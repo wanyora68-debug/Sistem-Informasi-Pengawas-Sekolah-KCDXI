@@ -1,0 +1,327 @@
+{
+  "users": [
+    {
+      "id": "1762696424712",
+      "username": "admin",
+      "password": "$2b$10$fjJLf86PdOhugDGcr.HS2etUQSFcO2J4sY/39nuEWQiW4i4DKZrEy",
+      "fullName": "Administrator",
+      "role": "admin",
+      "createdAt": "2025-11-09T13:53:44.712Z"
+    },
+    {
+      "id": "1762696525337",
+      "username": "wawan",
+      "password": "$2b$10$MbAU1EG6FXNJFhhtpe4Nde6hrOQQ0M.vU336hZSBdsaFzStOlzHiq",
+      "fullName": "H. Wawan Yogaswara, S.Pd, M.Pd",
+      "role": "pengawas",
+      "createdAt": "2025-11-09T13:55:25.337Z",
+      "photoUrl": "/uploads/1762830374284-750171039.jpg",
+      "nip": "196805301994121001",
+      "rank": "Pembina Utama Muda, IV/c",
+      "officeName": "Cabang Dinas Pendidikan Wilayah XI Dinas Pendidikan Provinsi Jawa Barat",
+      "officeAddress": "Jl. A.Yani No. 23 Kel. Paminggir Kec. Garut Kota Kabupaten Garut",
+      "homeAddress": "Griya Surya Indah No. 50 Kel. Sukagalih Kec. Tarogong Kidul Garut",
+      "phone": "087733438282"
+    },
+    {
+      "id": "1762836343774",
+      "username": "Undang ",
+      "password": "$2b$10$7HCZyYjo0x3PQsoLMTCgM.G47vAYrredZ7pkrYq/NNXfzYEy/0iSS",
+      "fullName": "Undang ",
+      "role": "pengawas",
+      "nip": null,
+      "rank": null,
+      "officeName": null,
+      "officeAddress": null,
+      "homeAddress": null,
+      "phone": null,
+      "photoUrl": null,
+      "createdAt": "2025-11-11T04:45:43.774Z"
+    },
+    {
+      "id": "1762837068152",
+      "username": "yenihandayani",
+      "password": "$2b$10$EBf/mpUycrPWKLq3nYcILeiTY.5qfBPmKePfvuwEuTk75a/Cbsfxy",
+      "fullName": "Yeni Handayani",
+      "role": "pengawas",
+      "nip": "197707282003122004",
+      "rank": "Pembina Utama Muda/ IV/c",
+      "officeName": "KCD Wil XI",
+      "officeAddress": "Jl Ahmad Yani 23",
+      "homeAddress": "Jl Pahlawan",
+      "phone": "087718345358",
+      "photoUrl": "/uploads/1762837258917-674271850.png",
+      "createdAt": "2025-11-11T04:57:48.152Z"
+    },
+    {
+      "id": "1762837080696",
+      "username": "Dede66",
+      "password": "$2b$10$UJEtkxlFCh9Z2S2V.rRCZeqt2/gyCkaQbE0Tr3YCpdLzPpSZyTLyu",
+      "fullName": "Dra. Hj. Dede Ikah",
+      "role": "pengawas",
+      "nip": null,
+      "rank": null,
+      "officeName": null,
+      "officeAddress": null,
+      "homeAddress": null,
+      "phone": null,
+      "photoUrl": "/uploads/1762837447825-974263149.jpg",
+      "createdAt": "2025-11-11T04:58:00.696Z"
+    },
+    {
+      "id": "1762838945060",
+      "username": "Admin",
+      "password": "$2b$10$TtmnI8gtngN1pzw/F98hd.Pn2AgHT0Cwvojxz8FSvEtbA8qGBCNkW",
+      "fullName": "Administrator",
+      "role": "pengawas",
+      "nip": null,
+      "rank": null,
+      "officeName": null,
+      "officeAddress": null,
+      "homeAddress": null,
+      "phone": null,
+      "photoUrl": null,
+      "createdAt": "2025-11-11T05:29:05.060Z"
+    }
+  ],
+  "schools": [
+    {
+      "id": "1762699563468",
+      "userId": "1762696525337",
+      "name": "SMKN 4 GARUT ",
+      "address": "Jl. Karangpawitan Kec. Karangpawitan",
+      "contact": "082115166630",
+      "principalName": "Drs, Pudji Santoso",
+      "principalNip": "196606291992031005",
+      "createdAt": "2025-11-09T14:46:03.468Z"
+    },
+    {
+      "id": "1762822002088",
+      "userId": "1762696525337",
+      "name": "SMK PLUS GODOG ",
+      "address": "Kp. Godog Kramat Rt 02/06 Karangpawitan",
+      "contact": "+62 857-2367-8224",
+      "principalName": "Yogi Sugianto",
+      "principalNip": null,
+      "createdAt": "2025-11-11T00:46:42.088Z"
+    },
+    {
+      "id": "1762822100350",
+      "userId": "1762696525337",
+      "name": "SMK IT MUHAJIRIN KARANGPAWITAN ",
+      "address": "Jl. Keramat Godog Kp. Cogreg Rt 01 Rw 09",
+      "contact": "0813-2399-3965",
+      "principalName": "Uloh Saepuloh, S.Ag",
+      "principalNip": null,
+      "createdAt": "2025-11-11T00:48:20.350Z"
+    },
+    {
+      "id": "1762822199750",
+      "userId": "1762696525337",
+      "name": "SMKS ISLAM MADINATUL ULUM ",
+      "address": "Kp. Sindangwargi Rt 01 Rw 07 Karangpawitan",
+      "contact": "0823-1683-0021",
+      "principalName": "Ayi Badruzaman ",
+      "principalNip": null,
+      "createdAt": "2025-11-11T00:49:59.750Z"
+    },
+    {
+      "id": "1762822289068",
+      "userId": "1762696525337",
+      "name": "SMK IT RABBANY ",
+      "address": "Jl. Cirendeu Tanjungsari Karangpawitan",
+      "contact": "0812-8293-6100",
+      "principalName": "M. Ridwan Saepuloh",
+      "principalNip": null,
+      "createdAt": "2025-11-11T00:51:29.068Z"
+    },
+    {
+      "id": "1762822378539",
+      "userId": "1762696525337",
+      "name": "SMKS ASSHIDDIQIYAH ",
+      "address": "Faroj Gifari",
+      "contact": " 0823-1547-9201",
+      "principalName": "Faroj Gifari",
+      "principalNip": null,
+      "createdAt": "2025-11-11T00:52:58.539Z"
+    },
+    {
+      "id": "1762822466523",
+      "userId": "1762696525337",
+      "name": "SMKS PLUS SUKARAJA ",
+      "address": "Jl. Kh. Zaenal Arif Km 3 Jatisari Karangpawitan",
+      "contact": " 0812-2497-5950",
+      "principalName": "Elva Alviya Fauziyah, M.Pd",
+      "principalNip": null,
+      "createdAt": "2025-11-11T00:54:26.523Z"
+    },
+    {
+      "id": "1762822543558",
+      "userId": "1762696525337",
+      "name": "SMKS AL AMIN ",
+      "address": "Kp. Bongkor Rt.03 Rw.08, Cintarakyat, Samarang, Kab. Garut",
+      "contact": "0823-1726-3686",
+      "principalName": "Agus Yuniantoro, SE",
+      "principalNip": null,
+      "createdAt": "2025-11-11T00:55:43.558Z"
+    },
+    {
+      "id": "1762822624909",
+      "userId": "1762696525337",
+      "name": "SMK AL MADANI GARUT ",
+      "address": "Jl. Raya Samarang Kec. Samarang",
+      "contact": " 0813-2102-4779",
+      "principalName": "Ucu Zaenal Arifin",
+      "principalNip": null,
+      "createdAt": "2025-11-11T00:57:04.909Z"
+    },
+    {
+      "id": "1762822698900",
+      "userId": "1762696525337",
+      "name": "SMK SYIS BADRUZZAMAN ",
+      "address": "Jl. Samarang Km 10, Kp. Surya Tanjung Anom, Rt 001, Rw 010 Samarang",
+      "contact": "0812-8978-5261",
+      "principalName": "Puad Badruzaman",
+      "principalNip": null,
+      "createdAt": "2025-11-11T00:58:18.900Z"
+    },
+    {
+      "id": "1762822785563",
+      "userId": "1762696525337",
+      "name": "SMK TUNAS NUSANTARA GARUT",
+      "address": "Jl. Raya Panyaweuyan Rt. 02 Rw. 03, Sukalaksana, Kec. Samarang",
+      "contact": " 0896-7142-5420",
+      "principalName": "Susi Kaherunisa",
+      "principalNip": null,
+      "createdAt": "2025-11-11T00:59:45.563Z"
+    },
+    {
+      "id": "1762822869908",
+      "userId": "1762696525337",
+      "name": "SMK PLUS AL ISTIQOMAH SAMARANG ",
+      "address": "Jl. Kamojang No.31, Kp. Samarang  Awi,  Rt/Rw. 002/001, Samarang",
+      "contact": " 0821-1688-8755",
+      "principalName": "Asep Kusmaya",
+      "principalNip": null,
+      "createdAt": "2025-11-11T01:01:09.908Z"
+    },
+    {
+      "id": "1762822943319",
+      "userId": "1762696525337",
+      "name": "SMK PLUS QURROTA A’YUN SAMARANG ",
+      "address": "Jl. Raya Samarang No. 114  Cikamiri Sirnasari Samarang",
+      "contact": "0852-2097-6282",
+      "principalName": "H. Atep MohWahid Kosim, S.Ag",
+      "principalNip": null,
+      "createdAt": "2025-11-11T01:02:23.319Z"
+    },
+    {
+      "id": "1762823053047",
+      "userId": "1762696525337",
+      "name": "SMKS YPPT GARUT ",
+      "address": "Jl. Nusa Indah No. 33 Tarogong Kidul",
+      "contact": " 0823-2021-0456",
+      "principalName": "Gumgum Firman",
+      "principalNip": null,
+      "createdAt": "2025-11-11T01:04:13.047Z"
+    },
+    {
+      "id": "1762823120827",
+      "userId": "1762696525337",
+      "name": " SMKS WIKRAMA 1 GARUT ",
+      "address": "Jl. Otto Iskandardinata Kp. Tanjung Rt/Rw 003/013 Tarogong  Kaler",
+      "contact": " 0856-9344-566",
+      "principalName": "Kunaedi",
+      "principalNip": null,
+      "createdAt": "2025-11-11T01:05:20.827Z"
+    },
+    {
+      "id": "1762823189448",
+      "userId": "1762696525337",
+      "name": "SMKS CILEDUG AL MUSADADDIYAH",
+      "address": "Jl. Mayor Syamsu No. 2 Tarogong Kidul",
+      "contact": "0813-1820-0070",
+      "principalName": "M. Nasrullah Ramdhan, M.Si",
+      "principalNip": null,
+      "createdAt": "2025-11-11T01:06:29.448Z"
+    },
+    {
+      "id": "1762824299228",
+      "userId": "1762696525337",
+      "name": "SMK ASSALAM SAMARANG ",
+      "address": "Jl. Cimencek No.4 Kp. Nangkelan Cintaasih Samarang",
+      "contact": "0821-1552-6230",
+      "principalName": "Asep Rahman",
+      "principalNip": null,
+      "createdAt": "2025-11-11T01:24:59.228Z"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "1762824574414",
+      "userId": "1762696525337",
+      "title": "Input Data Sekolah Binaan",
+      "category": "Perencanaan",
+      "description": "Input data sekolah binaan ke dalam aplikasi kkepengawasan dalm upaya mencatat dan mendokumentasikan semua kegiatan kepengawasan sesuai Tupoksi pengawas meliputi perencanaan, pelaksanaan dan pelaporan dengan bentuk kegiatan supervisi akademik atau supervisi manajerial pada sekolah binaan.",
+      "completed": true,
+      "photo1": "1762824574393-359380420.jpeg",
+      "photo2": "1762824574405-77488473.jpeg",
+      "date": "2025-11-11T00:00:00.000Z",
+      "createdAt": "2025-11-11T01:29:34.414Z"
+    }
+  ],
+  "supervisions": [
+    {
+      "id": "1762835139703",
+      "userId": "1762696525337",
+      "schoolId": "1762823053047",
+      "type": "Akademik",
+      "date": "2025-11-11T00:00:00.000Z",
+      "teacherName": "Sumi",
+      "teacherNip": null,
+      "findings": "Kegiatan KBM masih terlihat guru yang banyak aktif",
+      "recommendations": "Mohon untuk membuat kegiatan yang mendorong siswa lebih aktif dalam pembelajaran",
+      "photo1": "1762835139571-376044957.jpeg",
+      "photo2": "1762835139605-940240959.jpeg",
+      "createdAt": "2025-11-11T04:25:39.703Z"
+    }
+  ],
+  "additionalTasks": [
+    {
+      "id": "1762737252008",
+      "userId": "1762696525337",
+      "name": "Apel Pagi",
+      "date": "2025-11-10T00:00:00.000Z",
+      "location": "KCD XI",
+      "organizer": "KCD XI",
+      "description": "Apel pagi dipimpin oleh pejabat analis KCD yang menyampaikna pessann berkaitan dengan pelaksanaan TKA 2025. TKA susukan akan diselenggarakan pada tanggal 17 November 2025",
+      "photo1": "1762737251966-136256749.jpg",
+      "photo2": "1762737251973-945629969.jpg",
+      "createdAt": "2025-11-10T01:14:12.008Z"
+    }
+  ],
+  "events": [
+    {
+      "id": "1762826477112",
+      "userId": "1762696525337",
+      "schoolId": null,
+      "title": "Input data sekolah binaan",
+      "date": "2025-11-11T00:00:00.000Z",
+      "time": "09:01",
+      "description": "Input data sekolah binaan ke dalam aplikasi kkepengawasan dalm upaya mencatat dan mendokumentasikan semua kegiatan kepengawasan sesuai Tupoksi pengawas meliputi perencanaan, pelaksanaan dan pelaporan dengan bentuk kegiatan supervisi akademik atau supervisi manajerial pada sekolah binaan",
+      "reminded": false,
+      "createdAt": "2025-11-11T02:01:17.112Z"
+    },
+    {
+      "id": "1762826573754",
+      "userId": "1762696525337",
+      "schoolId": "1762823053047",
+      "title": "Monitoring KBM",
+      "date": "2025-11-12T00:00:00.000Z",
+      "time": "09:02",
+      "description": "Cek kesiapan supervisi Bu Sumi Guru SMK YPP",
+      "reminded": false,
+      "createdAt": "2025-11-11T02:02:53.754Z"
+    }
+  ]
+}
