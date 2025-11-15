@@ -1,5 +1,35 @@
 # Changelog - Aplikasi Pengawas Sekolah
 
+## 🚀 DEPLOYMENT - 11 November 2025 (Malam)
+
+### 🔧 Fix: Render Build Error
+- **FIXED:** Error "vite: not found" saat build di Render
+- **FIXED:** Update package.json untuk gunakan npx
+- **NEW:** render.yaml - Konfigurasi otomatis untuk Render
+- **NEW:** render-build.sh - Custom build script
+- **NEW:** FIX_RENDER_BUILD_ERROR.md - Dokumentasi fix
+- **IMPROVED:** Build command lebih reliable dengan npx
+- **SOLUTION:** Use "npx vite build" instead of "vite build"
+
+### 🎨 Deploy ke Render.com
+- **NEW:** DEPLOY_RENDER.md - Panduan lengkap deploy ke Render (GRATIS!)
+- **NEW:** QUICK_RENDER_DEPLOY.md - Quick guide 4 langkah (10 menit)
+- **NEW:** render.yaml - Konfigurasi Render
+- **INFO:** Render.com free tier - 100% gratis selamanya
+- **INFO:** Perfect untuk uji coba & testing
+- **INFO:** Auto-deploy dari GitHub
+- **INFO:** SSL & custom domain gratis
+
+### 🚂 Deploy ke Railway
+- **NEW:** DEPLOY_RAILWAY.md - Panduan deploy ke Railway
+- **INFO:** Railway $5 credit gratis untuk trial
+- **INFO:** Support full-stack dengan file storage
+
+### ⚠️ Deploy ke Vercel
+- **NEW:** DEPLOY_VERCEL.md - Penjelasan kenapa Vercel tidak cocok
+- **INFO:** Vercel tidak support file storage & local database
+- **INFO:** Perlu migrasi besar ke Supabase + cloud storage
+
 ## 📚 DOKUMENTASI - 11 November 2025 (Malam)
 
 ### 🗄️ Setup Database Supabase
