@@ -1,8 +1,14 @@
 {
-  "outputDirectory": "public"
-
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "public" // Pastikan direktori ini ada
+      }
+    }
+  ]
 }
-
 
 
 
