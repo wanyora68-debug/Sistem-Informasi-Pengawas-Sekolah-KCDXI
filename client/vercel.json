@@ -2,19 +2,7 @@
   "outputDirectory": "public"
 
 }
-{
-  "rewrites": [
-    {
-      "source": "/",
-      "destination": "/index.html"
-    },
-    {
-      "source": "/home",
-      "destination": "/home.html"
-    }
-    // Anda bisa menambahkan path lain di sini
-  ]
-}
+
 
 
 
