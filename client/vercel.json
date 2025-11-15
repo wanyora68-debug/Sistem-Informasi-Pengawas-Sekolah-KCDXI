@@ -1,5 +1,5 @@
 {
-  "outputDirectory": "dist"
+  "outputDirectory": "public"
 
 }
 {
@@ -10,5 +10,6 @@
     }
   ]
 }
+
 
 
