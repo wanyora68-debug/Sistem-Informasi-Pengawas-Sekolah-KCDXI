@@ -33,23 +33,15 @@ async function seedLocalAdmin() {
   }
 }
 
-// Ensure uploads directory exists
+// Ensure uploads directory exists (for backward compatibility)
 const uploadsDir = "uploads";
 if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir, { recursive: true });
 }
 
-// Setup file upload
+// Setup file upload with memory storage for base64 conversion
 const upload = multer({
-  storage: multer.diskStorage({
-    destination: (req, file, cb) => {
-      cb(null, "uploads/");
-    },
-    filename: (req, file, cb) => {
-      const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-      cb(null, uniqueSuffix + path.extname(file.originalname));
-    },
-  }),
+  storage: multer.memoryStorage(), // Store in memory for base64 conversion
   limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
   fileFilter: (req, file, cb) => {
     const allowedTypes = /jpeg|jpg|png/;
@@ -195,10 +187,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "No photo uploaded" });
       }
 
-      const photoUrl = `/uploads/${req.file.filename}`;
+      // Convert image to base64
+      const base64Image = `data:${req.file.mimetype};base64,${req.file.buffer.toString('base64')}`;
       
       const updatedUser = await db.updateUser(req.user!.userId, {
-        photoUrl,
+        photoUrl: base64Image,
       });
 
       if (!updatedUser) {
@@ -207,7 +200,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       res.json({ 
         message: "Profile photo updated successfully",
-        photoUrl,
+        photoUrl: base64Image,
         user: updatedUser 
       });
     } catch (error: any) {
@@ -384,13 +377,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/tasks", authMiddleware, upload.fields([{ name: "photo1" }, { name: "photo2" }]), async (req: AuthRequest, res) => {
     try {
       const files = req.files as { [fieldname: string]: Express.Multer.File[] };
+      
+      // Convert photos to base64
+      const photo1Base64 = files?.photo1?.[0] 
+        ? `data:${files.photo1[0].mimetype};base64,${files.photo1[0].buffer.toString('base64')}`
+        : null;
+      const photo2Base64 = files?.photo2?.[0]
+        ? `data:${files.photo2[0].mimetype};base64,${files.photo2[0].buffer.toString('base64')}`
+        : null;
+      
       const data = insertTaskSchema.parse({
         ...req.body,
         userId: req.user!.userId,
         date: req.body.date ? new Date(req.body.date) : new Date(),
         completed: req.body.completed === 'true' || req.body.completed === true,
-        photo1: files?.photo1?.[0]?.filename || null,
-        photo2: files?.photo2?.[0]?.filename || null,
+        photo1: photo1Base64,
+        photo2: photo2Base64,
       });
       const task = await db.createTask(data);
       res.json(task);
@@ -475,12 +477,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/supervisions", authMiddleware, upload.fields([{ name: "photo1" }, { name: "photo2" }]), async (req: AuthRequest, res) => {
     try {
       const files = req.files as { [fieldname: string]: Express.Multer.File[] };
+      
+      // Convert photos to base64
+      const photo1Base64 = files?.photo1?.[0] 
+        ? `data:${files.photo1[0].mimetype};base64,${files.photo1[0].buffer.toString('base64')}`
+        : null;
+      const photo2Base64 = files?.photo2?.[0]
+        ? `data:${files.photo2[0].mimetype};base64,${files.photo2[0].buffer.toString('base64')}`
+        : null;
+      
       const data = insertSupervisionSchema.parse({
         ...req.body,
         userId: req.user!.userId,
         date: req.body.date ? new Date(req.body.date) : new Date(),
-        photo1: files?.photo1?.[0]?.filename || null,
-        photo2: files?.photo2?.[0]?.filename || null,
+        photo1: photo1Base64,
+        photo2: photo2Base64,
       });
       const supervision = await db.createSupervision(data);
       res.json(supervision);
@@ -512,12 +523,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/additional-tasks", authMiddleware, upload.fields([{ name: "photo1" }, { name: "photo2" }]), async (req: AuthRequest, res) => {
     try {
       const files = req.files as { [fieldname: string]: Express.Multer.File[] };
+      
+      // Convert photos to base64
+      const photo1Base64 = files?.photo1?.[0] 
+        ? `data:${files.photo1[0].mimetype};base64,${files.photo1[0].buffer.toString('base64')}`
+        : null;
+      const photo2Base64 = files?.photo2?.[0]
+        ? `data:${files.photo2[0].mimetype};base64,${files.photo2[0].buffer.toString('base64')}`
+        : null;
+      
       const data = insertAdditionalTaskSchema.parse({
         ...req.body,
         userId: req.user!.userId,
         date: req.body.date ? new Date(req.body.date) : new Date(),
-        photo1: files?.photo1?.[0]?.filename || null,
-        photo2: files?.photo2?.[0]?.filename || null,
+        photo1: photo1Base64,
+        photo2: photo2Base64,
       });
       const task = await db.createAdditionalTask(data);
       res.json(task);
