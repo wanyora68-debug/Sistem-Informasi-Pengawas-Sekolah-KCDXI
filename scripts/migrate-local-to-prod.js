@@ -51,7 +51,8 @@ console.log('');
 
 // Import database after checking DATABASE_URL
 const { db } = await import('../server/db.js');
-const { users, schools, tasks, supervisions, additionalTasks, events } = await import('../db/schema.js');
+const schema = await import('../shared/schema.js');
+const { users, schools, tasks, supervisions, additionalTasks, events } = schema;
 
 async function migrateData() {
   console.log('🚀 Starting migration...\n');

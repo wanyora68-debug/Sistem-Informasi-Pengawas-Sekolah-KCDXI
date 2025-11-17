@@ -89,8 +89,8 @@ export default function TasksPage() {
     },
   });
 
-  // Update task mutation
-  const updateTaskMutation = useMutation({
+  // Toggle complete mutation
+  const toggleCompleteMutation = useMutation({
     mutationFn: async ({ id, completed }: { id: string; completed: boolean }) => {
       const token = localStorage.getItem('auth_token');
       const response = await fetch(`/api/tasks/${id}`, {
@@ -152,7 +152,7 @@ export default function TasksPage() {
   };
 
   const toggleComplete = (id: string, currentStatus: boolean) => {
-    updateTaskMutation.mutate({ id, completed: !currentStatus });
+    toggleCompleteMutation.mutate({ id, completed: !currentStatus });
   };
 
   const handleEditTask = (task: Task) => {
@@ -163,11 +163,78 @@ export default function TasksPage() {
       description: task.description || "",
       completed: task.completed,
     });
+    // Set existing photos as preview
+    if (task.photo1) {
+      const photoUrl = task.photo1.startsWith('data:') ? task.photo1 : `/uploads/${task.photo1}`;
+      setPhoto1Preview(photoUrl);
+    }
+    if (task.photo2) {
+      const photoUrl = task.photo2.startsWith('data:') ? task.photo2 : `/uploads/${task.photo2}`;
+      setPhoto2Preview(photoUrl);
+    }
     setIsEditDialogOpen(true);
   };
 
   const deleteTask = (id: string) => {
     deleteTaskMutation.mutate(id);
+  };
+
+  // Update task mutation
+  const updateTaskMutation = useMutation({
+    mutationFn: async ({ id, formData }: { id: string; formData: FormData }) => {
+      const token = localStorage.getItem('auth_token');
+      const response = await fetch(`/api/tasks/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+        body: formData,
+        credentials: 'include',
+      });
+      if (!response.ok) throw new Error('Failed to update task');
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['tasks'] });
+      toast({
+        title: "Berhasil",
+        description: "Tugas berhasil diupdate",
+      });
+      setEditingTask(null);
+      setNewTask({ title: "", category: "Perencanaan", description: "", completed: false });
+      setPhoto1(null);
+      setPhoto2(null);
+      setPhoto1Preview(null);
+      setPhoto2Preview(null);
+      setIsEditDialogOpen(false);
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Gagal",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
+  const handleUpdateTask = async () => {
+    if (!editingTask) return;
+    
+    const formData = new FormData();
+    formData.append('title', newTask.title);
+    formData.append('category', newTask.category);
+    formData.append('description', newTask.description);
+    formData.append('completed', newTask.completed.toString());
+    formData.append('date', editingTask.date);
+    
+    if (photo1) {
+      formData.append('photo1', photo1);
+    }
+    if (photo2) {
+      formData.append('photo2', photo2);
+    }
+
+    updateTaskMutation.mutate({ id: editingTask.id, formData });
   };
 
   const getCategoryColor = (category: string) => {
@@ -483,6 +550,177 @@ export default function TasksPage() {
                   data-testid="button-save-task"
                 >
                   {createTaskMutation.isPending ? "Menyimpan..." : "Simpan Tugas"}
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+
+        {/* Edit Dialog */}
+        <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+          <DialogContent className="max-w-2xl">
+            <DialogHeader>
+              <DialogTitle>Edit Tugas</DialogTitle>
+              <DialogDescription>Update detail tugas</DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="edit-task-title">Judul Tugas</Label>
+                <Input
+                  id="edit-task-title"
+                  value={newTask.title}
+                  onChange={(e) => setNewTask({ ...newTask, title: e.target.value })}
+                  placeholder="Masukkan judul tugas"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="edit-task-category">Kategori</Label>
+                <Select value={newTask.category} onValueChange={(value) => setNewTask({ ...newTask, category: value })}>
+                  <SelectTrigger id="edit-task-category">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Perencanaan">Perencanaan</SelectItem>
+                    <SelectItem value="Pendampingan">Pendampingan</SelectItem>
+                    <SelectItem value="Pelaporan">Pelaporan</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="edit-task-status">Status</Label>
+                <Select value={newTask.completed ? "true" : "false"} onValueChange={(value) => setNewTask({ ...newTask, completed: value === "true" })}>
+                  <SelectTrigger id="edit-task-status">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="false">Belum Selesai</SelectItem>
+                    <SelectItem value="true">Selesai</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="edit-task-description">Deskripsi</Label>
+                <Textarea
+                  id="edit-task-description"
+                  value={newTask.description}
+                  onChange={(e) => setNewTask({ ...newTask, description: e.target.value })}
+                  placeholder="Deskripsi detail tugas"
+                  rows={4}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Upload Foto (Maksimal 2)</Label>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <input
+                      ref={photo1InputRef}
+                      type="file"
+                      accept="image/jpeg,image/jpg,image/png"
+                      className="hidden"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          setPhoto1(file);
+                          const reader = new FileReader();
+                          reader.onloadend = () => setPhoto1Preview(reader.result as string);
+                          reader.readAsDataURL(file);
+                        }
+                      }}
+                    />
+                    <div
+                      onClick={() => photo1InputRef.current?.click()}
+                      className="border-2 border-dashed rounded-md p-6 text-center hover-elevate cursor-pointer relative"
+                    >
+                      {photo1Preview ? (
+                        <>
+                          <img src={photo1Preview} alt="Preview 1" className="w-full h-32 object-cover rounded" />
+                          <Button
+                            type="button"
+                            variant="destructive"
+                            size="icon"
+                            className="absolute top-2 right-2 h-6 w-6"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setPhoto1(null);
+                              setPhoto1Preview(null);
+                              if (photo1InputRef.current) photo1InputRef.current.value = '';
+                            }}
+                          >
+                            <X className="h-4 w-4" />
+                          </Button>
+                        </>
+                      ) : (
+                        <>
+                          <ImageIcon className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
+                          <p className="text-sm text-muted-foreground">Foto 1</p>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                  <div>
+                    <input
+                      ref={photo2InputRef}
+                      type="file"
+                      accept="image/jpeg,image/jpg,image/png"
+                      className="hidden"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          setPhoto2(file);
+                          const reader = new FileReader();
+                          reader.onloadend = () => setPhoto2Preview(reader.result as string);
+                          reader.readAsDataURL(file);
+                        }
+                      }}
+                    />
+                    <div
+                      onClick={() => photo2InputRef.current?.click()}
+                      className="border-2 border-dashed rounded-md p-6 text-center hover-elevate cursor-pointer relative"
+                    >
+                      {photo2Preview ? (
+                        <>
+                          <img src={photo2Preview} alt="Preview 2" className="w-full h-32 object-cover rounded" />
+                          <Button
+                            type="button"
+                            variant="destructive"
+                            size="icon"
+                            className="absolute top-2 right-2 h-6 w-6"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setPhoto2(null);
+                              setPhoto2Preview(null);
+                              if (photo2InputRef.current) photo2InputRef.current.value = '';
+                            }}
+                          >
+                            <X className="h-4 w-4" />
+                          </Button>
+                        </>
+                      ) : (
+                        <>
+                          <ImageIcon className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
+                          <p className="text-sm text-muted-foreground">Foto 2</p>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="flex gap-2 justify-end">
+                <Button variant="outline" onClick={() => {
+                  setIsEditDialogOpen(false);
+                  setEditingTask(null);
+                  setPhoto1(null);
+                  setPhoto2(null);
+                  setPhoto1Preview(null);
+                  setPhoto2Preview(null);
+                }}>
+                  Batal
+                </Button>
+                <Button 
+                  onClick={handleUpdateTask} 
+                  disabled={!newTask.title || updateTaskMutation.isPending}
+                >
+                  {updateTaskMutation.isPending ? "Menyimpan..." : "Update Tugas"}
                 </Button>
               </div>
             </div>

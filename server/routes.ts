@@ -411,6 +411,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Update task with photos
+  app.put("/api/tasks/:id", authMiddleware, upload.fields([{ name: 'photo1' }, { name: 'photo2' }]), async (req: AuthRequest, res) => {
+    try {
+      const files = req.files as { [fieldname: string]: Express.Multer.File[] };
+      const updateData: any = {
+        title: req.body.title,
+        category: req.body.category,
+        description: req.body.description,
+        completed: req.body.completed === 'true',
+        date: req.body.date,
+      };
+
+      // Convert photos to base64 if provided
+      if (files?.photo1?.[0]) {
+        updateData.photo1 = `data:${files.photo1[0].mimetype};base64,${files.photo1[0].buffer.toString('base64')}`;
+      }
+      if (files?.photo2?.[0]) {
+        updateData.photo2 = `data:${files.photo2[0].mimetype};base64,${files.photo2[0].buffer.toString('base64')}`;
+      }
+
+      const task = await db.updateTask(req.params.id, updateData);
+      res.json(task);
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
+    }
+  });
+
   app.delete("/api/tasks/:id", authMiddleware, async (req: AuthRequest, res) => {
     try {
       await db.deleteTask(req.params.id);
