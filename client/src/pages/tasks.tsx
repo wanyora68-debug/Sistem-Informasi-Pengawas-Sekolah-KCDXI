@@ -538,14 +538,14 @@ export default function TasksPage() {
                     <div className="grid grid-cols-2 gap-3">
                       {task.photo1 && (
                         <img 
-                          src={`/uploads/${task.photo1}`} 
+                          src={task.photo1.startsWith('data:') ? task.photo1 : `/uploads/${task.photo1}`} 
                           alt="Foto 1" 
                           className="w-full h-40 object-cover rounded-md border"
                         />
                       )}
                       {task.photo2 && (
                         <img 
-                          src={`/uploads/${task.photo2}`} 
+                          src={task.photo2.startsWith('data:') ? task.photo2 : `/uploads/${task.photo2}`} 
                           alt="Foto 2" 
                           className="w-full h-40 object-cover rounded-md border"
                         />

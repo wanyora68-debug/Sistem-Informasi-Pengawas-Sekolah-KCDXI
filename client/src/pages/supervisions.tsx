@@ -690,14 +690,14 @@ export default function SupervisionsPage() {
                     <div className="grid grid-cols-2 gap-3">
                       {supervision.photo1 && (
                         <img 
-                          src={`/uploads/${supervision.photo1}`} 
+                          src={supervision.photo1.startsWith('data:') ? supervision.photo1 : `/uploads/${supervision.photo1}`} 
                           alt="Foto 1" 
                           className="w-full h-40 object-cover rounded-md border"
                         />
                       )}
                       {supervision.photo2 && (
                         <img 
-                          src={`/uploads/${supervision.photo2}`} 
+                          src={supervision.photo2.startsWith('data:') ? supervision.photo2 : `/uploads/${supervision.photo2}`} 
                           alt="Foto 2" 
                           className="w-full h-40 object-cover rounded-md border"
                         />
