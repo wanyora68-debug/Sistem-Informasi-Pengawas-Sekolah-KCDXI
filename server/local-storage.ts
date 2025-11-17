@@ -323,4 +323,4 @@ class LocalStorage {
 }
 
 export const localStorage = new LocalStorage();
-export const isLocalStorageEnabled = true;
+export const isLocalStorageEnabled = false; // Always use database (Neon) in production
