@@ -182,8 +182,14 @@ export default function SupervisionsPage() {
     if (!printWindow) return;
 
     const photos = [];
-    if (supervision.photo1) photos.push({ url: `/uploads/${supervision.photo1}`, label: 'Foto 1' });
-    if (supervision.photo2) photos.push({ url: `/uploads/${supervision.photo2}`, label: 'Foto 2' });
+    if (supervision.photo1) {
+      const photoUrl = supervision.photo1.startsWith('data:') ? supervision.photo1 : `/uploads/${supervision.photo1}`;
+      photos.push({ url: photoUrl, label: 'Foto 1' });
+    }
+    if (supervision.photo2) {
+      const photoUrl = supervision.photo2.startsWith('data:') ? supervision.photo2 : `/uploads/${supervision.photo2}`;
+      photos.push({ url: photoUrl, label: 'Foto 2' });
+    }
     
     const photosHtml = photos.length > 0
       ? `

@@ -131,8 +131,14 @@ export default function AdditionalTasksPage() {
     if (!printWindow) return;
 
     const photos = [];
-    if (task.photo1) photos.push({ url: `/uploads/${task.photo1}`, label: 'Foto 1' });
-    if (task.photo2) photos.push({ url: `/uploads/${task.photo2}`, label: 'Foto 2' });
+    if (task.photo1) {
+      const photoUrl = task.photo1.startsWith('data:') ? task.photo1 : `/uploads/${task.photo1}`;
+      photos.push({ url: photoUrl, label: 'Foto 1' });
+    }
+    if (task.photo2) {
+      const photoUrl = task.photo2.startsWith('data:') ? task.photo2 : `/uploads/${task.photo2}`;
+      photos.push({ url: photoUrl, label: 'Foto 2' });
+    }
     
     const photosHtml = photos.length > 0
       ? `
