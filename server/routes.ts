@@ -528,6 +528,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Update supervision with photos
+  app.put("/api/supervisions/:id", authMiddleware, upload.fields([{ name: 'photo1' }, { name: 'photo2' }]), async (req: AuthRequest, res) => {
+    try {
+      const files = req.files as { [fieldname: string]: Express.Multer.File[] };
+      const updateData: any = {
+        schoolId: req.body.schoolId,
+        type: req.body.type,
+        teacherName: req.body.teacherName,
+        teacherNip: req.body.teacherNip,
+        findings: req.body.findings,
+        recommendations: req.body.recommendations,
+        date: req.body.date,
+      };
+
+      // Convert photos to base64 if provided
+      if (files?.photo1?.[0]) {
+        updateData.photo1 = `data:${files.photo1[0].mimetype};base64,${files.photo1[0].buffer.toString('base64')}`;
+      }
+      if (files?.photo2?.[0]) {
+        updateData.photo2 = `data:${files.photo2[0].mimetype};base64,${files.photo2[0].buffer.toString('base64')}`;
+      }
+
+      const supervision = await db.updateSupervision(req.params.id, updateData);
+      res.json(supervision);
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
+    }
+  });
+
   app.delete("/api/supervisions/:id", authMiddleware, async (req: AuthRequest, res) => {
     try {
       await db.deleteSupervision(req.params.id);
@@ -570,6 +599,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(task);
     } catch (error: any) {
       console.error('Error creating additional task:', error);
+      res.status(400).json({ error: error.message });
+    }
+  });
+
+  // Update additional task with photos
+  app.put("/api/additional-tasks/:id", authMiddleware, upload.fields([{ name: 'photo1' }, { name: 'photo2' }]), async (req: AuthRequest, res) => {
+    try {
+      const files = req.files as { [fieldname: string]: Express.Multer.File[] };
+      const updateData: any = {
+        name: req.body.name,
+        date: req.body.date,
+        location: req.body.location,
+        organizer: req.body.organizer,
+        description: req.body.description,
+      };
+
+      // Convert photos to base64 if provided
+      if (files?.photo1?.[0]) {
+        updateData.photo1 = `data:${files.photo1[0].mimetype};base64,${files.photo1[0].buffer.toString('base64')}`;
+      }
+      if (files?.photo2?.[0]) {
+        updateData.photo2 = `data:${files.photo2[0].mimetype};base64,${files.photo2[0].buffer.toString('base64')}`;
+      }
+
+      const task = await db.updateAdditionalTask(req.params.id, updateData);
+      res.json(task);
+    } catch (error: any) {
       res.status(400).json({ error: error.message });
     }
   });

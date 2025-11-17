@@ -54,12 +54,14 @@ export interface IStorage {
   getSupervisionsBySchool(schoolId: string): Promise<Supervision[]>;
   getSupervision(id: string): Promise<Supervision | undefined>;
   createSupervision(supervision: InsertSupervision): Promise<Supervision>;
+  updateSupervision(id: string, supervision: Partial<InsertSupervision>): Promise<Supervision>;
   deleteSupervision(id: string): Promise<void>;
 
   // Additional Tasks
   getAdditionalTasks(userId: string): Promise<AdditionalTask[]>;
   getAdditionalTask(id: string): Promise<AdditionalTask | undefined>;
   createAdditionalTask(task: InsertAdditionalTask): Promise<AdditionalTask>;
+  updateAdditionalTask(id: string, task: Partial<InsertAdditionalTask>): Promise<AdditionalTask>;
   deleteAdditionalTask(id: string): Promise<void>;
 
   // Reports
@@ -209,6 +211,11 @@ export class DbStorage implements IStorage {
     return result;
   }
 
+  async updateSupervision(id: string, supervision: Partial<InsertSupervision>): Promise<Supervision> {
+    const [result] = await db.update(supervisions).set(supervision).where(eq(supervisions.id, id)).returning();
+    return result;
+  }
+
   async deleteSupervision(id: string): Promise<void> {
     await db.delete(supervisions).where(eq(supervisions.id, id));
   }
@@ -227,6 +234,11 @@ export class DbStorage implements IStorage {
 
   async createAdditionalTask(task: InsertAdditionalTask): Promise<AdditionalTask> {
     const [result] = await db.insert(additionalTasks).values(task).returning();
+    return result;
+  }
+
+  async updateAdditionalTask(id: string, task: Partial<InsertAdditionalTask>): Promise<AdditionalTask> {
+    const [result] = await db.update(additionalTasks).set(task).where(eq(additionalTasks.id, id)).returning();
     return result;
   }
 

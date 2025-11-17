@@ -188,6 +188,14 @@ class LocalStorage {
     return newSupervision;
   }
 
+  async updateSupervision(id: string, supervision: Partial<InsertSupervision>): Promise<Supervision> {
+    const index = this.db.supervisions.findIndex(s => s.id === id);
+    if (index === -1) throw new Error('Supervision not found');
+    this.db.supervisions[index] = { ...this.db.supervisions[index], ...supervision };
+    this.saveDatabase();
+    return this.db.supervisions[index];
+  }
+
   async deleteSupervision(id: string): Promise<void> {
     this.db.supervisions = this.db.supervisions.filter(s => s.id !== id);
     this.saveDatabase();
@@ -210,6 +218,14 @@ class LocalStorage {
     this.db.additionalTasks.push(newTask);
     this.saveDatabase();
     return newTask;
+  }
+
+  async updateAdditionalTask(id: string, task: Partial<InsertAdditionalTask>): Promise<AdditionalTask> {
+    const index = this.db.additionalTasks.findIndex(t => t.id === id);
+    if (index === -1) throw new Error('Additional task not found');
+    this.db.additionalTasks[index] = { ...this.db.additionalTasks[index], ...task };
+    this.saveDatabase();
+    return this.db.additionalTasks[index];
   }
 
   async deleteAdditionalTask(id: string): Promise<void> {

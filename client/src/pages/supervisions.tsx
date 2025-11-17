@@ -47,6 +47,8 @@ export default function SupervisionsPage() {
   });
   
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [editingSupervision, setEditingSupervision] = useState<Supervision | null>(null);
   const [newSupervision, setNewSupervision] = useState({
     school: "",
     type: "Akademik",
@@ -169,6 +171,95 @@ export default function SupervisionsPage() {
 
   const deleteSupervision = (id: string) => {
     deleteSupervisionMutation.mutate(id);
+  };
+
+  // Update supervision mutation
+  const updateSupervisionMutation = useMutation({
+    mutationFn: async ({ id, formData }: { id: string; formData: FormData }) => {
+      const token = localStorage.getItem('auth_token');
+      const response = await fetch(`/api/supervisions/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+        body: formData,
+        credentials: 'include',
+      });
+      if (!response.ok) throw new Error('Failed to update supervision');
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['supervisions'] });
+      toast({
+        title: "Berhasil",
+        description: "Supervisi berhasil diupdate",
+      });
+      setEditingSupervision(null);
+      setNewSupervision({ school: "", type: "Akademik", date: "", teacherName: "", teacherNip: "", findings: "", recommendations: "" });
+      setPhoto1(null);
+      setPhoto2(null);
+      setPhoto1Preview(null);
+      setPhoto2Preview(null);
+      setIsEditDialogOpen(false);
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Gagal",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
+  const handleEditSupervision = (supervision: Supervision) => {
+    setEditingSupervision(supervision);
+    setNewSupervision({
+      school: supervision.school,
+      type: supervision.type,
+      date: supervision.date,
+      teacherName: supervision.teacherName || "",
+      teacherNip: supervision.teacherNip || "",
+      findings: supervision.findings,
+      recommendations: supervision.recommendations,
+    });
+    // Set existing photos as preview
+    if (supervision.photo1) {
+      const photoUrl = supervision.photo1.startsWith('data:') ? supervision.photo1 : `/uploads/${supervision.photo1}`;
+      setPhoto1Preview(photoUrl);
+    }
+    if (supervision.photo2) {
+      const photoUrl = supervision.photo2.startsWith('data:') ? supervision.photo2 : `/uploads/${supervision.photo2}`;
+      setPhoto2Preview(photoUrl);
+    }
+    setIsEditDialogOpen(true);
+  };
+
+  const handleUpdateSupervision = async () => {
+    if (!editingSupervision) return;
+
+    const selectedSchool = schools.find((s: any) => s.name === newSupervision.school);
+    if (!selectedSchool) {
+      toast({
+        title: "Error",
+        description: "Sekolah tidak ditemukan",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('schoolId', selectedSchool.id);
+    formData.append('type', newSupervision.type);
+    formData.append('teacherName', newSupervision.teacherName);
+    formData.append('teacherNip', newSupervision.teacherNip);
+    formData.append('findings', newSupervision.findings);
+    formData.append('recommendations', newSupervision.recommendations);
+    formData.append('date', newSupervision.date || editingSupervision.date);
+    
+    if (photo1) formData.append('photo1', photo1);
+    if (photo2) formData.append('photo2', photo2);
+
+    updateSupervisionMutation.mutate({ id: editingSupervision.id, formData });
   };
 
   const getTypeColor = (type: string) => {
@@ -640,6 +731,212 @@ export default function SupervisionsPage() {
             </div>
           </DialogContent>
         </Dialog>
+
+        {/* Edit Dialog */}
+        <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+          <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>Edit Supervisi</DialogTitle>
+              <DialogDescription>Update hasil supervisi</DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="edit-supervision-school">Sekolah</Label>
+                  <Select value={newSupervision.school} onValueChange={(value) => setNewSupervision({ ...newSupervision, school: value })}>
+                    <SelectTrigger id="edit-supervision-school">
+                      <SelectValue placeholder="Pilih sekolah" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {schools.length === 0 ? (
+                        <SelectItem value="no-school" disabled>Belum ada sekolah</SelectItem>
+                      ) : (
+                        schools.map((school: any) => (
+                          <SelectItem key={school.id} value={school.name}>
+                            {school.name}
+                          </SelectItem>
+                        ))
+                      )}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="edit-supervision-type">Jenis Supervisi</Label>
+                  <Select value={newSupervision.type} onValueChange={(value) => setNewSupervision({ ...newSupervision, type: value })}>
+                    <SelectTrigger id="edit-supervision-type">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Akademik">Akademik</SelectItem>
+                      <SelectItem value="Manajerial">Manajerial</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="edit-supervision-date">Tanggal Kegiatan</Label>
+                <Input
+                  id="edit-supervision-date"
+                  type="date"
+                  value={newSupervision.date}
+                  onChange={(e) => setNewSupervision({ ...newSupervision, date: e.target.value })}
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="edit-teacher-name">Nama Guru</Label>
+                  <Input
+                    id="edit-teacher-name"
+                    value={newSupervision.teacherName}
+                    onChange={(e) => setNewSupervision({ ...newSupervision, teacherName: e.target.value })}
+                    placeholder="Nama lengkap guru"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="edit-teacher-nip">NIP/NUPTK Guru</Label>
+                  <Input
+                    id="edit-teacher-nip"
+                    value={newSupervision.teacherNip}
+                    onChange={(e) => setNewSupervision({ ...newSupervision, teacherNip: e.target.value })}
+                    placeholder="NIP atau NUPTK"
+                  />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="edit-supervision-findings">Temuan / Hasil Supervisi</Label>
+                <Textarea
+                  id="edit-supervision-findings"
+                  value={newSupervision.findings}
+                  onChange={(e) => setNewSupervision({ ...newSupervision, findings: e.target.value })}
+                  placeholder="Catatan hasil supervisi"
+                  rows={4}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="edit-supervision-recommendations">Rekomendasi</Label>
+                <Textarea
+                  id="edit-supervision-recommendations"
+                  value={newSupervision.recommendations}
+                  onChange={(e) => setNewSupervision({ ...newSupervision, recommendations: e.target.value })}
+                  placeholder="Saran dan rekomendasi"
+                  rows={3}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Upload Foto (Maksimal 2)</Label>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <input
+                      ref={photo1InputRef}
+                      type="file"
+                      accept="image/jpeg,image/jpg,image/png"
+                      className="hidden"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          setPhoto1(file);
+                          const reader = new FileReader();
+                          reader.onloadend = () => setPhoto1Preview(reader.result as string);
+                          reader.readAsDataURL(file);
+                        }
+                      }}
+                    />
+                    <div
+                      onClick={() => photo1InputRef.current?.click()}
+                      className="border-2 border-dashed rounded-md p-6 text-center hover-elevate cursor-pointer relative"
+                    >
+                      {photo1Preview ? (
+                        <>
+                          <img src={photo1Preview} alt="Preview 1" className="w-full h-32 object-cover rounded" />
+                          <Button
+                            type="button"
+                            variant="destructive"
+                            size="icon"
+                            className="absolute top-2 right-2 h-6 w-6"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setPhoto1(null);
+                              setPhoto1Preview(null);
+                              if (photo1InputRef.current) photo1InputRef.current.value = '';
+                            }}
+                          >
+                            <X className="h-4 w-4" />
+                          </Button>
+                        </>
+                      ) : (
+                        <>
+                          <ImageIcon className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
+                          <p className="text-sm text-muted-foreground">Foto 1</p>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                  <div>
+                    <input
+                      ref={photo2InputRef}
+                      type="file"
+                      accept="image/jpeg,image/jpg,image/png"
+                      className="hidden"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          setPhoto2(file);
+                          const reader = new FileReader();
+                          reader.onloadend = () => setPhoto2Preview(reader.result as string);
+                          reader.readAsDataURL(file);
+                        }
+                      }}
+                    />
+                    <div
+                      onClick={() => photo2InputRef.current?.click()}
+                      className="border-2 border-dashed rounded-md p-6 text-center hover-elevate cursor-pointer relative"
+                    >
+                      {photo2Preview ? (
+                        <>
+                          <img src={photo2Preview} alt="Preview 2" className="w-full h-32 object-cover rounded" />
+                          <Button
+                            type="button"
+                            variant="destructive"
+                            size="icon"
+                            className="absolute top-2 right-2 h-6 w-6"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setPhoto2(null);
+                              setPhoto2Preview(null);
+                              if (photo2InputRef.current) photo2InputRef.current.value = '';
+                            }}
+                          >
+                            <X className="h-4 w-4" />
+                          </Button>
+                        </>
+                      ) : (
+                        <>
+                          <ImageIcon className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
+                          <p className="text-sm text-muted-foreground">Foto 2</p>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="flex gap-2 justify-end">
+                <Button variant="outline" onClick={() => {
+                  setIsEditDialogOpen(false);
+                  setEditingSupervision(null);
+                  setPhoto1(null);
+                  setPhoto2(null);
+                  setPhoto1Preview(null);
+                  setPhoto2Preview(null);
+                }}>
+                  Batal
+                </Button>
+                <Button onClick={handleUpdateSupervision} disabled={!newSupervision.school || !newSupervision.findings || updateSupervisionMutation.isPending}>
+                  {updateSupervisionMutation.isPending ? "Menyimpan..." : "Update Supervisi"}
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
 
       <Tabs defaultValue="all" className="w-full">
@@ -672,6 +969,9 @@ export default function SupervisionsPage() {
                     <Button variant="outline" size="sm" onClick={() => handlePrintSupervision(supervision)} data-testid={`button-print-supervision-${supervision.id}`}>
                       <Printer className="h-4 w-4 mr-2" />
                       Cetak
+                    </Button>
+                    <Button variant="outline" size="sm" onClick={() => handleEditSupervision(supervision)} data-testid={`button-edit-supervision-${supervision.id}`}>
+                      <FileText className="h-4 w-4" />
                     </Button>
                     <Button variant="outline" size="sm" onClick={() => deleteSupervision(supervision.id)} data-testid={`button-delete-supervision-${supervision.id}`}>
                       <X className="h-4 w-4" />
