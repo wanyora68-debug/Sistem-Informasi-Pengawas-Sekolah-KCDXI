@@ -168,9 +168,11 @@ export default function AdditionalTasksPage() {
 
   const handleEditTask = (task: AdditionalTask) => {
     setEditingTask(task);
+    // Format date for input[type="date"] (YYYY-MM-DD)
+    const dateStr = task.date ? new Date(task.date).toISOString().split('T')[0] : '';
     setNewTask({
       name: task.name,
-      date: task.date,
+      date: dateStr,
       location: task.location,
       organizer: task.organizer,
       description: task.description,
