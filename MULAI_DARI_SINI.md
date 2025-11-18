@@ -7,6 +7,11 @@
 ## 📚 Daftar File Panduan
 
 ### 🎯 **WAJIB BACA PERTAMA:**
+👉 **[CHECKLIST_SEDERHANA.md](CHECKLIST_SEDERHANA.md)**
+- Checklist mudah untuk verifikasi cepat
+- Step by step testing
+- Troubleshooting singkat
+
 👉 **[RINGKASAN_PERBAIKAN.md](RINGKASAN_PERBAIKAN.md)**
 - Ringkasan singkat semua perbaikan
 - Quick start guide
@@ -44,19 +49,25 @@
 
 ## 🎯 Alur Kerja yang Disarankan
 
-### 1️⃣ **Pahami Situasi** (5 menit)
+### 1️⃣ **Checklist Cepat** (10 menit)
+```
+Ikuti: CHECKLIST_SEDERHANA.md
+```
+Checklist mudah untuk test aplikasi step by step.
+
+### 2️⃣ **Pahami Situasi** (5 menit)
 ```
 Baca: RINGKASAN_PERBAIKAN.md
 ```
 Untuk memahami apa yang sudah diperbaiki dan apa yang perlu dilakukan.
 
-### 2️⃣ **Verifikasi Aplikasi** (10 menit)
+### 3️⃣ **Verifikasi Aplikasi** (10 menit)
 ```
 Ikuti: PANDUAN_VERIFIKASI_CEPAT.md
 ```
 Test aplikasi production untuk memastikan semua berfungsi.
 
-### 3️⃣ **Jika Ada Masalah** (15 menit)
+### 4️⃣ **Jika Ada Masalah** (15 menit)
 ```
 Baca: FIX_DATA_HILANG.md
 atau
@@ -64,7 +75,7 @@ Baca: CARA_CEK_DATABASE_URL.md
 ```
 Troubleshooting jika data hilang atau database tidak terkoneksi.
 
-### 4️⃣ **Checklist Lengkap** (20 menit)
+### 5️⃣ **Checklist Lengkap** (20 menit)
 ```
 Ikuti: STATUS_PERBAIKAN_TERKINI.md
 ```
