@@ -225,7 +225,9 @@ export default function TasksPage() {
     formData.append('category', newTask.category);
     formData.append('description', newTask.description);
     formData.append('completed', newTask.completed.toString());
-    formData.append('date', editingTask.date);
+    // Format date properly
+    const dateStr = editingTask.date ? new Date(editingTask.date).toISOString().split('T')[0] : new Date().toISOString().split('T')[0];
+    formData.append('date', dateStr);
     
     if (photo1) {
       formData.append('photo1', photo1);

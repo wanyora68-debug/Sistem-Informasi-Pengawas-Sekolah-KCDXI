@@ -254,7 +254,10 @@ export default function SupervisionsPage() {
     formData.append('teacherNip', newSupervision.teacherNip);
     formData.append('findings', newSupervision.findings);
     formData.append('recommendations', newSupervision.recommendations);
-    formData.append('date', newSupervision.date || editingSupervision.date);
+    // Format date properly
+    const dateToUse = newSupervision.date || editingSupervision.date;
+    const dateStr = dateToUse ? new Date(dateToUse).toISOString().split('T')[0] : new Date().toISOString().split('T')[0];
+    formData.append('date', dateStr);
     
     if (photo1) formData.append('photo1', photo1);
     if (photo2) formData.append('photo2', photo2);
