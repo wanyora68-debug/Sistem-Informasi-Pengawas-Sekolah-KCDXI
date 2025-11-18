@@ -609,7 +609,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const files = req.files as { [fieldname: string]: Express.Multer.File[] };
       const updateData: any = {
         name: req.body.name,
-        date: req.body.date,
+        date: req.body.date ? new Date(req.body.date) : new Date(),
         location: req.body.location,
         organizer: req.body.organizer,
         description: req.body.description,
@@ -626,6 +626,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const task = await db.updateAdditionalTask(req.params.id, updateData);
       res.json(task);
     } catch (error: any) {
+      console.error('Error updating additional task:', error);
       res.status(400).json({ error: error.message });
     }
   });
