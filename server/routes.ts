@@ -606,6 +606,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Update additional task with photos
   app.put("/api/additional-tasks/:id", authMiddleware, upload.fields([{ name: 'photo1' }, { name: 'photo2' }]), async (req: AuthRequest, res) => {
     try {
+      console.log('Update additional task request:', {
+        id: req.params.id,
+        body: req.body,
+        hasPhoto1: !!req.files?.['photo1'],
+        hasPhoto2: !!req.files?.['photo2']
+      });
+
+      // Validate required fields
+      if (!req.body.name || !req.body.location || !req.body.organizer || !req.body.description) {
+        return res.status(400).json({ error: 'Missing required fields' });
+      }
+
       const files = req.files as { [fieldname: string]: Express.Multer.File[] };
       const updateData: any = {
         name: req.body.name,
@@ -623,11 +635,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         updateData.photo2 = `data:${files.photo2[0].mimetype};base64,${files.photo2[0].buffer.toString('base64')}`;
       }
 
+      console.log('Updating with data:', updateData);
       const task = await db.updateAdditionalTask(req.params.id, updateData);
+      console.log('Update successful:', task);
       res.json(task);
     } catch (error: any) {
       console.error('Error updating additional task:', error);
-      res.status(400).json({ error: error.message });
+      res.status(400).json({ error: error.message || 'Failed to update task' });
     }
   });
 

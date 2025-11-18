@@ -238,8 +238,16 @@ export class DbStorage implements IStorage {
   }
 
   async updateAdditionalTask(id: string, task: Partial<InsertAdditionalTask>): Promise<AdditionalTask> {
-    const [result] = await db.update(additionalTasks).set(task).where(eq(additionalTasks.id, id)).returning();
-    return result;
+    try {
+      const [result] = await db.update(additionalTasks).set(task).where(eq(additionalTasks.id, id)).returning();
+      if (!result) {
+        throw new Error('Additional task not found');
+      }
+      return result;
+    } catch (error: any) {
+      console.error('Error updating additional task in storage:', error);
+      throw error;
+    }
   }
 
   async deleteAdditionalTask(id: string): Promise<void> {
