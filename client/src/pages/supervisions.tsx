@@ -132,30 +132,65 @@ export default function SupervisionsPage() {
   });
 
   const handleAddSupervision = async () => {
-    // Find school ID from school name
-    const selectedSchool = schools.find((s: any) => s.name === newSupervision.school);
-    if (!selectedSchool) {
+    try {
+      // Validate required fields
+      if (!newSupervision.school) {
+        toast({
+          title: "Error",
+          description: "Pilih sekolah terlebih dahulu",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      if (!newSupervision.findings) {
+        toast({
+          title: "Error",
+          description: "Temuan harus diisi",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Find school ID from school name
+      const selectedSchool = schools.find((s: any) => s.name === newSupervision.school);
+      if (!selectedSchool) {
+        toast({
+          title: "Error",
+          description: "Sekolah tidak ditemukan",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('schoolId', selectedSchool.id);
+      formData.append('type', newSupervision.type);
+      formData.append('teacherName', newSupervision.teacherName || '');
+      formData.append('teacherNip', newSupervision.teacherNip || '');
+      formData.append('findings', newSupervision.findings);
+      formData.append('recommendations', newSupervision.recommendations || '');
+      formData.append('date', newSupervision.date || new Date().toISOString().split('T')[0]);
+      
+      if (photo1) formData.append('photo1', photo1);
+      if (photo2) formData.append('photo2', photo2);
+
+      console.log('Submitting supervision:', {
+        schoolId: selectedSchool.id,
+        type: newSupervision.type,
+        hasPhoto1: !!photo1,
+        hasPhoto2: !!photo2
+      });
+
+      createSupervisionMutation.mutate(formData);
+    } catch (error: any) {
+      console.error('Error in handleAddSupervision:', error);
       toast({
         title: "Error",
-        description: "Sekolah tidak ditemukan",
+        description: error.message || "Terjadi kesalahan saat menyimpan supervisi",
         variant: "destructive",
       });
-      return;
     }
-
-    const formData = new FormData();
-    formData.append('schoolId', selectedSchool.id);
-    formData.append('type', newSupervision.type);
-    formData.append('teacherName', newSupervision.teacherName);
-    formData.append('teacherNip', newSupervision.teacherNip);
-    formData.append('findings', newSupervision.findings);
-    formData.append('recommendations', newSupervision.recommendations);
-    formData.append('date', newSupervision.date || new Date().toISOString().split('T')[0]);
-    
-    if (photo1) formData.append('photo1', photo1);
-    if (photo2) formData.append('photo2', photo2);
-
-    createSupervisionMutation.mutate(formData);
   };
 
   const groupBySchool = () => {
