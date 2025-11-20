@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Plus, FileText, Printer, Image as ImageIcon, X } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -48,6 +49,8 @@ export default function SupervisionsPage() {
   
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [supervisionToDelete, setSupervisionToDelete] = useState<string | null>(null);
   const [editingSupervision, setEditingSupervision] = useState<Supervision | null>(null);
   const [newSupervision, setNewSupervision] = useState({
     school: "",
@@ -204,8 +207,17 @@ export default function SupervisionsPage() {
     return grouped;
   };
 
-  const deleteSupervision = (id: string) => {
-    deleteSupervisionMutation.mutate(id);
+  const handleDeleteSupervision = (id: string) => {
+    setSupervisionToDelete(id);
+    setDeleteDialogOpen(true);
+  };
+
+  const confirmDelete = () => {
+    if (supervisionToDelete) {
+      deleteSupervisionMutation.mutate(supervisionToDelete);
+      setDeleteDialogOpen(false);
+      setSupervisionToDelete(null);
+    }
   };
 
   // Update supervision mutation
@@ -1011,7 +1023,7 @@ export default function SupervisionsPage() {
                     <Button variant="outline" size="sm" onClick={() => handleEditSupervision(supervision)} data-testid={`button-edit-supervision-${supervision.id}`}>
                       <FileText className="h-4 w-4" />
                     </Button>
-                    <Button variant="outline" size="sm" onClick={() => deleteSupervision(supervision.id)} data-testid={`button-delete-supervision-${supervision.id}`}>
+                    <Button variant="outline" size="sm" onClick={() => handleDeleteSupervision(supervision.id)} data-testid={`button-delete-supervision-${supervision.id}`}>
                       <X className="h-4 w-4" />
                     </Button>
                   </div>
@@ -1078,6 +1090,22 @@ export default function SupervisionsPage() {
           ))}
         </TabsContent>
       </Tabs>
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Hapus Supervisi?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Apakah Anda yakin ingin menghapus supervisi ini? Tindakan ini tidak dapat dibatalkan.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Batal</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmDelete}>Hapus</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
