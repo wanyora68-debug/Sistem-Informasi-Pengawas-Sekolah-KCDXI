@@ -672,15 +672,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const year = parseInt(req.query.year as string);
       const month = parseInt(req.query.month as string);
       
+      if (isNaN(year) || isNaN(month)) {
+        return res.status(400).json({ error: 'Invalid year or month' });
+      }
+      
       // Get all activities for the month
       const tasks = await db.getTasks(req.user!.userId);
       const supervisions = await db.getSupervisions(req.user!.userId);
       const additionalTasks = await db.getAdditionalTasks(req.user!.userId);
       
-      // Filter by month and year
+      // Filter by month and year with safe date handling
       const filterByMonth = (item: any) => {
-        const itemDate = new Date(item.date);
-        return itemDate.getFullYear() === year && itemDate.getMonth() + 1 === month;
+        try {
+          if (!item.date) return false;
+          const itemDate = new Date(item.date);
+          if (isNaN(itemDate.getTime())) return false;
+          return itemDate.getFullYear() === year && itemDate.getMonth() + 1 === month;
+        } catch {
+          return false;
+        }
       };
       
       const monthlyTasks = tasks.filter(filterByMonth);
@@ -693,6 +703,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         additionalTasks: monthlyAdditionalTasks,
       });
     } catch (error: any) {
+      console.error('Error in monthly details:', error);
       res.status(400).json({ error: error.message });
     }
   });
@@ -712,15 +723,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const year = parseInt(req.query.year as string);
       
+      if (isNaN(year)) {
+        return res.status(400).json({ error: 'Invalid year' });
+      }
+      
       // Get all activities for the year
       const tasks = await db.getTasks(req.user!.userId);
       const supervisions = await db.getSupervisions(req.user!.userId);
       const additionalTasks = await db.getAdditionalTasks(req.user!.userId);
       
-      // Filter by year
+      // Filter by year with safe date handling
       const filterByYear = (item: any) => {
-        const itemDate = new Date(item.date);
-        return itemDate.getFullYear() === year;
+        try {
+          if (!item.date) return false;
+          const itemDate = new Date(item.date);
+          if (isNaN(itemDate.getTime())) return false;
+          return itemDate.getFullYear() === year;
+        } catch {
+          return false;
+        }
       };
       
       const yearlyTasks = tasks.filter(filterByYear);
@@ -733,6 +754,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         additionalTasks: yearlyAdditionalTasks,
       });
     } catch (error: any) {
+      console.error('Error in yearly details:', error);
       res.status(400).json({ error: error.message });
     }
   });
