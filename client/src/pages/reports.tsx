@@ -34,6 +34,24 @@ export default function ReportsPage() {
     enabled: reportType === 'monthly',
   });
 
+  // Fetch monthly details (activities with photos)
+  const { data: monthlyDetails } = useQuery({
+    queryKey: ['monthly-details', selectedMonth],
+    queryFn: async () => {
+      const [year, month] = selectedMonth.split('-');
+      const token = localStorage.getItem('auth_token');
+      const response = await fetch(`/api/reports/monthly/details?year=${year}&month=${month}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+        credentials: 'include',
+      });
+      if (!response.ok) return { tasks: [], supervisions: [], additionalTasks: [] };
+      return response.json();
+    },
+    enabled: reportType === 'monthly',
+  });
+
   // Fetch yearly stats
   const { data: yearlyStats, isLoading: yearlyLoading } = useQuery({
     queryKey: ['yearly-stats', selectedYear],
@@ -46,6 +64,23 @@ export default function ReportsPage() {
         credentials: 'include',
       });
       if (!response.ok) return { totalSupervisions: 0, schools: 0, monthlyAverage: 0, completionRate: 0 };
+      return response.json();
+    },
+    enabled: reportType === 'yearly',
+  });
+
+  // Fetch yearly details (activities with photos)
+  const { data: yearlyDetails } = useQuery({
+    queryKey: ['yearly-details', selectedYear],
+    queryFn: async () => {
+      const token = localStorage.getItem('auth_token');
+      const response = await fetch(`/api/reports/yearly/details?year=${selectedYear}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+        credentials: 'include',
+      });
+      if (!response.ok) return { tasks: [], supervisions: [], additionalTasks: [] };
       return response.json();
     },
     enabled: reportType === 'yearly',
@@ -418,6 +453,105 @@ export default function ReportsPage() {
                   <p className="text-sm text-muted-foreground">Belum ada data untuk periode ini</p>
                 )}
               </div>
+
+              {/* Detail Kegiatan */}
+              {monthlyDetails && (monthlyDetails.tasks.length > 0 || monthlyDetails.supervisions.length > 0 || monthlyDetails.additionalTasks.length > 0) && (
+                <>
+                  <Separator />
+                  <div className="space-y-4">
+                    <h3 className="font-semibold">Detail Kegiatan</h3>
+                    
+                    {/* Tugas Pokok */}
+                    {monthlyDetails.tasks.length > 0 && (
+                      <div className="space-y-2">
+                        <h4 className="text-sm font-medium">Tugas Pokok ({monthlyDetails.tasks.length})</h4>
+                        <div className="space-y-2">
+                          {monthlyDetails.tasks.map((task: any) => (
+                            <div key={task.id} className="p-3 bg-muted rounded-lg">
+                              <div className="flex justify-between items-start mb-1">
+                                <p className="font-medium text-sm">{task.title}</p>
+                                <span className={`text-xs px-2 py-1 rounded ${task.completed ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`}>
+                                  {task.completed ? 'Selesai' : 'Proses'}
+                                </span>
+                              </div>
+                              {task.description && <p className="text-xs text-muted-foreground mb-2">{task.description}</p>}
+                              {(task.photo1 || task.photo2) && (
+                                <div className="flex gap-2 mt-2">
+                                  {task.photo1 && (
+                                    <img src={task.photo1} alt="Foto 1" className="w-20 h-20 object-cover rounded" />
+                                  )}
+                                  {task.photo2 && (
+                                    <img src={task.photo2} alt="Foto 2" className="w-20 h-20 object-cover rounded" />
+                                  )}
+                                </div>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Supervisi */}
+                    {monthlyDetails.supervisions.length > 0 && (
+                      <div className="space-y-2">
+                        <h4 className="text-sm font-medium">Supervisi ({monthlyDetails.supervisions.length})</h4>
+                        <div className="space-y-2">
+                          {monthlyDetails.supervisions.map((supervision: any) => (
+                            <div key={supervision.id} className="p-3 bg-muted rounded-lg">
+                              <div className="flex justify-between items-start mb-1">
+                                <p className="font-medium text-sm">{supervision.school}</p>
+                                <span className="text-xs px-2 py-1 rounded bg-blue-100 text-blue-800">
+                                  {supervision.type}
+                                </span>
+                              </div>
+                              <p className="text-xs text-muted-foreground mb-1">Temuan: {supervision.findings}</p>
+                              {supervision.recommendations && (
+                                <p className="text-xs text-muted-foreground mb-2">Rekomendasi: {supervision.recommendations}</p>
+                              )}
+                              {(supervision.photo1 || supervision.photo2) && (
+                                <div className="flex gap-2 mt-2">
+                                  {supervision.photo1 && (
+                                    <img src={supervision.photo1} alt="Foto 1" className="w-20 h-20 object-cover rounded" />
+                                  )}
+                                  {supervision.photo2 && (
+                                    <img src={supervision.photo2} alt="Foto 2" className="w-20 h-20 object-cover rounded" />
+                                  )}
+                                </div>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Tugas Tambahan */}
+                    {monthlyDetails.additionalTasks.length > 0 && (
+                      <div className="space-y-2">
+                        <h4 className="text-sm font-medium">Tugas Tambahan ({monthlyDetails.additionalTasks.length})</h4>
+                        <div className="space-y-2">
+                          {monthlyDetails.additionalTasks.map((task: any) => (
+                            <div key={task.id} className="p-3 bg-muted rounded-lg">
+                              <p className="font-medium text-sm mb-1">{task.name}</p>
+                              <p className="text-xs text-muted-foreground mb-1">Penyelenggara: {task.organizer}</p>
+                              <p className="text-xs text-muted-foreground mb-2">Lokasi: {task.location}</p>
+                              {(task.photo1 || task.photo2) && (
+                                <div className="flex gap-2 mt-2">
+                                  {task.photo1 && (
+                                    <img src={task.photo1} alt="Foto 1" className="w-20 h-20 object-cover rounded" />
+                                  )}
+                                  {task.photo2 && (
+                                    <img src={task.photo2} alt="Foto 2" className="w-20 h-20 object-cover rounded" />
+                                  )}
+                                </div>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </>
+              )}
             </div>
           ) : (
             <div className="space-y-6">
@@ -467,6 +601,108 @@ export default function ReportsPage() {
                   <p className="text-sm text-muted-foreground">Belum ada data untuk tahun ini</p>
                 )}
               </div>
+
+              {/* Detail Kegiatan Tahunan */}
+              {yearlyDetails && (yearlyDetails.tasks.length > 0 || yearlyDetails.supervisions.length > 0 || yearlyDetails.additionalTasks.length > 0) && (
+                <>
+                  <Separator />
+                  <div className="space-y-4">
+                    <h3 className="font-semibold">Detail Kegiatan Tahunan</h3>
+                    
+                    {/* Tugas Pokok */}
+                    {yearlyDetails.tasks.length > 0 && (
+                      <div className="space-y-2">
+                        <h4 className="text-sm font-medium">Tugas Pokok ({yearlyDetails.tasks.length})</h4>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                          {yearlyDetails.tasks.slice(0, 6).map((task: any) => (
+                            <div key={task.id} className="p-3 bg-muted rounded-lg">
+                              <div className="flex justify-between items-start mb-1">
+                                <p className="font-medium text-sm">{task.title}</p>
+                                <span className={`text-xs px-2 py-1 rounded ${task.completed ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`}>
+                                  {task.completed ? 'Selesai' : 'Proses'}
+                                </span>
+                              </div>
+                              {(task.photo1 || task.photo2) && (
+                                <div className="flex gap-2 mt-2">
+                                  {task.photo1 && (
+                                    <img src={task.photo1} alt="Foto 1" className="w-16 h-16 object-cover rounded" />
+                                  )}
+                                  {task.photo2 && (
+                                    <img src={task.photo2} alt="Foto 2" className="w-16 h-16 object-cover rounded" />
+                                  )}
+                                </div>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                        {yearlyDetails.tasks.length > 6 && (
+                          <p className="text-xs text-muted-foreground">Dan {yearlyDetails.tasks.length - 6} tugas lainnya...</p>
+                        )}
+                      </div>
+                    )}
+
+                    {/* Supervisi */}
+                    {yearlyDetails.supervisions.length > 0 && (
+                      <div className="space-y-2">
+                        <h4 className="text-sm font-medium">Supervisi ({yearlyDetails.supervisions.length})</h4>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                          {yearlyDetails.supervisions.slice(0, 6).map((supervision: any) => (
+                            <div key={supervision.id} className="p-3 bg-muted rounded-lg">
+                              <div className="flex justify-between items-start mb-1">
+                                <p className="font-medium text-sm">{supervision.school}</p>
+                                <span className="text-xs px-2 py-1 rounded bg-blue-100 text-blue-800">
+                                  {supervision.type}
+                                </span>
+                              </div>
+                              {(supervision.photo1 || supervision.photo2) && (
+                                <div className="flex gap-2 mt-2">
+                                  {supervision.photo1 && (
+                                    <img src={supervision.photo1} alt="Foto 1" className="w-16 h-16 object-cover rounded" />
+                                  )}
+                                  {supervision.photo2 && (
+                                    <img src={supervision.photo2} alt="Foto 2" className="w-16 h-16 object-cover rounded" />
+                                  )}
+                                </div>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                        {yearlyDetails.supervisions.length > 6 && (
+                          <p className="text-xs text-muted-foreground">Dan {yearlyDetails.supervisions.length - 6} supervisi lainnya...</p>
+                        )}
+                      </div>
+                    )}
+
+                    {/* Tugas Tambahan */}
+                    {yearlyDetails.additionalTasks.length > 0 && (
+                      <div className="space-y-2">
+                        <h4 className="text-sm font-medium">Tugas Tambahan ({yearlyDetails.additionalTasks.length})</h4>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                          {yearlyDetails.additionalTasks.slice(0, 6).map((task: any) => (
+                            <div key={task.id} className="p-3 bg-muted rounded-lg">
+                              <p className="font-medium text-sm mb-1">{task.name}</p>
+                              <p className="text-xs text-muted-foreground mb-1">Penyelenggara: {task.organizer}</p>
+                              {(task.photo1 || task.photo2) && (
+                                <div className="flex gap-2 mt-2">
+                                  {task.photo1 && (
+                                    <img src={task.photo1} alt="Foto 1" className="w-16 h-16 object-cover rounded" />
+                                  )}
+                                  {task.photo2 && (
+                                    <img src={task.photo2} alt="Foto 2" className="w-16 h-16 object-cover rounded" />
+                                  )}
+                                </div>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                        {yearlyDetails.additionalTasks.length > 6 && (
+                          <p className="text-xs text-muted-foreground">Dan {yearlyDetails.additionalTasks.length - 6} kegiatan lainnya...</p>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </>
+              )}
             </div>
           )}
         </CardContent>

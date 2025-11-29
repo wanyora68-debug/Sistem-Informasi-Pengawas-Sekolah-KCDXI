@@ -666,11 +666,72 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get detailed monthly report with activities and photos
+  app.get("/api/reports/monthly/details", authMiddleware, async (req: AuthRequest, res) => {
+    try {
+      const year = parseInt(req.query.year as string);
+      const month = parseInt(req.query.month as string);
+      
+      // Get all activities for the month
+      const tasks = await db.getTasks(req.user!.userId);
+      const supervisions = await db.getSupervisions(req.user!.userId);
+      const additionalTasks = await db.getAdditionalTasks(req.user!.userId);
+      
+      // Filter by month and year
+      const filterByMonth = (item: any) => {
+        const itemDate = new Date(item.date);
+        return itemDate.getFullYear() === year && itemDate.getMonth() + 1 === month;
+      };
+      
+      const monthlyTasks = tasks.filter(filterByMonth);
+      const monthlySupervisions = supervisions.filter(filterByMonth);
+      const monthlyAdditionalTasks = additionalTasks.filter(filterByMonth);
+      
+      res.json({
+        tasks: monthlyTasks,
+        supervisions: monthlySupervisions,
+        additionalTasks: monthlyAdditionalTasks,
+      });
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
+    }
+  });
+
   app.get("/api/reports/yearly", authMiddleware, async (req: AuthRequest, res) => {
     try {
       const year = parseInt(req.query.year as string);
       const stats = await db.getYearlyStats(req.user!.userId, year);
       res.json(stats);
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
+    }
+  });
+
+  // Get detailed yearly report with activities and photos
+  app.get("/api/reports/yearly/details", authMiddleware, async (req: AuthRequest, res) => {
+    try {
+      const year = parseInt(req.query.year as string);
+      
+      // Get all activities for the year
+      const tasks = await db.getTasks(req.user!.userId);
+      const supervisions = await db.getSupervisions(req.user!.userId);
+      const additionalTasks = await db.getAdditionalTasks(req.user!.userId);
+      
+      // Filter by year
+      const filterByYear = (item: any) => {
+        const itemDate = new Date(item.date);
+        return itemDate.getFullYear() === year;
+      };
+      
+      const yearlyTasks = tasks.filter(filterByYear);
+      const yearlySupervisions = supervisions.filter(filterByYear);
+      const yearlyAdditionalTasks = additionalTasks.filter(filterByYear);
+      
+      res.json({
+        tasks: yearlyTasks,
+        supervisions: yearlySupervisions,
+        additionalTasks: yearlyAdditionalTasks,
+      });
     } catch (error: any) {
       res.status(400).json({ error: error.message });
     }
