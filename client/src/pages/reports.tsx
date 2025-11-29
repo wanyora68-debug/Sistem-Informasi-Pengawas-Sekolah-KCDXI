@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
-import { FileText, Download, Calendar, TrendingUp, ClipboardCheck } from "lucide-react";
+import { FileText, Download, Calendar, TrendingUp, ClipboardCheck, Printer } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { useQuery } from "@tanstack/react-query";
 
@@ -321,8 +321,8 @@ export default function ReportsPage() {
   const stats = reportType === 'monthly' ? monthlyStats : yearlyStats;
 
   return (
-    <div className="space-y-6">
-      <div>
+    <div className="space-y-6 print-content">
+      <div className="print-avoid-break">
         <h1 className="text-3xl font-bold">Laporan Ringkas</h1>
         <p className="text-muted-foreground mt-1">Buat laporan bulanan dan tahunan</p>
       </div>
@@ -382,10 +382,16 @@ export default function ReportsPage() {
             )}
           </div>
 
-          <Button className="w-full md:w-auto" onClick={handleExportPDF} data-testid="button-export-pdf">
-            <Download className="h-4 w-4 mr-2" />
-            Ekspor ke PDF
-          </Button>
+          <div className="flex gap-2 no-print">
+            <Button className="w-full md:w-auto" onClick={handleExportPDF} data-testid="button-export-pdf">
+              <Download className="h-4 w-4 mr-2" />
+              Ekspor ke PDF
+            </Button>
+            <Button variant="outline" className="w-full md:w-auto" onClick={() => window.print()} data-testid="button-print">
+              <Printer className="h-4 w-4 mr-2" />
+              Print Halaman
+            </Button>
+          </div>
         </CardContent>
       </Card>
 
