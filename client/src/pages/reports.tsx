@@ -90,11 +90,15 @@ export default function ReportsPage() {
   const generateMonthOptions = () => {
     const options = [];
     const now = new Date();
-    for (let i = 0; i < 12; i++) {
+    // Generate from current month + 12 months forward to 12 months backward
+    for (let i = 12; i >= -12; i--) {
       const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
-      const value = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
-      const label = date.toLocaleDateString('id-ID', { year: 'numeric', month: 'long' });
-      options.push({ value, label });
+      // Only include from 2025 onwards
+      if (date.getFullYear() >= 2025) {
+        const value = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+        const label = date.toLocaleDateString('id-ID', { year: 'numeric', month: 'long' });
+        options.push({ value, label });
+      }
     }
     return options;
   };
