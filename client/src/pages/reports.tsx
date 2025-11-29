@@ -102,10 +102,11 @@ export default function ReportsPage() {
   // Generate year options
   const generateYearOptions = () => {
     const options = [];
+    const startYear = 2025; // Start from 2025
     const currentYear = new Date().getFullYear();
-    // Add 2 years forward and 5 years backward
-    for (let i = 2; i >= -5; i--) {
-      const year = currentYear + i;
+    const endYear = Math.max(currentYear + 5, 2030); // At least until 2030
+    
+    for (let year = endYear; year >= startYear; year--) {
       options.push({ value: year.toString(), label: year.toString() });
     }
     return options;
