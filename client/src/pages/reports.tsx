@@ -89,18 +89,20 @@ export default function ReportsPage() {
   // Generate month options for the last 12 months
   const generateMonthOptions = () => {
     const options = [];
+    const startDate = new Date(2025, 0, 1); // January 2025
     const now = new Date();
-    // Generate from current month + 12 months forward to 12 months backward
-    for (let i = 12; i >= -12; i--) {
-      const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
-      // Only include from 2025 onwards
-      if (date.getFullYear() >= 2025) {
-        const value = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
-        const label = date.toLocaleDateString('id-ID', { year: 'numeric', month: 'long' });
-        options.push({ value, label });
-      }
+    const endDate = new Date(now.getFullYear() + 5, 11, 1); // December of current year + 5
+    
+    // Generate all months from January 2025 to end date
+    const current = new Date(startDate);
+    while (current <= endDate) {
+      const value = `${current.getFullYear()}-${String(current.getMonth() + 1).padStart(2, '0')}`;
+      const label = current.toLocaleDateString('id-ID', { year: 'numeric', month: 'long' });
+      options.push({ value, label });
+      current.setMonth(current.getMonth() + 1);
     }
-    return options;
+    
+    return options.reverse(); // Newest first
   };
 
   // Generate year options
