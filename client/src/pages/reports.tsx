@@ -86,14 +86,13 @@ export default function ReportsPage() {
     enabled: reportType === 'yearly',
   });
 
-  // Generate month options for the last 12 months
+  // Generate month options from January 2025 to December 2030
   const generateMonthOptions = () => {
     const options = [];
     const startDate = new Date(2025, 0, 1); // January 2025
-    const now = new Date();
-    const endDate = new Date(now.getFullYear() + 5, 11, 1); // December of current year + 5
+    const endDate = new Date(2030, 11, 31); // December 2030
     
-    // Generate all months from January 2025 to end date
+    // Generate all months from January 2025 to December 2030
     const current = new Date(startDate);
     while (current <= endDate) {
       const value = `${current.getFullYear()}-${String(current.getMonth() + 1).padStart(2, '0')}`;
@@ -105,12 +104,11 @@ export default function ReportsPage() {
     return options.reverse(); // Newest first
   };
 
-  // Generate year options
+  // Generate year options from 2025 to 2030
   const generateYearOptions = () => {
     const options = [];
     const startYear = 2025; // Start from 2025
-    const currentYear = new Date().getFullYear();
-    const endYear = Math.max(currentYear + 5, 2030); // At least until 2030
+    const endYear = 2030; // End at 2030
     
     for (let year = endYear; year >= startYear; year--) {
       options.push({ value: year.toString(), label: year.toString() });
