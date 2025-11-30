@@ -817,12 +817,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       const monthNames = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
       
-      console.log(`Found ${photos.length} photos for ${monthNames[month - 1]} ${year}`);
-      console.log(`Supervisions checked: ${supervisions.length}, Tasks checked: ${await db.getTasks(req.user!.userId).then(t => t.length)}`);
+      console.log(`[ROUTES] Found ${photos.length} photos for ${monthNames[month - 1]} ${year}`);
+      console.log(`[ROUTES] Supervisions: ${supervisions.length}, Tasks: ${await db.getTasks(req.user!.userId).then(t => t.length)}`);
       if (photos.length > 0) {
-        console.log('Photo samples:', photos.map(p => p.substring(0, 50) + '...'));
+        console.log('[ROUTES] Photo samples:', photos.map(p => p.substring(0, 50) + '...'));
+        console.log('[ROUTES] Passing photos to PDF generator...');
       } else {
-        console.log('No photos found in database for this period');
+        console.log('[ROUTES] WARNING: No photos found in database for this period!');
       }
       
       const pdfBuffer = generateMonthlyPDF({
