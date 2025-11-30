@@ -769,12 +769,59 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const user = await db.getUser(req.user!.userId);
       const stats = await db.getMonthlyStats(req.user!.userId, year, month);
       
+      // Fetch photos from activities in this month
+      const startDate = new Date(year, month - 1, 1);
+      const endDate = new Date(year, month, 0, 23, 59, 59);
+      
+      const photos: string[] = [];
+      
+      // Get photos from supervisions
+      const supervisions = await db.getSupervisions(req.user!.userId);
+      supervisions
+        .filter(s => {
+          const date = new Date(s.date);
+          return date >= startDate && date <= endDate && (s.photo1 || s.photo2);
+        })
+        .forEach(s => {
+          if (s.photo1 && photos.length < 6) photos.push(s.photo1);
+          if (s.photo2 && photos.length < 6) photos.push(s.photo2);
+        });
+      
+      // If less than 6, get from tasks
+      if (photos.length < 6) {
+        const tasks = await db.getTasks(req.user!.userId);
+        tasks
+          .filter(t => {
+            const date = new Date(t.date);
+            return date >= startDate && date <= endDate && (t.photo1 || t.photo2);
+          })
+          .forEach(t => {
+            if (t.photo1 && photos.length < 6) photos.push(t.photo1);
+            if (t.photo2 && photos.length < 6) photos.push(t.photo2);
+          });
+      }
+      
+      // If still less than 6, get from additional tasks
+      if (photos.length < 6) {
+        const additionalTasks = await db.getAdditionalTasks(req.user!.userId);
+        additionalTasks
+          .filter(t => {
+            const date = new Date(t.date);
+            return date >= startDate && date <= endDate && (t.photo1 || t.photo2);
+          })
+          .forEach(t => {
+            if (t.photo1 && photos.length < 6) photos.push(t.photo1);
+            if (t.photo2 && photos.length < 6) photos.push(t.photo2);
+          });
+      }
+      
       const monthNames = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
       
       const pdfBuffer = generateMonthlyPDF({
         userName: user?.fullName || "Pengawas",
         period: `${monthNames[month - 1]} ${year}`,
         ...stats,
+        photos: photos.length > 0 ? photos : undefined,
       });
 
       res.setHeader("Content-Type", "application/pdf");
