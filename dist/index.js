@@ -187,6 +187,55 @@ function generateMonthlyPDF(data) {
     doc.text(note, 20, yPos);
     yPos += 6;
   });
+  if (data.photos && data.photos.length > 0) {
+    if (yPos > 200) {
+      doc.addPage();
+      addHeader(doc, "LAPORAN BULANAN", 3);
+      yPos = 45;
+    } else {
+      yPos += 15;
+    }
+    doc.setFontSize(14);
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(41, 128, 185);
+    doc.text("BUKTI KEGIATAN", 20, yPos);
+    yPos += 10;
+    const photosToShow = data.photos.slice(0, 6);
+    const photoWidth = 80;
+    const photoHeight = 60;
+    const spacing = 10;
+    const startX = 20;
+    photosToShow.forEach((photo, index) => {
+      const col = index % 2;
+      const row = Math.floor(index / 2);
+      const x = startX + col * (photoWidth + spacing);
+      const y = yPos + row * (photoHeight + spacing);
+      if (y + photoHeight > 250) {
+        doc.addPage();
+        addHeader(doc, "LAPORAN BULANAN", doc.internal.pages.length);
+        const newY = 45;
+        const newRow = row - Math.floor(index / 2);
+        const finalY2 = newY + newRow * (photoHeight + spacing);
+        try {
+          doc.addImage(photo, "JPEG", x, finalY2, photoWidth, photoHeight);
+          doc.setFontSize(8);
+          doc.setTextColor(100, 100, 100);
+          doc.text(`Foto ${index + 1}`, x + photoWidth / 2, finalY2 + photoHeight + 5, { align: "center" });
+        } catch (error) {
+          console.error(`Error adding photo ${index + 1}:`, error);
+        }
+      } else {
+        try {
+          doc.addImage(photo, "JPEG", x, y, photoWidth, photoHeight);
+          doc.setFontSize(8);
+          doc.setTextColor(100, 100, 100);
+          doc.text(`Foto ${index + 1}`, x + photoWidth / 2, y + photoHeight + 5, { align: "center" });
+        } catch (error) {
+          console.error(`Error adding photo ${index + 1}:`, error);
+        }
+      }
+    });
+  }
   addFooter(doc);
   return Buffer.from(doc.output("arraybuffer"));
 }
@@ -1635,11 +1684,43 @@ async function registerRoutes(app2) {
       const month = parseInt(req.query.month);
       const user = await db2.getUser(req.user.userId);
       const stats = await db2.getMonthlyStats(req.user.userId, year, month);
+      const startDate = new Date(year, month - 1, 1);
+      const endDate = new Date(year, month, 0, 23, 59, 59);
+      const photos = [];
+      const supervisions2 = await db2.getSupervisions(req.user.userId);
+      supervisions2.filter((s) => {
+        const date = new Date(s.date);
+        return date >= startDate && date <= endDate && (s.photo1 || s.photo2);
+      }).forEach((s) => {
+        if (s.photo1 && photos.length < 6) photos.push(s.photo1);
+        if (s.photo2 && photos.length < 6) photos.push(s.photo2);
+      });
+      if (photos.length < 6) {
+        const tasks2 = await db2.getTasks(req.user.userId);
+        tasks2.filter((t) => {
+          const date = new Date(t.date);
+          return date >= startDate && date <= endDate && (t.photo1 || t.photo2);
+        }).forEach((t) => {
+          if (t.photo1 && photos.length < 6) photos.push(t.photo1);
+          if (t.photo2 && photos.length < 6) photos.push(t.photo2);
+        });
+      }
+      if (photos.length < 6) {
+        const additionalTasks2 = await db2.getAdditionalTasks(req.user.userId);
+        additionalTasks2.filter((t) => {
+          const date = new Date(t.date);
+          return date >= startDate && date <= endDate && (t.photo1 || t.photo2);
+        }).forEach((t) => {
+          if (t.photo1 && photos.length < 6) photos.push(t.photo1);
+          if (t.photo2 && photos.length < 6) photos.push(t.photo2);
+        });
+      }
       const monthNames = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
       const pdfBuffer = generateMonthlyPDF2({
         userName: user?.fullName || "Pengawas",
         period: `${monthNames[month - 1]} ${year}`,
-        ...stats
+        ...stats,
+        photos: photos.length > 0 ? photos : void 0
       });
       res.setHeader("Content-Type", "application/pdf");
       res.setHeader("Content-Disposition", `attachment; filename=laporan-bulanan-${year}-${month}.pdf`);
