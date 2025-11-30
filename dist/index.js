@@ -1704,8 +1704,11 @@ async function registerRoutes(app2) {
       }
       const monthNames = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
       console.log(`Found ${photos.length} photos for ${monthNames[month - 1]} ${year}`);
+      console.log(`Supervisions checked: ${supervisions2.length}, Tasks checked: ${await db2.getTasks(req.user.userId).then((t) => t.length)}`);
       if (photos.length > 0) {
         console.log("Photo samples:", photos.map((p) => p.substring(0, 50) + "..."));
+      } else {
+        console.log("No photos found in database for this period");
       }
       const pdfBuffer = generateMonthlyPDF2({
         userName: user?.fullName || "Pengawas",
