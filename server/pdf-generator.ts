@@ -261,7 +261,7 @@ export function generateMonthlyPDF(data: MonthlyReportData): Buffer {
   
   // Photos section (if available)
   if (data.photos && data.photos.length > 0) {
-    console.log(`Adding ${data.photos.length} photos to PDF`);
+    console.log(`[PDF] Adding ${data.photos.length} photos to PDF`);
     
     // Calculate space needed for photos
     const photosToShow = data.photos.slice(0, 6);
@@ -304,7 +304,8 @@ export function generateMonthlyPDF(data: MonthlyReportData): Buffer {
         doc.setTextColor(100, 100, 100);
         doc.text(`Foto ${index + 1}`, x + photoWidth / 2, y + photoHeight + 5, { align: "center" });
       } catch (error) {
-        console.error(`Error adding photo ${index + 1}:`, error);
+        console.error(`[PDF] Error adding photo ${index + 1}:`, error);
+        console.error(`[PDF] Photo data length: ${photo?.length || 0}`);
       }
     });
   }

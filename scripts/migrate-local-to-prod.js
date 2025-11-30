@@ -126,8 +126,8 @@ async function migrateData() {
             category: task.category || null,
             description: task.description || null,
             completed: task.completed || false,
-            photo1: null, // Will need to re-upload photos
-            photo2: null,
+            photo1: task.photo1 || null, // Copy base64 photos
+            photo2: task.photo2 || null,
             date: new Date(task.date),
             createdAt: new Date(task.createdAt),
           };
@@ -156,8 +156,8 @@ async function migrateData() {
             teacherNip: supervision.teacherNip || null,
             findings: supervision.findings || null,
             recommendations: supervision.recommendations || null,
-            photo1: null, // Will need to re-upload photos
-            photo2: null,
+            photo1: supervision.photo1 || null, // Copy base64 photos
+            photo2: supervision.photo2 || null,
             createdAt: new Date(supervision.createdAt),
           };
 
@@ -183,8 +183,8 @@ async function migrateData() {
             location: additionalTask.location || null,
             organizer: additionalTask.organizer || null,
             description: additionalTask.description || null,
-            photo1: null, // Will need to re-upload photos
-            photo2: null,
+            photo1: additionalTask.photo1 || null, // Copy base64 photos
+            photo2: additionalTask.photo2 || null,
             createdAt: new Date(additionalTask.createdAt),
           };
 

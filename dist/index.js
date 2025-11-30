@@ -188,7 +188,7 @@ function generateMonthlyPDF(data) {
     yPos += 6;
   });
   if (data.photos && data.photos.length > 0) {
-    console.log(`Adding ${data.photos.length} photos to PDF`);
+    console.log(`[PDF] Adding ${data.photos.length} photos to PDF`);
     const photosToShow = data.photos.slice(0, 6);
     const photoWidth = 80;
     const photoHeight = 60;
@@ -219,7 +219,8 @@ function generateMonthlyPDF(data) {
         doc.setTextColor(100, 100, 100);
         doc.text(`Foto ${index + 1}`, x + photoWidth / 2, y + photoHeight + 5, { align: "center" });
       } catch (error) {
-        console.error(`Error adding photo ${index + 1}:`, error);
+        console.error(`[PDF] Error adding photo ${index + 1}:`, error);
+        console.error(`[PDF] Photo data length: ${photo?.length || 0}`);
       }
     });
   }
