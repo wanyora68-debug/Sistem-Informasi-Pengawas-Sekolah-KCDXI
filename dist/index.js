@@ -16,93 +16,314 @@ __export(pdf_generator_exports, {
 });
 import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
-function generateMonthlyPDF(data) {
-  const doc = new jsPDF();
-  doc.setFontSize(18);
-  doc.text("LAPORAN BULANAN", 105, 20, { align: "center" });
-  doc.setFontSize(14);
-  doc.text("Pengawas Sekolah", 105, 28, { align: "center" });
+function addHeader(doc, title, pageNumber) {
+  doc.setFillColor(41, 128, 185);
+  doc.rect(0, 0, 210, 35, "F");
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(16);
+  doc.setFont("helvetica", "bold");
+  doc.text(title, 105, 15, { align: "center" });
   doc.setFontSize(11);
-  doc.text(`Nama: ${data.userName}`, 20, 45);
-  doc.text(`Periode: ${data.period}`, 20, 52);
+  doc.setFont("helvetica", "normal");
+  doc.text("Dinas Pendidikan Provinsi Jawa Barat", 105, 23, { align: "center" });
+  doc.setFontSize(9);
+  doc.text(`Halaman ${pageNumber}`, 190, 30, { align: "right" });
+  doc.setTextColor(0, 0, 0);
+}
+function addFooter(doc) {
+  const pageHeight = doc.internal.pageSize.height;
+  doc.setDrawColor(41, 128, 185);
   doc.setLineWidth(0.5);
-  doc.line(20, 60, 190, 60);
+  doc.line(20, pageHeight - 20, 190, pageHeight - 20);
+  doc.setFontSize(8);
+  doc.setTextColor(100, 100, 100);
+  doc.text(
+    `Dibuat pada: ${(/* @__PURE__ */ new Date()).toLocaleDateString("id-ID", {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric"
+    })}`,
+    20,
+    pageHeight - 12
+  );
+  doc.text("Sistem Informasi Pengawas Sekolah", 105, pageHeight - 12, { align: "center" });
+  doc.text("designed by @w.yogaswara_kcdXi", 190, pageHeight - 12, { align: "right" });
+  doc.setTextColor(0, 0, 0);
+}
+function addCoverPage(doc, title, subtitle, userName, period) {
+  doc.setFillColor(41, 128, 185);
+  doc.rect(0, 0, 210, 297, "F");
+  doc.setFillColor(52, 152, 219);
+  doc.circle(105, 100, 80, "F");
+  doc.setFillColor(255, 255, 255);
+  doc.roundedRect(30, 80, 150, 140, 5, 5, "F");
+  doc.setTextColor(41, 128, 185);
+  doc.setFontSize(24);
+  doc.setFont("helvetica", "bold");
+  doc.text(title, 105, 110, { align: "center" });
+  doc.setFontSize(16);
+  doc.setFont("helvetica", "normal");
+  doc.text(subtitle, 105, 125, { align: "center" });
+  doc.setDrawColor(41, 128, 185);
+  doc.setLineWidth(1);
+  doc.line(50, 135, 160, 135);
+  doc.setTextColor(60, 60, 60);
   doc.setFontSize(12);
   doc.setFont("helvetica", "bold");
-  doc.text("RINGKASAN KEGIATAN", 20, 70);
+  doc.text("Nama Pengawas:", 105, 155, { align: "center" });
+  doc.setFont("helvetica", "normal");
+  doc.text(userName, 105, 165, { align: "center" });
+  doc.setFont("helvetica", "bold");
+  doc.text("Periode:", 105, 180, { align: "center" });
+  doc.setFont("helvetica", "normal");
+  doc.text(period, 105, 190, { align: "center" });
+  doc.setFontSize(10);
+  doc.setTextColor(255, 255, 255);
+  doc.text("Dinas Pendidikan Provinsi Jawa Barat", 105, 260, { align: "center" });
+  doc.setFontSize(8);
+  doc.text("Sistem Informasi Pengawas Sekolah", 105, 270, { align: "center" });
+  doc.setTextColor(0, 0, 0);
+}
+function generateMonthlyPDF(data) {
+  const doc = new jsPDF();
+  addCoverPage(doc, "LAPORAN BULANAN", "Kegiatan Pengawas Sekolah", data.userName, data.period);
+  doc.addPage();
+  addHeader(doc, "LAPORAN BULANAN", 2);
+  let yPos = 45;
+  doc.setFontSize(14);
+  doc.setFont("helvetica", "bold");
+  doc.setTextColor(41, 128, 185);
+  doc.text("INFORMASI UMUM", 20, yPos);
+  doc.setFillColor(240, 248, 255);
+  doc.roundedRect(20, yPos + 5, 170, 25, 2, 2, "F");
+  doc.setFontSize(11);
+  doc.setTextColor(60, 60, 60);
+  doc.setFont("helvetica", "bold");
+  doc.text("Nama Pengawas:", 25, yPos + 13);
+  doc.setFont("helvetica", "normal");
+  doc.text(data.userName, 70, yPos + 13);
+  doc.setFont("helvetica", "bold");
+  doc.text("Periode Laporan:", 25, yPos + 22);
+  doc.setFont("helvetica", "normal");
+  doc.text(data.period, 70, yPos + 22);
+  yPos += 40;
+  doc.setFontSize(14);
+  doc.setFont("helvetica", "bold");
+  doc.setTextColor(41, 128, 185);
+  doc.text("RINGKASAN KEGIATAN", 20, yPos);
+  const completionRate = data.totalTasks > 0 ? Math.round(data.completedTasks / data.totalTasks * 100) : 0;
   const statsData = [
     ["Total Tugas", data.totalTasks.toString()],
     ["Tugas Selesai", data.completedTasks.toString()],
+    ["Tugas Belum Selesai", (data.totalTasks - data.completedTasks).toString()],
     ["Supervisi Dilakukan", data.supervisions.toString()],
     ["Tugas Tambahan", data.additionalTasks.toString()],
-    [
-      "Tingkat Penyelesaian",
-      data.totalTasks > 0 ? `${Math.round(data.completedTasks / data.totalTasks * 100)}%` : "0%"
-    ]
+    ["Tingkat Penyelesaian", `${completionRate}%`]
   ];
   autoTable(doc, {
-    startY: 75,
+    startY: yPos + 5,
     head: [["Kategori", "Jumlah"]],
     body: statsData,
-    theme: "grid",
-    headStyles: { fillColor: [66, 133, 244] }
+    theme: "striped",
+    headStyles: {
+      fillColor: [41, 128, 185],
+      fontSize: 11,
+      fontStyle: "bold",
+      halign: "center"
+    },
+    bodyStyles: {
+      fontSize: 10
+    },
+    columnStyles: {
+      0: { cellWidth: 120, fontStyle: "bold" },
+      1: { cellWidth: 50, halign: "center" }
+    },
+    margin: { left: 20, right: 20 }
   });
   const finalY = doc.lastAutoTable.finalY || 150;
+  yPos = finalY + 15;
+  doc.setFontSize(14);
+  doc.setFont("helvetica", "bold");
+  doc.setTextColor(41, 128, 185);
+  doc.text("INDIKATOR KINERJA", 20, yPos);
+  let performanceColor;
+  let performanceText;
+  if (completionRate >= 90) {
+    performanceColor = [46, 204, 113];
+    performanceText = "SANGAT BAIK";
+  } else if (completionRate >= 75) {
+    performanceColor = [52, 152, 219];
+    performanceText = "BAIK";
+  } else if (completionRate >= 60) {
+    performanceColor = [241, 196, 15];
+    performanceText = "CUKUP";
+  } else {
+    performanceColor = [231, 76, 60];
+    performanceText = "PERLU DITINGKATKAN";
+  }
+  doc.setFillColor(performanceColor[0], performanceColor[1], performanceColor[2]);
+  doc.roundedRect(20, yPos + 5, 170, 30, 3, 3, "F");
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(16);
+  doc.setFont("helvetica", "bold");
+  doc.text(`Tingkat Penyelesaian: ${completionRate}%`, 105, yPos + 18, { align: "center" });
+  doc.setFontSize(12);
+  doc.text(`Status: ${performanceText}`, 105, yPos + 28, { align: "center" });
+  yPos += 45;
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.setTextColor(60, 60, 60);
+  doc.text("Catatan:", 20, yPos);
   doc.setFontSize(10);
-  doc.text(`Dibuat pada: ${(/* @__PURE__ */ new Date()).toLocaleDateString("id-ID")}`, 20, finalY + 20);
-  doc.text("designed by @w.yogaswara_kcdXi", 105, 285, { align: "center" });
+  doc.setFont("helvetica", "normal");
+  const notes = [
+    `\u2022 Total ${data.supervisions} supervisi telah dilakukan pada periode ${data.period}`,
+    `\u2022 Dari ${data.totalTasks} tugas, ${data.completedTasks} tugas telah diselesaikan`,
+    `\u2022 Terdapat ${data.additionalTasks} tugas tambahan yang telah dikerjakan`
+  ];
+  yPos += 7;
+  notes.forEach((note) => {
+    doc.text(note, 20, yPos);
+    yPos += 6;
+  });
+  addFooter(doc);
   return Buffer.from(doc.output("arraybuffer"));
 }
 function generateYearlyPDF(data) {
   const doc = new jsPDF();
-  doc.setFontSize(18);
-  doc.text("LAPORAN TAHUNAN", 105, 20, { align: "center" });
+  addCoverPage(doc, "LAPORAN TAHUNAN", "Kegiatan Pengawas Sekolah", data.userName, `Tahun ${data.year}`);
+  doc.addPage();
+  addHeader(doc, "LAPORAN TAHUNAN", 2);
+  let yPos = 45;
   doc.setFontSize(14);
-  doc.text("Pengawas Sekolah", 105, 28, { align: "center" });
-  doc.setFontSize(11);
-  doc.text(`Nama: ${data.userName}`, 20, 45);
-  doc.text(`Tahun: ${data.year}`, 20, 52);
-  doc.setLineWidth(0.5);
-  doc.line(20, 60, 190, 60);
-  doc.setFontSize(12);
   doc.setFont("helvetica", "bold");
-  doc.text("RINGKASAN TAHUNAN", 20, 70);
+  doc.setTextColor(41, 128, 185);
+  doc.text("INFORMASI UMUM", 20, yPos);
+  doc.setFillColor(240, 248, 255);
+  doc.roundedRect(20, yPos + 5, 170, 25, 2, 2, "F");
+  doc.setFontSize(11);
+  doc.setTextColor(60, 60, 60);
+  doc.setFont("helvetica", "bold");
+  doc.text("Nama Pengawas:", 25, yPos + 13);
+  doc.setFont("helvetica", "normal");
+  doc.text(data.userName, 70, yPos + 13);
+  doc.setFont("helvetica", "bold");
+  doc.text("Tahun Laporan:", 25, yPos + 22);
+  doc.setFont("helvetica", "normal");
+  doc.text(data.year, 70, yPos + 22);
+  yPos += 40;
+  doc.setFontSize(14);
+  doc.setFont("helvetica", "bold");
+  doc.setTextColor(41, 128, 185);
+  doc.text("RINGKASAN KEGIATAN TAHUNAN", 20, yPos);
+  const avgSupervisionPerMonth = Math.round(data.totalSupervisions / 12);
+  const avgSupervisionPerSchool = data.schools > 0 ? (data.totalSupervisions / data.schools).toFixed(1) : "0";
   const statsData = [
     ["Total Supervisi", data.totalSupervisions.toString()],
     ["Total Tugas", data.totalTasks.toString()],
     ["Tugas Selesai", data.completedTasks.toString()],
+    ["Tugas Belum Selesai", (data.totalTasks - data.completedTasks).toString()],
     ["Sekolah Binaan", data.schools.toString()],
     ["Tingkat Penyelesaian", `${data.completionRate}%`],
-    [
-      "Rata-rata Supervisi/Bulan",
-      Math.round(data.totalSupervisions / 12).toString()
-    ]
+    ["Rata-rata Supervisi/Bulan", avgSupervisionPerMonth.toString()],
+    ["Rata-rata Supervisi/Sekolah", avgSupervisionPerSchool]
   ];
   autoTable(doc, {
-    startY: 75,
+    startY: yPos + 5,
     head: [["Kategori", "Jumlah"]],
     body: statsData,
-    theme: "grid",
-    headStyles: { fillColor: [66, 133, 244] }
+    theme: "striped",
+    headStyles: {
+      fillColor: [41, 128, 185],
+      fontSize: 11,
+      fontStyle: "bold",
+      halign: "center"
+    },
+    bodyStyles: {
+      fontSize: 10
+    },
+    columnStyles: {
+      0: { cellWidth: 120, fontStyle: "bold" },
+      1: { cellWidth: 50, halign: "center" }
+    },
+    margin: { left: 20, right: 20 }
   });
   const finalY = doc.lastAutoTable.finalY || 150;
-  doc.setFontSize(11);
-  doc.setFont("helvetica", "normal");
-  doc.text("Kesimpulan:", 20, finalY + 15);
-  doc.setFontSize(10);
-  const summary = [
-    `\u2022 Total ${data.totalSupervisions} supervisi dilakukan sepanjang tahun ${data.year}`,
-    `\u2022 Membina ${data.schools} sekolah dengan rata-rata ${Math.round(data.totalSupervisions / 12)} kunjungan per bulan`,
-    `\u2022 Tingkat penyelesaian tugas mencapai ${data.completionRate}%`
+  yPos = finalY + 15;
+  doc.setFontSize(14);
+  doc.setFont("helvetica", "bold");
+  doc.setTextColor(41, 128, 185);
+  doc.text("INDIKATOR KINERJA TAHUNAN", 20, yPos);
+  let performanceColor;
+  let performanceText;
+  if (data.completionRate >= 90) {
+    performanceColor = [46, 204, 113];
+    performanceText = "SANGAT BAIK";
+  } else if (data.completionRate >= 75) {
+    performanceColor = [52, 152, 219];
+    performanceText = "BAIK";
+  } else if (data.completionRate >= 60) {
+    performanceColor = [241, 196, 15];
+    performanceText = "CUKUP";
+  } else {
+    performanceColor = [231, 76, 60];
+    performanceText = "PERLU DITINGKATKAN";
+  }
+  doc.setFillColor(performanceColor[0], performanceColor[1], performanceColor[2]);
+  doc.roundedRect(20, yPos + 5, 170, 30, 3, 3, "F");
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(16);
+  doc.setFont("helvetica", "bold");
+  doc.text(`Tingkat Penyelesaian: ${data.completionRate}%`, 105, yPos + 18, { align: "center" });
+  doc.setFontSize(12);
+  doc.text(`Status: ${performanceText}`, 105, yPos + 28, { align: "center" });
+  yPos += 45;
+  doc.setFontSize(14);
+  doc.setFont("helvetica", "bold");
+  doc.setTextColor(41, 128, 185);
+  doc.text("HIGHLIGHTS TAHUN " + data.year, 20, yPos);
+  yPos += 10;
+  const highlights = [
+    { label: "Total Supervisi", value: data.totalSupervisions.toString(), color: [52, 152, 219] },
+    { label: "Sekolah Binaan", value: data.schools.toString(), color: [46, 204, 113] },
+    { label: "Penyelesaian", value: `${data.completionRate}%`, color: [155, 89, 182] }
   ];
-  let yPos = finalY + 22;
+  const boxWidth = 50;
+  const boxHeight = 35;
+  const spacing = 10;
+  const startX = 20;
+  highlights.forEach((highlight, index) => {
+    const x = startX + index * (boxWidth + spacing);
+    doc.setFillColor(highlight.color[0], highlight.color[1], highlight.color[2]);
+    doc.roundedRect(x, yPos, boxWidth, boxHeight, 2, 2, "F");
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(18);
+    doc.setFont("helvetica", "bold");
+    doc.text(highlight.value, x + boxWidth / 2, yPos + 15, { align: "center" });
+    doc.setFontSize(8);
+    doc.setFont("helvetica", "normal");
+    doc.text(highlight.label, x + boxWidth / 2, yPos + 25, { align: "center" });
+  });
+  yPos += 50;
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.setTextColor(60, 60, 60);
+  doc.text("Kesimpulan:", 20, yPos);
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  const summary = [
+    `\u2022 Sepanjang tahun ${data.year}, telah dilakukan ${data.totalSupervisions} supervisi`,
+    `\u2022 Membina ${data.schools} sekolah dengan rata-rata ${avgSupervisionPerMonth} kunjungan per bulan`,
+    `\u2022 Tingkat penyelesaian tugas mencapai ${data.completionRate}%, menunjukkan kinerja yang ${performanceText.toLowerCase()}`,
+    `\u2022 Setiap sekolah binaan rata-rata dikunjungi ${avgSupervisionPerSchool} kali dalam setahun`
+  ];
+  yPos += 7;
   summary.forEach((line) => {
     doc.text(line, 20, yPos);
-    yPos += 7;
+    yPos += 6;
   });
-  doc.setFontSize(10);
-  doc.text(`Dibuat pada: ${(/* @__PURE__ */ new Date()).toLocaleDateString("id-ID")}`, 20, yPos + 10);
-  doc.text("designed by @w.yogaswara_kcdXi", 105, 285, { align: "center" });
+  addFooter(doc);
   return Buffer.from(doc.output("arraybuffer"));
 }
 var init_pdf_generator = __esm({
