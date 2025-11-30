@@ -817,6 +817,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       const monthNames = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
       
+      console.log(`Found ${photos.length} photos for ${monthNames[month - 1]} ${year}`);
+      if (photos.length > 0) {
+        console.log('Photo samples:', photos.map(p => p.substring(0, 50) + '...'));
+      }
+      
       const pdfBuffer = generateMonthlyPDF({
         userName: user?.fullName || "Pengawas",
         period: `${monthNames[month - 1]} ${year}`,

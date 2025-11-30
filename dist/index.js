@@ -188,7 +188,14 @@ function generateMonthlyPDF(data) {
     yPos += 6;
   });
   if (data.photos && data.photos.length > 0) {
-    if (yPos > 200) {
+    console.log(`Adding ${data.photos.length} photos to PDF`);
+    const photosToShow = data.photos.slice(0, 6);
+    const photoWidth = 80;
+    const photoHeight = 60;
+    const spacing = 10;
+    const rows = Math.ceil(photosToShow.length / 2);
+    const totalPhotoHeight = rows * photoHeight + (rows - 1) * spacing + 40;
+    if (yPos + totalPhotoHeight > 270) {
       doc.addPage();
       addHeader(doc, "LAPORAN BULANAN", 3);
       yPos = 45;
@@ -200,39 +207,19 @@ function generateMonthlyPDF(data) {
     doc.setTextColor(41, 128, 185);
     doc.text("BUKTI KEGIATAN", 20, yPos);
     yPos += 10;
-    const photosToShow = data.photos.slice(0, 6);
-    const photoWidth = 80;
-    const photoHeight = 60;
-    const spacing = 10;
     const startX = 20;
     photosToShow.forEach((photo, index) => {
       const col = index % 2;
       const row = Math.floor(index / 2);
       const x = startX + col * (photoWidth + spacing);
       const y = yPos + row * (photoHeight + spacing);
-      if (y + photoHeight > 250) {
-        doc.addPage();
-        addHeader(doc, "LAPORAN BULANAN", doc.internal.pages.length);
-        const newY = 45;
-        const newRow = row - Math.floor(index / 2);
-        const finalY2 = newY + newRow * (photoHeight + spacing);
-        try {
-          doc.addImage(photo, "JPEG", x, finalY2, photoWidth, photoHeight);
-          doc.setFontSize(8);
-          doc.setTextColor(100, 100, 100);
-          doc.text(`Foto ${index + 1}`, x + photoWidth / 2, finalY2 + photoHeight + 5, { align: "center" });
-        } catch (error) {
-          console.error(`Error adding photo ${index + 1}:`, error);
-        }
-      } else {
-        try {
-          doc.addImage(photo, "JPEG", x, y, photoWidth, photoHeight);
-          doc.setFontSize(8);
-          doc.setTextColor(100, 100, 100);
-          doc.text(`Foto ${index + 1}`, x + photoWidth / 2, y + photoHeight + 5, { align: "center" });
-        } catch (error) {
-          console.error(`Error adding photo ${index + 1}:`, error);
-        }
+      try {
+        doc.addImage(photo, "JPEG", x, y, photoWidth, photoHeight);
+        doc.setFontSize(8);
+        doc.setTextColor(100, 100, 100);
+        doc.text(`Foto ${index + 1}`, x + photoWidth / 2, y + photoHeight + 5, { align: "center" });
+      } catch (error) {
+        console.error(`Error adding photo ${index + 1}:`, error);
       }
     });
   }
@@ -1716,6 +1703,10 @@ async function registerRoutes(app2) {
         });
       }
       const monthNames = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+      console.log(`Found ${photos.length} photos for ${monthNames[month - 1]} ${year}`);
+      if (photos.length > 0) {
+        console.log("Photo samples:", photos.map((p) => p.substring(0, 50) + "..."));
+      }
       const pdfBuffer = generateMonthlyPDF2({
         userName: user?.fullName || "Pengawas",
         period: `${monthNames[month - 1]} ${year}`,
