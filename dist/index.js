@@ -367,6 +367,10 @@ var DbStorage = class {
     const [result] = await db.insert(supervisions).values(supervision).returning();
     return result;
   }
+  async updateSupervision(id, supervision) {
+    const [result] = await db.update(supervisions).set(supervision).where(eq(supervisions.id, id)).returning();
+    return result;
+  }
   async deleteSupervision(id) {
     await db.delete(supervisions).where(eq(supervisions.id, id));
   }
@@ -383,6 +387,18 @@ var DbStorage = class {
   async createAdditionalTask(task) {
     const [result] = await db.insert(additionalTasks).values(task).returning();
     return result;
+  }
+  async updateAdditionalTask(id, task) {
+    try {
+      const [result] = await db.update(additionalTasks).set(task).where(eq(additionalTasks.id, id)).returning();
+      if (!result) {
+        throw new Error("Additional task not found");
+      }
+      return result;
+    } catch (error) {
+      console.error("Error updating additional task in storage:", error);
+      throw error;
+    }
   }
   async deleteAdditionalTask(id) {
     await db.delete(additionalTasks).where(eq(additionalTasks.id, id));
@@ -593,6 +609,13 @@ var LocalStorage = class {
     this.saveDatabase();
     return newSupervision;
   }
+  async updateSupervision(id, supervision) {
+    const index = this.db.supervisions.findIndex((s) => s.id === id);
+    if (index === -1) throw new Error("Supervision not found");
+    this.db.supervisions[index] = { ...this.db.supervisions[index], ...supervision };
+    this.saveDatabase();
+    return this.db.supervisions[index];
+  }
   async deleteSupervision(id) {
     this.db.supervisions = this.db.supervisions.filter((s) => s.id !== id);
     this.saveDatabase();
@@ -613,6 +636,13 @@ var LocalStorage = class {
     this.db.additionalTasks.push(newTask);
     this.saveDatabase();
     return newTask;
+  }
+  async updateAdditionalTask(id, task) {
+    const index = this.db.additionalTasks.findIndex((t) => t.id === id);
+    if (index === -1) throw new Error("Additional task not found");
+    this.db.additionalTasks[index] = { ...this.db.additionalTasks[index], ...task };
+    this.saveDatabase();
+    return this.db.additionalTasks[index];
   }
   async deleteAdditionalTask(id) {
     this.db.additionalTasks = this.db.additionalTasks.filter((t) => t.id !== id);
@@ -698,7 +728,7 @@ var LocalStorage = class {
   }
 };
 var localStorage = new LocalStorage();
-var isLocalStorageEnabled = true;
+var isLocalStorageEnabled = false;
 
 // server/auth.ts
 import bcrypt from "bcryptjs";
@@ -1096,6 +1126,28 @@ async function registerRoutes(app2) {
       res.status(400).json({ error: error.message });
     }
   });
+  app2.put("/api/tasks/:id", authMiddleware, upload.fields([{ name: "photo1" }, { name: "photo2" }]), async (req, res) => {
+    try {
+      const files = req.files;
+      const updateData = {
+        title: req.body.title,
+        category: req.body.category,
+        description: req.body.description,
+        completed: req.body.completed === "true",
+        date: req.body.date
+      };
+      if (files?.photo1?.[0]) {
+        updateData.photo1 = `data:${files.photo1[0].mimetype};base64,${files.photo1[0].buffer.toString("base64")}`;
+      }
+      if (files?.photo2?.[0]) {
+        updateData.photo2 = `data:${files.photo2[0].mimetype};base64,${files.photo2[0].buffer.toString("base64")}`;
+      }
+      const task = await db2.updateTask(req.params.id, updateData);
+      res.json(task);
+    } catch (error) {
+      res.status(400).json({ error: error.message });
+    }
+  });
   app2.delete("/api/tasks/:id", authMiddleware, async (req, res) => {
     try {
       await db2.deleteTask(req.params.id);
@@ -1170,6 +1222,30 @@ async function registerRoutes(app2) {
       res.status(400).json({ error: error.message });
     }
   });
+  app2.put("/api/supervisions/:id", authMiddleware, upload.fields([{ name: "photo1" }, { name: "photo2" }]), async (req, res) => {
+    try {
+      const files = req.files;
+      const updateData = {
+        schoolId: req.body.schoolId,
+        type: req.body.type,
+        teacherName: req.body.teacherName,
+        teacherNip: req.body.teacherNip,
+        findings: req.body.findings,
+        recommendations: req.body.recommendations,
+        date: req.body.date
+      };
+      if (files?.photo1?.[0]) {
+        updateData.photo1 = `data:${files.photo1[0].mimetype};base64,${files.photo1[0].buffer.toString("base64")}`;
+      }
+      if (files?.photo2?.[0]) {
+        updateData.photo2 = `data:${files.photo2[0].mimetype};base64,${files.photo2[0].buffer.toString("base64")}`;
+      }
+      const supervision = await db2.updateSupervision(req.params.id, updateData);
+      res.json(supervision);
+    } catch (error) {
+      res.status(400).json({ error: error.message });
+    }
+  });
   app2.delete("/api/supervisions/:id", authMiddleware, async (req, res) => {
     try {
       await db2.deleteSupervision(req.params.id);
@@ -1205,6 +1281,40 @@ async function registerRoutes(app2) {
       res.status(400).json({ error: error.message });
     }
   });
+  app2.put("/api/additional-tasks/:id", authMiddleware, upload.fields([{ name: "photo1" }, { name: "photo2" }]), async (req, res) => {
+    try {
+      console.log("Update additional task request:", {
+        id: req.params.id,
+        body: req.body,
+        hasPhoto1: !!req.files?.["photo1"],
+        hasPhoto2: !!req.files?.["photo2"]
+      });
+      if (!req.body.name || !req.body.location || !req.body.organizer || !req.body.description) {
+        return res.status(400).json({ error: "Missing required fields" });
+      }
+      const files = req.files;
+      const updateData = {
+        name: req.body.name,
+        date: req.body.date ? new Date(req.body.date) : /* @__PURE__ */ new Date(),
+        location: req.body.location,
+        organizer: req.body.organizer,
+        description: req.body.description
+      };
+      if (files?.photo1?.[0]) {
+        updateData.photo1 = `data:${files.photo1[0].mimetype};base64,${files.photo1[0].buffer.toString("base64")}`;
+      }
+      if (files?.photo2?.[0]) {
+        updateData.photo2 = `data:${files.photo2[0].mimetype};base64,${files.photo2[0].buffer.toString("base64")}`;
+      }
+      console.log("Updating with data:", updateData);
+      const task = await db2.updateAdditionalTask(req.params.id, updateData);
+      console.log("Update successful:", task);
+      res.json(task);
+    } catch (error) {
+      console.error("Error updating additional task:", error);
+      res.status(400).json({ error: error.message || "Failed to update task" });
+    }
+  });
   app2.delete("/api/additional-tasks/:id", authMiddleware, async (req, res) => {
     try {
       await db2.deleteAdditionalTask(req.params.id);
@@ -1223,12 +1333,77 @@ async function registerRoutes(app2) {
       res.status(400).json({ error: error.message });
     }
   });
+  app2.get("/api/reports/monthly/details", authMiddleware, async (req, res) => {
+    try {
+      const year = parseInt(req.query.year);
+      const month = parseInt(req.query.month);
+      if (isNaN(year) || isNaN(month)) {
+        return res.status(400).json({ error: "Invalid year or month" });
+      }
+      const tasks2 = await db2.getTasks(req.user.userId);
+      const supervisions2 = await db2.getSupervisions(req.user.userId);
+      const additionalTasks2 = await db2.getAdditionalTasks(req.user.userId);
+      const filterByMonth = (item) => {
+        try {
+          if (!item.date) return false;
+          const itemDate = new Date(item.date);
+          if (isNaN(itemDate.getTime())) return false;
+          return itemDate.getFullYear() === year && itemDate.getMonth() + 1 === month;
+        } catch {
+          return false;
+        }
+      };
+      const monthlyTasks = tasks2.filter(filterByMonth);
+      const monthlySupervisions = supervisions2.filter(filterByMonth);
+      const monthlyAdditionalTasks = additionalTasks2.filter(filterByMonth);
+      res.json({
+        tasks: monthlyTasks,
+        supervisions: monthlySupervisions,
+        additionalTasks: monthlyAdditionalTasks
+      });
+    } catch (error) {
+      console.error("Error in monthly details:", error);
+      res.status(400).json({ error: error.message });
+    }
+  });
   app2.get("/api/reports/yearly", authMiddleware, async (req, res) => {
     try {
       const year = parseInt(req.query.year);
       const stats = await db2.getYearlyStats(req.user.userId, year);
       res.json(stats);
     } catch (error) {
+      res.status(400).json({ error: error.message });
+    }
+  });
+  app2.get("/api/reports/yearly/details", authMiddleware, async (req, res) => {
+    try {
+      const year = parseInt(req.query.year);
+      if (isNaN(year)) {
+        return res.status(400).json({ error: "Invalid year" });
+      }
+      const tasks2 = await db2.getTasks(req.user.userId);
+      const supervisions2 = await db2.getSupervisions(req.user.userId);
+      const additionalTasks2 = await db2.getAdditionalTasks(req.user.userId);
+      const filterByYear = (item) => {
+        try {
+          if (!item.date) return false;
+          const itemDate = new Date(item.date);
+          if (isNaN(itemDate.getTime())) return false;
+          return itemDate.getFullYear() === year;
+        } catch {
+          return false;
+        }
+      };
+      const yearlyTasks = tasks2.filter(filterByYear);
+      const yearlySupervisions = supervisions2.filter(filterByYear);
+      const yearlyAdditionalTasks = additionalTasks2.filter(filterByYear);
+      res.json({
+        tasks: yearlyTasks,
+        supervisions: yearlySupervisions,
+        additionalTasks: yearlyAdditionalTasks
+      });
+    } catch (error) {
+      console.error("Error in yearly details:", error);
       res.status(400).json({ error: error.message });
     }
   });
