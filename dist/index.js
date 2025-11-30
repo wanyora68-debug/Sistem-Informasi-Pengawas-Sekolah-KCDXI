@@ -1725,7 +1725,7 @@ async function registerRoutes(app2) {
       }
       const monthNames = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
       console.log(`[ROUTES] Found ${photos.length} photos for ${monthNames[month - 1]} ${year}`);
-      console.log(`[ROUTES] Supervisions: ${supervisions2.length}, Tasks: ${await db2.getTasks(req.user.userId).then((t) => t.length)}`);
+      console.log(`[ROUTES] Supervisions checked: ${supervisions2.length}`);
       if (photos.length > 0) {
         console.log("[ROUTES] Photo samples:", photos.map((p) => p.substring(0, 50) + "..."));
         console.log("[ROUTES] Passing photos to PDF generator...");
