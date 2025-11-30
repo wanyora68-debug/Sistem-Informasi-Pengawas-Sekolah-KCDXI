@@ -261,8 +261,18 @@ export function generateMonthlyPDF(data: MonthlyReportData): Buffer {
   
   // Photos section (if available)
   if (data.photos && data.photos.length > 0) {
-    // Check if we need a new page
-    if (yPos > 200) {
+    console.log(`Adding ${data.photos.length} photos to PDF`);
+    
+    // Calculate space needed for photos
+    const photosToShow = data.photos.slice(0, 6);
+    const photoWidth = 80;
+    const photoHeight = 60;
+    const spacing = 10;
+    const rows = Math.ceil(photosToShow.length / 2);
+    const totalPhotoHeight = (rows * photoHeight) + ((rows - 1) * spacing) + 40; // +40 for title and spacing
+    
+    // Check if we need a new page (more conservative check)
+    if (yPos + totalPhotoHeight > 270) {
       doc.addPage();
       addHeader(doc, "LAPORAN BULANAN", 3);
       yPos = 45;
@@ -278,10 +288,6 @@ export function generateMonthlyPDF(data: MonthlyReportData): Buffer {
     yPos += 10;
     
     // Display photos in grid (2 columns, max 6 photos)
-    const photosToShow = data.photos.slice(0, 6);
-    const photoWidth = 80;
-    const photoHeight = 60;
-    const spacing = 10;
     const startX = 20;
     
     photosToShow.forEach((photo, index) => {
@@ -290,35 +296,15 @@ export function generateMonthlyPDF(data: MonthlyReportData): Buffer {
       const x = startX + (col * (photoWidth + spacing));
       const y = yPos + (row * (photoHeight + spacing));
       
-      // Check if we need a new page
-      if (y + photoHeight > 250) {
-        doc.addPage();
-        addHeader(doc, "LAPORAN BULANAN", doc.internal.pages.length);
-        const newY = 45;
-        const newRow = row - Math.floor(index / 2);
-        const finalY = newY + (newRow * (photoHeight + spacing));
+      try {
+        doc.addImage(photo, 'JPEG', x, y, photoWidth, photoHeight);
         
-        try {
-          doc.addImage(photo, 'JPEG', x, finalY, photoWidth, photoHeight);
-          
-          // Add photo number
-          doc.setFontSize(8);
-          doc.setTextColor(100, 100, 100);
-          doc.text(`Foto ${index + 1}`, x + photoWidth / 2, finalY + photoHeight + 5, { align: "center" });
-        } catch (error) {
-          console.error(`Error adding photo ${index + 1}:`, error);
-        }
-      } else {
-        try {
-          doc.addImage(photo, 'JPEG', x, y, photoWidth, photoHeight);
-          
-          // Add photo number
-          doc.setFontSize(8);
-          doc.setTextColor(100, 100, 100);
-          doc.text(`Foto ${index + 1}`, x + photoWidth / 2, y + photoHeight + 5, { align: "center" });
-        } catch (error) {
-          console.error(`Error adding photo ${index + 1}:`, error);
-        }
+        // Add photo number
+        doc.setFontSize(8);
+        doc.setTextColor(100, 100, 100);
+        doc.text(`Foto ${index + 1}`, x + photoWidth / 2, y + photoHeight + 5, { align: "center" });
+      } catch (error) {
+        console.error(`Error adding photo ${index + 1}:`, error);
       }
     });
   }
