@@ -1,14 +1,17 @@
-const fs = require('fs');
-const path = require('path');
+const { Client } = require('pg');
 
 module.exports = async function handler(req, res) {
+  const client = new Client({
+    connectionString: process.env.SUPABASE_DATABASE_URL,
+    ssl: { rejectUnauthorized: false }
+  });
+
   try {
-    // Read local database
-    const dbPath = path.join(process.cwd(), 'local-database.json');
-    const data = JSON.parse(fs.readFileSync(dbPath, 'utf-8'));
+    await client.connect();
 
     if (req.method === 'GET') {
-      res.json(data.tasks || []);
+      const result = await client.query('SELECT * FROM tasks ORDER BY created_at DESC');
+      res.json(result.rows);
     } else {
       res.status(405).json({ error: 'Method not allowed' });
     }
@@ -16,5 +19,7 @@ module.exports = async function handler(req, res) {
   } catch (error) {
     console.error('Tasks API error:', error);
     res.status(500).json({ error: 'Internal server error' });
+  } finally {
+    await client.end();
   }
 }

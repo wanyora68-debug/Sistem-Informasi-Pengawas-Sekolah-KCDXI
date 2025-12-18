@@ -1,12 +1,16 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const fs = require('fs');
-const path = require('path');
+const { Client } = require('pg');
 
 module.exports = async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
+
+  const client = new Client({
+    connectionString: process.env.SUPABASE_DATABASE_URL,
+    ssl: { rejectUnauthorized: false }
+  });
 
   try {
     const { username, password } = req.body;
@@ -15,15 +19,19 @@ module.exports = async function handler(req, res) {
       return res.status(400).json({ error: 'Username and password required' });
     }
 
-    // Read local database
-    const dbPath = path.join(process.cwd(), 'local-database.json');
-    const data = JSON.parse(fs.readFileSync(dbPath, 'utf-8'));
+    await client.connect();
 
-    // Find user
-    const user = data.users.find(u => u.username === username);
-    if (!user) {
+    // Find user in Supabase
+    const result = await client.query(
+      'SELECT * FROM users WHERE username = $1',
+      [username]
+    );
+
+    if (result.rows.length === 0) {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
+
+    const user = result.rows[0];
 
     // Check password
     const isValid = await bcrypt.compare(password, user.password);
@@ -53,5 +61,7 @@ module.exports = async function handler(req, res) {
   } catch (error) {
     console.error('Login error:', error);
     res.status(500).json({ error: 'Internal server error' });
+  } finally {
+    await client.end();
   }
 }

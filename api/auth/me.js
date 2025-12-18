@@ -1,11 +1,15 @@
 const jwt = require('jsonwebtoken');
-const fs = require('fs');
-const path = require('path');
+const { Client } = require('pg');
 
 module.exports = async function handler(req, res) {
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
+
+  const client = new Client({
+    connectionString: process.env.SUPABASE_DATABASE_URL,
+    ssl: { rejectUnauthorized: false }
+  });
 
   try {
     const authHeader = req.headers.authorization;
@@ -16,15 +20,19 @@ module.exports = async function handler(req, res) {
     const token = authHeader.substring(7);
     const decoded = jwt.verify(token, process.env.JWT_SECRET || 'schoolguard-secret-key-2024');
 
-    // Read local database
-    const dbPath = path.join(process.cwd(), 'local-database.json');
-    const data = JSON.parse(fs.readFileSync(dbPath, 'utf-8'));
+    await client.connect();
 
-    // Find user
-    const user = data.users.find(u => u.id === decoded.userId);
-    if (!user) {
+    // Find user in Supabase
+    const result = await client.query(
+      'SELECT * FROM users WHERE id = $1',
+      [decoded.userId]
+    );
+
+    if (result.rows.length === 0) {
       return res.status(404).json({ error: 'User not found' });
     }
+
+    const user = result.rows[0];
 
     // Return user data (without password)
     const { password: _, ...userWithoutPassword } = user;
@@ -33,5 +41,7 @@ module.exports = async function handler(req, res) {
   } catch (error) {
     console.error('Auth error:', error);
     res.status(401).json({ error: 'Invalid token' });
+  } finally {
+    await client.end();
   }
 }

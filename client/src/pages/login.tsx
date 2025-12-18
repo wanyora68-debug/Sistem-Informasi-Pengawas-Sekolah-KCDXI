@@ -31,44 +31,29 @@ export default function LoginPage() {
     setIsLoading(true);
     
     try {
-      console.log('Login attempt:', { username: loginUsername, password: loginPassword });
-      
-      // Mock authentication for demo purposes
-      const validCredentials = [
-        { username: 'admin', password: 'admin123' },
-        { username: 'admin', password: 'admin' },
-        { username: 'wawan', password: 'admin' },
-        { username: 'wawan', password: 'wawan' },
-        { username: 'wawan', password: '123456' },
-        { username: 'wawan', password: 'password' },
-        { username: 'wawan', password: 'admin123' }
-      ];
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: loginUsername, password: loginPassword }),
+        credentials: 'include',
+      });
 
-      const isValid = validCredentials.some(cred => 
-        cred.username === loginUsername && cred.password === loginPassword
-      );
-      
-      console.log('Is valid:', isValid);
-
-      if (isValid) {
-        // Create mock token
-        const mockToken = btoa(JSON.stringify({
-          username: loginUsername,
-          role: loginUsername === 'admin' ? 'admin' : 'pengawas',
-          exp: Date.now() + 24 * 60 * 60 * 1000 // 24 hours
-        }));
-        
-        localStorage.setItem('auth_token', mockToken);
-        
+      if (response.ok) {
+        const data = await response.json();
+        // Store token in localStorage
+        if (data.token) {
+          localStorage.setItem('auth_token', data.token);
+        }
         toast({
           title: "Berhasil",
           description: "Login berhasil!",
         });
         setLocation('/');
       } else {
+        const error = await response.json();
         toast({
           title: "Gagal",
-          description: "Username atau password salah",
+          description: error.error || "Username atau password salah",
           variant: "destructive",
         });
       }

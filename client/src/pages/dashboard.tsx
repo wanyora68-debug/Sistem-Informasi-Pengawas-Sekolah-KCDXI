@@ -19,42 +19,41 @@ export default function Dashboard() {
     queryKey: ["/api/auth/me"],
     queryFn: async () => {
       const token = localStorage.getItem('auth_token');
-      if (!token) throw new Error('No token');
-      
-      // Mock user data
-      const decoded = JSON.parse(atob(token));
-      return {
-        id: '1',
-        username: decoded.username,
-        fullName: decoded.username === 'admin' ? 'Administrator' : 'H. Wawan Yogaswara, S.Pd, M.Pd',
-        role: decoded.role,
-        photoUrl: '/uploads/default-avatar.jpg'
-      };
+      const response = await fetch('/api/auth/me', {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+        credentials: 'include',
+      });
+      if (!response.ok) throw new Error('Failed to fetch user');
+      return response.json();
     },
   });
 
-  // Mock data for demo
+  // Fetch real data from Supabase
   const { data: tasks = [] } = useQuery({
     queryKey: ['tasks'],
     queryFn: async () => {
-      // Mock tasks data
-      return [
-        { id: '1', title: 'Supervisi Akademik SDN 1', status: 'completed', dueDate: '2024-12-20' },
-        { id: '2', title: 'Monitoring Kurikulum', status: 'in-progress', dueDate: '2024-12-25' },
-        { id: '3', title: 'Evaluasi Pembelajaran', status: 'pending', dueDate: '2024-12-30' }
-      ];
+      const token = localStorage.getItem('auth_token');
+      const response = await fetch('/api/tasks', {
+        headers: { 'Authorization': `Bearer ${token}` },
+        credentials: 'include',
+      });
+      if (!response.ok) return [];
+      return response.json();
     },
   });
 
   const { data: schools = [] } = useQuery({
     queryKey: ["/api/schools"],
     queryFn: async () => {
-      // Mock schools data
-      return [
-        { id: '1', name: 'SDN 1 Garut', type: 'SD', status: 'active' },
-        { id: '2', name: 'SMPN 2 Garut', type: 'SMP', status: 'active' },
-        { id: '3', name: 'SMAN 1 Garut', type: 'SMA', status: 'active' }
-      ];
+      const token = localStorage.getItem('auth_token');
+      const response = await fetch('/api/schools', {
+        headers: { 'Authorization': `Bearer ${token}` },
+        credentials: 'include',
+      });
+      if (!response.ok) return [];
+      return response.json();
     },
   });
 
