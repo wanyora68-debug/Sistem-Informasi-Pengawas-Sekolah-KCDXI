@@ -7,45 +7,43 @@ module.exports = async function handler(req, res) {
     const supabaseKey = process.env.SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZteGVib3VsbGdjZXd6anBxbCIsInJvbGUiOiJhbm9uIiwiaWF0IjoxNzM0NTk5NzI4LCJleHAiOjIwNTAxNzU3Mjh9.Ej8Ej8Ej8Ej8Ej8Ej8Ej8Ej8Ej8Ej8Ej8Ej8Ej8';
     
     const supabase = createClient(supabaseUrl, supabaseKey);
+    const { id } = req.query;
 
-    if (req.method === 'GET') {
-      const { data: schools, error } = await supabase
+    if (req.method === 'DELETE') {
+      const { error } = await supabase
         .from('schools')
-        .select('*')
-        .order('created_at', { ascending: false });
+        .delete()
+        .eq('id', id);
 
       if (error) {
-        console.error('Schools GET error:', error);
-        return res.status(500).json({ error: 'Failed to fetch schools' });
+        console.error('Schools DELETE error:', error);
+        return res.status(500).json({ error: 'Failed to delete school' });
       }
 
-      res.json(schools || []);
+      res.json({ message: 'School deleted successfully' });
 
-    } else if (req.method === 'POST') {
+    } else if (req.method === 'PUT') {
       const { name, address, contact, principalName, principalNip } = req.body;
-
-      if (!name || !address) {
-        return res.status(400).json({ error: 'Name and address are required' });
-      }
 
       const { data: school, error } = await supabase
         .from('schools')
-        .insert({
+        .update({
           name,
           address,
           contact,
           principal_name: principalName,
           principal_nip: principalNip
         })
+        .eq('id', id)
         .select()
         .single();
 
       if (error) {
-        console.error('Schools POST error:', error);
-        return res.status(500).json({ error: 'Failed to create school' });
+        console.error('Schools PUT error:', error);
+        return res.status(500).json({ error: 'Failed to update school' });
       }
 
-      res.status(201).json(school);
+      res.json(school);
 
     } else {
       res.status(405).json({ error: 'Method not allowed' });
