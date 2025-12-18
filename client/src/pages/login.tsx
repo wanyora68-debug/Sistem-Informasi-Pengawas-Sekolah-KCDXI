@@ -31,6 +31,8 @@ export default function LoginPage() {
     setIsLoading(true);
     
     try {
+      console.log('Login attempt:', { username: loginUsername, password: loginPassword });
+      
       // Mock authentication for demo purposes
       const validCredentials = [
         { username: 'admin', password: 'admin123' },
@@ -42,6 +44,8 @@ export default function LoginPage() {
       const isValid = validCredentials.some(cred => 
         cred.username === loginUsername && cred.password === loginPassword
       );
+      
+      console.log('Is valid:', isValid);
 
       if (isValid) {
         // Create mock token
