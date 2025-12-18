@@ -31,36 +31,38 @@ export default function LoginPage() {
     setIsLoading(true);
     
     try {
-      const response = await fetch('/api/auth/login', {
+      console.log('Attempting login with debug endpoint...');
+      
+      const response = await fetch('/api/debug-login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username: loginUsername, password: loginPassword }),
         credentials: 'include',
       });
 
-      if (response.ok) {
-        const data = await response.json();
+      const data = await response.json();
+      console.log('Login response:', data);
+
+      if (data.success && data.token) {
         // Store token in localStorage
-        if (data.token) {
-          localStorage.setItem('auth_token', data.token);
-        }
+        localStorage.setItem('auth_token', data.token);
         toast({
           title: "Berhasil",
-          description: "Login berhasil!",
+          description: `Login berhasil! (${data.source})`,
         });
         setLocation('/');
       } else {
-        const error = await response.json();
         toast({
           title: "Gagal",
-          description: error.error || "Username atau password salah",
+          description: data.error || "Username atau password salah",
           variant: "destructive",
         });
       }
     } catch (error) {
+      console.error('Login error:', error);
       toast({
         title: "Error",
-        description: "Terjadi kesalahan saat login",
+        description: "Terjadi kesalahan saat login: " + error.message,
         variant: "destructive",
       });
     } finally {
@@ -241,6 +243,45 @@ export default function LoginPage() {
                 <Button type="submit" className="w-full" disabled={isLoading} data-testid="button-login-submit">
                   {isLoading ? "Memproses..." : "Masuk"}
                 </Button>
+                
+                {/* Quick Login Buttons */}
+                <div className="mt-4 pt-4 border-t border-gray-200">
+                  <p className="text-sm text-gray-600 mb-2 text-center">Quick Login:</p>
+                  <div className="space-y-2">
+                    <Button 
+                      type="button" 
+                      variant="outline" 
+                      className="w-full text-sm" 
+                      disabled={isLoading}
+                      onClick={() => {
+                        setLoginUsername("admin");
+                        setLoginPassword("admin123");
+                        setTimeout(() => {
+                          const form = document.querySelector('form');
+                          if (form) form.requestSubmit();
+                        }, 100);
+                      }}
+                    >
+                      Login sebagai Admin
+                    </Button>
+                    <Button 
+                      type="button" 
+                      variant="outline" 
+                      className="w-full text-sm" 
+                      disabled={isLoading}
+                      onClick={() => {
+                        setLoginUsername("wawan");
+                        setLoginPassword("wawan123");
+                        setTimeout(() => {
+                          const form = document.querySelector('form');
+                          if (form) form.requestSubmit();
+                        }, 100);
+                      }}
+                    >
+                      Login sebagai Wawan
+                    </Button>
+                  </div>
+                </div>
               </form>
             </CardContent>
             </Card>
