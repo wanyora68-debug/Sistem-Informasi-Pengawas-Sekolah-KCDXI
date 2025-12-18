@@ -28,7 +28,16 @@ function Router() {
           </div>
         )}
       </Route>
-      <Route path="/" component={Dashboard} />
+      <Route path="/">
+        {() => {
+          const token = localStorage.getItem('auth_token');
+          if (!token) {
+            window.location.href = '/login';
+            return null;
+          }
+          return <Dashboard />;
+        }}
+      </Route>
       <Route path="/tasks" component={TasksPage} />
       <Route path="/calendar" component={CalendarPage} />
       <Route path="/supervisions" component={SupervisionsPage} />
