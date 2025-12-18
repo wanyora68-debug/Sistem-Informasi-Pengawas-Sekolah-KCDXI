@@ -1,16 +1,11 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const { Client } = require('pg');
+const { createClient } = require('@supabase/supabase-js');
 
 module.exports = async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
-
-  const client = new Client({
-    connectionString: process.env.SUPABASE_DATABASE_URL,
-    ssl: { rejectUnauthorized: false }
-  });
 
   try {
     const { username, password } = req.body;
@@ -19,22 +14,25 @@ module.exports = async function handler(req, res) {
       return res.status(400).json({ error: 'Username and password required' });
     }
 
-    await client.connect();
+    // Initialize Supabase client
+    const supabaseUrl = process.env.SUPABASE_URL || 'https://fmxeboullgcewzjpql.supabase.co';
+    const supabaseKey = process.env.SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZteGVib3VsbGdjZXd6anBxbCIsInJvbGUiOiJhbm9uIiwiaWF0IjoxNzM0NTk5NzI4LCJleHAiOjIwNTAxNzU3Mjh9.Ej8Ej8Ej8Ej8Ej8Ej8Ej8Ej8Ej8Ej8Ej8Ej8Ej8';
+    
+    const supabase = createClient(supabaseUrl, supabaseKey);
 
     // Find user in Supabase
-    const result = await client.query(
-      'SELECT * FROM users WHERE username = $1',
-      [username]
-    );
+    const { data: users, error: queryError } = await supabase
+      .from('users')
+      .select('*')
+      .eq('username', username)
+      .single();
 
-    if (result.rows.length === 0) {
+    if (queryError || !users) {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
 
-    const user = result.rows[0];
-
     // Check password
-    const isValid = await bcrypt.compare(password, user.password);
+    const isValid = await bcrypt.compare(password, users.password);
     if (!isValid) {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
@@ -42,16 +40,16 @@ module.exports = async function handler(req, res) {
     // Generate JWT token
     const token = jwt.sign(
       { 
-        userId: user.id, 
-        username: user.username, 
-        role: user.role 
+        userId: users.id, 
+        username: users.username, 
+        role: users.role 
       },
       process.env.JWT_SECRET || 'schoolguard-secret-key-2024',
       { expiresIn: '24h' }
     );
 
     // Return user data (without password)
-    const { password: _, ...userWithoutPassword } = user;
+    const { password: _, ...userWithoutPassword } = users;
 
     res.json({
       token,
@@ -61,7 +59,5 @@ module.exports = async function handler(req, res) {
   } catch (error) {
     console.error('Login error:', error);
     res.status(500).json({ error: 'Internal server error' });
-  } finally {
-    await client.end();
   }
 }
