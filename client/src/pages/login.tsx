@@ -33,7 +33,7 @@ export default function LoginPage() {
     try {
       console.log('Attempting login with debug endpoint...');
       
-      const response = await fetch('/api/debug-login', {
+      const response = await fetch('/api/simple-login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username: loginUsername, password: loginPassword }),
