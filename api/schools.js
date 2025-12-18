@@ -1,7 +1,7 @@
-import fs from 'fs';
-import path from 'path';
+const fs = require('fs');
+const path = require('path');
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   try {
     // Read local database
     const dbPath = path.join(process.cwd(), 'local-database.json');
