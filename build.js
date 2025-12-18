@@ -14,21 +14,8 @@ try {
   // Build client with vite
   console.log('📦 Building client with Vite...');
   
-  // Try multiple ways to run vite
-  const vitePaths = [
-    './node_modules/vite/bin/vite.js',
-    './node_modules/.bin/vite'
-  ];
-  
-  let viteCmd = 'npx vite build';
-  for (const vitePath of vitePaths) {
-    if (existsSync(vitePath)) {
-      viteCmd = `node ${vitePath} build`;
-      break;
-    }
-  }
-  
-  execSync(viteCmd, {
+  // Use vite build directly
+  execSync('vite build', {
     stdio: 'inherit',
     cwd: __dirname
   });
@@ -37,21 +24,8 @@ try {
   // Build server with esbuild
   console.log('📦 Building server with esbuild...');
   
-  // Try multiple ways to run esbuild
-  const esbuildPaths = [
-    './node_modules/esbuild/bin/esbuild',
-    './node_modules/.bin/esbuild'
-  ];
-  
-  let esbuildCmd = 'npx esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist';
-  for (const esbuildPath of esbuildPaths) {
-    if (existsSync(esbuildPath)) {
-      esbuildCmd = `node ${esbuildPath} server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist`;
-      break;
-    }
-  }
-  
-  execSync(esbuildCmd, {
+  // Use esbuild directly
+  execSync('esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist', {
     stdio: 'inherit',
     cwd: __dirname
   });

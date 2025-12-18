@@ -1,34 +1,18 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import path from "path";
-import { fileURLToPath } from "url";
-
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig({
-  plugins: [
-    react(),
-    // Only include Replit plugins in development
-    ...(process.env.NODE_ENV !== "production" && process.env.REPL_ID !== undefined
-      ? []
-      : []),
-  ],
+  plugins: [react()],
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "client", "src"),
-      "@shared": path.resolve(__dirname, "shared"),
-      "@assets": path.resolve(__dirname, "attached_assets"),
+      "@": path.resolve(process.cwd(), "client", "src"),
+      "@shared": path.resolve(process.cwd(), "shared"),
     },
   },
-  root: path.resolve(__dirname, "client"),
+  root: "client",
   build: {
-    outDir: path.resolve(__dirname, "dist/public"),
+    outDir: "../dist/public",
     emptyOutDir: true,
-  },
-  server: {
-    fs: {
-      strict: true,
-      deny: ["**/.*"],
-    },
   },
 });
