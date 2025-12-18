@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Sementara - Sistem Pengawas Sekolah</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+        }
+        .login-container {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            width: 100%;
+            max-width: 400px;
+        }
+        .logo {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .logo h1 {
+            color: #667eea;
+            margin: 0;
+            font-size: 1.8rem;
+        }
+        .logo p {
+            color: #666;
+            margin: 0.5rem 0 0 0;
+            font-size: 0.9rem;
+        }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #333;
+            font-weight: bold;
+        }
+        input[type="text"], input[type="password"] {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+            box-sizing: border-box;
+        }
+        input[type="text"]:focus, input[type="password"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        .btn {
+            width: 100%;
+            padding: 0.75rem;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 1rem;
+        }
+        .btn:hover {
+            background: #5a6fd8;
+        }
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 0.75rem;
+            border-radius: 5px;
+            margin-bottom: 1rem;
+            display: none;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            padding: 0.75rem;
+            border-radius: 5px;
+            margin-bottom: 1rem;
+            display: none;
+        }
+        .quick-login {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #eee;
+        }
+        .quick-login h3 {
+            margin: 0 0 1rem 0;
+            color: #666;
+            font-size: 1rem;
+        }
+        .quick-btn {
+            display: block;
+            width: 100%;
+            padding: 0.5rem;
+            margin-bottom: 0.5rem;
+            background: #28a745;
+            color: white;
+            text-decoration: none;
+            text-align: center;
+            border-radius: 5px;
+            font-size: 0.9rem;
+        }
+        .quick-btn:hover {
+            background: #218838;
+        }
+        .debug-info {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 5px;
+            font-size: 0.8rem;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="logo">
+            <h1>🏫 Sistem Pengawas Sekolah</h1>
+            <p>Dinas Pendidikan Provinsi Jawa Barat</p>
+            <p><strong>Login Sementara - Debug Mode</strong></p>
+        </div>
+
+        <div id="error" class="error"></div>
+        <div id="success" class="success"></div>
+
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" value="admin" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" value="admin123" required>
+            </div>
+            <button type="submit" class="btn" id="loginBtn">Masuk</button>
+        </form>
+
+        <div class="quick-login">
+            <h3>Quick Login:</h3>
+            <a href="#" class="quick-btn" onclick="quickLogin('admin', 'admin123')">Login sebagai Admin</a>
+            <a href="#" class="quick-btn" onclick="quickLogin('wawan', 'wawan123')">Login sebagai Wawan</a>
+        </div>
+
+        <div class="debug-info">
+            <strong>Debug Info:</strong><br>
+            <span id="debugInfo">Loading...</span>
+        </div>
+    </div>
+
+    <script>
+        // Load debug info
+        fetch('/api/debug-login')
+            .then(r => r.json())
+            .then(data => {
+                document.getElementById('debugInfo').innerHTML = 
+                    `Environment: ${data.environment?.NODE_ENV || 'unknown'}<br>` +
+                    `Supabase URL: ${data.supabaseUrl ? 'OK' : 'Missing'}<br>` +
+                    `Key Length: ${data.keyLength || 0}<br>` +
+                    `Timestamp: ${data.timestamp}`;
+            })
+            .catch(e => {
+                document.getElementById('debugInfo').innerHTML = 'Debug endpoint not available';
+            });
+
+        function showError(message) {
+            const errorDiv = document.getElementById('error');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+            document.getElementById('success').style.display = 'none';
+        }
+
+        function showSuccess(message) {
+            const successDiv = document.getElementById('success');
+            successDiv.textContent = message;
+            successDiv.style.display = 'block';
+            document.getElementById('error').style.display = 'none';
+        }
+
+        function quickLogin(username, password) {
+            document.getElementById('username').value = username;
+            document.getElementById('password').value = password;
+            performLogin(username, password);
+        }
+
+        async function performLogin(username, password) {
+            const loginBtn = document.getElementById('loginBtn');
+            loginBtn.disabled = true;
+            loginBtn.textContent = 'Memproses...';
+
+            try {
+                console.log('Attempting login with debug endpoint...');
+                
+                const response = await fetch('/api/debug-login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+
+                const data = await response.json();
+                console.log('Login response:', data);
+
+                if (data.success && data.token) {
+                    localStorage.setItem('auth_token', data.token);
+                    showSuccess(`Login berhasil! Redirecting... (Source: ${data.source})`);
+                    
+                    setTimeout(() => {
+                        window.location.href = '/';
+                    }, 1500);
+                } else {
+                    showError(data.error || 'Login gagal');
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                showError('Terjadi kesalahan saat login: ' + error.message);
+            } finally {
+                loginBtn.disabled = false;
+                loginBtn.textContent = 'Masuk';
+            }
+        }
+
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            performLogin(username, password);
+        });
+    </script>
+</body>
+</html>
