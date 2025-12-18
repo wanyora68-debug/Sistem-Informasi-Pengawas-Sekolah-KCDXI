@@ -31,29 +31,37 @@ export default function LoginPage() {
     setIsLoading(true);
     
     try {
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username: loginUsername, password: loginPassword }),
-        credentials: 'include',
-      });
+      // Mock authentication for demo purposes
+      const validCredentials = [
+        { username: 'admin', password: 'admin123' },
+        { username: 'admin', password: 'admin' },
+        { username: 'wawan', password: 'admin' },
+        { username: 'wawan', password: 'wawan' }
+      ];
 
-      if (response.ok) {
-        const data = await response.json();
-        // Store token in localStorage
-        if (data.token) {
-          localStorage.setItem('auth_token', data.token);
-        }
+      const isValid = validCredentials.some(cred => 
+        cred.username === loginUsername && cred.password === loginPassword
+      );
+
+      if (isValid) {
+        // Create mock token
+        const mockToken = btoa(JSON.stringify({
+          username: loginUsername,
+          role: loginUsername === 'admin' ? 'admin' : 'pengawas',
+          exp: Date.now() + 24 * 60 * 60 * 1000 // 24 hours
+        }));
+        
+        localStorage.setItem('auth_token', mockToken);
+        
         toast({
           title: "Berhasil",
           description: "Login berhasil!",
         });
         setLocation('/');
       } else {
-        const error = await response.json();
         toast({
           title: "Gagal",
-          description: error.error || "Username atau password salah",
+          description: "Username atau password salah",
           variant: "destructive",
         });
       }
