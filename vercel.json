@@ -1,6 +1,8 @@
 {
   "version": 2,
   "name": "school-guard-manager",
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist/public",
   "builds": [
     {
       "src": "dist/index.js",
