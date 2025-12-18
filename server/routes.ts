@@ -828,6 +828,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       const pdfBuffer = generateMonthlyPDF({
         userName: user?.fullName || "Pengawas",
+        userNip: user?.nip || undefined,
         period: `${monthNames[month - 1]} ${year}`,
         ...stats,
         photos: photos.length > 0 ? photos : undefined,
@@ -849,10 +850,66 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const user = await db.getUser(req.user!.userId);
       const stats = await db.getYearlyStats(req.user!.userId, year);
       
+      // Fetch photos from activities throughout the year
+      const startDate = new Date(year, 0, 1); // January 1st
+      const endDate = new Date(year, 11, 31, 23, 59, 59); // December 31st
+      
+      const photos: string[] = [];
+      
+      // Get photos from supervisions
+      const supervisions = await db.getSupervisions(req.user!.userId);
+      supervisions
+        .filter(s => {
+          const date = new Date(s.date);
+          return date >= startDate && date <= endDate && (s.photo1 || s.photo2);
+        })
+        .forEach(s => {
+          if (s.photo1 && photos.length < 6) photos.push(s.photo1);
+          if (s.photo2 && photos.length < 6) photos.push(s.photo2);
+        });
+      
+      // If less than 6, get from tasks
+      if (photos.length < 6) {
+        const tasks = await db.getTasks(req.user!.userId);
+        tasks
+          .filter(t => {
+            const date = new Date(t.date);
+            return date >= startDate && date <= endDate && (t.photo1 || t.photo2);
+          })
+          .forEach(t => {
+            if (t.photo1 && photos.length < 6) photos.push(t.photo1);
+            if (t.photo2 && photos.length < 6) photos.push(t.photo2);
+          });
+      }
+      
+      // If still less than 6, get from additional tasks
+      if (photos.length < 6) {
+        const additionalTasks = await db.getAdditionalTasks(req.user!.userId);
+        additionalTasks
+          .filter(t => {
+            const date = new Date(t.date);
+            return date >= startDate && date <= endDate && (t.photo1 || t.photo2);
+          })
+          .forEach(t => {
+            if (t.photo1 && photos.length < 6) photos.push(t.photo1);
+            if (t.photo2 && photos.length < 6) photos.push(t.photo2);
+          });
+      }
+      
+      console.log(`[ROUTES] Found ${photos.length} photos for yearly report ${year}`);
+      if (photos.length > 0) {
+        console.log('[ROUTES] Photo samples for yearly:', photos.map(p => p.substring(0, 50) + '...'));
+        console.log('[ROUTES] Passing photos to yearly PDF generator...');
+      } else {
+        console.log('[ROUTES] WARNING: No photos found for yearly report!');
+      }
+      
       const pdfBuffer = generateYearlyPDF({
         userName: user?.fullName || "Pengawas",
+        userNip: user?.nip || undefined,
         year: year.toString(),
         ...stats,
+        photos: photos.length > 0 ? photos : undefined,
       });
 
       res.setHeader("Content-Type", "application/pdf");

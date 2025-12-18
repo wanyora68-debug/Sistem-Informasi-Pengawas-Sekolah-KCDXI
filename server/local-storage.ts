@@ -323,4 +323,5 @@ class LocalStorage {
 }
 
 export const localStorage = new LocalStorage();
-export const isLocalStorageEnabled = false; // Always use database (Neon) in production
+// Auto-detect: use local storage if DATABASE_URL is not configured
+export const isLocalStorageEnabled = !process.env.DATABASE_URL || process.env.DATABASE_URL.includes('example');

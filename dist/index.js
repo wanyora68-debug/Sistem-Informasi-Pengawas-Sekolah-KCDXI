@@ -95,19 +95,31 @@ function generateMonthlyPDF(data) {
   doc.setFont("helvetica", "bold");
   doc.setTextColor(41, 128, 185);
   doc.text("INFORMASI UMUM", 20, yPos);
+  const infoBoxHeight = data.userNip ? 35 : 25;
   doc.setFillColor(240, 248, 255);
-  doc.roundedRect(20, yPos + 5, 170, 25, 2, 2, "F");
+  doc.roundedRect(20, yPos + 5, 170, infoBoxHeight, 2, 2, "F");
   doc.setFontSize(11);
   doc.setTextColor(60, 60, 60);
   doc.setFont("helvetica", "bold");
   doc.text("Nama Pengawas:", 25, yPos + 13);
   doc.setFont("helvetica", "normal");
-  doc.text(data.userName, 70, yPos + 13);
-  doc.setFont("helvetica", "bold");
-  doc.text("Periode Laporan:", 25, yPos + 22);
-  doc.setFont("helvetica", "normal");
-  doc.text(data.period, 70, yPos + 22);
-  yPos += 40;
+  doc.text(data.userName, 85, yPos + 13);
+  if (data.userNip) {
+    doc.setFont("helvetica", "bold");
+    doc.text("NIP:", 25, yPos + 22);
+    doc.setFont("helvetica", "normal");
+    doc.text(data.userNip, 85, yPos + 22);
+    doc.setFont("helvetica", "bold");
+    doc.text("Periode Laporan:", 25, yPos + 31);
+    doc.setFont("helvetica", "normal");
+    doc.text(data.period, 85, yPos + 31);
+  } else {
+    doc.setFont("helvetica", "bold");
+    doc.text("Periode Laporan:", 25, yPos + 22);
+    doc.setFont("helvetica", "normal");
+    doc.text(data.period, 85, yPos + 22);
+  }
+  yPos += data.userNip ? 50 : 40;
   doc.setFontSize(14);
   doc.setFont("helvetica", "bold");
   doc.setTextColor(41, 128, 185);
@@ -203,7 +215,6 @@ function generateMonthlyPDF(data) {
     console.log(`[PDF] Valid photos: ${validPhotos.length} out of ${data.photos.length}`);
     if (validPhotos.length === 0) {
       console.error("[PDF] No valid photos to display");
-      return;
     }
     const photosToShow = validPhotos.slice(0, 6);
     const photoWidth = 80;
@@ -257,19 +268,31 @@ function generateYearlyPDF(data) {
   doc.setFont("helvetica", "bold");
   doc.setTextColor(41, 128, 185);
   doc.text("INFORMASI UMUM", 20, yPos);
+  const infoBoxHeight = data.userNip ? 35 : 25;
   doc.setFillColor(240, 248, 255);
-  doc.roundedRect(20, yPos + 5, 170, 25, 2, 2, "F");
+  doc.roundedRect(20, yPos + 5, 170, infoBoxHeight, 2, 2, "F");
   doc.setFontSize(11);
   doc.setTextColor(60, 60, 60);
   doc.setFont("helvetica", "bold");
   doc.text("Nama Pengawas:", 25, yPos + 13);
   doc.setFont("helvetica", "normal");
-  doc.text(data.userName, 70, yPos + 13);
-  doc.setFont("helvetica", "bold");
-  doc.text("Tahun Laporan:", 25, yPos + 22);
-  doc.setFont("helvetica", "normal");
-  doc.text(data.year, 70, yPos + 22);
-  yPos += 40;
+  doc.text(data.userName, 85, yPos + 13);
+  if (data.userNip) {
+    doc.setFont("helvetica", "bold");
+    doc.text("NIP:", 25, yPos + 22);
+    doc.setFont("helvetica", "normal");
+    doc.text(data.userNip, 85, yPos + 22);
+    doc.setFont("helvetica", "bold");
+    doc.text("Tahun Laporan:", 25, yPos + 31);
+    doc.setFont("helvetica", "normal");
+    doc.text(data.year, 85, yPos + 31);
+  } else {
+    doc.setFont("helvetica", "bold");
+    doc.text("Tahun Laporan:", 25, yPos + 22);
+    doc.setFont("helvetica", "normal");
+    doc.text(data.year, 85, yPos + 22);
+  }
+  yPos += data.userNip ? 50 : 40;
   doc.setFontSize(14);
   doc.setFont("helvetica", "bold");
   doc.setTextColor(41, 128, 185);
@@ -353,7 +376,7 @@ function generateYearlyPDF(data) {
   highlights.forEach((highlight, index) => {
     const x = startX + index * (boxWidth + spacing);
     doc.setFillColor(highlight.color[0], highlight.color[1], highlight.color[2]);
-    doc.roundedRect(x, yPos, boxWidth, boxHeight, 2, 2, "F");
+    doc.roundedRect(x, yPos, boxWidth, infoBoxHeight, 2, 2, "F");
     doc.setTextColor(255, 255, 255);
     doc.setFontSize(18);
     doc.setFont("helvetica", "bold");
@@ -380,6 +403,61 @@ function generateYearlyPDF(data) {
     doc.text(line, 20, yPos);
     yPos += 6;
   });
+  if (data.photos && data.photos.length > 0) {
+    console.log(`[PDF] Adding ${data.photos.length} photos to yearly PDF`);
+    const validPhotos = data.photos.filter((photo) => {
+      if (!photo || typeof photo !== "string") {
+        console.error("[PDF] Invalid photo: not a string");
+        return false;
+      }
+      if (!photo.startsWith("data:image/")) {
+        console.error("[PDF] Invalid photo: missing data:image/ prefix");
+        return false;
+      }
+      return true;
+    });
+    console.log(`[PDF] Valid photos: ${validPhotos.length} out of ${data.photos.length}`);
+    if (validPhotos.length > 0) {
+      const photosToShow = validPhotos.slice(0, 6);
+      const photoWidth = 80;
+      const photoHeight = 60;
+      const spacing2 = 10;
+      const rows = Math.ceil(photosToShow.length / 2);
+      const totalPhotoHeight = rows * photoHeight + (rows - 1) * spacing2 + 40;
+      if (yPos + totalPhotoHeight > 270) {
+        doc.addPage();
+        addHeader(doc, "LAPORAN TAHUNAN", 3);
+        yPos = 45;
+      } else {
+        yPos += 15;
+      }
+      doc.setFontSize(14);
+      doc.setFont("helvetica", "bold");
+      doc.setTextColor(41, 128, 185);
+      doc.text("BUKTI KEGIATAN TAHUNAN", 20, yPos);
+      yPos += 10;
+      const startX2 = 20;
+      photosToShow.forEach((photo, index) => {
+        const col = index % 2;
+        const row = Math.floor(index / 2);
+        const x = startX2 + col * (photoWidth + spacing2);
+        const y = yPos + row * (photoHeight + spacing2);
+        try {
+          console.log(`[PDF] Adding yearly photo ${index + 1} at position (${x}, ${y})`);
+          doc.addImage(photo, "JPEG", x, y, photoWidth, photoHeight);
+          doc.setFontSize(8);
+          doc.setTextColor(100, 100, 100);
+          doc.text(`Foto ${index + 1}`, x + photoWidth / 2, y + photoHeight + 5, { align: "center" });
+          console.log(`[PDF] Successfully added yearly photo ${index + 1}`);
+        } catch (error) {
+          console.error(`[PDF] Error adding yearly photo ${index + 1}:`, error);
+          console.error(`[PDF] Photo prefix: ${photo?.substring(0, 50)}`);
+        }
+      });
+    }
+  } else {
+    console.log("[PDF] No photos provided for yearly PDF generation");
+  }
   addFooter(doc);
   return Buffer.from(doc.output("arraybuffer"));
 }
@@ -1006,7 +1084,7 @@ var LocalStorage = class {
   }
 };
 var localStorage = new LocalStorage();
-var isLocalStorageEnabled = false;
+var isLocalStorageEnabled = !process.env.DATABASE_URL || process.env.DATABASE_URL.includes("example");
 
 // server/auth.ts
 import bcrypt from "bcryptjs";
@@ -1734,6 +1812,7 @@ async function registerRoutes(app2) {
       }
       const pdfBuffer = generateMonthlyPDF2({
         userName: user?.fullName || "Pengawas",
+        userNip: user?.nip || void 0,
         period: `${monthNames[month - 1]} ${year}`,
         ...stats,
         photos: photos.length > 0 ? photos : void 0
@@ -1751,10 +1830,50 @@ async function registerRoutes(app2) {
       const year = parseInt(req.query.year);
       const user = await db2.getUser(req.user.userId);
       const stats = await db2.getYearlyStats(req.user.userId, year);
+      const startDate = new Date(year, 0, 1);
+      const endDate = new Date(year, 11, 31, 23, 59, 59);
+      const photos = [];
+      const supervisions2 = await db2.getSupervisions(req.user.userId);
+      supervisions2.filter((s) => {
+        const date = new Date(s.date);
+        return date >= startDate && date <= endDate && (s.photo1 || s.photo2);
+      }).forEach((s) => {
+        if (s.photo1 && photos.length < 6) photos.push(s.photo1);
+        if (s.photo2 && photos.length < 6) photos.push(s.photo2);
+      });
+      if (photos.length < 6) {
+        const tasks2 = await db2.getTasks(req.user.userId);
+        tasks2.filter((t) => {
+          const date = new Date(t.date);
+          return date >= startDate && date <= endDate && (t.photo1 || t.photo2);
+        }).forEach((t) => {
+          if (t.photo1 && photos.length < 6) photos.push(t.photo1);
+          if (t.photo2 && photos.length < 6) photos.push(t.photo2);
+        });
+      }
+      if (photos.length < 6) {
+        const additionalTasks2 = await db2.getAdditionalTasks(req.user.userId);
+        additionalTasks2.filter((t) => {
+          const date = new Date(t.date);
+          return date >= startDate && date <= endDate && (t.photo1 || t.photo2);
+        }).forEach((t) => {
+          if (t.photo1 && photos.length < 6) photos.push(t.photo1);
+          if (t.photo2 && photos.length < 6) photos.push(t.photo2);
+        });
+      }
+      console.log(`[ROUTES] Found ${photos.length} photos for yearly report ${year}`);
+      if (photos.length > 0) {
+        console.log("[ROUTES] Photo samples for yearly:", photos.map((p) => p.substring(0, 50) + "..."));
+        console.log("[ROUTES] Passing photos to yearly PDF generator...");
+      } else {
+        console.log("[ROUTES] WARNING: No photos found for yearly report!");
+      }
       const pdfBuffer = generateYearlyPDF2({
         userName: user?.fullName || "Pengawas",
+        userNip: user?.nip || void 0,
         year: year.toString(),
-        ...stats
+        ...stats,
+        photos: photos.length > 0 ? photos : void 0
       });
       res.setHeader("Content-Type", "application/pdf");
       res.setHeader("Content-Disposition", `attachment; filename=laporan-tahunan-${year}.pdf`);

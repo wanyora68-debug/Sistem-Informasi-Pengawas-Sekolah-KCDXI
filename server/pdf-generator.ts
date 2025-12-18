@@ -3,6 +3,7 @@ import autoTable from "jspdf-autotable";
 
 export interface MonthlyReportData {
   userName: string;
+  userNip?: string; // NIP pengawas
   period: string;
   totalTasks: number;
   completedTasks: number;
@@ -13,12 +14,14 @@ export interface MonthlyReportData {
 
 export interface YearlyReportData {
   userName: string;
+  userNip?: string; // NIP pengawas
   year: string;
   totalSupervisions: number;
   totalTasks: number;
   completedTasks: number;
   schools: number;
   completionRate: number;
+  photos?: string[]; // Array of base64 photo strings (max 6)
 }
 
 // Helper function to add header
@@ -144,24 +147,38 @@ export function generateMonthlyPDF(data: MonthlyReportData): Buffer {
   doc.setTextColor(41, 128, 185);
   doc.text("INFORMASI UMUM", 20, yPos);
   
-  // Info box
+  // Info box - adjust height based on NIP availability
+  const infoBoxHeight = data.userNip ? 35 : 25;
   doc.setFillColor(240, 248, 255);
-  doc.roundedRect(20, yPos + 5, 170, 25, 2, 2, 'F');
+  doc.roundedRect(20, yPos + 5, 170, infoBoxHeight, 2, 2, 'F');
   
   doc.setFontSize(11);
   doc.setTextColor(60, 60, 60);
   doc.setFont("helvetica", "bold");
   doc.text("Nama Pengawas:", 25, yPos + 13);
   doc.setFont("helvetica", "normal");
-  doc.text(data.userName, 70, yPos + 13);
+  doc.text(data.userName, 85, yPos + 13);
   
-  doc.setFont("helvetica", "bold");
-  doc.text("Periode Laporan:", 25, yPos + 22);
-  doc.setFont("helvetica", "normal");
-  doc.text(data.period, 70, yPos + 22);
+  // Add NIP if available
+  if (data.userNip) {
+    doc.setFont("helvetica", "bold");
+    doc.text("NIP:", 25, yPos + 22);
+    doc.setFont("helvetica", "normal");
+    doc.text(data.userNip, 85, yPos + 22);
+    
+    doc.setFont("helvetica", "bold");
+    doc.text("Periode Laporan:", 25, yPos + 31);
+    doc.setFont("helvetica", "normal");
+    doc.text(data.period, 85, yPos + 31);
+  } else {
+    doc.setFont("helvetica", "bold");
+    doc.text("Periode Laporan:", 25, yPos + 22);
+    doc.setFont("helvetica", "normal");
+    doc.text(data.period, 85, yPos + 22);
+  }
   
   // Section: Ringkasan Kegiatan
-  yPos += 40;
+  yPos += data.userNip ? 50 : 40;
   doc.setFontSize(14);
   doc.setFont("helvetica", "bold");
   doc.setTextColor(41, 128, 185);
@@ -280,7 +297,7 @@ export function generateMonthlyPDF(data: MonthlyReportData): Buffer {
     
     if (validPhotos.length === 0) {
       console.error('[PDF] No valid photos to display');
-      return;
+      // Continue without photos
     }
     
     // Calculate space needed for photos
@@ -357,24 +374,38 @@ export function generateYearlyPDF(data: YearlyReportData): Buffer {
   doc.setTextColor(41, 128, 185);
   doc.text("INFORMASI UMUM", 20, yPos);
   
-  // Info box
+  // Info box - adjust height based on NIP availability
+  const infoBoxHeight = data.userNip ? 35 : 25;
   doc.setFillColor(240, 248, 255);
-  doc.roundedRect(20, yPos + 5, 170, 25, 2, 2, 'F');
+  doc.roundedRect(20, yPos + 5, 170, infoBoxHeight, 2, 2, 'F');
   
   doc.setFontSize(11);
   doc.setTextColor(60, 60, 60);
   doc.setFont("helvetica", "bold");
   doc.text("Nama Pengawas:", 25, yPos + 13);
   doc.setFont("helvetica", "normal");
-  doc.text(data.userName, 70, yPos + 13);
+  doc.text(data.userName, 85, yPos + 13);
   
-  doc.setFont("helvetica", "bold");
-  doc.text("Tahun Laporan:", 25, yPos + 22);
-  doc.setFont("helvetica", "normal");
-  doc.text(data.year, 70, yPos + 22);
+  // Add NIP if available
+  if (data.userNip) {
+    doc.setFont("helvetica", "bold");
+    doc.text("NIP:", 25, yPos + 22);
+    doc.setFont("helvetica", "normal");
+    doc.text(data.userNip, 85, yPos + 22);
+    
+    doc.setFont("helvetica", "bold");
+    doc.text("Tahun Laporan:", 25, yPos + 31);
+    doc.setFont("helvetica", "normal");
+    doc.text(data.year, 85, yPos + 31);
+  } else {
+    doc.setFont("helvetica", "bold");
+    doc.text("Tahun Laporan:", 25, yPos + 22);
+    doc.setFont("helvetica", "normal");
+    doc.text(data.year, 85, yPos + 22);
+  }
   
   // Section: Ringkasan Tahunan
-  yPos += 40;
+  yPos += data.userNip ? 50 : 40;
   doc.setFontSize(14);
   doc.setFont("helvetica", "bold");
   doc.setTextColor(41, 128, 185);
@@ -478,7 +509,7 @@ export function generateYearlyPDF(data: YearlyReportData): Buffer {
     const x = startX + (index * (boxWidth + spacing));
     
     doc.setFillColor(highlight.color[0], highlight.color[1], highlight.color[2]);
-    doc.roundedRect(x, yPos, boxWidth, boxHeight, 2, 2, 'F');
+    doc.roundedRect(x, yPos, boxWidth, infoBoxHeight, 2, 2, 'F');
     
     doc.setTextColor(255, 255, 255);
     doc.setFontSize(18);
@@ -511,6 +542,78 @@ export function generateYearlyPDF(data: YearlyReportData): Buffer {
     doc.text(line, 20, yPos);
     yPos += 6;
   });
+  
+  // Photos section (if available)
+  if (data.photos && data.photos.length > 0) {
+    console.log(`[PDF] Adding ${data.photos.length} photos to yearly PDF`);
+    
+    // Validate and filter photos
+    const validPhotos = data.photos.filter(photo => {
+      if (!photo || typeof photo !== 'string') {
+        console.error('[PDF] Invalid photo: not a string');
+        return false;
+      }
+      if (!photo.startsWith('data:image/')) {
+        console.error('[PDF] Invalid photo: missing data:image/ prefix');
+        return false;
+      }
+      return true;
+    });
+    
+    console.log(`[PDF] Valid photos: ${validPhotos.length} out of ${data.photos.length}`);
+    
+    if (validPhotos.length > 0) {
+      // Calculate space needed for photos
+      const photosToShow = validPhotos.slice(0, 6);
+      const photoWidth = 80;
+      const photoHeight = 60;
+      const spacing = 10;
+      const rows = Math.ceil(photosToShow.length / 2);
+      const totalPhotoHeight = (rows * photoHeight) + ((rows - 1) * spacing) + 40; // +40 for title and spacing
+      
+      // Check if we need a new page (more conservative check)
+      if (yPos + totalPhotoHeight > 270) {
+        doc.addPage();
+        addHeader(doc, "LAPORAN TAHUNAN", 3);
+        yPos = 45;
+      } else {
+        yPos += 15;
+      }
+      
+      doc.setFontSize(14);
+      doc.setFont("helvetica", "bold");
+      doc.setTextColor(41, 128, 185);
+      doc.text("BUKTI KEGIATAN TAHUNAN", 20, yPos);
+      
+      yPos += 10;
+      
+      // Display photos in grid (2 columns, max 6 photos)
+      const startX = 20;
+      
+      photosToShow.forEach((photo, index) => {
+        const col = index % 2;
+        const row = Math.floor(index / 2);
+        const x = startX + (col * (photoWidth + spacing));
+        const y = yPos + (row * (photoHeight + spacing));
+        
+        try {
+          console.log(`[PDF] Adding yearly photo ${index + 1} at position (${x}, ${y})`);
+          doc.addImage(photo, 'JPEG', x, y, photoWidth, photoHeight);
+          
+          // Add photo number
+          doc.setFontSize(8);
+          doc.setTextColor(100, 100, 100);
+          doc.text(`Foto ${index + 1}`, x + photoWidth / 2, y + photoHeight + 5, { align: "center" });
+          console.log(`[PDF] Successfully added yearly photo ${index + 1}`);
+        } catch (error) {
+          console.error(`[PDF] Error adding yearly photo ${index + 1}:`, error);
+          console.error(`[PDF] Photo prefix: ${photo?.substring(0, 50)}`);
+        }
+      });
+    }
+  } else {
+    console.log('[PDF] No photos provided for yearly PDF generation');
+  }
   
   // Footer
   addFooter(doc);
