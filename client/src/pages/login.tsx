@@ -38,7 +38,10 @@ export default function LoginPage() {
         { username: 'admin', password: 'admin123' },
         { username: 'admin', password: 'admin' },
         { username: 'wawan', password: 'admin' },
-        { username: 'wawan', password: 'wawan' }
+        { username: 'wawan', password: 'wawan' },
+        { username: 'wawan', password: '123456' },
+        { username: 'wawan', password: 'password' },
+        { username: 'wawan', password: 'admin123' }
       ];
 
       const isValid = validCredentials.some(cred => 
