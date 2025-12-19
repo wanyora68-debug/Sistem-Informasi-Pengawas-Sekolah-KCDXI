@@ -9,6 +9,8 @@ import { Plus, Trash2, MapPin, Phone, School as SchoolIcon } from "lucide-react"
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
+import { response } from "express";
+import { response } from "express";
 
 type School = {
   id: string;
@@ -30,11 +32,15 @@ export default function SchoolsPage() {
       try {
         if (typeof window !== 'undefined' && window.localStorage) {
           const schoolsData = localStorage.getItem('schools_data');
+          console.log('Reading schools from localStorage:', schoolsData);
           if (schoolsData) {
             const parsed = JSON.parse(schoolsData);
-            return Array.isArray(parsed) ? parsed : [];
+            const result = Array.isArray(parsed) ? parsed : [];
+            console.log('Parsed schools data:', result);
+            return result;
           }
         }
+        console.log('No schools data found, returning empty array');
         return [];
       } catch (error) {
         console.warn('Error reading schools from localStorage:', error);
@@ -65,7 +71,12 @@ export default function SchoolsPage() {
       return newSchoolData;
     },
     onSuccess: () => {
+      // Force refresh the query
       queryClient.invalidateQueries({ queryKey: ["/api/schools"] });
+      queryClient.refetchQueries({ queryKey: ["/api/schools"] });
+      
+      console.log('School saved, current localStorage data:', localStorage.getItem('schools_data'));
+      
       toast({
         title: "Berhasil",
         description: "Sekolah berhasil ditambahkan",
