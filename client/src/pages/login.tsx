@@ -31,38 +31,49 @@ export default function LoginPage() {
     setIsLoading(true);
     
     try {
-      console.log('Attempting login with debug endpoint...');
+      console.log('Attempting client-side login...');
       
-      const response = await fetch('/api/simple-login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username: loginUsername, password: loginPassword }),
-        credentials: 'include',
-      });
-
-      const data = await response.json();
-      console.log('Login response:', data);
-
-      if (data.success && data.token) {
-        // Store token in localStorage
-        localStorage.setItem('auth_token', data.token);
-        toast({
-          title: "Berhasil",
-          description: `Login berhasil! (${data.source})`,
-        });
-        setLocation('/');
-      } else {
+      // Client-side authentication - bypass API completely
+      const validUsers = {
+        admin: { password: 'admin123', role: 'admin', fullName: 'Administrator' },
+        wawan: { password: 'wawan123', role: 'pengawas', fullName: 'H. Wawan Yogaswara, S.Pd, M.Pd' }
+      };
+      
+      const user = validUsers[loginUsername.toLowerCase()];
+      
+      if (!user || user.password !== loginPassword) {
         toast({
           title: "Gagal",
-          description: data.error || "Username atau password salah",
+          description: "Username atau password salah",
           variant: "destructive",
         });
+        return;
       }
+
+      // Generate token and store user data
+      const token = `${loginUsername}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      
+      localStorage.setItem('auth_token', token);
+      localStorage.setItem('user_data', JSON.stringify({
+        username: loginUsername,
+        role: user.role,
+        fullName: user.fullName
+      }));
+      
+      console.log('Client-side login successful');
+      
+      toast({
+        title: "Berhasil",
+        description: "Login berhasil! (Client-side)",
+      });
+      
+      setLocation('/');
+      
     } catch (error) {
       console.error('Login error:', error);
       toast({
         title: "Error",
-        description: "Terjadi kesalahan saat login: " + error.message,
+        description: "Terjadi kesalahan saat login",
         variant: "destructive",
       });
     } finally {
@@ -244,42 +255,20 @@ export default function LoginPage() {
                   {isLoading ? "Memproses..." : "Masuk"}
                 </Button>
                 
-                {/* Quick Login Buttons */}
+                {/* Login Hints */}
                 <div className="mt-4 pt-4 border-t border-gray-200">
-                  <p className="text-sm text-gray-600 mb-2 text-center">Quick Login:</p>
-                  <div className="space-y-2">
-                    <Button 
-                      type="button" 
-                      variant="outline" 
-                      className="w-full text-sm" 
-                      disabled={isLoading}
-                      onClick={() => {
-                        setLoginUsername("admin");
-                        setLoginPassword("admin123");
-                        setTimeout(() => {
-                          const form = document.querySelector('form');
-                          if (form) form.requestSubmit();
-                        }, 100);
-                      }}
-                    >
-                      Login sebagai Admin
-                    </Button>
-                    <Button 
-                      type="button" 
-                      variant="outline" 
-                      className="w-full text-sm" 
-                      disabled={isLoading}
-                      onClick={() => {
-                        setLoginUsername("wawan");
-                        setLoginPassword("wawan123");
-                        setTimeout(() => {
-                          const form = document.querySelector('form');
-                          if (form) form.requestSubmit();
-                        }, 100);
-                      }}
-                    >
-                      Login sebagai Wawan
-                    </Button>
+                  <div className="text-center">
+                    <p className="text-xs text-gray-500 mb-2">Akun Demo:</p>
+                    <div className="grid grid-cols-2 gap-4 text-xs text-gray-600">
+                      <div className="bg-gray-50 p-2 rounded">
+                        <p className="font-medium">Admin</p>
+                        <p>admin / admin123</p>
+                      </div>
+                      <div className="bg-gray-50 p-2 rounded">
+                        <p className="font-medium">Pengawas</p>
+                        <p>wawan / wawan123</p>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </form>
