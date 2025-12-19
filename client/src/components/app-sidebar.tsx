@@ -72,23 +72,22 @@ export function AppSidebar() {
   const [location, setLocation] = useLocation();
   const { toast } = useToast();
 
-  // Fetch current user to check role
-  const { data: currentUser } = useQuery({
-    queryKey: ["/api/auth/me"],
-    queryFn: async () => {
-      const token = localStorage.getItem('auth_token');
-      const response = await fetch('/api/auth/me', {
-        headers: { 'Authorization': `Bearer ${token}` },
-        credentials: 'include',
-      });
-      if (!response.ok) return null;
-      return response.json();
-    },
-  });
+  // Get current user from localStorage (client-side auth)
+  const getCurrentUser = () => {
+    try {
+      const userData = localStorage.getItem('user_data');
+      return userData ? JSON.parse(userData) : null;
+    } catch {
+      return null;
+    }
+  };
+
+  const currentUser = getCurrentUser();
 
   const handleLogout = () => {
-    // Clear auth token
+    // Clear auth data
     localStorage.removeItem('auth_token');
+    localStorage.removeItem('user_data');
     
     // Show toast notification
     toast({

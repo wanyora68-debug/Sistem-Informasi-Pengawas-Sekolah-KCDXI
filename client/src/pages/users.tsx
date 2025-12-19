@@ -1,5 +1,4 @@
-import { useState } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -8,9 +7,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Trash2, Shield, User as UserIcon, Activity } from "lucide-react";
+import { Plus, Trash2, Shield, User as UserIcon } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { UserActivitiesDialog } from "@/components/user-activities-dialog";
 
 type User = {
   id: string;
@@ -24,10 +22,9 @@ type User = {
 };
 
 export default function UsersPage() {
-  const queryClient = useQueryClient();
   const { toast } = useToast();
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
-  const [selectedUserForActivities, setSelectedUserForActivities] = useState<{ id: string; name: string } | null>(null);
+  const [users, setUsers] = useState<User[]>([]);
   const [newUser, setNewUser] = useState({
     username: "",
     password: "",
@@ -38,88 +35,65 @@ export default function UsersPage() {
     phone: "",
   });
 
-  // Fetch current user to check if admin
-  const { data: currentUser } = useQuery({
-    queryKey: ["/api/auth/me"],
-    queryFn: async () => {
-      const token = localStorage.getItem('auth_token');
-      const response = await fetch('/api/auth/me', {
-        headers: { 'Authorization': `Bearer ${token}` },
-        credentials: 'include',
-      });
-      if (!response.ok) throw new Error('Failed to fetch user');
-      return response.json();
-    },
-  });
+  // Get current user from localStorage
+  const getCurrentUser = () => {
+    try {
+      const userData = localStorage.getItem('user_data');
+      return userData ? JSON.parse(userData) : null;
+    } catch {
+      return null;
+    }
+  };
 
-  // Fetch all users (admin only)
-  const { data: users = [], isLoading } = useQuery<User[]>({
-    queryKey: ["/api/admin/users"],
-    queryFn: async () => {
-      const token = localStorage.getItem('auth_token');
-      const response = await fetch('/api/admin/users', {
-        headers: { 'Authorization': `Bearer ${token}` },
-        credentials: 'include',
-      });
-      if (!response.ok) throw new Error('Failed to fetch users');
-      return response.json();
-    },
-    enabled: currentUser?.role === 'admin',
-  });
+  const currentUser = getCurrentUser();
 
-  // Create user mutation
-  const createUserMutation = useMutation({
-    mutationFn: async (userData: typeof newUser) => {
-      const token = localStorage.getItem('auth_token');
-      const response = await fetch('/api/admin/users', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-        body: JSON.stringify(userData),
-      });
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || 'Failed to create user');
+  // Load users from localStorage
+  useEffect(() => {
+    const loadUsers = () => {
+      try {
+        const usersData = localStorage.getItem('app_users');
+        if (usersData) {
+          setUsers(JSON.parse(usersData));
+        } else {
+          // Default users if none exist
+          const defaultUsers: User[] = [
+            {
+              id: '1',
+              username: 'admin',
+              fullName: 'Administrator',
+              role: 'admin',
+              nip: '',
+              rank: '',
+              phone: '',
+              createdAt: new Date().toISOString()
+            },
+            {
+              id: '2',
+              username: 'wawan',
+              fullName: 'H. Wawan Yogaswara, S.Pd, M.Pd',
+              role: 'pengawas',
+              nip: '196805301994121001',
+              rank: 'Pembina Utama Muda, IV/c',
+              phone: '087733438282',
+              createdAt: new Date().toISOString()
+            }
+          ];
+          setUsers(defaultUsers);
+          localStorage.setItem('app_users', JSON.stringify(defaultUsers));
+        }
+      } catch (error) {
+        console.error('Error loading users:', error);
       }
-      return response.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/admin/users"] });
-      toast({ title: "Berhasil", description: "User berhasil ditambahkan" });
-      setNewUser({ username: "", password: "", fullName: "", role: "pengawas", nip: "", rank: "", phone: "" });
-      setIsAddDialogOpen(false);
-    },
-    onError: (error: Error) => {
-      toast({ title: "Gagal", description: error.message, variant: "destructive" });
-    },
-  });
+    };
 
-  // Delete user mutation
-  const deleteUserMutation = useMutation({
-    mutationFn: async (userId: string) => {
-      const token = localStorage.getItem('auth_token');
-      const response = await fetch(`/api/admin/users/${userId}`, {
-        method: 'DELETE',
-        headers: { 'Authorization': `Bearer ${token}` },
-        credentials: 'include',
-      });
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || 'Failed to delete user');
-      }
-      return response.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/admin/users"] });
-      toast({ title: "Berhasil", description: "User berhasil dihapus" });
-    },
-    onError: (error: Error) => {
-      toast({ title: "Gagal", description: error.message, variant: "destructive" });
-    },
-  });
+    loadUsers();
+  }, []);
+
+  // Save users to localStorage
+  const saveUsers = (updatedUsers: User[]) => {
+    setUsers(updatedUsers);
+    localStorage.setItem('app_users', JSON.stringify(updatedUsers));
+  };
 
   const handleAddUser = () => {
     if (!newUser.username || !newUser.password || !newUser.fullName) {
@@ -130,7 +104,46 @@ export default function UsersPage() {
       });
       return;
     }
-    createUserMutation.mutate(newUser);
+
+    // Check if username already exists
+    if (users.some(user => user.username === newUser.username)) {
+      toast({
+        title: "Error",
+        description: "Username sudah digunakan",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const user: User = {
+      id: Date.now().toString(),
+      username: newUser.username,
+      fullName: newUser.fullName,
+      role: newUser.role,
+      nip: newUser.nip,
+      rank: newUser.rank,
+      phone: newUser.phone,
+      createdAt: new Date().toISOString()
+    };
+
+    const updatedUsers = [...users, user];
+    saveUsers(updatedUsers);
+
+    toast({
+      title: "Berhasil",
+      description: "User berhasil ditambahkan",
+    });
+
+    setNewUser({
+      username: "",
+      password: "",
+      fullName: "",
+      role: "pengawas",
+      nip: "",
+      rank: "",
+      phone: "",
+    });
+    setIsAddDialogOpen(false);
   };
 
   const handleDeleteUser = (userId: string, username: string) => {
@@ -142,7 +155,14 @@ export default function UsersPage() {
       });
       return;
     }
-    deleteUserMutation.mutate(userId);
+
+    const updatedUsers = users.filter(user => user.id !== userId);
+    saveUsers(updatedUsers);
+
+    toast({
+      title: "Berhasil",
+      description: "User berhasil dihapus",
+    });
   };
 
   if (currentUser?.role !== 'admin') {
@@ -159,14 +179,6 @@ export default function UsersPage() {
             </div>
           </CardContent>
         </Card>
-      </div>
-    );
-  }
-
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <p className="text-muted-foreground">Memuat data...</p>
       </div>
     );
   }
@@ -269,8 +281,8 @@ export default function UsersPage() {
                 <Button variant="outline" onClick={() => setIsAddDialogOpen(false)}>
                   Batal
                 </Button>
-                <Button onClick={handleAddUser} disabled={createUserMutation.isPending}>
-                  {createUserMutation.isPending ? "Menyimpan..." : "Simpan User"}
+                <Button onClick={handleAddUser}>
+                  Simpan User
                 </Button>
               </div>
             </div>
@@ -302,14 +314,6 @@ export default function UsersPage() {
                   </div>
                 </div>
                 <div className="flex gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setSelectedUserForActivities({ id: user.id, name: user.fullName })}
-                  >
-                    <Activity className="h-4 w-4 mr-1" />
-                    Aktivitas
-                  </Button>
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
                       <Button
@@ -383,16 +387,6 @@ export default function UsersPage() {
             </div>
           </CardContent>
         </Card>
-      )}
-
-      {/* User Activities Dialog */}
-      {selectedUserForActivities && (
-        <UserActivitiesDialog
-          userId={selectedUserForActivities.id}
-          userName={selectedUserForActivities.name}
-          open={!!selectedUserForActivities}
-          onOpenChange={(open) => !open && setSelectedUserForActivities(null)}
-        />
       )}
     </div>
   );
