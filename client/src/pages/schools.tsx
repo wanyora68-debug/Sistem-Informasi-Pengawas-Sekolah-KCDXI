@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -26,38 +26,25 @@ export default function SchoolsPage() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   
-  // Use simple useState instead of React Query
-  const [schools, setSchools] = useState<School[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  
-  // Load schools from localStorage on component mount
-  useEffect(() => {
-    const loadSchools = () => {
-      console.log('🔍 Loading schools from localStorage...');
+  // EXACT COPY FROM TASKS.TSX - Use React Query with localStorage
+  const { data: schools = [], isLoading } = useQuery<School[]>({
+    queryKey: ['schools'],
+    queryFn: () => {
       try {
         if (typeof window !== 'undefined' && window.localStorage) {
           const schoolsData = localStorage.getItem('schools_data');
-          console.log('📊 Reading schools from localStorage:', schoolsData);
           if (schoolsData) {
             const parsed = JSON.parse(schoolsData);
-            const result = Array.isArray(parsed) ? parsed : [];
-            console.log('✅ Parsed schools data:', result);
-            setSchools(result);
-          } else {
-            console.log('⚠️ No schools data found, setting empty array');
-            setSchools([]);
+            return Array.isArray(parsed) ? parsed : [];
           }
         }
+        return [];
       } catch (error) {
-        console.error('❌ Error reading schools from localStorage:', error);
-        setSchools([]);
-      } finally {
-        setIsLoading(false);
+        console.warn('Error reading schools from localStorage:', error);
+        return [];
       }
-    };
-    
-    loadSchools();
-  }, []);
+    },
+  });
 
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [newSchool, setNewSchool] = useState({ name: "", address: "", contact: "", principalName: "", principalNip: "" });
@@ -80,21 +67,14 @@ export default function SchoolsPage() {
       
       return newSchoolData;
     },
-    onSuccess: (newSchoolData) => {
-      console.log('🎉 School saved successfully!');
-      console.log('💾 Current localStorage data:', localStorage.getItem('schools_data'));
-      
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['schools'] });
       toast({
         title: "Berhasil",
         description: "Sekolah berhasil ditambahkan",
       });
       setNewSchool({ name: "", address: "", contact: "", principalName: "", principalNip: "" });
       setIsAddDialogOpen(false);
-      
-      // Force page reload to show new data
-      setTimeout(() => {
-        window.location.reload();
-      }, 1000);
     },
     onError: () => {
       toast({
@@ -117,10 +97,8 @@ export default function SchoolsPage() {
       return { success: true };
       return response.json();
     },
-    onSuccess: (_, deletedId) => {
-      // Update state directly
-      setSchools(prevSchools => prevSchools.filter(school => school.id !== deletedId));
-      
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['schools'] });
       toast({
         title: "Berhasil",
         description: "Sekolah berhasil dihapus",
