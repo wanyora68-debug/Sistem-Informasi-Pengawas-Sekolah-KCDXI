@@ -141,23 +141,59 @@ export default function TasksPage() {
   const handleAddTask = async () => {
     try {
       console.log('Submitting task:', newTask);
-      const formData = new FormData();
-      formData.append('title', newTask.title);
-      formData.append('category', newTask.category);
-      formData.append('description', newTask.description);
-      formData.append('completed', newTask.completed.toString());
-      formData.append('date', new Date().toISOString().split('T')[0]);
+      
+      // Direct localStorage save (bypass API completely for now)
+      const tasksData = localStorage.getItem('tasks_data');
+      const currentTasks = tasksData ? JSON.parse(tasksData) : [];
+      
+      // Convert photos to base64 if they exist
+      let photo1Base64 = null;
+      let photo2Base64 = null;
       
       if (photo1) {
-        console.log('Adding photo1:', photo1.name);
-        formData.append('photo1', photo1);
+        photo1Base64 = await new Promise<string>((resolve) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result as string);
+          reader.readAsDataURL(photo1);
+        });
       }
+      
       if (photo2) {
-        console.log('Adding photo2:', photo2.name);
-        formData.append('photo2', photo2);
+        photo2Base64 = await new Promise<string>((resolve) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result as string);
+          reader.readAsDataURL(photo2);
+        });
       }
-
-      createTaskMutation.mutate(formData);
+      
+      const newTaskData = {
+        id: Date.now().toString(),
+        title: newTask.title,
+        category: newTask.category,
+        description: newTask.description,
+        completed: newTask.completed,
+        date: new Date().toISOString().split('T')[0],
+        photo1: photo1Base64,
+        photo2: photo2Base64,
+        createdAt: new Date().toISOString()
+      };
+      
+      const updatedTasks = [...currentTasks, newTaskData];
+      localStorage.setItem('tasks_data', JSON.stringify(updatedTasks));
+      
+      // Trigger success manually
+      queryClient.invalidateQueries({ queryKey: ['tasks'] });
+      toast({
+        title: "Berhasil",
+        description: "Tugas berhasil ditambahkan",
+      });
+      setNewTask({ title: "", category: "Perencanaan", description: "", completed: false });
+      setPhoto1(null);
+      setPhoto2(null);
+      setPhoto1Preview(null);
+      setPhoto2Preview(null);
+      setIsAddDialogOpen(false);
+      
     } catch (error) {
       console.error('Error in handleAddTask:', error);
       toast({

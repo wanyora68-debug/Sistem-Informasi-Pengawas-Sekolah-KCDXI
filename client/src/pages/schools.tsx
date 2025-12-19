@@ -54,26 +54,7 @@ export default function SchoolsPage() {
 
   const createSchoolMutation = useMutation({
     mutationFn: async (school: typeof newSchool) => {
-      // Try API first, fallback to localStorage
-      try {
-        const token = localStorage.getItem('auth_token');
-        const response = await fetch("/api/schools", {
-          method: "POST",
-          headers: { 
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
-          },
-          body: JSON.stringify(school),
-          credentials: "include",
-        });
-        if (response.ok) {
-          return response.json();
-        }
-      } catch (error) {
-        console.log('API failed, using localStorage fallback');
-      }
-      
-      // Fallback to localStorage
+      // Direct localStorage save
       const schoolsData = localStorage.getItem('schools_data');
       const currentSchools = schoolsData ? JSON.parse(schoolsData) : [];
       
@@ -109,24 +90,7 @@ export default function SchoolsPage() {
 
   const deleteSchoolMutation = useMutation({
     mutationFn: async (id: string) => {
-      // Try API first, fallback to localStorage
-      try {
-        const token = localStorage.getItem('auth_token');
-        const response = await fetch(`/api/schools/${id}`, {
-          method: "DELETE",
-          headers: {
-            "Authorization": `Bearer ${token}`
-          },
-          credentials: "include",
-        });
-        if (response.ok) {
-          return response.json();
-        }
-      } catch (error) {
-        console.log('API failed, using localStorage fallback');
-      }
-      
-      // Fallback to localStorage
+      // Direct localStorage delete
       const schoolsData = localStorage.getItem('schools_data');
       const currentSchools = schoolsData ? JSON.parse(schoolsData) : [];
       
