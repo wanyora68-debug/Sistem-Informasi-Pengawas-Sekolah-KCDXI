@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Schools LocalStorage</title>
+</head>
+<body>
+    <h1>Test Schools LocalStorage</h1>
+    
+    <div>
+        <h3>Add School:</h3>
+        <input type="text" id="schoolName" placeholder="School Name">
+        <button onclick="addSchool()">Add School</button>
+    </div>
+    
+    <div>
+        <h3>Schools List:</h3>
+        <div id="schoolsList"></div>
+    </div>
+    
+    <div>
+        <h3>Actions:</h3>
+        <button onclick="showData()">Show localStorage Data</button>
+        <button onclick="clearData()">Clear Data</button>
+    </div>
+    
+    <div id="output"></div>
+
+    <script>
+        function addSchool() {
+            const name = document.getElementById('schoolName').value;
+            if (!name) return;
+            
+            // Get current schools
+            const schoolsData = localStorage.getItem('schools_data');
+            const currentSchools = schoolsData ? JSON.parse(schoolsData) : [];
+            
+            // Add new school
+            const newSchool = {
+                id: Date.now().toString(),
+                name: name,
+                address: 'Test Address',
+                contact: '123456789',
+                principalName: 'Test Principal',
+                principalNip: '123456789',
+                supervisions: 0,
+                createdAt: new Date().toISOString()
+            };
+            
+            const updatedSchools = [...currentSchools, newSchool];
+            localStorage.setItem('schools_data', JSON.stringify(updatedSchools));
+            
+            console.log('School added:', newSchool);
+            console.log('Updated schools:', updatedSchools);
+            
+            document.getElementById('schoolName').value = '';
+            showSchools();
+        }
+        
+        function showSchools() {
+            const schoolsData = localStorage.getItem('schools_data');
+            const schools = schoolsData ? JSON.parse(schoolsData) : [];
+            
+            const listDiv = document.getElementById('schoolsList');
+            listDiv.innerHTML = schools.map(school => 
+                `<div style="border: 1px solid #ccc; margin: 5px; padding: 10px;">
+                    <strong>${school.name}</strong><br>
+                    ID: ${school.id}<br>
+                    Created: ${school.createdAt}
+                </div>`
+            ).join('');
+        }
+        
+        function showData() {
+            const data = localStorage.getItem('schools_data');
+            document.getElementById('output').innerHTML = 
+                `<h4>localStorage Data:</h4><pre>${data || 'No data'}</pre>`;
+        }
+        
+        function clearData() {
+            localStorage.removeItem('schools_data');
+            showSchools();
+            showData();
+        }
+        
+        // Load schools on page load
+        window.onload = function() {
+            showSchools();
+            showData();
+        };
+    </script>
+</body>
+</html>
