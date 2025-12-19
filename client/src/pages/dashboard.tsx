@@ -51,53 +51,81 @@ export default function Dashboard() {
     },
   });
 
-  // Fetch real data from Supabase
+  // Fetch data from localStorage with safe error handling
   const { data: tasks = [] } = useQuery({
     queryKey: ['tasks'],
-    queryFn: async () => {
-      const token = localStorage.getItem('auth_token');
-      const response = await fetch('/api/tasks', {
-        headers: { 'Authorization': `Bearer ${token}` },
-        credentials: 'include',
-      });
-      if (!response.ok) return [];
-      return response.json();
+    queryFn: () => {
+      try {
+        if (typeof window !== 'undefined' && window.localStorage) {
+          const tasksData = localStorage.getItem('tasks_data');
+          if (tasksData) {
+            const parsed = JSON.parse(tasksData);
+            return Array.isArray(parsed) ? parsed : [];
+          }
+        }
+        return [];
+      } catch (error) {
+        console.warn('Error reading tasks from localStorage:', error);
+        return [];
+      }
     },
   });
 
   const { data: schools = [] } = useQuery({
     queryKey: ["/api/schools"],
-    queryFn: async () => {
-      const token = localStorage.getItem('auth_token');
-      const response = await fetch('/api/schools', {
-        headers: { 'Authorization': `Bearer ${token}` },
-        credentials: 'include',
-      });
-      if (!response.ok) return [];
-      return response.json();
+    queryFn: () => {
+      try {
+        if (typeof window !== 'undefined' && window.localStorage) {
+          const schoolsData = localStorage.getItem('schools_data');
+          if (schoolsData) {
+            const parsed = JSON.parse(schoolsData);
+            return Array.isArray(parsed) ? parsed : [];
+          }
+        }
+        return [];
+      } catch (error) {
+        console.warn('Error reading schools from localStorage:', error);
+        return [];
+      }
     },
   });
 
   const { data: supervisions = [] } = useQuery({
     queryKey: ['supervisions'],
-    queryFn: async () => {
-      const token = localStorage.getItem('auth_token');
-      const response = await fetch('/api/supervisions', {
-        headers: { 'Authorization': `Bearer ${token}` },
-        credentials: 'include',
-      });
-      if (!response.ok) return [];
-      return response.json();
+    queryFn: () => {
+      try {
+        if (typeof window !== 'undefined' && window.localStorage) {
+          const supervisionsData = localStorage.getItem('supervisions_data');
+          if (supervisionsData) {
+            const parsed = JSON.parse(supervisionsData);
+            return Array.isArray(parsed) ? parsed : [];
+          }
+        }
+        return [];
+      } catch (error) {
+        console.warn('Error reading supervisions from localStorage:', error);
+        return [];
+      }
     },
   });
 
   const { data: additionalTasks = [] } = useQuery({
     queryKey: ['additional-tasks'],
-    queryFn: async () => {
-      const token = localStorage.getItem('auth_token');
-      const response = await fetch('/api/additional-tasks', {
-        headers: { 'Authorization': `Bearer ${token}` },
-        credentials: 'include',
+    queryFn: () => {
+      try {
+        if (typeof window !== 'undefined' && window.localStorage) {
+          const additionalTasksData = localStorage.getItem('additional_tasks_data');
+          if (additionalTasksData) {
+            const parsed = JSON.parse(additionalTasksData);
+            return Array.isArray(parsed) ? parsed : [];
+          }
+        }
+        return [];
+      } catch (error) {
+        console.warn('Error reading additional tasks from localStorage:', error);
+        return [];
+      }
+    },
       });
       if (!response.ok) return [];
       return response.json();
@@ -106,14 +134,20 @@ export default function Dashboard() {
 
   const { data: events = [] } = useQuery({
     queryKey: ['events'],
-    queryFn: async () => {
-      const token = localStorage.getItem('auth_token');
-      const response = await fetch('/api/events', {
-        headers: { 'Authorization': `Bearer ${token}` },
-        credentials: 'include',
-      });
-      if (!response.ok) return [];
-      return response.json();
+    queryFn: () => {
+      try {
+        if (typeof window !== 'undefined' && window.localStorage) {
+          const eventsData = localStorage.getItem('events_data');
+          if (eventsData) {
+            const parsed = JSON.parse(eventsData);
+            return Array.isArray(parsed) ? parsed : [];
+          }
+        }
+        return [];
+      } catch (error) {
+        console.warn('Error reading events from localStorage:', error);
+        return [];
+      }
     },
   });
 

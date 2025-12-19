@@ -81,7 +81,21 @@ export default function SupervisionsPage() {
   // Fetch supervisions from API
   const { data: supervisions = [], isLoading } = useQuery({
     queryKey: ['supervisions'],
-    queryFn: supervisionsApi.getAll,
+    queryFn: () => {
+      try {
+        if (typeof window !== 'undefined' && window.localStorage) {
+          const supervisionsData = localStorage.getItem('supervisions_data');
+          if (supervisionsData) {
+            const parsed = JSON.parse(supervisionsData);
+            return Array.isArray(parsed) ? parsed : [];
+          }
+        }
+        return [];
+      } catch (error) {
+        console.warn('Error reading supervisions from localStorage:', error);
+        return [];
+      }
+    },
   });
 
   // Fetch schools for dropdown

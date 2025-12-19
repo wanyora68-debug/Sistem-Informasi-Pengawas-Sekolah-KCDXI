@@ -26,26 +26,20 @@ export default function SchoolsPage() {
   
   const { data: schools = [] } = useQuery<School[]>({
     queryKey: ["/api/schools"],
-    queryFn: async () => {
-      // Try API first, fallback to localStorage
+    queryFn: () => {
       try {
-        const token = localStorage.getItem('auth_token');
-        const response = await fetch('/api/schools', {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-          },
-          credentials: 'include',
-        });
-        if (response.ok) {
-          return response.json();
+        if (typeof window !== 'undefined' && window.localStorage) {
+          const schoolsData = localStorage.getItem('schools_data');
+          if (schoolsData) {
+            const parsed = JSON.parse(schoolsData);
+            return Array.isArray(parsed) ? parsed : [];
+          }
         }
+        return [];
       } catch (error) {
-        console.log('API failed, using localStorage fallback');
+        console.warn('Error reading schools from localStorage:', error);
+        return [];
       }
-      
-      // Fallback to localStorage
-      const schoolsData = localStorage.getItem('schools_data');
-      return schoolsData ? JSON.parse(schoolsData) : [];
     },
   });
 
