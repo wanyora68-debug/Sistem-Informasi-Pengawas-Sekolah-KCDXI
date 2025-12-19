@@ -19,14 +19,35 @@ export default function Dashboard() {
     queryKey: ["/api/auth/me"],
     queryFn: async () => {
       const token = localStorage.getItem('auth_token');
-      const response = await fetch('/api/auth/me', {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-        credentials: 'include',
-      });
-      if (!response.ok) throw new Error('Failed to fetch user');
-      return response.json();
+      
+      // Try API first
+      try {
+        const response = await fetch('/api/auth/me', {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+          credentials: 'include',
+        });
+        if (response.ok) {
+          return response.json();
+        }
+      } catch (error) {
+        console.log('API failed, using localStorage fallback');
+      }
+      
+      // Fallback to localStorage
+      const userData = localStorage.getItem('user_data');
+      if (userData) {
+        const parsedUser = JSON.parse(userData);
+        return {
+          id: parsedUser.username,
+          username: parsedUser.username,
+          fullName: parsedUser.fullName,
+          role: parsedUser.role,
+        };
+      }
+      
+      throw new Error('No user data found');
     },
   });
 
@@ -207,9 +228,14 @@ export default function Dashboard() {
             <p className="mt-2 text-blue-50">
               Selamat datang kembali, <span className="font-semibold">{user?.fullName || 'Pengawas'}</span>! 
             </p>
-            <p className="text-sm text-blue-100 mt-1">
-              Berikut ringkasan kegiatan Anda hari ini
-            </p>
+            <div className="flex items-center gap-2 mt-2">
+              <Badge variant="secondary" className="bg-white/20 text-white border-white/30">
+                {user?.role === 'admin' ? 'Administrator' : user?.role === 'pengawas' ? 'Pengawas' : 'User'}
+              </Badge>
+              <p className="text-sm text-blue-100">
+                Berikut ringkasan kegiatan Anda hari ini
+              </p>
+            </div>
           </div>
         </div>
         <div className="absolute right-0 top-0 h-full w-1/3 opacity-10">
