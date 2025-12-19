@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -26,10 +26,14 @@ export default function SchoolsPage() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   
-  const { data: schools = [], refetch } = useQuery<School[]>({
-    queryKey: ["/api/schools"],
-    queryFn: () => {
-      console.log('🔍 Schools query running...');
+  // Use simple useState instead of React Query
+  const [schools, setSchools] = useState<School[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  
+  // Load schools from localStorage on component mount
+  useEffect(() => {
+    const loadSchools = () => {
+      console.log('🔍 Loading schools from localStorage...');
       try {
         if (typeof window !== 'undefined' && window.localStorage) {
           const schoolsData = localStorage.getItem('schools_data');
@@ -38,19 +42,22 @@ export default function SchoolsPage() {
             const parsed = JSON.parse(schoolsData);
             const result = Array.isArray(parsed) ? parsed : [];
             console.log('✅ Parsed schools data:', result);
-            return result;
+            setSchools(result);
+          } else {
+            console.log('⚠️ No schools data found, setting empty array');
+            setSchools([]);
           }
         }
-        console.log('⚠️ No schools data found, returning empty array');
-        return [];
       } catch (error) {
         console.error('❌ Error reading schools from localStorage:', error);
-        return [];
+        setSchools([]);
+      } finally {
+        setIsLoading(false);
       }
-    },
-    staleTime: 0, // Always refetch
-    cacheTime: 0, // Don't cache
-  });
+    };
+    
+    loadSchools();
+  }, []);
 
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [newSchool, setNewSchool] = useState({ name: "", address: "", contact: "", principalName: "", principalNip: "" });
@@ -73,13 +80,12 @@ export default function SchoolsPage() {
       
       return newSchoolData;
     },
-    onSuccess: () => {
+    onSuccess: (newSchoolData) => {
       console.log('🎉 School saved successfully!');
       console.log('💾 Current localStorage data:', localStorage.getItem('schools_data'));
       
-      // Force refresh the query
-      queryClient.invalidateQueries({ queryKey: ["/api/schools"] });
-      refetch();
+      // Update state directly
+      setSchools(prevSchools => [...prevSchools, newSchoolData]);
       
       toast({
         title: "Berhasil",
@@ -109,8 +115,10 @@ export default function SchoolsPage() {
       return { success: true };
       return response.json();
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/schools"] });
+    onSuccess: (_, deletedId) => {
+      // Update state directly
+      setSchools(prevSchools => prevSchools.filter(school => school.id !== deletedId));
+      
       toast({
         title: "Berhasil",
         description: "Sekolah berhasil dihapus",
