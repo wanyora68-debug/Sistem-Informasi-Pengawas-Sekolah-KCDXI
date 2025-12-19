@@ -31,22 +31,25 @@ export default function ProfilePage() {
   const { data: user, isLoading } = useQuery<UserProfile>({
     queryKey: ["/api/auth/me"],
     queryFn: async () => {
-      const token = localStorage.getItem('auth_token');
-      const response = await fetch('/api/auth/me', {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-        credentials: 'include',
-      });
-      if (!response.ok) {
-        if (response.status === 401) {
-          // Clear token and redirect to login
-          localStorage.removeItem('auth_token');
-          window.location.href = '/login';
-        }
-        throw new Error('Failed to fetch profile');
+      // Get user data from localStorage (same as dashboard)
+      const userData = localStorage.getItem('user_data');
+      if (userData) {
+        const parsedUser = JSON.parse(userData);
+        
+        // Get additional profile data from localStorage
+        const profileData = localStorage.getItem('profile_data');
+        const parsedProfile = profileData ? JSON.parse(profileData) : {};
+        
+        return {
+          id: parsedUser.username,
+          username: parsedUser.username,
+          fullName: parsedUser.fullName,
+          role: parsedUser.role,
+          ...parsedProfile
+        };
       }
-      return response.json();
+      
+      throw new Error('No user data found');
     },
   });
 
@@ -76,27 +79,27 @@ export default function ProfilePage() {
 
   const updateProfileMutation = useMutation({
     mutationFn: async (data: typeof formData) => {
-      const token = localStorage.getItem('auth_token');
-      const response = await fetch('/api/auth/profile', {
-        method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-        body: JSON.stringify(data),
-      });
-      if (!response.ok) {
-        if (response.status === 401) {
-          // Clear token and redirect to login
-          localStorage.removeItem('auth_token');
-          window.location.href = '/login';
-          throw new Error('Sesi Anda telah berakhir. Silakan login kembali.');
-        }
-        const error = await response.json();
-        throw new Error(error.error || 'Failed to update profile');
+      // Save profile data to localStorage
+      const currentProfileData = localStorage.getItem('profile_data');
+      const currentProfile = currentProfileData ? JSON.parse(currentProfileData) : {};
+      
+      const updatedProfile = {
+        ...currentProfile,
+        ...data,
+        updatedAt: new Date().toISOString()
+      };
+      
+      localStorage.setItem('profile_data', JSON.stringify(updatedProfile));
+      
+      // Also update user_data with fullName if changed
+      const userData = localStorage.getItem('user_data');
+      if (userData) {
+        const parsedUserData = JSON.parse(userData);
+        parsedUserData.fullName = data.fullName;
+        localStorage.setItem('user_data', JSON.stringify(parsedUserData));
       }
-      return response.json();
+      
+      return updatedProfile;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/auth/me"] });
@@ -116,29 +119,27 @@ export default function ProfilePage() {
 
   const uploadPhotoMutation = useMutation({
     mutationFn: async (file: File) => {
-      const token = localStorage.getItem('auth_token');
-      const formData = new FormData();
-      formData.append('photo', file);
-
-      const response = await fetch('/api/auth/profile/photo', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-        credentials: 'include',
-        body: formData,
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const base64 = e.target?.result as string;
+          
+          // Save photo to localStorage
+          const currentProfileData = localStorage.getItem('profile_data');
+          const currentProfile = currentProfileData ? JSON.parse(currentProfileData) : {};
+          
+          const updatedProfile = {
+            ...currentProfile,
+            photoUrl: base64,
+            updatedAt: new Date().toISOString()
+          };
+          
+          localStorage.setItem('profile_data', JSON.stringify(updatedProfile));
+          resolve(updatedProfile);
+        };
+        reader.onerror = () => reject(new Error('Failed to read file'));
+        reader.readAsDataURL(file);
       });
-      if (!response.ok) {
-        if (response.status === 401) {
-          // Clear token and redirect to login
-          localStorage.removeItem('auth_token');
-          window.location.href = '/login';
-          throw new Error('Sesi Anda telah berakhir. Silakan login kembali.');
-        }
-        const error = await response.json();
-        throw new Error(error.error || 'Failed to upload photo');
-      }
-      return response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/auth/me"] });
