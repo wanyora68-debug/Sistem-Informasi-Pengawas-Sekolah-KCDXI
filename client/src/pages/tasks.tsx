@@ -39,10 +39,24 @@ export default function TasksPage() {
   const photo1InputRef = useRef<HTMLInputElement>(null);
   const photo2InputRef = useRef<HTMLInputElement>(null);
 
-  // Fetch tasks from API
+  // Fetch tasks from localStorage with safe fallback
   const { data: tasks = [], isLoading } = useQuery({
     queryKey: ['tasks'],
-    queryFn: tasksApi.getAll,
+    queryFn: () => {
+      try {
+        if (typeof window !== 'undefined' && window.localStorage) {
+          const tasksData = localStorage.getItem('tasks_data');
+          if (tasksData) {
+            const parsed = JSON.parse(tasksData);
+            return Array.isArray(parsed) ? parsed : [];
+          }
+        }
+        return [];
+      } catch (error) {
+        console.warn('Error reading tasks from localStorage:', error);
+        return [];
+      }
+    },
   });
 
   // Create task mutation
