@@ -84,15 +84,17 @@ export default function SchoolsPage() {
       console.log('🎉 School saved successfully!');
       console.log('💾 Current localStorage data:', localStorage.getItem('schools_data'));
       
-      // Update state directly
-      setSchools(prevSchools => [...prevSchools, newSchoolData]);
-      
       toast({
         title: "Berhasil",
         description: "Sekolah berhasil ditambahkan",
       });
       setNewSchool({ name: "", address: "", contact: "", principalName: "", principalNip: "" });
       setIsAddDialogOpen(false);
+      
+      // Force page reload to show new data
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
     },
     onError: () => {
       toast({
