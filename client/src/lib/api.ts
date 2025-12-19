@@ -26,89 +26,301 @@ async function handleResponse(response: Response) {
 // Tasks API
 export const tasksApi = {
   getAll: async () => {
-    const response = await fetch(`${API_BASE}/tasks`, {
-      headers: getAuthHeaders(),
-      credentials: 'include',
-    });
-    return handleResponse(response);
+    try {
+      const response = await fetch(`${API_BASE}/tasks`, {
+        headers: getAuthHeaders(),
+        credentials: 'include',
+      });
+      if (response.ok) {
+        return handleResponse(response);
+      }
+    } catch (error) {
+      console.log('Tasks API failed, using localStorage fallback');
+    }
+    
+    // Fallback to localStorage
+    const tasksData = localStorage.getItem('tasks_data');
+    return tasksData ? JSON.parse(tasksData) : [];
   },
   
   create: async (formData: FormData) => {
-    const response = await fetch(`${API_BASE}/tasks`, {
-      method: 'POST',
-      headers: getAuthHeaders(),
-      body: formData,
-      credentials: 'include',
+    try {
+      const response = await fetch(`${API_BASE}/tasks`, {
+        method: 'POST',
+        headers: getAuthHeaders(),
+        body: formData,
+        credentials: 'include',
+      });
+      if (response.ok) {
+        return handleResponse(response);
+      }
+    } catch (error) {
+      console.log('Tasks API failed, using localStorage fallback');
+    }
+    
+    // Fallback to localStorage
+    const tasksData = localStorage.getItem('tasks_data');
+    const currentTasks = tasksData ? JSON.parse(tasksData) : [];
+    
+    // Convert FormData to object with proper async file handling
+    const taskData: any = {};
+    const filePromises: Promise<void>[] = [];
+    
+    formData.forEach((value, key) => {
+      if (key.startsWith('photo') && value instanceof File) {
+        // Convert file to base64 for localStorage
+        const promise = new Promise<void>((resolve) => {
+          const reader = new FileReader();
+          reader.onload = () => {
+            taskData[key] = reader.result;
+            resolve();
+          };
+          reader.readAsDataURL(value);
+        });
+        filePromises.push(promise);
+      } else {
+        taskData[key] = value;
+      }
     });
-    return handleResponse(response);
+    
+    // Wait for all file conversions to complete
+    await Promise.all(filePromises);
+    
+    const newTask = {
+      id: Date.now().toString(),
+      ...taskData,
+      date: taskData.date || new Date().toISOString().split('T')[0],
+      completed: taskData.completed === 'true',
+      createdAt: new Date().toISOString()
+    };
+    
+    const updatedTasks = [...currentTasks, newTask];
+    localStorage.setItem('tasks_data', JSON.stringify(updatedTasks));
+    
+    return newTask;
   },
   
   delete: async (id: string) => {
-    const response = await fetch(`${API_BASE}/tasks/${id}`, {
-      method: 'DELETE',
-      headers: getAuthHeaders(),
-      credentials: 'include',
-    });
-    return handleResponse(response);
+    try {
+      const response = await fetch(`${API_BASE}/tasks/${id}`, {
+        method: 'DELETE',
+        headers: getAuthHeaders(),
+        credentials: 'include',
+      });
+      if (response.ok) {
+        return handleResponse(response);
+      }
+    } catch (error) {
+      console.log('Tasks API failed, using localStorage fallback');
+    }
+    
+    // Fallback to localStorage
+    const tasksData = localStorage.getItem('tasks_data');
+    const currentTasks = tasksData ? JSON.parse(tasksData) : [];
+    
+    const updatedTasks = currentTasks.filter((task: any) => task.id !== id);
+    localStorage.setItem('tasks_data', JSON.stringify(updatedTasks));
+    
+    return { success: true };
   },
 };
 
 // Supervisions API
 export const supervisionsApi = {
   getAll: async () => {
-    const response = await fetch(`${API_BASE}/supervisions`, {
-      headers: getAuthHeaders(),
-      credentials: 'include',
-    });
-    return handleResponse(response);
+    try {
+      const response = await fetch(`${API_BASE}/supervisions`, {
+        headers: getAuthHeaders(),
+        credentials: 'include',
+      });
+      if (response.ok) {
+        return handleResponse(response);
+      }
+    } catch (error) {
+      console.log('Supervisions API failed, using localStorage fallback');
+    }
+    
+    // Fallback to localStorage
+    const supervisionsData = localStorage.getItem('supervisions_data');
+    return supervisionsData ? JSON.parse(supervisionsData) : [];
   },
   
   create: async (formData: FormData) => {
-    const response = await fetch(`${API_BASE}/supervisions`, {
-      method: 'POST',
-      headers: getAuthHeaders(),
-      body: formData,
-      credentials: 'include',
+    try {
+      const response = await fetch(`${API_BASE}/supervisions`, {
+        method: 'POST',
+        headers: getAuthHeaders(),
+        body: formData,
+        credentials: 'include',
+      });
+      if (response.ok) {
+        return handleResponse(response);
+      }
+    } catch (error) {
+      console.log('Supervisions API failed, using localStorage fallback');
+    }
+    
+    // Fallback to localStorage
+    const supervisionsData = localStorage.getItem('supervisions_data');
+    const currentSupervisions = supervisionsData ? JSON.parse(supervisionsData) : [];
+    
+    // Convert FormData to object with proper async file handling
+    const supervisionData: any = {};
+    const filePromises: Promise<void>[] = [];
+    
+    formData.forEach((value, key) => {
+      if (key.startsWith('photo') && value instanceof File) {
+        // Convert file to base64 for localStorage
+        const promise = new Promise<void>((resolve) => {
+          const reader = new FileReader();
+          reader.onload = () => {
+            supervisionData[key] = reader.result;
+            resolve();
+          };
+          reader.readAsDataURL(value);
+        });
+        filePromises.push(promise);
+      } else {
+        supervisionData[key] = value;
+      }
     });
-    return handleResponse(response);
+    
+    // Wait for all file conversions to complete
+    await Promise.all(filePromises);
+    
+    const newSupervision = {
+      id: Date.now().toString(),
+      ...supervisionData,
+      createdAt: new Date().toISOString()
+    };
+    
+    const updatedSupervisions = [...currentSupervisions, newSupervision];
+    localStorage.setItem('supervisions_data', JSON.stringify(updatedSupervisions));
+    
+    return newSupervision;
   },
   
   delete: async (id: string) => {
-    const response = await fetch(`${API_BASE}/supervisions/${id}`, {
-      method: 'DELETE',
-      headers: getAuthHeaders(),
-      credentials: 'include',
-    });
-    return handleResponse(response);
+    try {
+      const response = await fetch(`${API_BASE}/supervisions/${id}`, {
+        method: 'DELETE',
+        headers: getAuthHeaders(),
+        credentials: 'include',
+      });
+      if (response.ok) {
+        return handleResponse(response);
+      }
+    } catch (error) {
+      console.log('Supervisions API failed, using localStorage fallback');
+    }
+    
+    // Fallback to localStorage
+    const supervisionsData = localStorage.getItem('supervisions_data');
+    const currentSupervisions = supervisionsData ? JSON.parse(supervisionsData) : [];
+    
+    const updatedSupervisions = currentSupervisions.filter((supervision: any) => supervision.id !== id);
+    localStorage.setItem('supervisions_data', JSON.stringify(updatedSupervisions));
+    
+    return { success: true };
   },
 };
 
 // Additional Tasks API
 export const additionalTasksApi = {
   getAll: async () => {
-    const response = await fetch(`${API_BASE}/additional-tasks`, {
-      headers: getAuthHeaders(),
-      credentials: 'include',
-    });
-    return handleResponse(response);
+    try {
+      const response = await fetch(`${API_BASE}/additional-tasks`, {
+        headers: getAuthHeaders(),
+        credentials: 'include',
+      });
+      if (response.ok) {
+        return handleResponse(response);
+      }
+    } catch (error) {
+      console.log('Additional Tasks API failed, using localStorage fallback');
+    }
+    
+    // Fallback to localStorage
+    const additionalTasksData = localStorage.getItem('additional_tasks_data');
+    return additionalTasksData ? JSON.parse(additionalTasksData) : [];
   },
   
   create: async (formData: FormData) => {
-    const response = await fetch(`${API_BASE}/additional-tasks`, {
-      method: 'POST',
-      headers: getAuthHeaders(),
-      body: formData,
-      credentials: 'include',
+    try {
+      const response = await fetch(`${API_BASE}/additional-tasks`, {
+        method: 'POST',
+        headers: getAuthHeaders(),
+        body: formData,
+        credentials: 'include',
+      });
+      if (response.ok) {
+        return handleResponse(response);
+      }
+    } catch (error) {
+      console.log('Additional Tasks API failed, using localStorage fallback');
+    }
+    
+    // Fallback to localStorage
+    const additionalTasksData = localStorage.getItem('additional_tasks_data');
+    const currentAdditionalTasks = additionalTasksData ? JSON.parse(additionalTasksData) : [];
+    
+    // Convert FormData to object with proper async file handling
+    const taskData: any = {};
+    const filePromises: Promise<void>[] = [];
+    
+    formData.forEach((value, key) => {
+      if (key.startsWith('photo') && value instanceof File) {
+        // Convert file to base64 for localStorage
+        const promise = new Promise<void>((resolve) => {
+          const reader = new FileReader();
+          reader.onload = () => {
+            taskData[key] = reader.result;
+            resolve();
+          };
+          reader.readAsDataURL(value);
+        });
+        filePromises.push(promise);
+      } else {
+        taskData[key] = value;
+      }
     });
-    return handleResponse(response);
+    
+    // Wait for all file conversions to complete
+    await Promise.all(filePromises);
+    
+    const newAdditionalTask = {
+      id: Date.now().toString(),
+      ...taskData,
+      createdAt: new Date().toISOString()
+    };
+    
+    const updatedAdditionalTasks = [...currentAdditionalTasks, newAdditionalTask];
+    localStorage.setItem('additional_tasks_data', JSON.stringify(updatedAdditionalTasks));
+    
+    return newAdditionalTask;
   },
   
   delete: async (id: string) => {
-    const response = await fetch(`${API_BASE}/additional-tasks/${id}`, {
-      method: 'DELETE',
-      headers: getAuthHeaders(),
-      credentials: 'include',
-    });
-    return handleResponse(response);
+    try {
+      const response = await fetch(`${API_BASE}/additional-tasks/${id}`, {
+        method: 'DELETE',
+        headers: getAuthHeaders(),
+        credentials: 'include',
+      });
+      if (response.ok) {
+        return handleResponse(response);
+      }
+    } catch (error) {
+      console.log('Additional Tasks API failed, using localStorage fallback');
+    }
+    
+    // Fallback to localStorage
+    const additionalTasksData = localStorage.getItem('additional_tasks_data');
+    const currentAdditionalTasks = additionalTasksData ? JSON.parse(additionalTasksData) : [];
+    
+    const updatedAdditionalTasks = currentAdditionalTasks.filter((task: any) => task.id !== id);
+    localStorage.setItem('additional_tasks_data', JSON.stringify(updatedAdditionalTasks));
+    
+    return { success: true };
   },
 };

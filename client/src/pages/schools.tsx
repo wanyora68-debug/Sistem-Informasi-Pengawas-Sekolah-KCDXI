@@ -27,15 +27,25 @@ export default function SchoolsPage() {
   const { data: schools = [] } = useQuery<School[]>({
     queryKey: ["/api/schools"],
     queryFn: async () => {
-      const token = localStorage.getItem('auth_token');
-      const response = await fetch('/api/schools', {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-        credentials: 'include',
-      });
-      if (!response.ok) return [];
-      return response.json();
+      // Try API first, fallback to localStorage
+      try {
+        const token = localStorage.getItem('auth_token');
+        const response = await fetch('/api/schools', {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+          credentials: 'include',
+        });
+        if (response.ok) {
+          return response.json();
+        }
+      } catch (error) {
+        console.log('API failed, using localStorage fallback');
+      }
+      
+      // Fallback to localStorage
+      const schoolsData = localStorage.getItem('schools_data');
+      return schoolsData ? JSON.parse(schoolsData) : [];
     },
   });
 
@@ -44,21 +54,40 @@ export default function SchoolsPage() {
 
   const createSchoolMutation = useMutation({
     mutationFn: async (school: typeof newSchool) => {
-      const token = localStorage.getItem('auth_token');
-      const response = await fetch("/api/schools", {
-        method: "POST",
-        headers: { 
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
-        },
-        body: JSON.stringify(school),
-        credentials: "include",
-      });
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || "Failed to create school");
+      // Try API first, fallback to localStorage
+      try {
+        const token = localStorage.getItem('auth_token');
+        const response = await fetch("/api/schools", {
+          method: "POST",
+          headers: { 
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+          },
+          body: JSON.stringify(school),
+          credentials: "include",
+        });
+        if (response.ok) {
+          return response.json();
+        }
+      } catch (error) {
+        console.log('API failed, using localStorage fallback');
       }
-      return response.json();
+      
+      // Fallback to localStorage
+      const schoolsData = localStorage.getItem('schools_data');
+      const currentSchools = schoolsData ? JSON.parse(schoolsData) : [];
+      
+      const newSchoolData = {
+        id: Date.now().toString(),
+        ...school,
+        supervisions: 0,
+        createdAt: new Date().toISOString()
+      };
+      
+      const updatedSchools = [...currentSchools, newSchoolData];
+      localStorage.setItem('schools_data', JSON.stringify(updatedSchools));
+      
+      return newSchoolData;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/schools"] });
@@ -80,15 +109,31 @@ export default function SchoolsPage() {
 
   const deleteSchoolMutation = useMutation({
     mutationFn: async (id: string) => {
-      const token = localStorage.getItem('auth_token');
-      const response = await fetch(`/api/schools/${id}`, {
-        method: "DELETE",
-        headers: {
-          "Authorization": `Bearer ${token}`
-        },
-        credentials: "include",
-      });
-      if (!response.ok) throw new Error("Failed to delete school");
+      // Try API first, fallback to localStorage
+      try {
+        const token = localStorage.getItem('auth_token');
+        const response = await fetch(`/api/schools/${id}`, {
+          method: "DELETE",
+          headers: {
+            "Authorization": `Bearer ${token}`
+          },
+          credentials: "include",
+        });
+        if (response.ok) {
+          return response.json();
+        }
+      } catch (error) {
+        console.log('API failed, using localStorage fallback');
+      }
+      
+      // Fallback to localStorage
+      const schoolsData = localStorage.getItem('schools_data');
+      const currentSchools = schoolsData ? JSON.parse(schoolsData) : [];
+      
+      const updatedSchools = currentSchools.filter((school: School) => school.id !== id);
+      localStorage.setItem('schools_data', JSON.stringify(updatedSchools));
+      
+      return { success: true };
       return response.json();
     },
     onSuccess: () => {

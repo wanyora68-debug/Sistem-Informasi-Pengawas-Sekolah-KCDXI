@@ -92,18 +92,35 @@ export default function TasksPage() {
   // Toggle complete mutation
   const toggleCompleteMutation = useMutation({
     mutationFn: async ({ id, completed }: { id: string; completed: boolean }) => {
-      const token = localStorage.getItem('auth_token');
-      const response = await fetch(`/api/tasks/${id}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-        body: JSON.stringify({ completed }),
-        credentials: 'include',
-      });
-      if (!response.ok) throw new Error('Failed to update task');
-      return response.json();
+      // Try API first, fallback to localStorage
+      try {
+        const token = localStorage.getItem('auth_token');
+        const response = await fetch(`/api/tasks/${id}`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+          body: JSON.stringify({ completed }),
+          credentials: 'include',
+        });
+        if (response.ok) {
+          return response.json();
+        }
+      } catch (error) {
+        console.log('Toggle API failed, using localStorage fallback');
+      }
+      
+      // Fallback to localStorage
+      const tasksData = localStorage.getItem('tasks_data');
+      const currentTasks = tasksData ? JSON.parse(tasksData) : [];
+      
+      const updatedTasks = currentTasks.map((task: any) => 
+        task.id === id ? { ...task, completed } : task
+      );
+      localStorage.setItem('tasks_data', JSON.stringify(updatedTasks));
+      
+      return { success: true };
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['tasks'] });
@@ -182,17 +199,58 @@ export default function TasksPage() {
   // Update task mutation
   const updateTaskMutation = useMutation({
     mutationFn: async ({ id, formData }: { id: string; formData: FormData }) => {
-      const token = localStorage.getItem('auth_token');
-      const response = await fetch(`/api/tasks/${id}`, {
-        method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-        body: formData,
-        credentials: 'include',
+      // Try API first, fallback to localStorage
+      try {
+        const token = localStorage.getItem('auth_token');
+        const response = await fetch(`/api/tasks/${id}`, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+          body: formData,
+          credentials: 'include',
+        });
+        if (response.ok) {
+          return response.json();
+        }
+      } catch (error) {
+        console.log('Update API failed, using localStorage fallback');
+      }
+      
+      // Fallback to localStorage
+      const tasksData = localStorage.getItem('tasks_data');
+      const currentTasks = tasksData ? JSON.parse(tasksData) : [];
+      
+      // Convert FormData to object with proper async file handling
+      const taskData: any = {};
+      const filePromises: Promise<void>[] = [];
+      
+      formData.forEach((value, key) => {
+        if (key.startsWith('photo') && value instanceof File) {
+          // Convert file to base64 for localStorage
+          const promise = new Promise<void>((resolve) => {
+            const reader = new FileReader();
+            reader.onload = () => {
+              taskData[key] = reader.result;
+              resolve();
+            };
+            reader.readAsDataURL(value);
+          });
+          filePromises.push(promise);
+        } else {
+          taskData[key] = value;
+        }
       });
-      if (!response.ok) throw new Error('Failed to update task');
-      return response.json();
+      
+      // Wait for all file conversions to complete
+      await Promise.all(filePromises);
+      
+      const updatedTasks = currentTasks.map((task: any) => 
+        task.id === id ? { ...task, ...taskData, completed: taskData.completed === 'true' } : task
+      );
+      localStorage.setItem('tasks_data', JSON.stringify(updatedTasks));
+      
+      return { success: true };
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['tasks'] });

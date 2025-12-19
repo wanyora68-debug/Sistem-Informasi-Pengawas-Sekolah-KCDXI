@@ -35,15 +35,25 @@ export default function SupervisionsPage() {
   const { data: user } = useQuery({
     queryKey: ["/api/auth/me"],
     queryFn: async () => {
-      const token = localStorage.getItem('auth_token');
-      const response = await fetch('/api/auth/me', {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-        credentials: 'include',
-      });
-      if (!response.ok) throw new Error('Failed to fetch user');
-      return response.json();
+      // Get user data from localStorage (same as dashboard)
+      const userData = localStorage.getItem('user_data');
+      if (userData) {
+        const parsedUser = JSON.parse(userData);
+        
+        // Get additional profile data from localStorage
+        const profileData = localStorage.getItem('profile_data');
+        const parsedProfile = profileData ? JSON.parse(profileData) : {};
+        
+        return {
+          id: parsedUser.username,
+          username: parsedUser.username,
+          fullName: parsedUser.fullName,
+          role: parsedUser.role,
+          ...parsedProfile
+        };
+      }
+      
+      throw new Error('No user data found');
     },
   });
   

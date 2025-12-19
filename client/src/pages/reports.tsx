@@ -21,15 +21,49 @@ export default function ReportsPage() {
     queryKey: ['monthly-stats', selectedMonth],
     queryFn: async () => {
       const [year, month] = selectedMonth.split('-');
-      const token = localStorage.getItem('auth_token');
-      const response = await fetch(`/api/reports/monthly?year=${year}&month=${month}`, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-        credentials: 'include',
-      });
-      if (!response.ok) return { totalTasks: 0, completedTasks: 0, supervisions: 0, additionalTasks: 0 };
-      return response.json();
+      
+      // Try API first, fallback to localStorage
+      try {
+        const token = localStorage.getItem('auth_token');
+        const response = await fetch(`/api/reports/monthly?year=${year}&month=${month}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+          credentials: 'include',
+        });
+        if (response.ok) {
+          return response.json();
+        }
+      } catch (error) {
+        console.log('Reports API failed, using localStorage fallback');
+      }
+      
+      // Fallback to localStorage calculation
+      const tasksData = localStorage.getItem('tasks_data');
+      const supervisionsData = localStorage.getItem('supervisions_data');
+      const additionalTasksData = localStorage.getItem('additional_tasks_data');
+      
+      const tasks = tasksData ? JSON.parse(tasksData) : [];
+      const supervisions = supervisionsData ? JSON.parse(supervisionsData) : [];
+      const additionalTasks = additionalTasksData ? JSON.parse(additionalTasksData) : [];
+      
+      // Filter by month/year
+      const filterByMonth = (item: any) => {
+        const itemDate = new Date(item.date || item.createdAt);
+        return itemDate.getFullYear() === parseInt(year) && 
+               (itemDate.getMonth() + 1) === parseInt(month);
+      };
+      
+      const monthlyTasks = tasks.filter(filterByMonth);
+      const monthlySupervisions = supervisions.filter(filterByMonth);
+      const monthlyAdditionalTasks = additionalTasks.filter(filterByMonth);
+      
+      return {
+        totalTasks: monthlyTasks.length,
+        completedTasks: monthlyTasks.filter((t: any) => t.completed).length,
+        supervisions: monthlySupervisions.length,
+        additionalTasks: monthlyAdditionalTasks.length
+      };
     },
     enabled: reportType === 'monthly',
   });
@@ -39,15 +73,44 @@ export default function ReportsPage() {
     queryKey: ['monthly-details', selectedMonth],
     queryFn: async () => {
       const [year, month] = selectedMonth.split('-');
-      const token = localStorage.getItem('auth_token');
-      const response = await fetch(`/api/reports/monthly/details?year=${year}&month=${month}`, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-        credentials: 'include',
-      });
-      if (!response.ok) return { tasks: [], supervisions: [], additionalTasks: [] };
-      return response.json();
+      
+      // Try API first, fallback to localStorage
+      try {
+        const token = localStorage.getItem('auth_token');
+        const response = await fetch(`/api/reports/monthly/details?year=${year}&month=${month}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+          credentials: 'include',
+        });
+        if (response.ok) {
+          return response.json();
+        }
+      } catch (error) {
+        console.log('Reports details API failed, using localStorage fallback');
+      }
+      
+      // Fallback to localStorage
+      const tasksData = localStorage.getItem('tasks_data');
+      const supervisionsData = localStorage.getItem('supervisions_data');
+      const additionalTasksData = localStorage.getItem('additional_tasks_data');
+      
+      const tasks = tasksData ? JSON.parse(tasksData) : [];
+      const supervisions = supervisionsData ? JSON.parse(supervisionsData) : [];
+      const additionalTasks = additionalTasksData ? JSON.parse(additionalTasksData) : [];
+      
+      // Filter by month/year
+      const filterByMonth = (item: any) => {
+        const itemDate = new Date(item.date || item.createdAt);
+        return itemDate.getFullYear() === parseInt(year) && 
+               (itemDate.getMonth() + 1) === parseInt(month);
+      };
+      
+      return {
+        tasks: tasks.filter(filterByMonth),
+        supervisions: supervisions.filter(filterByMonth),
+        additionalTasks: additionalTasks.filter(filterByMonth)
+      };
     },
     enabled: reportType === 'monthly',
   });
