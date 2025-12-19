@@ -5,6 +5,15 @@ import { Link } from "wouter";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useQuery } from "@tanstack/react-query";
+import additionalTasks from "./additional-tasks";
+import supervisions from "./supervisions";
+import tasks from "./tasks";
+import supervisions from "./supervisions";
+import schools from "./schools";
+import tasks from "./tasks";
+import tasks from "./tasks";
+import { response } from "express";
+import { response } from "express";
 
 type UserProfile = {
   id: string;
