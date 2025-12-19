@@ -26,27 +26,30 @@ export default function SchoolsPage() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   
-  const { data: schools = [] } = useQuery<School[]>({
+  const { data: schools = [], refetch } = useQuery<School[]>({
     queryKey: ["/api/schools"],
     queryFn: () => {
+      console.log('🔍 Schools query running...');
       try {
         if (typeof window !== 'undefined' && window.localStorage) {
           const schoolsData = localStorage.getItem('schools_data');
-          console.log('Reading schools from localStorage:', schoolsData);
+          console.log('📊 Reading schools from localStorage:', schoolsData);
           if (schoolsData) {
             const parsed = JSON.parse(schoolsData);
             const result = Array.isArray(parsed) ? parsed : [];
-            console.log('Parsed schools data:', result);
+            console.log('✅ Parsed schools data:', result);
             return result;
           }
         }
-        console.log('No schools data found, returning empty array');
+        console.log('⚠️ No schools data found, returning empty array');
         return [];
       } catch (error) {
-        console.warn('Error reading schools from localStorage:', error);
+        console.error('❌ Error reading schools from localStorage:', error);
         return [];
       }
     },
+    staleTime: 0, // Always refetch
+    cacheTime: 0, // Don't cache
   });
 
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
@@ -71,11 +74,12 @@ export default function SchoolsPage() {
       return newSchoolData;
     },
     onSuccess: () => {
+      console.log('🎉 School saved successfully!');
+      console.log('💾 Current localStorage data:', localStorage.getItem('schools_data'));
+      
       // Force refresh the query
       queryClient.invalidateQueries({ queryKey: ["/api/schools"] });
-      queryClient.refetchQueries({ queryKey: ["/api/schools"] });
-      
-      console.log('School saved, current localStorage data:', localStorage.getItem('schools_data'));
+      refetch();
       
       toast({
         title: "Berhasil",
