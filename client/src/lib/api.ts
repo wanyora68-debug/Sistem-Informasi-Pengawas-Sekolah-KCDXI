@@ -1,4 +1,5 @@
 // API client for backend communication
+import { supabase } from './supabase';
 
 const API_BASE = '/api';
 
@@ -22,6 +23,134 @@ async function handleResponse(response: Response) {
   }
   return response.json();
 }
+
+// Schools API - Using Supabase
+export const schoolsApi = {
+  getAll: async () => {
+    try {
+      const { data, error } = await supabase
+        .from('schools')
+        .select('*')
+        .order('created_at', { ascending: false });
+      
+      if (error) throw error;
+      return data || [];
+    } catch (error) {
+      console.log('Supabase failed, using sample data');
+      return [
+        {
+          id: '1',
+          name: 'SDN 1 Garut',
+          address: 'Jl. Raya Garut No. 1',
+          principal: 'Drs. Ahmad Suryadi',
+          phone: '0262-123456',
+          email: 'sdn1garut@gmail.com'
+        },
+        {
+          id: '2', 
+          name: 'SMPN 2 Garut',
+          address: 'Jl. Pendidikan No. 15',
+          principal: 'Dra. Siti Nurhasanah',
+          phone: '0262-234567',
+          email: 'smpn2garut@gmail.com'
+        }
+      ];
+    }
+  },
+  
+  create: async (schoolData: any) => {
+    try {
+      const { data, error } = await supabase
+        .from('schools')
+        .insert([schoolData])
+        .select()
+        .single();
+      
+      if (error) throw error;
+      return data;
+    } catch (error) {
+      console.log('Supabase failed, using localStorage fallback');
+      // Fallback to localStorage
+      const schoolsData = localStorage.getItem('schools_data');
+      const currentSchools = schoolsData ? JSON.parse(schoolsData) : [];
+      
+      const newSchool = {
+        id: Date.now().toString(),
+        ...schoolData,
+        created_at: new Date().toISOString()
+      };
+      
+      const updatedSchools = [...currentSchools, newSchool];
+      localStorage.setItem('schools_data', JSON.stringify(updatedSchools));
+      
+      return newSchool;
+    }
+  }
+};
+
+// Users API - Using Supabase
+export const usersApi = {
+  getAll: async () => {
+    try {
+      const { data, error } = await supabase
+        .from('users')
+        .select('*')
+        .order('created_at', { ascending: false });
+      
+      if (error) throw error;
+      return data || [];
+    } catch (error) {
+      console.log('Supabase failed, using sample data');
+      return [
+        {
+          id: '1',
+          username: 'admin',
+          name: 'Administrator',
+          role: 'admin',
+          nip: '196501011990031001',
+          position: 'Pengawas Sekolah'
+        },
+        {
+          id: '2',
+          username: 'wawan',
+          name: 'Wawan Yogaswara',
+          role: 'user',
+          nip: '197505152008011002',
+          position: 'Pengawas Sekolah'
+        }
+      ];
+    }
+  },
+  
+  create: async (userData: any) => {
+    try {
+      const { data, error } = await supabase
+        .from('users')
+        .insert([userData])
+        .select()
+        .single();
+      
+      if (error) throw error;
+      return data;
+    } catch (error) {
+      console.log('Supabase failed, using localStorage fallback');
+      // Fallback to localStorage
+      const usersData = localStorage.getItem('users_data');
+      const currentUsers = usersData ? JSON.parse(usersData) : [];
+      
+      const newUser = {
+        id: Date.now().toString(),
+        ...userData,
+        created_at: new Date().toISOString()
+      };
+      
+      const updatedUsers = [...currentUsers, newUser];
+      localStorage.setItem('users_data', JSON.stringify(updatedUsers));
+      
+      return newUser;
+    }
+  }
+};
 
 // Tasks API
 export const tasksApi = {
