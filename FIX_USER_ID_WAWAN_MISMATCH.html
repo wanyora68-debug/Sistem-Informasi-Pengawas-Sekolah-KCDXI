@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔧 Fix User ID Wawan Mismatch</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+            border-radius: 8px;
+        }
+        .fix-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            background: #f8fafc;
+        }
+        .error {
+            border-color: #ef4444;
+            background: #fef2f2;
+        }
+        .success {
+            border-color: #10b981;
+            background: #ecfdf5;
+        }
+        .fix-button {
+            background: #ef4444;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            margin: 10px;
+        }
+        .fix-button:hover {
+            background: #dc2626;
+        }
+        .result {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 6px;
+            background: #f1f5f9;
+            border-left: 4px solid #3b82f6;
+        }
+        .code {
+            background: #1f2937;
+            color: #f9fafb;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            overflow-x: auto;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔧 Fix User ID Wawan Mismatch</h1>
+            <p>Memperbaiki ketidakcocokan User ID antara aplikasi dan database</p>
+        </div>
+
+        <div class="fix-section error">
+            <h3>❌ Masalah Ditemukan</h3>
+            <div class="result">
+                <h4>Root Cause:</h4>
+                <ul>
+                    <li><strong>Dialog menggunakan userId:</strong> "2" (dari aplikasi)</li>
+                    <li><strong>Database menggunakan userId:</strong> "1762696525337" (dari local-database.json)</li>
+                    <li><strong>Akibat:</strong> Filter tidak menemukan data karena ID tidak cocok</li>
+                </ul>
+                
+                <h4>Console Log Evidence:</h4>
+                <div class="code">
+🔍 Getting localStorage activities for: {userId: "2", userName: "wawan"}
+🔍 Filtering 0 items by userId for user: {userId: "2", userName: "wawan"}
+❌ No matches found because userId "2" ≠ "1762696525337"</div>
+            </div>
+        </div>
+
+        <div class="fix-section">
+            <h3>🔍 Diagnosis User Data</h3>
+            <button class="fix-button" onclick="diagnoseUserData()">
+                Diagnosis User Data
+            </button>
+            <div id="diagnosis-result" class="result" style="display: none;">
+                <div id="diagnosis-output"></div>
+            </div>
+        </div>
+
+        <div class="fix-section">
+            <h3>🛠️ Fix User ID Mismatch</h3>
+            <button class="fix-button" onclick="fixUserIdMismatch()">
+                Fix User ID Mismatch
+            </button>
+            <div id="fix-result" class="result" style="display: none;">
+                <div id="fix-output"></div>
+            </div>
+        </div>
+
+        <div class="fix-section">
+            <h3>🧪 Test After Fix</h3>
+            <button class="fix-button" onclick="testAfterFix()">
+                Test Dialog Function
+            </button>
+            <div id="test-result" class="result" style="display: none;">
+                <div id="test-output"></div>
+            </div>
+        </div>
+
+        <div class="fix-section success">
+            <h3>✅ Solusi</h3>
+            <div class="result">
+                <h4>2 Opsi Perbaikan:</h4>
+                <ol>
+                    <li><strong>Opsi 1 (Recommended):</strong> Update aktivitas di database untuk menggunakan userId "2"</li>
+                    <li><strong>Opsi 2:</strong> Update user di aplikasi untuk menggunakan userId "1762696525337"</li>
+                </ol>
+                
+                <p><strong>Kita akan gunakan Opsi 1</strong> karena lebih mudah dan tidak mengubah struktur aplikasi.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function diagnoseUserData() {
+            const resultDiv = document.getElementById('diagnosis-result');
+            const outputDiv = document.getElementById('diagnosis-output');
+            
+            try {
+                // Check localStorage data
+                const localDatabase = localStorage.getItem('local-database');
+                if (!localDatabase) {
+                    outputDiv.innerHTML = `
+                        <div style="color: #ef4444; font-weight: bold;">
+                            ❌ localStorage 'local-database' tidak ditemukan!
+                        </div>
+                    `;
+                    resultDiv.style.display = 'block';
+                    return;
+                }
+
+                const data = JSON.parse(localDatabase);
+                
+                // Find all users
+                const users = data.users || [];
+                const wawanUsers = users.filter(u => u.username === 'wawan' || u.fullName?.includes('Wawan'));
+                
+                // Find activities with different userIds
+                const allUserIds = new Set();
+                ['tasks', 'supervisions', 'events', 'additionalTasks'].forEach(type => {
+                    if (data[type]) {
+                        data[type].forEach(item => {
+                            if (item.userId) allUserIds.add(item.userId);
+                        });
+                    }
+                });
+
+                outputDiv.innerHTML = `
+                    <h4>🔍 Diagnosis Results:</h4>
+                    
+                    <h5>👤 Users dengan nama Wawan:</h5>
+                    <table style="width: 100%; border-collapse: collapse; margin: 10px 0;">
+                        <tr style="background: #f3f4f6;">
+                            <th style="border: 1px solid #e5e7eb; padding: 8px;">ID</th>
+                            <th style="border: 1px solid #e5e7eb; padding: 8px;">Username</th>
+                            <th style="border: 1px solid #e5e7eb; padding: 8px;">Full Name</th>
+                        </tr>
+                        ${wawanUsers.map(user => `
+                            <tr>
+                                <td style="border: 1px solid #e5e7eb; padding: 8px;">${user.id}</td>
+                                <td style="border: 1px solid #e5e7eb; padding: 8px;">${user.username}</td>
+                                <td style="border: 1px solid #e5e7eb; padding: 8px;">${user.fullName}</td>
+                            </tr>
+                        `).join('')}
+                    </table>
+                    
+                    <h5>📊 User IDs yang ditemukan di aktivitas:</h5>
+                    <ul>
+                        ${Array.from(allUserIds).map(id => `<li>${id}</li>`).join('')}
+                    </ul>
+                    
+                    <h5>❌ Masalah:</h5>
+                    <p>Aplikasi menggunakan userId "2" tapi aktivitas menggunakan userId "1762696525337"</p>
+                    
+                    <h5>✅ Solusi:</h5>
+                    <p>Update semua aktivitas untuk menggunakan userId "2" agar cocok dengan aplikasi.</p>
+                `;
+                
+                resultDiv.style.display = 'block';
+                console.log('🔍 Diagnosis completed:', {
+                    wawanUsers,
+                    allUserIds: Array.from(allUserIds)
+                });
+
+            } catch (error) {
+                outputDiv.innerHTML = `
+                    <div style="color: #ef4444; font-weight: bold;">
+                        ❌ Error diagnosis: ${error.message}
+                    </div>
+                `;
+                resultDiv.style.display = 'block';
+                console.error('❌ Error:', error);
+            }
+        }
+
+        function fixUserIdMismatch() {
+            const resultDiv = document.getElementById('fix-result');
+            const outputDiv = document.getElementById('fix-output');
+            
+            try {
+                // Get existing data
+                const localDatabase = localStorage.getItem('local-database');
+                if (!localDatabase) {
+                    outputDiv.innerHTML = `
+                        <div style="color: #ef4444; font-weight: bold;">
+                            ❌ localStorage 'local-database' tidak ditemukan!
+                        </div>
+                    `;
+                    resultDiv.style.display = 'block';
+                    return;
+                }
+
+                const data = JSON.parse(localDatabase);
+                
+                // Update all activities to use userId "2" instead of "1762696525337"
+                const oldUserId = "1762696525337";
+                const newUserId = "2";
+                
+                let updatedCount = 0;
+                
+                ['tasks', 'supervisions', 'events', 'additionalTasks'].forEach(type => {
+                    if (data[type] && Array.isArray(data[type])) {
+                        data[type].forEach(item => {
+                            if (item.userId === oldUserId) {
+                                item.userId = newUserId;
+                                updatedCount++;
+                            }
+                        });
+                    }
+                });
+                
+                // Also update user data to use consistent ID
+                if (data.users && Array.isArray(data.users)) {
+                    const wawanUser = data.users.find(u => u.id === oldUserId);
+                    if (wawanUser) {
+                        wawanUser.id = newUserId;
+                        updatedCount++;
+                    }
+                }
+                
+                // Save updated data
+                localStorage.setItem('local-database', JSON.stringify(data));
+                
+                outputDiv.innerHTML = `
+                    <h4>✅ Fix Berhasil!</h4>
+                    <p><strong>Updated ${updatedCount} records</strong></p>
+                    
+                    <h5>Perubahan yang dilakukan:</h5>
+                    <ul>
+                        <li>✅ Semua aktivitas dengan userId "${oldUserId}" → "${newUserId}"</li>
+                        <li>✅ User Wawan ID "${oldUserId}" → "${newUserId}"</li>
+                        <li>✅ Data disimpan ke localStorage</li>
+                    </ul>
+                    
+                    <div style="color: #10b981; font-weight: bold; margin-top: 15px;">
+                        ✅ Sekarang dialog aktivitas akan menampilkan data Wawan dengan benar!
+                    </div>
+                `;
+                
+                resultDiv.style.display = 'block';
+                console.log('✅ Fix completed:', { updatedCount, oldUserId, newUserId });
+
+            } catch (error) {
+                outputDiv.innerHTML = `
+                    <div style="color: #ef4444; font-weight: bold;">
+                        ❌ Error fixing: ${error.message}
+                    </div>
+                `;
+                resultDiv.style.display = 'block';
+                console.error('❌ Error:', error);
+            }
+        }
+
+        function testAfterFix() {
+            const resultDiv = document.getElementById('test-result');
+            const outputDiv = document.getElementById('test-output');
+            
+            // Test with the correct userId "2"
+            const userId = "2";
+            const userName = "wawan";
+            
+            const getLocalStorageActivities = () => {
+                try {
+                    const getLocalStorageData = (key) => {
+                        try {
+                            const data = localStorage.getItem(key);
+                            return data ? JSON.parse(data) : [];
+                        } catch {
+                            return [];
+                        }
+                    };
+
+                    const filterByUser = (data, userField = 'userId') => {
+                        if (!data || !Array.isArray(data)) return [];
+                        
+                        return data.filter(item => {
+                            if (item[userField] === userId) return true;
+                            if (item.username && userName && 
+                                item.username.toLowerCase() === userName.toLowerCase()) return true;
+                            return false;
+                        });
+                    };
+
+                    const localData = getLocalStorageData('local-database') || {};
+                    
+                    const tasks = filterByUser(localData.tasks || []);
+                    const supervisions = filterByUser(localData.supervisions || []);
+                    const events = filterByUser(localData.events || []);
+                    const additionalTasks = filterByUser(localData.additionalTasks || []);
+
+                    return { tasks, supervisions, events, additionalTasks };
+                } catch (error) {
+                    console.error('Error:', error);
+                    return { tasks: [], supervisions: [], events: [], additionalTasks: [] };
+                }
+            };
+
+            // Run test
+            const result = getLocalStorageActivities();
+            const totalActivities = result.tasks.length + result.supervisions.length + result.events.length + result.additionalTasks.length;
+            
+            outputDiv.innerHTML = `
+                <h4>🧪 Test Results dengan userId "${userId}":</h4>
+                <table style="width: 100%; border-collapse: collapse; margin: 10px 0;">
+                    <tr style="background: #f3f4f6;">
+                        <th style="border: 1px solid #e5e7eb; padding: 8px;">Type</th>
+                        <th style="border: 1px solid #e5e7eb; padding: 8px;">Count</th>
+                        <th style="border: 1px solid #e5e7eb; padding: 8px;">Status</th>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid #e5e7eb; padding: 8px;">Tasks</td>
+                        <td style="border: 1px solid #e5e7eb; padding: 8px;">${result.tasks.length}</td>
+                        <td style="border: 1px solid #e5e7eb; padding: 8px;">${result.tasks.length > 0 ? '✅' : '❌'}</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid #e5e7eb; padding: 8px;">Supervisions</td>
+                        <td style="border: 1px solid #e5e7eb; padding: 8px;">${result.supervisions.length}</td>
+                        <td style="border: 1px solid #e5e7eb; padding: 8px;">${result.supervisions.length > 0 ? '✅' : '❌'}</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid #e5e7eb; padding: 8px;">Events</td>
+                        <td style="border: 1px solid #e5e7eb; padding: 8px;">${result.events.length}</td>
+                        <td style="border: 1px solid #e5e7eb; padding: 8px;">${result.events.length > 0 ? '✅' : '❌'}</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid #e5e7eb; padding: 8px;">Additional Tasks</td>
+                        <td style="border: 1px solid #e5e7eb; padding: 8px;">${result.additionalTasks.length}</td>
+                        <td style="border: 1px solid #e5e7eb; padding: 8px;">${result.additionalTasks.length > 0 ? '✅' : '❌'}</td>
+                    </tr>
+                </table>
+                
+                <h4>📊 Total Activities: ${totalActivities}</h4>
+                
+                ${totalActivities > 0 ? 
+                    '<div style="color: #10b981; font-weight: bold;">✅ SUCCESS: Dialog akan menampilkan aktivitas!</div>' : 
+                    '<div style="color: #ef4444; font-weight: bold;">❌ FAILED: Masih belum ada aktivitas ditemukan.</div>'
+                }
+                
+                <p><strong>Refresh aplikasi dan test dialog lagi.</strong></p>
+            `;
+            
+            resultDiv.style.display = 'block';
+            console.log('🧪 Test completed:', result);
+        }
+
+        // Auto-run diagnosis on load
+        window.onload = function() {
+            console.log('🔧 Fix User ID Wawan Mismatch - Ready');
+            setTimeout(() => {
+                diagnoseUserData();
+            }, 500);
+        };
+    </script>
+</body>
+</html>

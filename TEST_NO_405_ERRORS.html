@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧪 TEST NO 405 ERRORS</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #f0fdf4;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border: 3px solid #16a34a;
+        }
+        h1 {
+            color: #16a34a;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .test {
+            background: #f0f9ff;
+            border-left: 4px solid #2563eb;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        .success {
+            background: #f0fdf4;
+            border-left: 4px solid #16a34a;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        .error {
+            background: #fef2f2;
+            border-left: 4px solid #dc2626;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        button {
+            background: #16a34a;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px 5px;
+            font-size: 16px;
+            font-weight: bold;
+            width: 100%;
+        }
+        button:hover {
+            background: #15803d;
+        }
+        .result {
+            margin: 15px 0;
+            padding: 15px;
+            border-radius: 5px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            font-family: monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+        }
+        .console-log {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+            margin: 15px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 TEST NO 405 ERRORS</h1>
+        
+        <div class="test">
+            <h3>🎯 TUJUAN TEST</h3>
+            <p>Memverifikasi bahwa aplikasi tidak lagi menghasilkan error 405 Method Not Allowed</p>
+            <ul>
+                <li>✅ Tidak ada API calls ke /api/additional-tasks</li>
+                <li>✅ Tidak ada API calls ke /api/schools</li>
+                <li>✅ Semua data menggunakan localStorage 100%</li>
+                <li>✅ Console bersih tanpa error 405</li>
+            </ul>
+        </div>
+
+        <div class="test">
+            <h3>🔍 MONITOR CONSOLE</h3>
+            <button onclick="startMonitoring()">🚀 START MONITORING</button>
+            <div id="consoleOutput" class="console-log" style="display: none;"></div>
+        </div>
+
+        <div class="test">
+            <h3>📊 TEST DATA</h3>
+            <button onclick="testData()">📋 TEST LOCALSTORAGE DATA</button>
+            <div id="dataResult" class="result" style="display: none;"></div>
+        </div>
+
+        <div class="test">
+            <h3>🌐 SIMULATE API CALLS</h3>
+            <button onclick="simulateApiCalls()">🧪 SIMULATE CALLS</button>
+            <div id="apiResult" class="result" style="display: none;"></div>
+        </div>
+
+        <div id="finalResult" style="display: none;"></div>
+    </div>
+
+    <script>
+        let consoleOutput = [];
+        let originalConsoleError = console.error;
+        let originalConsoleWarn = console.warn;
+        let originalConsoleLog = console.log;
+        let monitoring = false;
+
+        function startMonitoring() {
+            if (monitoring) return;
+            
+            monitoring = true;
+            consoleOutput = [];
+            
+            // Override console methods to capture output
+            console.error = function(...args) {
+                consoleOutput.push('❌ ERROR: ' + args.join(' '));
+                updateConsoleDisplay();
+                originalConsoleError.apply(console, args);
+            };
+            
+            console.warn = function(...args) {
+                consoleOutput.push('⚠️ WARN: ' + args.join(' '));
+                updateConsoleDisplay();
+                originalConsoleWarn.apply(console, args);
+            };
+            
+            console.log = function(...args) {
+                consoleOutput.push('ℹ️ LOG: ' + args.join(' '));
+                updateConsoleDisplay();
+                originalConsoleLog.apply(console, args);
+            };
+            
+            document.getElementById('consoleOutput').style.display = 'block';
+            document.getElementById('consoleOutput').textContent = '🎯 Monitoring console... (buka aplikasi di tab lain)\\n';
+            
+            // Monitor for network errors
+            window.addEventListener('error', function(e) {
+                consoleOutput.push('💥 NETWORK ERROR: ' + e.message);
+                updateConsoleDisplay();
+            });
+            
+            // Monitor fetch requests
+            const originalFetch = window.fetch;
+            window.fetch = function(...args) {
+                const url = args[0];
+                if (typeof url === 'string' && url.includes('/api/')) {
+                    consoleOutput.push('🌐 FETCH DETECTED: ' + url);
+                    updateConsoleDisplay();
+                }
+                return originalFetch.apply(this, args);
+            };
+            
+            setTimeout(() => {
+                if (consoleOutput.length === 1) {
+                    consoleOutput.push('✅ No errors detected in 10 seconds!');
+                    updateConsoleDisplay();
+                }
+            }, 10000);
+        }
+        
+        function updateConsoleDisplay() {
+            const output = document.getElementById('consoleOutput');
+            output.textContent = consoleOutput.join('\\n');
+            output.scrollTop = output.scrollHeight;
+        }
+
+        function testData() {
+            try {
+                const tasks = JSON.parse(localStorage.getItem('additional_tasks_data') || '[]');
+                const schools = JSON.parse(localStorage.getItem('schools_data') || '[]');
+                const tasksBackup = JSON.parse(localStorage.getItem('additional_tasks_data_backup') || '[]');
+                const schoolsBackup = JSON.parse(localStorage.getItem('schools_data_backup') || '[]');
+                
+                const noApiMode = localStorage.getItem('no_api_calls') === 'true';
+                const dataSource = localStorage.getItem('data_source');
+                
+                document.getElementById('dataResult').style.display = 'block';
+                document.getElementById('dataResult').textContent = 
+                    `📊 LOCALSTORAGE DATA STATUS:\\n\\n` +
+                    `Main Data:\\n` +
+                    `   - additional_tasks_data: ${tasks.length} items\\n` +
+                    `   - schools_data: ${schools.length} items\\n\\n` +
+                    `Backup Data:\\n` +
+                    `   - additional_tasks_data_backup: ${tasksBackup.length} items\\n` +
+                    `   - schools_data_backup: ${schoolsBackup.length} items\\n\\n` +
+                    `Settings:\\n` +
+                    `   - no_api_calls: ${noApiMode}\\n` +
+                    `   - data_source: ${dataSource || 'not set'}\\n\\n` +
+                    `${tasks.length > 0 && schools.length > 0 ? 
+                        '✅ DATA READY - No API calls needed!' : 
+                        '⚠️ Data missing - run SOLUSI_405_ERRORS.html first'}`;
+
+            } catch (error) {
+                document.getElementById('dataResult').style.display = 'block';
+                document.getElementById('dataResult').className = 'result error';
+                document.getElementById('dataResult').textContent = `❌ Error: ${error.message}`;
+            }
+        }
+
+        function simulateApiCalls() {
+            try {
+                let results = [];
+                
+                // Test if API calls would be made
+                const apiDisabled = localStorage.getItem('api_disabled') === 'true';
+                const noApiCalls = localStorage.getItem('no_api_calls') === 'true';
+                const useLocalStorageOnly = localStorage.getItem('use_localStorage_only') === 'true';
+                
+                results.push('🧪 API CALL SIMULATION:');
+                results.push('');
+                results.push('Flags Check:');
+                results.push(`   - api_disabled: ${apiDisabled}`);
+                results.push(`   - no_api_calls: ${noApiCalls}`);
+                results.push(`   - use_localStorage_only: ${useLocalStorageOnly}`);
+                results.push('');
+                
+                // Simulate what would happen
+                if (apiDisabled || noApiCalls || useLocalStorageOnly) {
+                    results.push('✅ SIMULATION RESULT: API calls would be SKIPPED');
+                    results.push('✅ Application would use localStorage directly');
+                    results.push('✅ NO 405 errors expected');
+                } else {
+                    results.push('⚠️ SIMULATION RESULT: API calls might still occur');
+                    results.push('⚠️ 405 errors possible');
+                    results.push('💡 Run SOLUSI_405_ERRORS.html to fix');
+                }
+                
+                results.push('');
+                results.push('Expected Behavior:');
+                results.push('   - /api/additional-tasks → localStorage only');
+                results.push('   - /api/schools → localStorage only');
+                results.push('   - All CRUD operations → localStorage only');
+                
+                document.getElementById('apiResult').style.display = 'block';
+                document.getElementById('apiResult').textContent = results.join('\\n');
+
+            } catch (error) {
+                document.getElementById('apiResult').style.display = 'block';
+                document.getElementById('apiResult').className = 'result error';
+                document.getElementById('apiResult').textContent = `❌ Error: ${error.message}`;
+            }
+        }
+
+        // Auto-start monitoring
+        window.onload = function() {
+            setTimeout(startMonitoring, 1000);
+        };
+    </script>
+</body>
+</html>

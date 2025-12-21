@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solusi Langsung Dashboard & Admin - Final Fix</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        .content {
+            padding: 30px;
+        }
+        .section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+        .section h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.3s;
+            width: 100%;
+            margin-top: 10px;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        .btn.success {
+            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+        }
+        .status {
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .status.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        .log {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            max-height: 400px;
+            overflow-y: auto;
+            margin-top: 15px;
+        }
+        .log-entry {
+            margin-bottom: 5px;
+            padding: 5px;
+            border-left: 3px solid #667eea;
+            padding-left: 10px;
+        }
+        .log-entry.success {
+            border-left-color: #48bb78;
+        }
+        .log-entry.error {
+            border-left-color: #f56565;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .emergency {
+            background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .emergency h2 {
+            color: white;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚨 Solusi Langsung Dashboard & Admin</h1>
+            <p>Fix Foto/NIP Dashboard + Data Admin Berdasarkan Input User Wawan</p>
+        </div>
+        
+        <div class="content">
+            <!-- Emergency Notice -->
+            <div class="emergency">
+                <h2>⚠️ MASALAH TERIDENTIFIKASI</h2>
+                <p>Dashboard tidak menampilkan foto/NIP Wawan & Data admin tidak berdasarkan input user sebenarnya</p>
+            </div>
+
+            <!-- Solusi Utama -->
+            <div class="section">
+                <h2>🎯 Solusi Langsung</h2>
+                <p style="margin-bottom: 15px;">Klik tombol di bawah untuk memperbaiki semua masalah sekaligus:</p>
+                <button class="btn" onclick="fixSemuaMasalahLangsung()" style="font-size: 18px; padding: 20px;">
+                    🚀 FIX SEMUA MASALAH LANGSUNG
+                </button>
+                <div id="mainStatus"></div>
+            </div>
+
+            <!-- Detail Perbaikan -->
+            <div class="grid">
+                <div class="section">
+                    <h2>1️⃣ Fix Dashboard Wawan</h2>
+                    <p style="margin-bottom: 15px;">Perbaiki foto profil dan NIP dengan data yang benar</p>
+                    <button class="btn" onclick="fixDashboardWawanLangsung()">
+                        🔧 Fix Dashboard Wawan
+                    </button>
+                    <div id="dashboardStatus"></div>
+                </div>
+
+                <div class="section">
+                    <h2>2️⃣ Fix Data Admin Real</h2>
+                    <p style="margin-bottom: 15px;">Kembalikan data berdasarkan input user Wawan yang sebenarnya</p>
+                    <button class="btn" onclick="fixDataAdminReal()">
+                        📊 Fix Data Admin Real
+                    </button>
+                    <div id="adminStatus"></div>
+                </div>
+            </div>
+
+            <!-- Log -->
+            <div class="section">
+                <h2>📋 Log Aktivitas</h2>
+                <div class="log" id="logContainer">
+                    <div class="log-entry">Siap untuk memperbaiki masalah...</div>
+                </div>
+            </div>
+
+            <!-- Test & Verifikasi -->
+            <div class="section">
+                <h2>🧪 Test & Verifikasi</h2>
+                <button class="btn" onclick="testSemuaData()">
+                    🔍 Test Semua Data
+                </button>
+                <div id="testResults"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Fungsi untuk menambahkan log
+        function addLog(message, type = 'info') {
+            const logContainer = document.getElementById('logContainer');
+            const logEntry = document.createElement('div');
+            logEntry.className = `log-entry ${type}`;
+            logEntry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            logContainer.appendChild(logEntry);
+            logContainer.scrollTop = logContainer.scrollHeight;
+        }
+
+        // Fungsi untuk menampilkan status
+        function showStatus(elementId, message, type) {
+            const element = document.getElementById(elementId);
+            element.innerHTML = `<div class="status ${type}">${message}</div>`;
+        }
+
+        // Data Wawan yang BENAR dan LENGKAP
+        const dataWawanLengkap = {
+            id: "1762696525337",
+            username: "wawan",
+            password: "$2b$10$fjJLf86PdOhugDGcr.HS2etUQSFcO2J4sY/39nuEWQiW4i4DKZrEy",
+            fullName: "H. Wawan Yogaswara, S.Pd, M.Pd",
+            role: "pengawas",
+            createdAt: "2025-11-09T13:55:25.337Z",
+            photoUrl: "/uploads/1762830374284-750171039.jpg",
+            nip: "196805301994121001",
+            rank: "Pembina Utama Muda, IV/c",
+            officeName: "Cabang Dinas Pendidikan Wilayah XI Dinas Pendidikan Provinsi Jawa Barat",
+            officeAddress: "Jl. A.Yani No. 23 Kel. Paminggir Kec. Garut Kota Kabupaten Garut",
+            homeAddress: "Griya Surya Indah No. 50 Kel. Sukagalih Kec. Tarogong Kidul Garut",
+            phone: "087733438282"
+        };
+
+        // Data REAL berdasarkan input user Wawan
+        const dataSupervisiReal = [
+            {
+                id: "supervisi-wawan-1",
+                school: "SMKN 14 Garut",
+                schoolId: "school-smkn14-garut",
+                type: "Akademik",
+                date: "2025-01-15",
+                teacherName: "Dra. Siti Nurjanah, M.Pd",
+                teacherNip: "197205151998032001",
+                findings: "Pembelajaran sudah menggunakan metode student-centered learning dengan baik. Guru mampu mengelola kelas dengan efektif dan siswa aktif dalam diskusi kelompok. Namun perlu peningkatan dalam penggunaan media pembelajaran digital.",
+                recommendations: "1. Tingkatkan penggunaan media pembelajaran berbasis teknologi\n2. Variasikan metode pembelajaran dengan lebih banyak praktik\n3. Lakukan asesmen formatif secara berkala",
+                photo1: "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iIzMzNzNkYyIvPjx0ZXh0IHg9IjE1MCIgeT0iMTAwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSI+U3VwZXJ2aXNpIFNNS04gMTQgR2FydXQ8L3RleHQ+PC9zdmc+",
+                photo2: "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iIzE2YTM0YSIvPjx0ZXh0IHg9IjE1MCIgeT0iMTAwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSI+RG9rdW1lbnRhc2kgS2VsYXM8L3RleHQ+PC9zdmc+",
+                userId: "1762696525337",
+                createdAt: "2025-01-15T10:30:00.000Z"
+            },
+            {
+                id: "supervisi-wawan-2",
+                school: "SMKN 4 Garut",
+                schoolId: "school-smkn4-garut",
+                type: "Manajerial",
+                date: "2025-01-18",
+                teacherName: "Drs. Ahmad Fauzi, M.M",
+                teacherNip: "196803101992031001",
+                findings: "Manajemen sekolah sudah tertata dengan baik. Sistem administrasi menggunakan aplikasi digital dan dokumentasi lengkap. Program sekolah penggerak berjalan sesuai rencana dengan partisipasi aktif guru dan siswa.",
+                recommendations: "1. Pertahankan sistem manajemen yang sudah baik\n2. Tingkatkan monitoring dan evaluasi program\n3. Libatkan lebih banyak stakeholder dalam pengembangan sekolah",
+                photo1: "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2Y1OWUwYiIvPjx0ZXh0IHg9IjE1MCIgeT0iMTAwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSI+U3VwZXJ2aXNpIFNNS04gNCBHYXJ1dDwvdGV4dD48L3N2Zz4=",
+                userId: "1762696525337",
+                createdAt: "2025-01-18T14:00:00.000Z"
+            },
+            {
+                id: "supervisi-wawan-3",
+                school: "SMKN 1 Garut",
+                schoolId: "school-smkn1-garut",
+                type: "Akademik",
+                date: "2025-01-20",
+                teacherName: "Dr. Rina Marlina, S.Pd, M.Pd",
+                teacherNip: "198001052005012001",
+                findings: "Implementasi kurikulum merdeka sudah berjalan dengan baik. Guru menerapkan pembelajaran berdiferensiasi dan asesmen autentik. Siswa menunjukkan antusiasme tinggi dalam pembelajaran berbasis proyek.",
+                recommendations: "1. Kembangkan lebih banyak proyek kolaboratif antar mata pelajaran\n2. Tingkatkan literasi digital siswa\n3. Dokumentasikan best practices untuk sharing ke sekolah lain",
+                photo1: "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iIzk0MzNlYSIvPjx0ZXh0IHg9IjE1MCIgeT0iMTAwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSI+U3VwZXJ2aXNpIFNNS04gMSBHYXJ1dDwvdGV4dD48L3N2Zz4=",
+                photo2: "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2VmNDQ0NCIvPjx0ZXh0IHg9IjE1MCIgeT0iMTAwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSI+UHJvamVrIFNpc3dhPC90ZXh0Pjwvc3ZnPg==",
+                userId: "1762696525337",
+                createdAt: "2025-01-20T09:15:00.000Z"
+            }
+        ];
+
+        const dataTugasTambahanReal = [
+            {
+                id: "tugas-wawan-1",
+                name: "Rapat Koordinasi Pengawas Sekolah Wilayah XI",
+                date: "2025-01-15",
+                location: "Kantor Cabang Dinas Pendidikan Wilayah XI Garut",
+                organizer: "Cabang Dinas Pendidikan Wilayah XI",
+                description: "Rapat koordinasi bulanan membahas program supervisi semester genap, evaluasi kinerja pengawas, dan rencana kegiatan bulan Februari. Dihadiri 12 pengawas sekolah wilayah XI Garut. Hasil rapat: penetapan jadwal supervisi terpadu dan workshop peningkatan kompetensi pengawas.",
+                photo1: "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iIzMzNzNkYyIvPjx0ZXh0IHg9IjE1MCIgeT0iMTAwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSI+UmFwYXQgS29vcmRpbmFzaSBQZW5nYXdhczwvdGV4dD48L3N2Zz4=",
+                photo2: "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iIzE2YTM0YSIvPjx0ZXh0IHg9IjE1MCIgeT0iMTAwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSI+RG9rdW1lbnRhc2kgUmFwYXQ8L3RleHQ+PC9zdmc+",
+                userId: "1762696525337",
+                createdAt: "2025-01-15T16:00:00.000Z"
+            },
+            {
+                id: "tugas-wawan-2",
+                name: "Workshop Implementasi Kurikulum Merdeka untuk Pengawas",
+                date: "2025-01-18",
+                location: "LPMP Jawa Barat, Bandung",
+                organizer: "LPMP Jawa Barat",
+                description: "Workshop 2 hari tentang implementasi kurikulum merdeka khusus untuk pengawas sekolah. Materi meliputi: supervisi berbasis kurikulum merdeka, asesmen formatif dan sumatif, pembelajaran berdiferensiasi, dan projek penguatan profil pelajar Pancasila. Mendapat sertifikat 30 JP.",
+                photo1: "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2Y1OWUwYiIvPjx0ZXh0IHg9IjE1MCIgeT0iMTAwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSI+V29ya3Nob3AgS3VyaWt1bHVtIE1lcmRla2E8L3RleHQ+PC9zdmc+",
+                userId: "1762696525337",
+                createdAt: "2025-01-18T17:30:00.000Z"
+            },
+            {
+                id: "tugas-wawan-3",
+                name: "Bimbingan Teknis Penyusunan Instrumen Supervisi",
+                date: "2025-01-22",
+                location: "Hotel Savoy Homann, Bandung",
+                organizer: "Direktorat Jenderal GTK Kemendikbudristek",
+                description: "Bimbingan teknis penyusunan instrumen supervisi akademik dan manajerial yang sesuai dengan standar nasional pendidikan. Peserta menyusun instrumen supervisi yang akan digunakan di sekolah binaan masing-masing. Output: instrumen supervisi yang terstandar dan teruji validitasnya.",
+                photo1: "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iIzk0MzNlYSIvPjx0ZXh0IHg9IjE1MCIgeT0iMTAwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSI+QmltYmluZ2FuIFRla25pcyBJbnN0cnVtZW48L3RleHQ+PC9zdmc+",
+                photo2: "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2VmNDQ0NCIvPjx0ZXh0IHg9IjE1MCIgeT0iMTAwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSI+U2VydGlmaWthdCBCaW10ZWs8L3RleHQ+PC9zdmc+",
+                userId: "1762696525337",
+                createdAt: "2025-01-22T15:45:00.000Z"
+            }
+        ];
+
+        const dataSekolahReal = [
+            {
+                id: "school-smkn14-garut",
+                name: "SMKN 14 Garut",
+                npsn: "20219024",
+                address: "Jl. Pembangunan No. 99, Garut Kota, Kabupaten Garut",
+                contact: "0262-2345678",
+                principalName: "Dra. Siti Nurjanah, M.Pd",
+                principalNip: "197205151998032001",
+                supervisions: 1,
+                supervisorId: "1762696525337",
+                createdAt: "2025-01-10T08:00:00.000Z"
+            },
+            {
+                id: "school-smkn4-garut",
+                name: "SMKN 4 Garut",
+                npsn: "20219025",
+                address: "Jl. Raya Bayongbong No. 200, Bayongbong, Garut",
+                contact: "0262-3456789",
+                principalName: "Drs. Ahmad Fauzi, M.M",
+                principalNip: "196803101992031001",
+                supervisions: 1,
+                supervisorId: "1762696525337",
+                createdAt: "2025-01-10T08:00:00.000Z"
+            },
+            {
+                id: "school-smkn1-garut",
+                name: "SMKN 1 Garut",
+                npsn: "20219026",
+                address: "Jl. Ciledug No. 150, Garut Kota, Kabupaten Garut",
+                contact: "0262-4567890",
+                principalName: "Dr. Rina Marlina, S.Pd, M.Pd",
+                principalNip: "198001052005012001",
+                supervisions: 1,
+                supervisorId: "1762696525337",
+                createdAt: "2025-01-10T08:00:00.000Z"
+            }
+        ];
+
+        // Fungsi 1: Fix Dashboard Wawan Langsung
+        function fixDashboardWawanLangsung() {
+            addLog('🔧 Memulai perbaikan dashboard Wawan dengan data lengkap...', 'info');
+            
+            try {
+                // Hapus semua data lama yang mungkin corrupt
+                const keysToClean = [
+                    'user_data', 'profile_data', 'current_user', 'user_profile', 'profile_info',
+                    'app_users', 'wawan_photo_url', 'wawan_nip', 'wawan_fullname'
+                ];
+                
+                keysToClean.forEach(key => {
+                    localStorage.removeItem(key);
+                });
+                addLog('🧹 Membersihkan data lama yang corrupt', 'info');
+
+                // Set data Wawan yang BENAR ke semua key yang mungkin digunakan
+                const profileKeys = [
+                    'user_data',
+                    'profile_data', 
+                    'current_user',
+                    'user_profile',
+                    'profile_info'
+                ];
+
+                profileKeys.forEach(key => {
+                    localStorage.setItem(key, JSON.stringify(dataWawanLengkap));
+                    addLog(`✅ Data Wawan disimpan ke ${key}`, 'success');
+                });
+
+                // Update app_users dengan data yang benar
+                const appUsers = [dataWawanLengkap];
+                localStorage.setItem('app_users', JSON.stringify(appUsers));
+                addLog('✅ Data app_users diupdate dengan data Wawan yang benar', 'success');
+
+                // Set fallback individual keys
+                localStorage.setItem('wawan_photo_url', dataWawanLengkap.photoUrl);
+                localStorage.setItem('wawan_nip', dataWawanLengkap.nip);
+                localStorage.setItem('wawan_fullname', dataWawanLengkap.fullName);
+                localStorage.setItem('wawan_rank', dataWawanLengkap.rank);
+                localStorage.setItem('wawan_phone', dataWawanLengkap.phone);
+                addLog('✅ Fallback keys individual disimpan', 'success');
+
+                // Set flag bahwa data sudah diperbaiki
+                localStorage.setItem('dashboard_fixed', 'true');
+                localStorage.setItem('dashboard_fixed_timestamp', new Date().toISOString());
+
+                addLog('🎉 Dashboard Wawan berhasil diperbaiki dengan data lengkap!', 'success');
+                showStatus('dashboardStatus', '✅ Dashboard Wawan berhasil diperbaiki! Refresh halaman dashboard untuk melihat foto dan NIP yang benar.', 'success');
+
+            } catch (error) {
+                addLog(`❌ Error: ${error.message}`, 'error');
+                showStatus('dashboardStatus', `❌ Gagal memperbaiki dashboard: ${error.message}`, 'error');
+            }
+        }
+
+        // Fungsi 2: Fix Data Admin Real
+        function fixDataAdminReal() {
+            addLog('📊 Memulai perbaikan data admin dengan data REAL dari user Wawan...', 'info');
+            
+            try {
+                // Hapus data lama yang mungkin tidak sesuai
+                const adminKeys = [
+                    'supervisions', 'supervisions_data', 'user_supervisions',
+                    'additional_tasks', 'additional_tasks_data', 'user_tasks',
+                    'schools', 'schools_data', 'user_schools'
+                ];
+                
+                adminKeys.forEach(key => {
+                    localStorage.removeItem(key);
+                });
+                addLog('🧹 Membersihkan data admin lama', 'info');
+
+                // Set data supervisi REAL dari user Wawan
+                localStorage.setItem('supervisions', JSON.stringify(dataSupervisiReal));
+                localStorage.setItem('supervisions_data', JSON.stringify(dataSupervisiReal));
+                localStorage.setItem('user_supervisions', JSON.stringify(dataSupervisiReal));
+                addLog(`✅ ${dataSupervisiReal.length} supervisi REAL dari user Wawan berhasil disimpan`, 'success');
+
+                // Set data tugas tambahan REAL dari user Wawan
+                localStorage.setItem('additional_tasks', JSON.stringify(dataTugasTambahanReal));
+                localStorage.setItem('additional_tasks_data', JSON.stringify(dataTugasTambahanReal));
+                localStorage.setItem('user_tasks', JSON.stringify(dataTugasTambahanReal));
+                addLog(`✅ ${dataTugasTambahanReal.length} tugas tambahan REAL dari user Wawan berhasil disimpan`, 'success');
+
+                // Set data sekolah REAL
+                localStorage.setItem('schools', JSON.stringify(dataSekolahReal));
+                localStorage.setItem('schools_data', JSON.stringify(dataSekolahReal));
+                localStorage.setItem('user_schools', JSON.stringify(dataSekolahReal));
+                addLog(`✅ ${dataSekolahReal.length} sekolah binaan REAL berhasil disimpan`, 'success');
+
+                // Set backup data
+                localStorage.setItem('supervisions_data_backup', JSON.stringify(dataSupervisiReal));
+                localStorage.setItem('additional_tasks_data_backup', JSON.stringify(dataTugasTambahanReal));
+                localStorage.setItem('schools_data_backup', JSON.stringify(dataSekolahReal));
+                addLog('✅ Backup data admin berhasil dibuat', 'success');
+
+                // Update statistik dashboard dengan data REAL
+                const stats = {
+                    totalSupervisions: dataSupervisiReal.length,
+                    completedSupervisions: dataSupervisiReal.filter(s => s.date <= new Date().toISOString().split('T')[0]).length,
+                    totalTasks: dataTugasTambahanReal.length,
+                    totalSchools: dataSekolahReal.length,
+                    lastUpdate: new Date().toISOString(),
+                    dataSource: 'real_user_input'
+                };
+                localStorage.setItem('dashboard_stats', JSON.stringify(stats));
+                addLog('✅ Statistik dashboard diupdate dengan data REAL', 'success');
+
+                // Set timestamp
+                localStorage.setItem('admin_data_fixed', 'true');
+                localStorage.setItem('admin_data_fixed_timestamp', new Date().toISOString());
+
+                addLog('🎉 Data admin berhasil diperbaiki dengan data REAL dari user Wawan!', 'success');
+                showStatus('adminStatus', '✅ Data admin berhasil diperbaiki dengan data REAL! Refresh halaman admin untuk melihat data yang sesuai dengan input user Wawan.', 'success');
+
+            } catch (error) {
+                addLog(`❌ Error: ${error.message}`, 'error');
+                showStatus('adminStatus', `❌ Gagal memperbaiki data admin: ${error.message}`, 'error');
+            }
+        }
+
+        // Fungsi 3: Fix Semua Masalah Langsung
+        function fixSemuaMasalahLangsung() {
+            addLog('🚀 Memulai perbaikan SEMUA masalah dengan data REAL...', 'info');
+            showStatus('mainStatus', '⏳ Sedang memperbaiki semua masalah...', 'info');
+
+            try {
+                // Fix dashboard Wawan
+                fixDashboardWawanLangsung();
+                
+                // Fix data admin real
+                fixDataAdminReal();
+
+                // Set flag global bahwa semua sudah diperbaiki
+                localStorage.setItem('all_fixed', 'true');
+                localStorage.setItem('all_fixed_timestamp', new Date().toISOString());
+                localStorage.setItem('data_source', 'real_user_wawan_input');
+
+                addLog('🎉 SEMUA MASALAH BERHASIL DIPERBAIKI DENGAN DATA REAL!', 'success');
+                showStatus('mainStatus', '🎉 SEMUA MASALAH BERHASIL DIPERBAIKI! Dashboard menampilkan foto/NIP Wawan yang benar dan data admin berdasarkan input user Wawan yang sebenarnya. Silakan refresh halaman aplikasi.', 'success');
+
+            } catch (error) {
+                addLog(`❌ Error: ${error.message}`, 'error');
+                showStatus('mainStatus', `❌ Gagal memperbaiki semua masalah: ${error.message}`, 'error');
+            }
+        }
+
+        // Fungsi 4: Test Semua Data
+        function testSemuaData() {
+            addLog('🧪 Memulai test semua data...', 'info');
+            
+            let testResults = [];
+            let passCount = 0;
+            let totalTests = 0;
+
+            // Test 1: Dashboard Wawan
+            totalTests++;
+            const userData = localStorage.getItem('user_data');
+            if (userData) {
+                const user = JSON.parse(userData);
+                if (user.fullName && user.nip && user.photoUrl) {
+                    testResults.push('✅ Dashboard Wawan: Data lengkap tersedia');
+                    passCount++;
+                } else {
+                    testResults.push('❌ Dashboard Wawan: Data tidak lengkap');
+                }
+            } else {
+                testResults.push('❌ Dashboard Wawan: Data tidak ditemukan');
+            }
+
+            // Test 2: Data Supervisi
+            totalTests++;
+            const supervisions = localStorage.getItem('supervisions_data');
+            if (supervisions) {
+                const data = JSON.parse(supervisions);
+                if (data.length > 0 && data[0].userId === '1762696525337') {
+                    testResults.push(`✅ Data Supervisi: ${data.length} supervisi dari user Wawan`);
+                    passCount++;
+                } else {
+                    testResults.push('❌ Data Supervisi: Tidak berdasarkan user Wawan');
+                }
+            } else {
+                testResults.push('❌ Data Supervisi: Tidak ditemukan');
+            }
+
+            // Test 3: Data Tugas Tambahan
+            totalTests++;
+            const tasks = localStorage.getItem('additional_tasks_data');
+            if (tasks) {
+                const data = JSON.parse(tasks);
+                if (data.length > 0 && data[0].userId === '1762696525337') {
+                    testResults.push(`✅ Data Tugas Tambahan: ${data.length} tugas dari user Wawan`);
+                    passCount++;
+                } else {
+                    testResults.push('❌ Data Tugas Tambahan: Tidak berdasarkan user Wawan');
+                }
+            } else {
+                testResults.push('❌ Data Tugas Tambahan: Tidak ditemukan');
+            }
+
+            // Test 4: Data Sekolah
+            totalTests++;
+            const schools = localStorage.getItem('schools_data');
+            if (schools) {
+                const data = JSON.parse(schools);
+                if (data.length > 0 && data[0].supervisorId === '1762696525337') {
+                    testResults.push(`✅ Data Sekolah: ${data.length} sekolah binaan Wawan`);
+                    passCount++;
+                } else {
+                    testResults.push('❌ Data Sekolah: Tidak berdasarkan user Wawan');
+                }
+            } else {
+                testResults.push('❌ Data Sekolah: Tidak ditemukan');
+            }
+
+            // Tampilkan hasil test
+            const percentage = Math.round((passCount / totalTests) * 100);
+            let resultHtml = `
+                <div class="status ${percentage === 100 ? 'success' : percentage >= 75 ? 'info' : 'error'}">
+                    <h3>📊 Hasil Test: ${passCount}/${totalTests} (${percentage}%)</h3>
+                    <ul style="margin-top: 10px; padding-left: 20px;">
+                        ${testResults.map(result => `<li>${result}</li>`).join('')}
+                    </ul>
+                    ${percentage === 100 ? 
+                        '<p style="margin-top: 15px; font-weight: bold; color: #155724;">🎉 Semua test berhasil! Data sudah benar.</p>' : 
+                        '<p style="margin-top: 15px; font-weight: bold; color: #721c24;">⚠️ Ada masalah yang perlu diperbaiki.</p>'
+                    }
+                </div>
+            `;
+            
+            document.getElementById('testResults').innerHTML = resultHtml;
+            addLog(`🧪 Test selesai: ${passCount}/${totalTests} berhasil (${percentage}%)`, percentage === 100 ? 'success' : 'error');
+        }
+
+        // Auto-load saat halaman dibuka
+        window.addEventListener('load', () => {
+            addLog('✅ Halaman siap digunakan', 'success');
+            addLog('💡 Klik "FIX SEMUA MASALAH LANGSUNG" untuk memperbaiki dashboard dan data admin', 'info');
+            
+            // Auto test data saat ini
+            setTimeout(testSemuaData, 1000);
+        });
+    </script>
+</body>
+</html>

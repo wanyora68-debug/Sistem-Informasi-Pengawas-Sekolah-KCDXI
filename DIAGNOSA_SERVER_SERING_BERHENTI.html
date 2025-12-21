@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Diagnosa Server Sering Berhenti</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .success { color: green; font-weight: bold; }
+        .error { color: red; font-weight: bold; }
+        .info { color: blue; }
+        .warning { color: orange; }
+        button { padding: 10px 15px; margin: 5px; background: #007cba; color: white; border: none; border-radius: 3px; cursor: pointer; }
+        button:hover { background: #005a87; }
+        pre { background: #f5f5f5; padding: 10px; overflow-x: auto; font-size: 12px; }
+        .result { margin: 10px 0; padding: 10px; border-left: 4px solid #007cba; background: #f9f9f9; }
+    </style>
+</head>
+<body>
+    <h1>🔍 Diagnosa Server Sering Berhenti</h1>
+    
+    <div class="section">
+        <h2>🚨 Kemungkinan Penyebab Server Crash:</h2>
+        <ul>
+            <li><strong>Syntax Error:</strong> Error di kode JavaScript/TypeScript</li>
+            <li><strong>Memory Leak:</strong> Penggunaan memori berlebihan</li>
+            <li><strong>Port Conflict:</strong> Port 5000 digunakan aplikasi lain</li>
+            <li><strong>File Watch Error:</strong> Hot reload gagal karena perubahan file</li>
+            <li><strong>Database Connection:</strong> Masalah koneksi database</li>
+            <li><strong>Dependency Issue:</strong> Masalah dengan node_modules</li>
+        </ul>
+    </div>
+    
+    <div class="section">
+        <h2>1. Cek Status Server</h2>
+        <button onclick="checkServerStatus()">🔍 Cek Status Server</button>
+        <div id="serverStatusResult"></div>
+    </div>
+    
+    <div class="section">
+        <h2>2. Restart Server dengan Monitoring</h2>
+        <button onclick="restartServerWithMonitoring()">🔄 Restart Server</button>
+        <div id="restartResult"></div>
+    </div>
+    
+    <div class="section">
+        <h2>3. Solusi Cepat</h2>
+        <button onclick="quickFix()">⚡ Quick Fix</button>
+        <button onclick="emergencyRestart()">🚨 Emergency Restart</button>
+        <div id="quickFixResult"></div>
+    </div>
+    
+    <div class="section">
+        <h2>4. Panduan Manual</h2>
+        <div id="manualGuide">
+            <h3>📋 Langkah Manual untuk Restart Server:</h3>
+            <ol>
+                <li><strong>Buka Terminal/Command Prompt</strong></li>
+                <li><strong>Navigasi ke folder project:</strong> <code>cd "D:\Data Ibu\SchoolGuardManager"</code></li>
+                <li><strong>Stop server yang berjalan:</strong> <code>Ctrl+C</code> (jika ada)</li>
+                <li><strong>Clear cache:</strong> <code>npm run clean</code> (jika ada)</li>
+                <li><strong>Restart server:</strong> <code>npm run dev</code></li>
+                <li><strong>Tunggu hingga muncul:</strong> <code>[express] serving on port 5000</code></li>
+                <li><strong>Akses aplikasi:</strong> <code>http://localhost:5000</code></li>
+            </ol>
+            
+            <h3>🔧 Jika Server Masih Crash:</h3>
+            <ol>
+                <li><strong>Cek port:</strong> <code>netstat -ano | findstr :5000</code></li>
+                <li><strong>Kill process:</strong> <code>taskkill /PID [PID_NUMBER] /F</code></li>
+                <li><strong>Restart komputer</strong> (jika perlu)</li>
+                <li><strong>Install ulang dependencies:</strong> <code>npm install</code></li>
+            </ol>
+        </div>
+    </div>
+
+    <script>
+        function log(message, type = 'info') {
+            console.log(message);
+            const className = type === 'success' ? 'success' : type === 'error' ? 'error' : type === 'warning' ? 'warning' : 'info';
+            return `<div class="${className}">${message}</div>`;
+        }
+
+        function checkServerStatus() {
+            const result = document.getElementById('serverStatusResult');
+            let html = '';
+            
+            html += log('🔍 Checking server status...', 'info');
+            
+            // Test if server is responding
+            fetch('http://localhost:5000/api/health')
+                .then(response => {
+                    if (response.ok) {
+                        html += log('✅ Server is responding on port 5000', 'success');
+                        html += log('📊 Server status: HEALTHY', 'success');
+                    } else {
+                        html += log(`⚠️ Server responding but with status: ${response.status}`, 'warning');
+                    }
+                    result.innerHTML = `<div class="result">${html}</div>`;
+                })
+                .catch(error => {
+                    html += log('❌ Server is NOT responding on port 5000', 'error');
+                    html += log('💡 Server mungkin crash atau belum distart', 'warning');
+                    html += log('🔧 Gunakan tombol "Restart Server" untuk memulai ulang', 'info');
+                    result.innerHTML = `<div class="result">${html}</div>`;
+                });
+        }
+
+        function restartServerWithMonitoring() {
+            const result = document.getElementById('restartResult');
+            let html = '';
+            
+            html += log('🔄 Attempting to restart server...', 'info');
+            html += log('⚠️ Note: Restart harus dilakukan manual via terminal', 'warning');
+            html += log('', 'info');
+            html += log('📋 Langkah-langkah:', 'info');
+            html += log('1. Buka Command Prompt atau PowerShell', 'info');
+            html += log('2. cd "D:\\Data Ibu\\SchoolGuardManager"', 'info');
+            html += log('3. npm run dev', 'info');
+            html += log('4. Tunggu hingga muncul "[express] serving on port 5000"', 'info');
+            html += log('5. Akses http://localhost:5000', 'info');
+            
+            result.innerHTML = `<div class="result">${html}</div>`;
+        }
+
+        function quickFix() {
+            const result = document.getElementById('quickFixResult');
+            let html = '';
+            
+            try {
+                html += log('⚡ Running quick fixes...', 'info');
+                
+                // Clear localStorage conflicts
+                const conflictKeys = [
+                    'ultimate_fix_applied',
+                    'wawan_fullname',
+                    'wawan_nip', 
+                    'wawan_photo_url'
+                ];
+                
+                conflictKeys.forEach(key => {
+                    if (localStorage.getItem(key)) {
+                        localStorage.removeItem(key);
+                        html += log(`🧹 Cleared: ${key}`, 'success');
+                    }
+                });
+                
+                // Set stable user session
+                const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+                if (currentUser.id) {
+                    // Ensure stable session
+                    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                    localStorage.setItem('token', currentUser.role + '-stable-token');
+                    html += log('✅ Stabilized user session', 'success');
+                }
+                
+                html += log('✅ Quick fixes applied', 'success');
+                html += log('🔄 Server masih perlu di-restart manual', 'warning');
+                
+            } catch (error) {
+                html += log(`❌ Error: ${error.message}`, 'error');
+            }
+            
+            result.innerHTML = `<div class="result">${html}</div>`;
+        }
+
+        function emergencyRestart() {
+            const result = document.getElementById('quickFixResult');
+            let html = '';
+            
+            html += log('🚨 EMERGENCY RESTART INSTRUCTIONS', 'error');
+            html += log('', 'info');
+            html += log('⚠️ Server crash detected. Manual restart required:', 'warning');
+            html += log('', 'info');
+            html += log('🔧 IMMEDIATE ACTIONS:', 'info');
+            html += log('1. Press Ctrl+Alt+T (or open Command Prompt)', 'info');
+            html += log('2. Type: cd "D:\\Data Ibu\\SchoolGuardManager"', 'info');
+            html += log('3. Type: npm run dev', 'info');
+            html += log('4. Wait for: "[express] serving on port 5000"', 'info');
+            html += log('5. Open browser: http://localhost:5000', 'info');
+            html += log('', 'info');
+            html += log('🆘 IF STILL FAILING:', 'error');
+            html += log('1. Close all terminals', 'info');
+            html += log('2. Restart computer', 'info');
+            html += log('3. Try again', 'info');
+            
+            result.innerHTML = `<div class="result">${html}</div>`;
+        }
+
+        // Auto-check server status on load
+        window.onload = function() {
+            setTimeout(checkServerStatus, 1000);
+        };
+    </script>
+</body>
+</html>

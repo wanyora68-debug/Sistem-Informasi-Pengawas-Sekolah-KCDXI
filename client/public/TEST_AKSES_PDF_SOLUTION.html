@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧪 Test Akses PDF Solution</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #10b981;
+        }
+        
+        .header h1 {
+            color: #10b981;
+            margin-bottom: 10px;
+        }
+        
+        .test-box {
+            background: #f3f4f6;
+            border: 2px solid #d1d5db;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .test-box.success {
+            background: #d1fae5;
+            border-color: #10b981;
+        }
+        
+        .test-box.error {
+            background: #fee2e2;
+            border-color: #ef4444;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 15px 30px;
+            margin: 10px 5px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 16px;
+            transition: all 0.2s;
+            text-align: center;
+        }
+        
+        .btn-green {
+            background: #10b981;
+            color: white;
+        }
+        
+        .btn-green:hover {
+            background: #059669;
+            transform: scale(1.05);
+        }
+        
+        .btn-blue {
+            background: #3b82f6;
+            color: white;
+        }
+        
+        .btn-blue:hover {
+            background: #2563eb;
+            transform: scale(1.05);
+        }
+        
+        .result {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+        
+        .result.success {
+            background: #d1fae5;
+            color: #047857;
+            border: 2px solid #10b981;
+        }
+        
+        .result.error {
+            background: #fee2e2;
+            color: #dc2626;
+            border: 2px solid #ef4444;
+        }
+        
+        .instructions {
+            background: #fffbeb;
+            border: 2px solid #f59e0b;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .instructions h3 {
+            color: #92400e;
+            margin-top: 0;
+        }
+        
+        .instructions ol {
+            margin: 10px 0;
+            padding-left: 25px;
+        }
+        
+        .instructions li {
+            margin: 10px 0;
+            line-height: 1.6;
+        }
+        
+        code {
+            background: #f3f4f6;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            color: #dc2626;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🧪 Test Akses PDF Solution</h1>
+            <p>Verifikasi apakah file PDF_EXPORT_WORKING_SOLUTION.html dapat diakses</p>
+        </div>
+
+        <div class="test-box">
+            <h2>🎯 Test 1: Link Langsung (Paling Sederhana)</h2>
+            <p>Klik tombol di bawah ini untuk test akses langsung ke PDF solution:</p>
+            
+            <a href="/PDF_EXPORT_WORKING_SOLUTION.html" target="_blank" class="btn btn-green">
+                🟢 BUKA PDF SOLUTION (Link Langsung)
+            </a>
+            
+            <div id="test1-result"></div>
+        </div>
+
+        <div class="test-box">
+            <h2>🔍 Test 2: Fetch API</h2>
+            <p>Test apakah file dapat diakses melalui HTTP request:</p>
+            
+            <button class="btn btn-blue" onclick="testFetch()">
+                🔵 Test Fetch API
+            </button>
+            
+            <div id="test2-result"></div>
+        </div>
+
+        <div class="test-box">
+            <h2>📍 Test 3: URL Alternatif</h2>
+            <p>Test berbagai variasi URL:</p>
+            
+            <a href="http://localhost:5000/PDF_EXPORT_WORKING_SOLUTION.html" target="_blank" class="btn btn-blue">
+                🔗 localhost:5000/PDF_EXPORT_WORKING_SOLUTION.html
+            </a>
+            
+            <a href="./PDF_EXPORT_WORKING_SOLUTION.html" target="_blank" class="btn btn-blue">
+                🔗 ./PDF_EXPORT_WORKING_SOLUTION.html
+            </a>
+        </div>
+
+        <div class="instructions">
+            <h3>📋 Jika Tombol Tidak Bekerja:</h3>
+            <ol>
+                <li><strong>Restart Server:</strong>
+                    <br><code>.\stop-server.ps1</code>
+                    <br><code>.\start-server.ps1</code>
+                </li>
+                <li><strong>Clear Browser Cache:</strong>
+                    <br>Tekan <code>Ctrl+Shift+Delete</code> → Clear cache
+                </li>
+                <li><strong>Hard Refresh:</strong>
+                    <br>Tekan <code>Ctrl+Shift+R</code> (Windows) atau <code>Cmd+Shift+R</code> (Mac)
+                </li>
+                <li><strong>Check File Ada:</strong>
+                    <br>Buka PowerShell dan jalankan:
+                    <br><code>Test-Path "client\public\PDF_EXPORT_WORKING_SOLUTION.html"</code>
+                    <br>Harus return: <code>True</code>
+                </li>
+                <li><strong>Check Console Browser:</strong>
+                    <br>Tekan <code>F12</code> → Tab Console → Lihat error messages
+                </li>
+            </ol>
+        </div>
+
+        <div class="test-box">
+            <h2>✅ Hasil Yang Diharapkan</h2>
+            <p>Jika berhasil, klik tombol hijau di atas akan:</p>
+            <ul>
+                <li>✅ Membuka tab baru</li>
+                <li>✅ Menampilkan halaman PDF Export Solution</li>
+                <li>✅ Ada tombol "Generate PDF" di halaman tersebut</li>
+                <li>✅ Tidak ada error 404 atau file not found</li>
+            </ul>
+        </div>
+
+        <div class="instructions">
+            <h3>🔧 Troubleshooting Lanjutan:</h3>
+            <p><strong>Jika file tidak ditemukan (404):</strong></p>
+            <ol>
+                <li>Copy file dari root ke public:
+                    <br><code>Copy-Item "PDF_EXPORT_WORKING_SOLUTION.html" -Destination "client\public\PDF_EXPORT_WORKING_SOLUTION.html"</code>
+                </li>
+                <li>Verifikasi file ada:
+                    <br><code>Get-ChildItem "client\public\PDF_EXPORT_WORKING_SOLUTION.html"</code>
+                </li>
+                <li>Restart server setelah copy file</li>
+            </ol>
+        </div>
+    </div>
+
+    <script>
+        // Auto test saat halaman dimuat
+        window.onload = function() {
+            console.log('🧪 Test page loaded');
+            console.log('📍 Current URL:', window.location.href);
+            
+            // Auto test fetch
+            setTimeout(testFetch, 1000);
+        };
+        
+        function testFetch() {
+            const resultDiv = document.getElementById('test2-result');
+            resultDiv.innerHTML = '<p>⏳ Testing...</p>';
+            
+            fetch('/PDF_EXPORT_WORKING_SOLUTION.html')
+                .then(response => {
+                    if (response.ok) {
+                        resultDiv.innerHTML = `
+                            <div class="result success">
+                                ✅ SUCCESS! File dapat diakses<br>
+                                Status: ${response.status} ${response.statusText}<br>
+                                Content-Type: ${response.headers.get('content-type')}
+                            </div>
+                        `;
+                        console.log('✅ PDF Solution file is accessible');
+                    } else {
+                        resultDiv.innerHTML = `
+                            <div class="result error">
+                                ❌ FAILED! File tidak ditemukan<br>
+                                Status: ${response.status} ${response.statusText}<br>
+                                <br>
+                                <strong>Solusi:</strong><br>
+                                1. Check apakah file ada di client/public/<br>
+                                2. Restart server<br>
+                                3. Clear browser cache
+                            </div>
+                        `;
+                        console.error('❌ PDF Solution file not found');
+                    }
+                })
+                .catch(error => {
+                    resultDiv.innerHTML = `
+                        <div class="result error">
+                            ❌ ERROR! ${error.message}<br>
+                            <br>
+                            <strong>Kemungkinan penyebab:</strong><br>
+                            1. Server tidak running<br>
+                            2. File tidak ada<br>
+                            3. Network error
+                        </div>
+                    `;
+                    console.error('❌ Error:', error);
+                });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test API Aktivitas Wawan Langsung</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .step {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background: #f9f9f9;
+        }
+        .success { border-color: #4CAF50; background: #f0fff0; }
+        .error { border-color: #f44336; background: #fff0f0; }
+        .warning { border-color: #ff9800; background: #fff8e1; }
+        .info { border-color: #2196F3; background: #f0f8ff; }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background: #0056b3; }
+        .success-btn { background: #28a745; }
+        .success-btn:hover { background: #218838; }
+        pre {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .log {
+            max-height: 300px;
+            overflow-y: auto;
+            background: #000;
+            color: #0f0;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Test API Aktivitas Wawan Langsung</h1>
+        <p>Tool untuk test API endpoint aktivitas user Wawan secara langsung</p>
+
+        <div class="step info">
+            <h3>ℹ️ Informasi</h3>
+            <p>Tool ini akan test API endpoint <code>/api/users/wawan/activities</code> untuk memastikan data Wawan dikembalikan dengan benar.</p>
+        </div>
+
+        <div class="step">
+            <h3>🧪 Test Actions</h3>
+            <button onclick="testWawanAPI()" class="success-btn">🧪 Test API Wawan</button>
+            <button onclick="testAllUserAPIs()">👥 Test All User APIs</button>
+            <button onclick="compareWithLocalStorage()">📊 Compare with localStorage</button>
+        </div>
+
+        <div class="step">
+            <h3>📊 API Response</h3>
+            <div id="apiResponse"></div>
+        </div>
+
+        <div class="step">
+            <h3>📋 Log</h3>
+            <div id="logOutput" class="log"></div>
+            <button onclick="clearLog()">🗑️ Clear Log</button>
+        </div>
+    </div>
+
+    <script>
+        let logElement = document.getElementById('logOutput');
+        
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const color = type === 'error' ? '#ff6b6b' : type === 'success' ? '#51cf66' : type === 'warning' ? '#ffd43b' : '#74c0fc';
+            logElement.innerHTML += `<div style="color: ${color}">[${timestamp}] ${message}</div>`;
+            logElement.scrollTop = logElement.scrollHeight;
+            console.log(message);
+        }
+
+        function clearLog() {
+            logElement.innerHTML = '';
+        }
+
+        async function testWawanAPI() {
+            log('🧪 Testing Wawan API endpoint...', 'info');
+            
+            try {
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    log('❌ No auth token found in localStorage', 'error');
+                    return;
+                }
+
+                const headers = {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                };
+
+                log('📡 Calling /api/users/wawan/activities...', 'info');
+                
+                const response = await fetch('/api/users/wawan/activities', {
+                    method: 'GET',
+                    headers: headers
+                });
+
+                log(`📊 Response status: ${response.status}`, response.ok ? 'success' : 'error');
+
+                if (response.ok) {
+                    const data = await response.json();
+                    
+                    const totalItems = (data.tasks?.length || 0) + 
+                                     (data.supervisions?.length || 0) + 
+                                     (data.events?.length || 0) + 
+                                     (data.additionalTasks?.length || 0);
+
+                    log(`✅ API Success! Found ${totalItems} total items`, 'success');
+                    log(`📊 Breakdown: Tasks(${data.tasks?.length || 0}), Supervisions(${data.supervisions?.length || 0}), Events(${data.events?.length || 0}), Additional(${data.additionalTasks?.length || 0})`, 'info');
+
+                    document.getElementById('apiResponse').innerHTML = `
+                        <h4>✅ API Response Success:</h4>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+
+                    if (totalItems === 0) {
+                        log('⚠️ API returned empty data - this might be why dialog shows no activities', 'warning');
+                    }
+                } else {
+                    const errorText = await response.text();
+                    log(`❌ API Error: ${response.status} - ${errorText}`, 'error');
+                    
+                    document.getElementById('apiResponse').innerHTML = `
+                        <h4>❌ API Error:</h4>
+                        <pre>Status: ${response.status}
+Error: ${errorText}</pre>
+                    `;
+                }
+
+            } catch (error) {
+                log(`❌ Network error: ${error.message}`, 'error');
+                document.getElementById('apiResponse').innerHTML = `
+                    <h4>❌ Network Error:</h4>
+                    <pre>${error.message}</pre>
+                `;
+            }
+        }
+
+        async function testAllUserAPIs() {
+            log('👥 Testing all user API endpoints...', 'info');
+            
+            const userIds = ['wawan', 'admin', '1', '2'];
+            const token = localStorage.getItem('token');
+            
+            if (!token) {
+                log('❌ No auth token found', 'error');
+                return;
+            }
+
+            const headers = {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            };
+
+            let allResults = {};
+
+            for (const userId of userIds) {
+                try {
+                    log(`📡 Testing user: ${userId}`, 'info');
+                    
+                    const response = await fetch(`/api/users/${userId}/activities`, {
+                        method: 'GET',
+                        headers: headers
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        const totalItems = (data.tasks?.length || 0) + 
+                                         (data.supervisions?.length || 0) + 
+                                         (data.events?.length || 0) + 
+                                         (data.additionalTasks?.length || 0);
+                        
+                        allResults[userId] = {
+                            status: 'success',
+                            totalItems,
+                            data
+                        };
+                        
+                        log(`✅ ${userId}: ${totalItems} items`, totalItems > 0 ? 'success' : 'warning');
+                    } else {
+                        allResults[userId] = {
+                            status: 'error',
+                            error: response.status
+                        };
+                        log(`❌ ${userId}: Error ${response.status}`, 'error');
+                    }
+                } catch (error) {
+                    allResults[userId] = {
+                        status: 'error',
+                        error: error.message
+                    };
+                    log(`❌ ${userId}: ${error.message}`, 'error');
+                }
+            }
+
+            document.getElementById('apiResponse').innerHTML = `
+                <h4>👥 All User API Results:</h4>
+                <pre>${JSON.stringify(allResults, null, 2)}</pre>
+            `;
+        }
+
+        async function compareWithLocalStorage() {
+            log('📊 Comparing API with localStorage...', 'info');
+            
+            try {
+                // Get localStorage data
+                const localDb = JSON.parse(localStorage.getItem('local-database') || '{}');
+                
+                const localWawanData = {
+                    tasks: (localDb.tasks || []).filter(t => 
+                        t.userId === 'wawan' || 
+                        (t.username && t.username.toLowerCase() === 'wawan') ||
+                        (t.title && t.title.toLowerCase().includes('wawan'))
+                    ),
+                    supervisions: (localDb.supervisions || []).filter(s => 
+                        s.userId === 'wawan' || 
+                        (s.username && s.username.toLowerCase() === 'wawan') ||
+                        (s.schoolName && s.schoolName.toLowerCase().includes('wawan'))
+                    ),
+                    events: (localDb.events || []).filter(e => 
+                        e.userId === 'wawan' || 
+                        (e.username && e.username.toLowerCase() === 'wawan') ||
+                        (e.title && e.title.toLowerCase().includes('wawan'))
+                    ),
+                    additionalTasks: (localDb.additionalTasks || []).filter(at => 
+                        at.userId === 'wawan' || 
+                        (at.username && at.username.toLowerCase() === 'wawan') ||
+                        (at.name && at.name.toLowerCase().includes('wawan'))
+                    )
+                };
+
+                const localTotal = localWawanData.tasks.length + 
+                                 localWawanData.supervisions.length + 
+                                 localWawanData.events.length + 
+                                 localWawanData.additionalTasks.length;
+
+                log(`📦 localStorage has ${localTotal} Wawan items`, localTotal > 0 ? 'success' : 'warning');
+
+                // Test API
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    log('❌ No auth token for API test', 'error');
+                    return;
+                }
+
+                const response = await fetch('/api/users/wawan/activities', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                let apiData = { tasks: [], supervisions: [], events: [], additionalTasks: [] };
+                let apiTotal = 0;
+
+                if (response.ok) {
+                    apiData = await response.json();
+                    apiTotal = (apiData.tasks?.length || 0) + 
+                              (apiData.supervisions?.length || 0) + 
+                              (apiData.events?.length || 0) + 
+                              (apiData.additionalTasks?.length || 0);
+                    
+                    log(`📡 API has ${apiTotal} Wawan items`, apiTotal > 0 ? 'success' : 'warning');
+                } else {
+                    log(`❌ API failed: ${response.status}`, 'error');
+                }
+
+                // Compare
+                const comparison = {
+                    localStorage: {
+                        total: localTotal,
+                        tasks: localWawanData.tasks.length,
+                        supervisions: localWawanData.supervisions.length,
+                        events: localWawanData.events.length,
+                        additionalTasks: localWawanData.additionalTasks.length,
+                        sampleData: {
+                            task: localWawanData.tasks[0]?.title || 'None',
+                            supervision: localWawanData.supervisions[0]?.schoolName || 'None',
+                            event: localWawanData.events[0]?.title || 'None',
+                            additionalTask: localWawanData.additionalTasks[0]?.name || 'None'
+                        }
+                    },
+                    api: {
+                        total: apiTotal,
+                        tasks: apiData.tasks?.length || 0,
+                        supervisions: apiData.supervisions?.length || 0,
+                        events: apiData.events?.length || 0,
+                        additionalTasks: apiData.additionalTasks?.length || 0,
+                        sampleData: {
+                            task: apiData.tasks?.[0]?.title || 'None',
+                            supervision: apiData.supervisions?.[0]?.schoolName || 'None',
+                            event: apiData.events?.[0]?.title || 'None',
+                            additionalTask: apiData.additionalTasks?.[0]?.name || 'None'
+                        }
+                    },
+                    match: localTotal === apiTotal
+                };
+
+                document.getElementById('apiResponse').innerHTML = `
+                    <h4>📊 localStorage vs API Comparison:</h4>
+                    <pre>${JSON.stringify(comparison, null, 2)}</pre>
+                `;
+
+                if (comparison.match && localTotal > 0) {
+                    log('✅ Perfect match! API and localStorage have same data', 'success');
+                } else if (localTotal > 0 && apiTotal === 0) {
+                    log('⚠️ localStorage has data but API returns empty - API needs fixing', 'warning');
+                } else if (localTotal === 0) {
+                    log('⚠️ No data in localStorage - need to run data connection tool first', 'warning');
+                } else {
+                    log('⚠️ Data mismatch between localStorage and API', 'warning');
+                }
+
+            } catch (error) {
+                log(`❌ Comparison error: ${error.message}`, 'error');
+            }
+        }
+
+        // Initialize
+        log('🚀 API Test tool loaded', 'success');
+        log('💡 Click "Test API Wawan" to check if the API returns Wawan data', 'info');
+    </script>
+</body>
+</html>

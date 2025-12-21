@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌐 TEST LOCALHOST</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #f0f9ff;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border: 3px solid #2563eb;
+        }
+        h1 {
+            color: #2563eb;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .status {
+            background: #f8fafc;
+            border-left: 4px solid #2563eb;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        .success {
+            background: #f0fdf4;
+            border-left: 4px solid #16a34a;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        .error {
+            background: #fef2f2;
+            border-left: 4px solid #dc2626;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        button {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px 5px;
+            font-size: 16px;
+            font-weight: bold;
+            width: 100%;
+        }
+        button:hover {
+            background: #1d4ed8;
+        }
+        .success-btn {
+            background: #16a34a;
+        }
+        .success-btn:hover {
+            background: #15803d;
+        }
+        .result {
+            margin: 15px 0;
+            padding: 15px;
+            border-radius: 5px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            font-family: monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+        }
+        iframe {
+            width: 100%;
+            height: 400px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌐 TEST LOCALHOST</h1>
+        
+        <div class="success">
+            <h3>✅ SERVER STATUS</h3>
+            <p><strong>Server Express:</strong> Running on port 5000</p>
+            <p><strong>Static Files:</strong> Serving from dist/public</p>
+            <p><strong>Mode:</strong> Production (static files)</p>
+        </div>
+
+        <div class="status">
+            <h3>🔍 TEST CONNECTION</h3>
+            <button onclick="testConnection()">🌐 TEST LOCALHOST:5000</button>
+            <div id="connectionResult" class="result" style="display: none;"></div>
+        </div>
+
+        <div class="status">
+            <h3>📱 PREVIEW APLIKASI</h3>
+            <button onclick="showPreview()" class="success-btn">👀 PREVIEW DALAM IFRAME</button>
+            <div id="previewContainer" style="display: none;">
+                <iframe id="appPreview" src="about:blank"></iframe>
+            </div>
+        </div>
+
+        <div class="status">
+            <h3>🚀 BUKA APLIKASI</h3>
+            <p>Jika test connection berhasil, klik tombol di bawah:</p>
+            <button onclick="openApp()" class="success-btn">🌐 BUKA DI TAB BARU</button>
+        </div>
+
+        <div class="status">
+            <h3>🧪 TROUBLESHOOTING</h3>
+            <button onclick="showTroubleshooting()">🔧 JIKA TIDAK BISA AKSES</button>
+            <div id="troubleshootingResult" class="result" style="display: none;"></div>
+        </div>
+    </div>
+
+    <script>
+        async function testConnection() {
+            const resultDiv = document.getElementById('connectionResult');
+            resultDiv.style.display = 'block';
+            resultDiv.textContent = '🔄 Testing connection to localhost:5000...';
+            
+            try {
+                const response = await fetch('http://localhost:5000', {
+                    method: 'GET',
+                    mode: 'cors'
+                });
+                
+                if (response.ok) {
+                    resultDiv.className = 'result success';
+                    resultDiv.textContent = 
+                        `✅ CONNECTION SUCCESS!\\n\\n` +
+                        `Status: ${response.status} ${response.statusText}\\n` +
+                        `Content-Type: ${response.headers.get('content-type')}\\n` +
+                        `Server: Express\\n\\n` +
+                        `🎉 Localhost:5000 is accessible!\\n` +
+                        `You can now open the application.`;
+                } else {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = 
+                    `❌ CONNECTION FAILED!\\n\\n` +
+                    `Error: ${error.message}\\n\\n` +
+                    `Possible causes:\\n` +
+                    `- Server not running\\n` +
+                    `- Port 5000 blocked\\n` +
+                    `- Firewall blocking connection\\n` +
+                    `- CORS issues\\n\\n` +
+                    `Check troubleshooting section below.`;
+            }
+        }
+
+        function showPreview() {
+            const container = document.getElementById('previewContainer');
+            const iframe = document.getElementById('appPreview');
+            
+            container.style.display = 'block';
+            iframe.src = 'http://localhost:5000';
+            
+            // Handle iframe load errors
+            iframe.onerror = function() {
+                container.innerHTML = 
+                    '<div class="error">' +
+                    '<h4>❌ Preview Failed</h4>' +
+                    '<p>Cannot load localhost:5000 in iframe.</p>' +
+                    '<p>This might be due to security restrictions.</p>' +
+                    '<p>Try opening in a new tab instead.</p>' +
+                    '</div>';
+            };
+        }
+
+        function openApp() {
+            window.open('http://localhost:5000', '_blank');
+        }
+
+        function showTroubleshooting() {
+            const troubleshooting = `🔧 TROUBLESHOOTING LOCALHOST:
+
+1. CHECK SERVER STATUS:
+   - Pastikan server masih berjalan
+   - Lihat console untuk error messages
+   - Port 5000 harus available
+
+2. FIREWALL/ANTIVIRUS:
+   - Disable Windows Firewall sementara
+   - Disable antivirus real-time protection
+   - Allow Node.js through firewall
+
+3. BROWSER ISSUES:
+   - Try different browser (Chrome, Firefox, Edge)
+   - Clear browser cache (Ctrl+Shift+Delete)
+   - Disable browser extensions
+   - Try incognito/private mode
+
+4. NETWORK ISSUES:
+   - Try 127.0.0.1:5000 instead of localhost:5000
+   - Check if other localhost apps work
+   - Restart network adapter
+
+5. PORT CONFLICTS:
+   - Check if port 5000 is used by other apps
+   - Try netstat -an | findstr :5000
+   - Kill other processes using port 5000
+
+6. ALTERNATIVE ACCESS:
+   - Try http://127.0.0.1:5000
+   - Try http://[::1]:5000
+   - Check your local IP: ipconfig
+
+7. SERVER RESTART:
+   - Stop server (Ctrl+C in terminal)
+   - Run: npm run dev
+   - Wait for "serving on port 5000" message
+
+8. BUILD ISSUES:
+   - Run: npm run build:client
+   - Check if dist/public folder exists
+   - Verify index.html in dist/public
+
+COMMON SOLUTIONS:
+- Restart computer
+- Run as Administrator
+- Use different port (change in .env)
+- Check Windows hosts file`;
+
+            document.getElementById('troubleshootingResult').style.display = 'block';
+            document.getElementById('troubleshootingResult').textContent = troubleshooting;
+        }
+
+        // Auto-test connection on load
+        window.onload = function() {
+            setTimeout(testConnection, 1000);
+        };
+    </script>
+</body>
+</html>

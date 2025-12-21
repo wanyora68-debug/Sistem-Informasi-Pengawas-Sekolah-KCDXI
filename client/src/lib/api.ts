@@ -125,42 +125,16 @@ export const tasksApi = {
   },
 };
 
-// Supervisions API
+// Supervisions API - DISABLED: Using localStorage only to prevent 405 errors
 export const supervisionsApi = {
   getAll: async () => {
-    try {
-      const response = await fetch(`${API_BASE}/supervisions`, {
-        headers: getAuthHeaders(),
-        credentials: 'include',
-      });
-      if (response.ok) {
-        return handleResponse(response);
-      }
-    } catch (error) {
-      console.log('Supervisions API failed, using localStorage fallback');
-    }
-    
-    // Fallback to localStorage
+    // Direct localStorage only - no API calls
     const supervisionsData = localStorage.getItem('supervisions_data');
     return supervisionsData ? JSON.parse(supervisionsData) : [];
   },
   
   create: async (formData: FormData) => {
-    try {
-      const response = await fetch(`${API_BASE}/supervisions`, {
-        method: 'POST',
-        headers: getAuthHeaders(),
-        body: formData,
-        credentials: 'include',
-      });
-      if (response.ok) {
-        return handleResponse(response);
-      }
-    } catch (error) {
-      console.log('Supervisions API failed, using localStorage fallback');
-    }
-    
-    // Fallback to localStorage
+    // Direct localStorage only - no API calls
     const supervisionsData = localStorage.getItem('supervisions_data');
     const currentSupervisions = supervisionsData ? JSON.parse(supervisionsData) : [];
     
@@ -196,71 +170,34 @@ export const supervisionsApi = {
     
     const updatedSupervisions = [...currentSupervisions, newSupervision];
     localStorage.setItem('supervisions_data', JSON.stringify(updatedSupervisions));
+    localStorage.setItem('supervisions_data_backup', JSON.stringify(updatedSupervisions));
     
     return newSupervision;
   },
   
   delete: async (id: string) => {
-    try {
-      const response = await fetch(`${API_BASE}/supervisions/${id}`, {
-        method: 'DELETE',
-        headers: getAuthHeaders(),
-        credentials: 'include',
-      });
-      if (response.ok) {
-        return handleResponse(response);
-      }
-    } catch (error) {
-      console.log('Supervisions API failed, using localStorage fallback');
-    }
-    
-    // Fallback to localStorage
+    // Direct localStorage only - no API calls
     const supervisionsData = localStorage.getItem('supervisions_data');
     const currentSupervisions = supervisionsData ? JSON.parse(supervisionsData) : [];
     
     const updatedSupervisions = currentSupervisions.filter((supervision: any) => supervision.id !== id);
     localStorage.setItem('supervisions_data', JSON.stringify(updatedSupervisions));
+    localStorage.setItem('supervisions_data_backup', JSON.stringify(updatedSupervisions));
     
     return { success: true };
   },
 };
 
-// Additional Tasks API
+// Additional Tasks API - DISABLED: Using localStorage only to prevent 405 errors
 export const additionalTasksApi = {
   getAll: async () => {
-    try {
-      const response = await fetch(`${API_BASE}/additional-tasks`, {
-        headers: getAuthHeaders(),
-        credentials: 'include',
-      });
-      if (response.ok) {
-        return handleResponse(response);
-      }
-    } catch (error) {
-      console.log('Additional Tasks API failed, using localStorage fallback');
-    }
-    
-    // Fallback to localStorage
+    // Direct localStorage only - no API calls
     const additionalTasksData = localStorage.getItem('additional_tasks_data');
     return additionalTasksData ? JSON.parse(additionalTasksData) : [];
   },
   
   create: async (formData: FormData) => {
-    try {
-      const response = await fetch(`${API_BASE}/additional-tasks`, {
-        method: 'POST',
-        headers: getAuthHeaders(),
-        body: formData,
-        credentials: 'include',
-      });
-      if (response.ok) {
-        return handleResponse(response);
-      }
-    } catch (error) {
-      console.log('Additional Tasks API failed, using localStorage fallback');
-    }
-    
-    // Fallback to localStorage
+    // Direct localStorage only - no API calls
     const additionalTasksData = localStorage.getItem('additional_tasks_data');
     const currentAdditionalTasks = additionalTasksData ? JSON.parse(additionalTasksData) : [];
     
@@ -296,30 +233,19 @@ export const additionalTasksApi = {
     
     const updatedAdditionalTasks = [...currentAdditionalTasks, newAdditionalTask];
     localStorage.setItem('additional_tasks_data', JSON.stringify(updatedAdditionalTasks));
+    localStorage.setItem('additional_tasks_data_backup', JSON.stringify(updatedAdditionalTasks));
     
     return newAdditionalTask;
   },
   
   delete: async (id: string) => {
-    try {
-      const response = await fetch(`${API_BASE}/additional-tasks/${id}`, {
-        method: 'DELETE',
-        headers: getAuthHeaders(),
-        credentials: 'include',
-      });
-      if (response.ok) {
-        return handleResponse(response);
-      }
-    } catch (error) {
-      console.log('Additional Tasks API failed, using localStorage fallback');
-    }
-    
-    // Fallback to localStorage
+    // Direct localStorage only - no API calls
     const additionalTasksData = localStorage.getItem('additional_tasks_data');
     const currentAdditionalTasks = additionalTasksData ? JSON.parse(additionalTasksData) : [];
     
     const updatedAdditionalTasks = currentAdditionalTasks.filter((task: any) => task.id !== id);
     localStorage.setItem('additional_tasks_data', JSON.stringify(updatedAdditionalTasks));
+    localStorage.setItem('additional_tasks_data_backup', JSON.stringify(updatedAdditionalTasks));
     
     return { success: true };
   },

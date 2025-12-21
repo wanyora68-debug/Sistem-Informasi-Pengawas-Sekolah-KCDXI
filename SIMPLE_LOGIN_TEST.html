@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Login Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .login-container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .logo-section {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 8px;
+            color: white;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .status {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 4px;
+            text-align: center;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        .test-buttons {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+        }
+        .test-btn {
+            flex: 1;
+            padding: 8px;
+            font-size: 12px;
+            background: #6c757d;
+        }
+        .test-btn:hover {
+            background: #545b62;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="logo-section">
+            <h2>🏛️ Disdik Jabar</h2>
+            <p>Cabang Dinas Pendidikan Wilayah XI</p>
+            <small>Sistem Informasi Pengawas Sekolah</small>
+        </div>
+
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            
+            <button type="submit">🔐 Login</button>
+        </form>
+
+        <div class="test-buttons">
+            <button class="test-btn" onclick="fillAdmin()">Admin</button>
+            <button class="test-btn" onclick="fillWawan()">Wawan</button>
+            <button class="test-btn" onclick="clearStorage()">Clear</button>
+        </div>
+
+        <div id="status"></div>
+
+        <div class="info" style="margin-top: 20px; font-size: 12px;">
+            <strong>Test Credentials:</strong><br>
+            Admin: admin / admin123<br>
+            Pengawas: wawan / wawan123
+        </div>
+    </div>
+
+    <script>
+        // Login form handler
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const statusDiv = document.getElementById('status');
+            
+            // Clear previous status
+            statusDiv.innerHTML = '';
+            
+            // Validate credentials
+            const validUsers = {
+                admin: { password: 'admin123', role: 'admin', fullName: 'Administrator' },
+                wawan: { password: 'wawan123', role: 'pengawas', fullName: 'H. Wawan Yogaswara, S.Pd, M.Pd' }
+            };
+            
+            const user = validUsers[username.toLowerCase()];
+            
+            if (!user || user.password !== password) {
+                statusDiv.innerHTML = '<div class="error">❌ Username atau password salah!</div>';
+                return;
+            }
+            
+            // Generate token and store user data
+            const token = `${username}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+            
+            try {
+                localStorage.setItem('auth_token', token);
+                localStorage.setItem('user_data', JSON.stringify({
+                    username: username,
+                    role: user.role,
+                    fullName: user.fullName
+                }));
+                
+                statusDiv.innerHTML = '<div class="success">✅ Login berhasil! Redirecting...</div>';
+                
+                // Redirect after 1 second
+                setTimeout(() => {
+                    // Try to redirect to main app
+                    if (window.location.pathname.includes('.html')) {
+                        // We're in a static HTML file, redirect to root
+                        window.location.href = '/';
+                    } else {
+                        // We're in the React app
+                        window.location.href = '/';
+                    }
+                }, 1000);
+                
+            } catch (error) {
+                statusDiv.innerHTML = '<div class="error">❌ Error menyimpan data: ' + error.message + '</div>';
+            }
+        });
+        
+        // Helper functions
+        function fillAdmin() {
+            document.getElementById('username').value = 'admin';
+            document.getElementById('password').value = 'admin123';
+        }
+        
+        function fillWawan() {
+            document.getElementById('username').value = 'wawan';
+            document.getElementById('password').value = 'wawan123';
+        }
+        
+        function clearStorage() {
+            localStorage.clear();
+            sessionStorage.clear();
+            document.getElementById('status').innerHTML = '<div class="info">🗑️ Storage cleared!</div>';
+        }
+        
+        // Test localStorage on page load
+        window.addEventListener('load', function() {
+            try {
+                localStorage.setItem('test', 'test');
+                localStorage.removeItem('test');
+                console.log('✅ localStorage working');
+            } catch (error) {
+                document.getElementById('status').innerHTML = '<div class="error">❌ localStorage not available: ' + error.message + '</div>';
+            }
+            
+            // Show current auth status
+            const token = localStorage.getItem('auth_token');
+            const userData = localStorage.getItem('user_data');
+            
+            if (token && userData) {
+                try {
+                    const user = JSON.parse(userData);
+                    document.getElementById('status').innerHTML = 
+                        '<div class="info">ℹ️ Already logged in as: ' + user.fullName + ' (' + user.role + ')</div>';
+                } catch (e) {
+                    // Invalid user data, clear it
+                    localStorage.removeItem('auth_token');
+                    localStorage.removeItem('user_data');
+                }
+            }
+        });
+    </script>
+</body>
+</html>

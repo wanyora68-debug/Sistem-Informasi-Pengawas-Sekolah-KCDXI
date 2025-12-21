@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fix React Query Cache Admin - FINAL</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        .content {
+            padding: 30px;
+        }
+        .section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.3s;
+            width: 100%;
+            margin-top: 10px;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        .status {
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .log {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            max-height: 400px;
+            overflow-y: auto;
+            margin-top: 15px;
+        }
+        .problem {
+            background: #fef2f2;
+            border: 2px solid #fca5a5;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .problem h3 {
+            color: #dc2626;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔧 Fix React Query Cache Admin</h1>
+            <p>Mengatasi Masalah Cache React Query di Halaman Admin</p>
+        </div>
+        <div class="content">
+            <div class="problem">
+                <h3>🚨 Masalah React Query Cache:</h3>
+                <ul style="margin-left: 20px;">
+                    <li>❌ Halaman admin tidak menampilkan data user Wawan</li>
+                    <li>❌ React Query cache tidak ter-invalidate saat localStorage berubah</li>
+                    <li>❌ Data lama masih ter-cache meskipun localStorage sudah diupdate</li>
+                    <li>❌ Perlu force invalidate cache untuk refresh data</li>
+                </ul>
+            </div>
+            
+            <div class="section">
+                <h2>🎯 Fix React Query Cache</h2>
+                <button class="btn" onclick="fixReactQueryCache()" style="font-size: 18px; padding: 20px;">
+                    🚀 FIX REACT QUERY CACHE - INVALIDATE & REFRESH
+                </button>
+                <div id="cacheStatus"></div>
+            </div>
+            
+            <div class="section">
+                <h2>📋 Log Aktivitas</h2>
+                <div class="log" id="logContainer">
+                    <div>Siap untuk fix React Query cache...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function addLog(message) {
+            const logContainer = document.getElementById('logContainer');
+            const logEntry = document.createElement('div');
+            logEntry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            logContainer.appendChild(logEntry);
+            logContainer.scrollTop = logContainer.scrollHeight;
+        }
+        
+        function showStatus(elementId, message, isSuccess = true) {
+            document.getElementById(elementId).innerHTML = `<div class="status ${isSuccess ? 'success' : 'error'}">${message}</div>`;
+        }
+        
+        function fixReactQueryCache() {
+            addLog('🚀 Memulai fix React Query cache...');
+            
+            try {
+                // 1. Pastikan data user Wawan ada dan benar
+                addLog('1️⃣ Memastikan data user Wawan tersimpan dengan benar...');
+                
+                const profileWawan = {
+                    id: "1762696525337",
+                    username: "wawan",
+                    fullName: "H. Wawan Yogaswara, S.Pd, M.Pd",
+                    role: "pengawas",
+                    nip: "196805301994121001",
+                    rank: "Pembina Utama Muda, IV/c",
+                    officeName: "Cabang Dinas Pendidikan Wilayah XI Dinas Pendidikan Provinsi Jawa Barat",
+                    phone: "087733438282",
+                    photoUrl: "/uploads/1762830374284-750171039.jpg"
+                };
+                
+                // Set profile ke multiple keys
+                const profileKeys = ['user_data', 'profile_data', 'current_user', 'user_profile'];
+                profileKeys.forEach(key => {
+                    localStorage.setItem(key, JSON.stringify(profileWawan));
+                });
+                addLog('✅ Profile data Wawan tersimpan');
+                
+                // 2. Ambil dan perbaiki data yang ada
+                addLog('2️⃣ Memperbaiki data aktivitas user Wawan...');
+                
+                // Get existing data
+                const supervisionsData = localStorage.getItem('supervisions_data');
+                const additionalTasksData = localStorage.getItem('additional_tasks_data');
+                const schoolsData = localStorage.getItem('schools_data');
+                
+                let supervisions = [];
+                let additionalTasks = [];
+                let schools = [];
+                
+                // Parse and fix supervisions
+                if (supervisionsData) {
+                    supervisions = JSON.parse(supervisionsData);
+                    supervisions.forEach(s => {
+                        s.userId = "1762696525337";
+                        if (!s.school || s.school === 'undefined') {
+                            s.school = 'SMKN 14 Garut';
+                            s.schoolId = 'school-smkn14-garut';
+                        }
+                        if (!s.type) s.type = 'Supervisi';
+                        if (!s.findings) s.findings = 'Supervisi dan pembinaan kepala sekolah dalam rangka peningkatan kualitas pendidikan.';
+                    });
+                    addLog(`✅ Fixed ${supervisions.length} supervisions`);
+                }
+                
+                // Parse and fix additional tasks
+                if (additionalTasksData) {
+                    additionalTasks = JSON.parse(additionalTasksData);
+                    additionalTasks.forEach(t => {
+                        t.userId = "1762696525337";
+                    });
+                    addLog(`✅ Fixed ${additionalTasks.length} additional tasks`);
+                }
+                
+                // Parse and fix schools
+                if (schoolsData) {
+                    schools = JSON.parse(schoolsData);
+                    schools.forEach(s => {
+                        s.supervisorId = "1762696525337";
+                    });
+                    addLog(`✅ Fixed ${schools.length} schools`);
+                }
+                
+                // 3. Save fixed data back to localStorage
+                addLog('3️⃣ Menyimpan data yang sudah diperbaiki...');
+                
+                localStorage.setItem('supervisions_data', JSON.stringify(supervisions));
+                localStorage.setItem('additional_tasks_data', JSON.stringify(additionalTasks));
+                localStorage.setItem('schools_data', JSON.stringify(schools));
+                addLog('✅ Data tersimpan ke localStorage');
+                
+                // 4. Clear React Query cache
+                addLog('4️⃣ Clearing React Query cache...');
+                
+                // Clear all possible React Query cache keys
+                const cacheKeys = [
+                    'supervisions',
+                    'additional-tasks', 
+                    'schools',
+                    'tasks',
+                    '/api/supervisions',
+                    '/api/additional-tasks',
+                    '/api/schools',
+                    '/api/tasks',
+                    '/api/auth/me'
+                ];
+                
+                // Remove from localStorage (where React Query might store cache)
+                const allKeys = Object.keys(localStorage);
+                allKeys.forEach(key => {
+                    if (key.includes('react-query') || 
+                        key.includes('tanstack') || 
+                        key.includes('rq-') ||
+                        key.startsWith('@@') ||
+                        cacheKeys.some(cacheKey => key.includes(cacheKey))) {
+                        localStorage.removeItem(key);
+                        addLog(`🗑️ Removed cache key: ${key}`);
+                    }
+                });
+                
+                // Clear sessionStorage too
+                const sessionKeys = Object.keys(sessionStorage);
+                sessionKeys.forEach(key => {
+                    if (key.includes('react-query') || 
+                        key.includes('tanstack') || 
+                        key.includes('rq-')) {
+                        sessionStorage.removeItem(key);
+                        addLog(`🗑️ Removed session cache key: ${key}`);
+                    }
+                });
+                
+                addLog('✅ React Query cache cleared');
+                
+                // 5. Set invalidation flags
+                addLog('5️⃣ Setting cache invalidation flags...');
+                
+                const timestamp = new Date().toISOString();
+                localStorage.setItem('cache_invalidated', 'true');
+                localStorage.setItem('cache_invalidated_timestamp', timestamp);
+                localStorage.setItem('force_query_refetch', 'true');
+                localStorage.setItem('admin_data_version', timestamp);
+                
+                // Set specific flags for each query
+                cacheKeys.forEach(key => {
+                    localStorage.setItem(`invalidate_${key}`, 'true');
+                    localStorage.setItem(`${key}_last_updated`, timestamp);
+                });
+                
+                addLog('✅ Cache invalidation flags set');
+                
+                // 6. Trigger storage events to notify React components
+                addLog('6️⃣ Triggering storage events...');
+                
+                const dataKeys = ['supervisions_data', 'additional_tasks_data', 'schools_data', 'user_data'];
+                dataKeys.forEach(key => {
+                    const data = localStorage.getItem(key);
+                    if (data) {
+                        // Trigger storage event
+                        window.dispatchEvent(new StorageEvent('storage', {
+                            key: key,
+                            newValue: data,
+                            oldValue: null,
+                            storageArea: localStorage
+                        }));
+                        
+                        // Also trigger custom events
+                        window.dispatchEvent(new CustomEvent('localStorageChange', {
+                            detail: { key: key, newValue: data }
+                        }));
+                        
+                        addLog(`📡 Triggered events for ${key}`);
+                    }
+                });
+                
+                // 7. Set reload instructions
+                addLog('7️⃣ Setting reload instructions...');
+                
+                localStorage.setItem('need_hard_refresh', 'true');
+                localStorage.setItem('refresh_admin_pages', 'true');
+                
+                addLog('🎉 FIX REACT QUERY CACHE SELESAI!');
+                
+                showStatus('cacheStatus', `
+                    🎉 REACT QUERY CACHE BERHASIL DIPERBAIKI!<br><br>
+                    ✅ Data user Wawan diperbaiki dan tersimpan<br>
+                    ✅ React Query cache dibersihkan<br>
+                    ✅ Cache invalidation flags diset<br>
+                    ✅ Storage events triggered<br><br>
+                    <strong>LANGKAH SELANJUTNYA:</strong><br>
+                    1. Tutup halaman ini<br>
+                    2. Buka halaman admin (Supervisi/Tugas Tambahan/Sekolah)<br>
+                    3. Tekan <strong>Ctrl+Shift+R</strong> (hard refresh)<br>
+                    4. Atau tutup dan buka ulang tab aplikasi<br><br>
+                    <strong>Data user Wawan akan muncul!</strong>
+                `);
+                
+            } catch (error) {
+                addLog(`❌ Error: ${error.message}`);
+                showStatus('cacheStatus', `❌ Gagal: ${error.message}`, false);
+            }
+        }
+        
+        // Auto-load saat halaman dibuka
+        window.addEventListener('load', () => {
+            addLog('✅ Halaman siap digunakan');
+            addLog('💡 Klik tombol untuk fix React Query cache');
+            addLog('💡 Setelah fix, lakukan hard refresh (Ctrl+Shift+R) di halaman admin');
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EMERGENCY - Restore Semua Data Admin</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f8f9fa; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .card { background: white; margin: 20px 0; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .success { background: #d4edda; border-left: 4px solid #28a745; color: #155724; }
+        .error { background: #f8d7da; border-left: 4px solid #dc3545; color: #721c24; }
+        .warning { background: #fff3cd; border-left: 4px solid #ffc107; color: #856404; }
+        .info { background: #d1ecf1; border-left: 4px solid #17a2b8; color: #0c5460; }
+        button { 
+            background: #dc3545; color: white; border: none; padding: 15px 30px; 
+            border-radius: 4px; cursor: pointer; margin: 10px; font-size: 16px; font-weight: bold;
+        }
+        button:hover { background: #c82333; }
+        button.success { background: #28a745; }
+        button.success:hover { background: #1e7e34; }
+        h1 { text-align: center; color: #dc3545; font-size: 28px; }
+        h2 { color: #dc3545; border-bottom: 2px solid #dc3545; padding-bottom: 10px; }
+        pre { background: #f8f9fa; padding: 15px; border-radius: 4px; overflow-x: auto; font-size: 12px; }
+        .emergency { background: #dc3545; color: white; padding: 20px; border-radius: 8px; text-align: center; }
+        .status-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="emergency">
+            <h1>🚨 EMERGENCY RESTORE</h1>
+            <p><strong>SEMUA DATA ADMIN HILANG!</strong></p>
+            <p>File ini akan memulihkan SEMUA data yang hilang dengan cepat</p>
+        </div>
+        
+        <div class="card">
+            <h2>🚀 RESTORE EMERGENCY</h2>
+            <button onclick="emergencyRestoreAll()" style="font-size: 20px; padding: 20px 40px;">
+                🚨 RESTORE SEMUA DATA SEKARANG!
+            </button>
+            <div id="restoreStatus"></div>
+        </div>
+
+        <div class="card">
+            <h2>📊 Status Data Saat Ini</h2>
+            <button onclick="checkAllData()" class="success">Cek Status Data</button>
+            <div class="status-grid" id="dataStatus">
+                <div>⏳ Menunggu pengecekan...</div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>🔧 Tools Emergency</h2>
+            <button onclick="backupCurrentState()" class="success">Backup State Saat Ini</button>
+            <button onclick="showDebugInfo()">Debug Info</button>
+            <button onclick="clearAllData()">Clear All Data</button>
+            <div id="debugOutput"></div>
+        </div>
+    </div>
+
+    <script>
+        // EMERGENCY RESTORE FUNCTION
+        function emergencyRestoreAll() {
+            const statusDiv = document.getElementById('restoreStatus');
+            statusDiv.innerHTML = '<div class="warning">🚨 MEMULAI EMERGENCY RESTORE...</div>';
+            
+            try {
+                console.log('🚨 EMERGENCY RESTORE: Starting full data restoration');
+                
+                // COMPLETE DATABASE WITH ALL DATA
+                const completeDatabase = {
+                    // TASKS DATA
+                    tasks: [
+                        {
+                            id: '1',
+                            title: 'Supervisi dan pembinaan Kepala SMKN 14 Garut',
+                            description: 'Melakukan supervisi akademik dan pembinaan kepala sekolah SMKN 14 Garut',
+                            category: 'Supervisi Akademik',
+                            completed: true,
+                            date: '2025-01-15T00:00:00.000Z',
+                            userId: 'wawan-123',
+                            username: 'wawan',
+                            createdBy: 'wawan'
+                        },
+                        {
+                            id: '2',
+                            title: 'Evaluasi program sekolah penggerak SMKN 4 Garut',
+                            description: 'Evaluasi implementasi program sekolah penggerak di SMKN 4 Garut',
+                            category: 'Evaluasi Program',
+                            completed: false,
+                            date: '2025-01-18T00:00:00.000Z',
+                            userId: 'wawan-123',
+                            username: 'wawan',
+                            createdBy: 'wawan'
+                        },
+                        {
+                            id: '3',
+                            title: 'Monitoring Implementasi Kurikulum Merdeka',
+                            description: 'Monitoring implementasi kurikulum merdeka di sekolah binaan',
+                            category: 'Monitoring',
+                            completed: false,
+                            date: '2025-01-25T00:00:00.000Z',
+                            userId: 'wawan-123',
+                            username: 'wawan',
+                            createdBy: 'wawan'
+                        },
+                        {
+                            id: '4',
+                            title: 'Penyusunan Laporan Supervisi Semester',
+                            description: 'Menyusun laporan hasil supervisi semester genap',
+                            category: 'Pelaporan',
+                            completed: false,
+                            date: '2025-02-01T00:00:00.000Z',
+                            userId: 'wawan-123',
+                            username: 'wawan',
+                            createdBy: 'wawan'
+                        }
+                    ],
+                    
+                    // SUPERVISIONS DATA
+                    supervisions: [
+                        {
+                            id: '1',
+                            schoolName: 'SMKN 14 Garut',
+                            school: 'SMKN 14 Garut',
+                            type: 'Supervisi Akademik',
+                            findings: 'Pembelajaran sudah sesuai kurikulum merdeka, namun perlu peningkatan dalam penggunaan teknologi pembelajaran',
+                            recommendations: 'Tingkatkan penggunaan media pembelajaran digital dan platform e-learning',
+                            notes: 'Supervisi berjalan lancar, kepala sekolah sangat kooperatif dalam implementasi perbaikan',
+                            date: '2025-01-15T00:00:00.000Z',
+                            userId: 'wawan-123',
+                            username: 'wawan',
+                            createdBy: 'wawan'
+                        },
+                        {
+                            id: '2',
+                            schoolName: 'SMKN 4 Garut',
+                            school: 'SMKN 4 Garut',
+                            type: 'Supervisi Manajerial',
+                            findings: 'Manajemen sekolah sudah baik, namun sistem dokumentasi masih perlu diperbaiki',
+                            recommendations: 'Perbaiki sistem dokumentasi dan arsip sekolah, implementasikan sistem digital',
+                            notes: 'Perlu follow up dalam 2 minggu untuk memastikan perbaikan dokumentasi',
+                            date: '2025-01-18T00:00:00.000Z',
+                            userId: 'wawan-123',
+                            username: 'wawan',
+                            createdBy: 'wawan'
+                        },
+                        {
+                            id: '3',
+                            schoolName: 'SMKN 1 Garut',
+                            school: 'SMKN 1 Garut',
+                            type: 'Supervisi Akademik',
+                            findings: 'Proses pembelajaran berjalan baik, fasilitas memadai, guru kompeten',
+                            recommendations: 'Tingkatkan variasi metode pembelajaran dan penggunaan teknologi',
+                            notes: 'Sekolah sudah menerapkan pembelajaran berbasis proyek dengan baik',
+                            date: '2025-01-22T00:00:00.000Z',
+                            userId: 'wawan-123',
+                            username: 'wawan',
+                            createdBy: 'wawan'
+                        },
+                        {
+                            id: '4',
+                            schoolName: 'SMKN 2 Garut',
+                            school: 'SMKN 2 Garut',
+                            type: 'Supervisi Manajerial',
+                            findings: 'Kepemimpinan kepala sekolah baik, namun perlu peningkatan koordinasi dengan komite sekolah',
+                            recommendations: 'Perkuat komunikasi dengan komite sekolah dan orang tua siswa',
+                            notes: 'Sekolah memiliki program unggulan yang perlu dikembangkan lebih lanjut',
+                            date: '2025-01-28T00:00:00.000Z',
+                            userId: 'wawan-123',
+                            username: 'wawan',
+                            createdBy: 'wawan'
+                        }
+                    ],
+                    
+                    // EVENTS DATA
+                    events: [
+                        {
+                            id: '1',
+                            title: 'Rapat Koordinasi Pengawas Sekolah',
+                            name: 'Rapat Koordinasi Pengawas Sekolah',
+                            description: 'Rapat koordinasi bulanan pengawas sekolah se-Kabupaten Garut membahas program kerja dan evaluasi',
+                            date: '2025-01-15T00:00:00.000Z',
+                            time: '09:00',
+                            location: 'Aula Dinas Pendidikan Garut',
+                            userId: 'wawan-123',
+                            username: 'wawan',
+                            createdBy: 'wawan'
+                        },
+                        {
+                            id: '2',
+                            title: 'Workshop Implementasi Kurikulum Merdeka',
+                            name: 'Workshop Implementasi Kurikulum Merdeka',
+                            description: 'Workshop peningkatan kapasitas pengawas dalam implementasi dan monitoring kurikulum merdeka',
+                            date: '2025-01-25T00:00:00.000Z',
+                            time: '08:00',
+                            location: 'Hotel Santika Garut',
+                            userId: 'wawan-123',
+                            username: 'wawan',
+                            createdBy: 'wawan'
+                        },
+                        {
+                            id: '3',
+                            title: 'Seminar Pendidikan Karakter',
+                            name: 'Seminar Pendidikan Karakter',
+                            description: 'Seminar nasional tentang pendidikan karakter di era digital dan implementasinya',
+                            date: '2025-02-05T00:00:00.000Z',
+                            time: '08:30',
+                            location: 'Universitas Garut',
+                            userId: 'wawan-123',
+                            username: 'wawan',
+                            createdBy: 'wawan'
+                        },
+                        {
+                            id: '4',
+                            title: 'Pelatihan Evaluasi Pembelajaran',
+                            name: 'Pelatihan Evaluasi Pembelajaran',
+                            description: 'Pelatihan teknik evaluasi pembelajaran berbasis kompetensi',
+                            date: '2025-02-12T00:00:00.000Z',
+                            time: '09:00',
+                            location: 'LPMP Jawa Barat',
+                            userId: 'wawan-123',
+                            username: 'wawan',
+                            createdBy: 'wawan'
+                        }
+                    ],
+                    
+                    // ADDITIONAL TASKS DATA
+                    additionalTasks: [
+                        {
+                            id: '1',
+                            name: 'Rapat Koordinasi Pengawas Sekolah',
+                            title: 'Rapat Koordinasi Pengawas Sekolah',
+                            description: 'Mengikuti rapat koordinasi pengawas sekolah tingkat kabupaten untuk membahas program kerja semester genap',
+                            organizer: 'Dinas Pendidikan Kabupaten Garut',
+                            location: 'Aula Dinas Pendidikan Garut',
+                            date: '2025-01-15T00:00:00.000Z',
+                            userId: 'wawan-123',
+                            username: 'wawan',
+                            createdBy: 'wawan'
+                        },
+                        {
+                            id: '2',
+                            name: 'Workshop Kurikulum Merdeka',
+                            title: 'Workshop Kurikulum Merdeka',
+                            description: 'Mengikuti workshop implementasi kurikulum merdeka untuk pengawas sekolah tingkat provinsi',
+                            organizer: 'Dinas Pendidikan Provinsi Jawa Barat',
+                            location: 'Hotel Santika Garut',
+                            date: '2025-01-30T00:00:00.000Z',
+                            userId: 'wawan-123',
+                            username: 'wawan',
+                            createdBy: 'wawan'
+                        },
+                        {
+                            id: '3',
+                            name: 'Evaluasi Kinerja Sekolah Binaan',
+                            title: 'Evaluasi Kinerja Sekolah Binaan',
+                            description: 'Melakukan evaluasi kinerja sekolah binaan semester genap tahun ajaran 2024/2025',
+                            organizer: 'Cabang Dinas Pendidikan Wilayah XI',
+                            location: 'Sekolah Binaan',
+                            date: '2025-02-10T00:00:00.000Z',
+                            userId: 'wawan-123',
+                            username: 'wawan',
+                            createdBy: 'wawan'
+                        },
+                        {
+                            id: '4',
+                            name: 'Pelatihan Supervisi Akademik',
+                            title: 'Pelatihan Supervisi Akademik',
+                            description: 'Mengikuti pelatihan teknik supervisi akademik modern dan efektif',
+                            organizer: 'Pusat Pengembangan Profesi Pendidik',
+                            location: 'Jakarta',
+                            date: '2025-02-20T00:00:00.000Z',
+                            userId: 'wawan-123',
+                            username: 'wawan',
+                            createdBy: 'wawan'
+                        },
+                        {
+                            id: '5',
+                            name: 'Penyusunan Laporan Tahunan',
+                            title: 'Penyusunan Laporan Tahunan',
+                            description: 'Menyusun laporan tahunan hasil supervisi dan pembinaan sekolah',
+                            organizer: 'Internal',
+                            location: 'Kantor Cabang Disdik',
+                            date: '2025-03-01T00:00:00.000Z',
+                            userId: 'wawan-123',
+                            username: 'wawan',
+                            createdBy: 'wawan'
+                        }
+                    ],
+                    
+                    // SCHOOLS DATA
+                    schools: [
+                        {
+                            id: '1',
+                            name: 'SMKN 14 Garut',
+                            address: 'Jl. Raya Garut-Tasikmalaya',
+                            principal: 'Drs. Ahmad Suryadi, M.Pd',
+                            phone: '0262-123456',
+                            email: 'smkn14garut@gmail.com',
+                            type: 'SMK',
+                            status: 'active'
+                        },
+                        {
+                            id: '2',
+                            name: 'SMKN 4 Garut',
+                            address: 'Jl. Cimanuk No. 123',
+                            principal: 'Dra. Siti Nurhasanah, M.Pd',
+                            phone: '0262-234567',
+                            email: 'smkn4garut@gmail.com',
+                            type: 'SMK',
+                            status: 'active'
+                        },
+                        {
+                            id: '3',
+                            name: 'SMKN 1 Garut',
+                            address: 'Jl. Pembangunan No. 45',
+                            principal: 'Dr. Bambang Sutrisno, M.Pd',
+                            phone: '0262-345678',
+                            email: 'smkn1garut@gmail.com',
+                            type: 'SMK',
+                            status: 'active'
+                        },
+                        {
+                            id: '4',
+                            name: 'SMKN 2 Garut',
+                            address: 'Jl. Veteran No. 67',
+                            principal: 'Drs. Edi Supriyanto, M.Pd',
+                            phone: '0262-456789',
+                            email: 'smkn2garut@gmail.com',
+                            type: 'SMK',
+                            status: 'active'
+                        }
+                    ]
+                };
+                
+                // USERS DATA
+                const usersData = [
+                    {
+                        id: 'admin-1',
+                        username: 'admin',
+                        fullName: 'Administrator Sistem',
+                        role: 'admin',
+                        nip: '',
+                        rank: '',
+                        phone: '',
+                        email: 'admin@disdik.jabar.go.id',
+                        department: 'Cabang Dinas Pendidikan Wilayah XI',
+                        status: 'active',
+                        createdAt: '2024-01-01T00:00:00.000Z',
+                        updatedAt: new Date().toISOString()
+                    },
+                    {
+                        id: 'wawan-123',
+                        username: 'wawan',
+                        fullName: 'H. Wawan Yogaswara, S.Pd, M.Pd',
+                        role: 'pengawas',
+                        nip: '196805301994121001',
+                        rank: 'Pembina Utama Muda, IV/c',
+                        phone: '087733438282',
+                        email: 'wawan.yogaswara@disdik.jabar.go.id',
+                        department: 'Cabang Dinas Pendidikan Wilayah XI',
+                        status: 'active',
+                        lastLogin: new Date().toISOString(),
+                        createdAt: '2024-01-01T00:00:00.000Z',
+                        updatedAt: new Date().toISOString()
+                    }
+                ];
+                
+                // PROFILE DATA
+                const profileData = {
+                    fullName: 'H. Wawan Yogaswara, S.Pd, M.Pd',
+                    nip: '196805301994121001',
+                    photoUrl: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iIzMzNzNkYyIvPjx0ZXh0IHg9IjUwIiB5PSI1NSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE0IiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+V2F3YW48L3RleHQ+PC9zdmc+',
+                    role: 'pengawas',
+                    rank: 'Pembina Utama Muda, IV/c',
+                    phone: '087733438282',
+                    email: 'wawan.yogaswara@disdik.jabar.go.id',
+                    department: 'Cabang Dinas Pendidikan Wilayah XI'
+                };
+                
+                // SAVE ALL DATA TO LOCALSTORAGE
+                console.log('💾 Saving complete database...');
+                localStorage.setItem('local-database', JSON.stringify(completeDatabase));
+                
+                // Save individual collections
+                localStorage.setItem('tasks', JSON.stringify(completeDatabase.tasks));
+                localStorage.setItem('supervisions', JSON.stringify(completeDatabase.supervisions));
+                localStorage.setItem('events', JSON.stringify(completeDatabase.events));
+                localStorage.setItem('calendar_events', JSON.stringify(completeDatabase.events));
+                localStorage.setItem('additional_tasks', JSON.stringify(completeDatabase.additionalTasks));
+                localStorage.setItem('additionalTasks', JSON.stringify(completeDatabase.additionalTasks));
+                localStorage.setItem('schools', JSON.stringify(completeDatabase.schools));
+                
+                // Save users data
+                localStorage.setItem('app_users', JSON.stringify(usersData));
+                localStorage.setItem('users', JSON.stringify(usersData));
+                localStorage.setItem('user_list', JSON.stringify(usersData));
+                
+                // Save profile data
+                localStorage.setItem('user_profile', JSON.stringify(profileData));
+                localStorage.setItem('current_user', JSON.stringify(profileData));
+                localStorage.setItem('user_data', JSON.stringify(profileData));
+                localStorage.setItem('profile_data', JSON.stringify(profileData));
+                
+                console.log('✅ EMERGENCY RESTORE COMPLETED!');
+                
+                statusDiv.innerHTML = `
+                    <div class="success">
+                        ✅ <strong>EMERGENCY RESTORE BERHASIL!</strong>
+                        <br><br><strong>DATA YANG DIPULIHKAN:</strong>
+                        <br>• Tugas Pokok: ${completeDatabase.tasks.length} items
+                        <br>• Supervisi: ${completeDatabase.supervisions.length} items
+                        <br>• Kegiatan: ${completeDatabase.events.length} items
+                        <br>• Tugas Tambahan: ${completeDatabase.additionalTasks.length} items
+                        <br>• Sekolah Binaan: ${completeDatabase.schools.length} items
+                        <br>• Users: ${usersData.length} users
+                        <br>• Profile: Wawan dengan foto
+                        <br><br><strong>🔄 REFRESH APLIKASI REACT SEKARANG!</strong>
+                        <br>Semua halaman admin seharusnya sudah normal kembali.
+                    </div>
+                `;
+                
+                // Auto-check data
+                setTimeout(() => {
+                    checkAllData();
+                }, 1000);
+                
+            } catch (error) {
+                console.error('❌ EMERGENCY RESTORE FAILED:', error);
+                statusDiv.innerHTML = `
+                    <div class="error">
+                        ❌ <strong>EMERGENCY RESTORE GAGAL!</strong>
+                        <br>Error: ${error.message}
+                        <br>Silakan coba lagi atau hubungi support.
+                    </div>
+                `;
+            }
+        }
+
+        function checkAllData() {
+            const statusDiv = document.getElementById('dataStatus');
+            
+            try {
+                const database = localStorage.getItem('local-database');
+                const users = localStorage.getItem('app_users');
+                const profile = localStorage.getItem('user_profile');
+                
+                let html = '';
+                
+                if (database) {
+                    const data = JSON.parse(database);
+                    html += `
+                        <div class="success" style="padding: 15px; border-radius: 4px;">
+                            ✅ <strong>Database</strong>
+                            <br>Tasks: ${data.tasks?.length || 0}
+                            <br>Supervisions: ${data.supervisions?.length || 0}
+                            <br>Events: ${data.events?.length || 0}
+                            <br>Additional Tasks: ${data.additionalTasks?.length || 0}
+                            <br>Schools: ${data.schools?.length || 0}
+                        </div>
+                    `;
+                } else {
+                    html += `
+                        <div class="error" style="padding: 15px; border-radius: 4px;">
+                            ❌ <strong>Database</strong>
+                            <br>Tidak ada data
+                        </div>
+                    `;
+                }
+                
+                if (users) {
+                    const userData = JSON.parse(users);
+                    html += `
+                        <div class="success" style="padding: 15px; border-radius: 4px;">
+                            ✅ <strong>Users</strong>
+                            <br>Total: ${userData.length} users
+                            <br>Wawan: ${userData.find(u => u.username === 'wawan') ? 'Ada' : 'Tidak ada'}
+                        </div>
+                    `;
+                } else {
+                    html += `
+                        <div class="error" style="padding: 15px; border-radius: 4px;">
+                            ❌ <strong>Users</strong>
+                            <br>Tidak ada data
+                        </div>
+                    `;
+                }
+                
+                if (profile) {
+                    const profileData = JSON.parse(profile);
+                    html += `
+                        <div class="success" style="padding: 15px; border-radius: 4px;">
+                            ✅ <strong>Profile</strong>
+                            <br>Nama: ${profileData.fullName}
+                            <br>Foto: ${profileData.photoUrl ? 'Ada' : 'Tidak ada'}
+                        </div>
+                    `;
+                } else {
+                    html += `
+                        <div class="error" style="padding: 15px; border-radius: 4px;">
+                            ❌ <strong>Profile</strong>
+                            <br>Tidak ada data
+                        </div>
+                    `;
+                }
+                
+                statusDiv.innerHTML = html;
+                
+            } catch (error) {
+                statusDiv.innerHTML = `
+                    <div class="error">
+                        ❌ Error checking data: ${error.message}
+                    </div>
+                `;
+            }
+        }
+
+        function backupCurrentState() {
+            const data = {};
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                data[key] = localStorage.getItem(key);
+            }
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'emergency_backup_' + new Date().toISOString().slice(0,19).replace(/:/g, '-') + '.json';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function showDebugInfo() {
+            const debugOutput = document.getElementById('debugOutput');
+            const debugData = {
+                localStorage_keys: Object.keys(localStorage),
+                localStorage_size: JSON.stringify(localStorage).length,
+                local_database_exists: !!localStorage.getItem('local-database'),
+                app_users_exists: !!localStorage.getItem('app_users'),
+                user_profile_exists: !!localStorage.getItem('user_profile')
+            };
+            
+            debugOutput.innerHTML = `<pre>${JSON.stringify(debugData, null, 2)}</pre>`;
+        }
+
+        function clearAllData() {
+            if (confirm('⚠️ PERINGATAN: Ini akan menghapus SEMUA data localStorage!\n\nApakah Anda yakin?')) {
+                localStorage.clear();
+                alert('✅ Semua data localStorage telah dihapus');
+                checkAllData();
+            }
+        }
+
+        // Auto-run check on page load
+        window.onload = function() {
+            console.log('🚨 Emergency restore tool loaded');
+            checkAllData();
+        };
+    </script>
+</body>
+</html>

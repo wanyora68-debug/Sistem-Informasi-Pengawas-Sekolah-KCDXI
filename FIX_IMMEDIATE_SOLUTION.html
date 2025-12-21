@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚀 SOLUSI LANGSUNG</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #dc2626;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .fix-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 2px solid #dc2626;
+            border-radius: 8px;
+            background: #fef2f2;
+        }
+        .fix-section h3 {
+            color: #dc2626;
+            margin-top: 0;
+        }
+        button {
+            background: #dc2626;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px 5px;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        button:hover {
+            background: #b91c1c;
+        }
+        .success {
+            background: #f0fdf4;
+            border-color: #16a34a;
+            color: #15803d;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border-left: 4px solid #16a34a;
+        }
+        .instructions {
+            background: #fffbeb;
+            border-left: 4px solid #f59e0b;
+            color: #d97706;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        .code {
+            background: #1f2937;
+            color: #f9fafb;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 SOLUSI LANGSUNG - PERBAIKI SEKARANG</h1>
+        <p style="text-align: center; color: #666; margin-bottom: 30px;">
+            Berdasarkan screenshot, ada masalah dengan API calls. Mari perbaiki dengan solusi langsung.
+        </p>
+
+        <!-- IMMEDIATE FIX -->
+        <div class="fix-section">
+            <h3>🔥 PERBAIKAN LANGSUNG</h3>
+            <button onclick="fixImmediate()">PERBAIKI SEKARANG</button>
+            <div id="fixResult" class="success" style="display: none;"></div>
+            
+            <div class="instructions">
+                <strong>MASALAH YANG TERDETEKSI:</strong><br>
+                1. Halaman Tugas Tambahan kosong<br>
+                2. Error 405 Method Not Allowed di console<br>
+                3. Masih ada API calls yang tidak perlu<br><br>
+                
+                <strong>SOLUSI:</strong><br>
+                Tambahkan data langsung ke localStorage dan refresh halaman
+            </div>
+        </div>
+
+        <!-- MANUAL STEPS -->
+        <div class="fix-section">
+            <h3>📋 LANGKAH MANUAL (JIKA TOMBOL TIDAK BEKERJA)</h3>
+            
+            <p><strong>1. Buka Console Browser (F12)</strong></p>
+            <p><strong>2. Copy-paste kode ini dan tekan Enter:</strong></p>
+            
+            <div class="code">// HAPUS SEMUA DATA LAMA
+localStorage.clear();
+
+// TAMBAH DATA SEKOLAH
+const schools = [
+  {
+    id: "school-1",
+    name: "SDN Contoh 01",
+    address: "Jl. Contoh No. 1",
+    contact: "081234567890",
+    principalName: "Kepala Sekolah Contoh",
+    principalNip: "123456789",
+    supervisions: 0,
+    createdAt: new Date().toISOString()
+  },
+  {
+    id: "school-2", 
+    name: "SDN Contoh 02",
+    address: "Jl. Contoh No. 2",
+    contact: "081234567891",
+    principalName: "Kepala Sekolah Contoh 2",
+    principalNip: "123456790",
+    supervisions: 0,
+    createdAt: new Date().toISOString()
+  }
+];
+
+localStorage.setItem('schools_data', JSON.stringify(schools));
+
+// TAMBAH DATA TUGAS TAMBAHAN
+const additionalTasks = [
+  {
+    id: "task-1",
+    name: "Rapat Koordinasi Bulanan",
+    date: "2024-12-19",
+    location: "Kantor Dinas Pendidikan",
+    organizer: "Dinas Pendidikan",
+    description: "Rapat koordinasi bulanan untuk membahas program supervisi sekolah",
+    createdAt: new Date().toISOString()
+  },
+  {
+    id: "task-2",
+    name: "Workshop Kurikulum Merdeka",
+    date: "2024-12-20",
+    location: "Aula Sekolah",
+    organizer: "Tim Kurikulum",
+    description: "Workshop implementasi kurikulum merdeka untuk guru-guru",
+    createdAt: new Date().toISOString()
+  }
+];
+
+localStorage.setItem('additional_tasks_data', JSON.stringify(additionalTasks));
+
+console.log('✅ Data berhasil ditambahkan!');
+console.log('📊 Sekolah:', schools.length, 'items');
+console.log('📋 Tugas Tambahan:', additionalTasks.length, 'items');
+
+// REFRESH HALAMAN
+location.reload();</div>
+
+            <p><strong>3. Halaman akan refresh otomatis</strong></p>
+            <p><strong>4. Data harus muncul di halaman Sekolah Binaan dan Tugas Tambahan</strong></p>
+        </div>
+
+        <!-- VERIFICATION -->
+        <div class="fix-section">
+            <h3>✅ VERIFIKASI HASIL</h3>
+            <button onclick="verifyFix()">CEK HASIL PERBAIKAN</button>
+            <div id="verifyResult" class="success" style="display: none;"></div>
+            
+            <div class="instructions">
+                <strong>YANG HARUS TERJADI SETELAH PERBAIKAN:</strong><br>
+                1. Halaman Sekolah Binaan menampilkan 2 sekolah<br>
+                2. Halaman Tugas Tambahan menampilkan 2 kegiatan<br>
+                3. Tidak ada error di console<br>
+                4. Bisa tambah/edit/hapus data baru<br><br>
+                
+                <strong>JIKA MASIH BERMASALAH:</strong><br>
+                1. Clear cache browser (Ctrl+Shift+Delete)<br>
+                2. Restart aplikasi<br>
+                3. Coba di browser lain (Chrome/Firefox)
+            </div>
+        </div>
+
+        <!-- PERMANENT FIX -->
+        <div class="fix-section">
+            <h3>🔧 PERBAIKAN PERMANEN</h3>
+            <div class="instructions">
+                <strong>UNTUK DEVELOPER:</strong><br>
+                Masalah utama adalah masih ada API calls di component. Perlu:<br>
+                1. Hapus semua import API dari additional-tasks.tsx dan schools.tsx<br>
+                2. Pastikan semua menggunakan localStorage langsung<br>
+                3. Hapus semua mutation yang masih menggunakan API<br>
+                4. Test ulang semua fungsi CRUD
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function fixImmediate() {
+            try {
+                // Clear existing data
+                localStorage.clear();
+                
+                // Add schools data
+                const schools = [
+                    {
+                        id: "school-1",
+                        name: "SDN Contoh 01",
+                        address: "Jl. Contoh No. 1",
+                        contact: "081234567890",
+                        principalName: "Kepala Sekolah Contoh",
+                        principalNip: "123456789",
+                        supervisions: 0,
+                        createdAt: new Date().toISOString()
+                    },
+                    {
+                        id: "school-2", 
+                        name: "SDN Contoh 02",
+                        address: "Jl. Contoh No. 2",
+                        contact: "081234567891",
+                        principalName: "Kepala Sekolah Contoh 2",
+                        principalNip: "123456790",
+                        supervisions: 0,
+                        createdAt: new Date().toISOString()
+                    }
+                ];
+                
+                localStorage.setItem('schools_data', JSON.stringify(schools));
+                
+                // Add additional tasks data
+                const additionalTasks = [
+                    {
+                        id: "task-1",
+                        name: "Rapat Koordinasi Bulanan",
+                        date: "2024-12-19",
+                        location: "Kantor Dinas Pendidikan",
+                        organizer: "Dinas Pendidikan",
+                        description: "Rapat koordinasi bulanan untuk membahas program supervisi sekolah",
+                        createdAt: new Date().toISOString()
+                    },
+                    {
+                        id: "task-2",
+                        name: "Workshop Kurikulum Merdeka",
+                        date: "2024-12-20",
+                        location: "Aula Sekolah",
+                        organizer: "Tim Kurikulum",
+                        description: "Workshop implementasi kurikulum merdeka untuk guru-guru",
+                        createdAt: new Date().toISOString()
+                    }
+                ];
+                
+                localStorage.setItem('additional_tasks_data', JSON.stringify(additionalTasks));
+                
+                document.getElementById('fixResult').style.display = 'block';
+                document.getElementById('fixResult').innerHTML = 
+                    `🎉 <strong>PERBAIKAN BERHASIL!</strong><br><br>` +
+                    `✅ Data sekolah ditambahkan: ${schools.length} sekolah<br>` +
+                    `✅ Data tugas tambahan ditambahkan: ${additionalTasks.length} tugas<br><br>` +
+                    `<strong>Sekarang refresh halaman aplikasi utama untuk melihat hasilnya!</strong><br><br>` +
+                    `<button onclick="location.reload()" style="background: #16a34a; padding: 10px 20px; border: none; color: white; border-radius: 5px; cursor: pointer;">REFRESH HALAMAN INI</button>`;
+                
+            } catch (error) {
+                document.getElementById('fixResult').style.display = 'block';
+                document.getElementById('fixResult').className = 'fix-section';
+                document.getElementById('fixResult').innerHTML = `❌ Error: ${error.message}`;
+            }
+        }
+        
+        function verifyFix() {
+            try {
+                const schoolsData = localStorage.getItem('schools_data');
+                const tasksData = localStorage.getItem('additional_tasks_data');
+                
+                const schools = schoolsData ? JSON.parse(schoolsData) : [];
+                const tasks = tasksData ? JSON.parse(tasksData) : [];
+                
+                document.getElementById('verifyResult').style.display = 'block';
+                document.getElementById('verifyResult').innerHTML = 
+                    `📊 <strong>STATUS VERIFIKASI:</strong><br><br>` +
+                    `🏫 Sekolah Binaan: ${schools.length} sekolah ${schools.length > 0 ? '✅' : '❌'}<br>` +
+                    `📋 Tugas Tambahan: ${tasks.length} tugas ${tasks.length > 0 ? '✅' : '❌'}<br><br>` +
+                    `${schools.length > 0 && tasks.length > 0 ? 
+                        '<strong style="color: #16a34a;">🎉 SEMUA DATA TERSEDIA!</strong><br>Buka aplikasi utama untuk melihat hasilnya.' : 
+                        '<strong style="color: #dc2626;">❌ DATA BELUM LENGKAP!</strong><br>Klik "PERBAIKI SEKARANG" terlebih dahulu.'}`;
+                
+            } catch (error) {
+                document.getElementById('verifyResult').style.display = 'block';
+                document.getElementById('verifyResult').className = 'fix-section';
+                document.getElementById('verifyResult').innerHTML = `❌ Error: ${error.message}`;
+            }
+        }
+        
+        // Auto-verify on load
+        window.onload = function() {
+            verifyFix();
+        };
+    </script>
+</body>
+</html>

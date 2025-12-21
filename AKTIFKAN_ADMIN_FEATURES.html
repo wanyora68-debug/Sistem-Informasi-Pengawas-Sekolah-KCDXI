@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Aktifkan Admin Features</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; text-align: center; }
+        .container { max-width: 600px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .big-button { background: #4caf50; color: white; padding: 20px 40px; border: none; border-radius: 10px; cursor: pointer; font-size: 18px; margin: 10px; }
+        .big-button:hover { background: #45a049; }
+        .admin-button { background: #ff9800; }
+        .admin-button:hover { background: #f57c00; }
+        .status { margin: 20px 0; padding: 15px; border-radius: 5px; }
+        .success { background: #e8f5e8; border: 2px solid #4caf50; }
+        .info { background: #e3f2fd; border: 2px solid #2196f3; }
+        .step { background: #f5f5f5; padding: 15px; margin: 10px 0; border-radius: 8px; text-align: left; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>👑 Aktifkan Admin Features</h1>
+        <p><strong>Mengaktifkan semua tombol dan fitur untuk user Administrator</strong></p>
+        
+        <div class="step">
+            <h3>🔍 Masalah:</h3>
+            <p>Tombol untuk user Administrator tidak aktif (disabled) karena proteksi berlebihan.</p>
+        </div>
+
+        <div class="step">
+            <h3>✅ Solusi:</h3>
+            <p>Mengaktifkan tombol View, Edit, Activities, dan Reset Password untuk admin, tapi tetap proteksi untuk Delete dan Status.</p>
+        </div>
+        
+        <button class="big-button admin-button" onclick="activateAdminFeatures()">
+            👑 Aktifkan Admin Features
+        </button>
+        
+        <button class="big-button" onclick="testAdminLogin()">
+            🔐 Test Login Admin
+        </button>
+        
+        <div id="status" style="display: none;"></div>
+    </div>
+
+    <script>
+        function showStatus(message, type = 'info') {
+            const status = document.getElementById('status');
+            status.style.display = 'block';
+            status.innerHTML = message;
+            status.className = 'status ' + type;
+        }
+
+        function activateAdminFeatures() {
+            showStatus('👑 Mengaktifkan admin features...', 'info');
+            
+            // Set admin user dengan akses penuh
+            const adminUser = {
+                id: '1762696424712',
+                username: 'admin',
+                password: '$2b$10$nNLmmE3LGFdd6fLaBdCMvObzPpLqeT9UJN0fe/9aM9viOsOc.IAq2',
+                fullName: 'Administrator',
+                role: 'admin',
+                nip: '',
+                rank: 'Administrator',
+                officeName: 'Cabang Dinas Pendidikan Wilayah XI',
+                officeAddress: 'Jl. A.Yani No. 23 Kel. Paminggir Kec. Garut Kota Kabupaten Garut',
+                homeAddress: '',
+                phone: '',
+                photoUrl: '/uploads/1762984516465-513200650.jpg',
+                email: 'admin@disdik.jabar.go.id',
+                department: 'Cabang Dinas Pendidikan Wilayah XI',
+                status: 'active',
+                createdAt: '2025-11-09T13:53:44.712Z',
+                updatedAt: new Date().toISOString(),
+                lastLogin: new Date().toISOString()
+            };
+
+            // Set current user sebagai admin
+            localStorage.setItem('currentUser', JSON.stringify(adminUser));
+            localStorage.setItem('user_data', JSON.stringify(adminUser));
+            
+            // Pastikan admin ada di daftar users
+            const existingUsers = JSON.parse(localStorage.getItem('app_users') || '[]');
+            const adminExists = existingUsers.find(u => u.username === 'admin');
+            
+            if (!adminExists) {
+                const updatedUsers = [adminUser, ...existingUsers];
+                localStorage.setItem('app_users', JSON.stringify(updatedUsers));
+                localStorage.setItem('users', JSON.stringify(updatedUsers));
+            } else {
+                // Update admin data
+                const updatedUsers = existingUsers.map(u => 
+                    u.username === 'admin' ? adminUser : u
+                );
+                localStorage.setItem('app_users', JSON.stringify(updatedUsers));
+                localStorage.setItem('users', JSON.stringify(updatedUsers));
+            }
+            
+            showStatus('✅ Admin features berhasil diaktifkan! Membuka halaman users...', 'success');
+            
+            setTimeout(() => {
+                window.open('http://localhost:5000/users', '_blank');
+            }, 2000);
+        }
+
+        function testAdminLogin() {
+            showStatus('🔐 Testing admin login...', 'info');
+            
+            // Set admin sebagai current user
+            const adminUser = {
+                id: '1762696424712',
+                username: 'admin',
+                fullName: 'Administrator',
+                role: 'admin',
+                status: 'active'
+            };
+            
+            localStorage.setItem('currentUser', JSON.stringify(adminUser));
+            localStorage.setItem('user_data', JSON.stringify(adminUser));
+            
+            showStatus('✅ Admin login berhasil! Membuka aplikasi...', 'success');
+            
+            setTimeout(() => {
+                window.open('http://localhost:5000', '_blank');
+            }, 1500);
+        }
+    </script>
+</body>
+</html>

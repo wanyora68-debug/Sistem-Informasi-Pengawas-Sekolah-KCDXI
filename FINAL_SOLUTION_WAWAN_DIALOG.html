@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Final Solution Wawan Dialog</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        }
+        .step {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 10px;
+            background: rgba(255,255,255,0.05);
+        }
+        .success { border-color: #4CAF50; background: rgba(76, 175, 80, 0.1); }
+        .warning { border-color: #ff9800; background: rgba(255, 152, 0, 0.1); }
+        .info { border-color: #2196F3; background: rgba(33, 150, 243, 0.1); }
+        button {
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+            color: white;
+            border: none;
+            padding: 20px 30px;
+            border-radius: 10px;
+            cursor: pointer;
+            margin: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+        }
+        button:hover { 
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+        .status {
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            font-weight: bold;
+            background: rgba(255,255,255,0.1);
+        }
+        h1 { text-align: center; font-size: 2.5em; margin-bottom: 30px; }
+        h3 { color: #fff; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 FINAL SOLUTION</h1>
+        <h2 style="text-align: center;">Dialog Aktivitas Wawan</h2>
+
+        <div class="step warning">
+            <h3>🎯 Tujuan</h3>
+            <p>Memastikan dialog aktivitas user Wawan menampilkan data yang benar dari localStorage.</p>
+        </div>
+
+        <div class="step info">
+            <h3>🚀 Solusi Final</h3>
+            <p>Klik tombol di bawah untuk menerapkan fix terakhir:</p>
+            <div style="text-align: center;">
+                <button onclick="applyFinalSolution()">🎯 TERAPKAN SOLUSI FINAL</button>
+            </div>
+        </div>
+
+        <div class="step">
+            <h3>📊 Status</h3>
+            <div id="status">Siap untuk menerapkan solusi...</div>
+        </div>
+
+        <div class="step success" id="instructions" style="display: none;">
+            <h3>📋 Langkah Selanjutnya</h3>
+            <ol>
+                <li>Buka <strong>localhost:5000/users</strong> di tab baru</li>
+                <li>Klik tombol aktivitas pada user <strong>Wawan</strong></li>
+                <li>Dialog seharusnya menampilkan data yang benar</li>
+            </ol>
+        </div>
+    </div>
+
+    <script>
+        function updateStatus(message, type = 'info') {
+            const statusDiv = document.getElementById('status');
+            statusDiv.innerHTML = `<div class="status">${message}</div>`;
+        }
+
+        function applyFinalSolution() {
+            updateStatus('🔄 Menerapkan solusi final...', 'info');
+            
+            try {
+                // Step 1: Get localStorage data
+                const localDb = JSON.parse(localStorage.getItem('local-database') || '{}');
+                
+                // Step 2: Ensure all Wawan data has correct identifiers
+                const fixWawanData = (items) => {
+                    if (!items || !Array.isArray(items)) return [];
+                    
+                    return items.map(item => {
+                        // Check if this is Wawan's data
+                        const isWawanItem = 
+                            item.userId === 'wawan' ||
+                            (item.username && item.username.toLowerCase() === 'wawan') ||
+                            (item.title && item.title.toLowerCase().includes('wawan')) ||
+                            (item.name && item.name.toLowerCase().includes('wawan')) ||
+                            (item.schoolName && item.schoolName.toLowerCase().includes('wawan')) ||
+                            (item.description && item.description.toLowerCase().includes('wawan')) ||
+                            (item.notes && item.notes.toLowerCase().includes('wawan')) ||
+                            (item.findings && item.findings.toLowerCase().includes('wawan'));
+                        
+                        if (isWawanItem) {
+                            // Ensure proper identifiers for Wawan
+                            return {
+                                ...item,
+                                userId: 'wawan',
+                                username: 'wawan'
+                            };
+                        }
+                        
+                        return item;
+                    });
+                };
+
+                // Step 3: Fix all data types
+                const updatedData = {
+                    ...localDb,
+                    tasks: fixWawanData(localDb.tasks || []),
+                    supervisions: fixWawanData(localDb.supervisions || []),
+                    events: fixWawanData(localDb.events || []),
+                    additionalTasks: fixWawanData(localDb.additionalTasks || [])
+                };
+
+                // Step 4: Save updated data
+                localStorage.setItem('local-database', JSON.stringify(updatedData));
+
+                // Step 5: Count Wawan's data
+                const wawanData = {
+                    tasks: updatedData.tasks.filter(t => t.userId === 'wawan'),
+                    supervisions: updatedData.supervisions.filter(s => s.userId === 'wawan'),
+                    events: updatedData.events.filter(e => e.userId === 'wawan'),
+                    additionalTasks: updatedData.additionalTasks.filter(at => at.userId === 'wawan')
+                };
+
+                const totalItems = wawanData.tasks.length + wawanData.supervisions.length + 
+                                 wawanData.events.length + wawanData.additionalTasks.length;
+
+                // Step 6: Clear any cache that might interfere
+                const cacheKeys = [
+                    'user-activities-cache',
+                    'activities-cache',
+                    'dialog-cache'
+                ];
+                
+                cacheKeys.forEach(key => {
+                    if (localStorage.getItem(key)) {
+                        localStorage.removeItem(key);
+                    }
+                });
+
+                // Step 7: Set success flag
+                localStorage.setItem('wawan-dialog-fixed', 'true');
+                localStorage.setItem('force-dialog-refresh', Date.now().toString());
+
+                if (totalItems > 0) {
+                    updateStatus(`✅ SOLUSI BERHASIL DITERAPKAN!<br><br>
+                        📊 Data Wawan yang ditemukan:<br>
+                        • Tugas Pokok: ${wawanData.tasks.length}<br>
+                        • Supervisi: ${wawanData.supervisions.length}<br>
+                        • Kegiatan: ${wawanData.events.length}<br>
+                        • Tugas Tambahan: ${wawanData.additionalTasks.length}<br>
+                        <br>
+                        🎯 Total: ${totalItems} aktivitas`, 'success');
+                    
+                    document.getElementById('instructions').style.display = 'block';
+                    
+                    // Auto-open users page after 3 seconds
+                    setTimeout(() => {
+                        if (confirm('Buka halaman users sekarang untuk test dialog?')) {
+                            window.open('http://localhost:5000/users', '_blank');
+                        }
+                    }, 3000);
+                    
+                } else {
+                    updateStatus('⚠️ Tidak ada data Wawan ditemukan di localStorage. Pastikan data sudah ada terlebih dahulu.', 'warning');
+                }
+
+            } catch (error) {
+                updateStatus(`❌ Error: ${error.message}`, 'error');
+            }
+        }
+
+        // Initialize
+        updateStatus('🚀 Tool siap digunakan. Klik tombol untuk menerapkan solusi final.', 'info');
+    </script>
+</body>
+</html>

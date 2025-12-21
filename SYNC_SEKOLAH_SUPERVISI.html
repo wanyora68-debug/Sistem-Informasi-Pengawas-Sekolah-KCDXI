@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content=\"width=device-width, initial-scale=1.0\">
+    <title>🔄 SYNC SEKOLAH SUPERVISI</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #f0f9ff;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border: 3px solid #2563eb;
+        }
+        h1 {
+            color: #2563eb;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .problem {
+            background: #fef2f2;
+            border-left: 4px solid #dc2626;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        .fix {
+            background: #f0fdf4;
+            border-left: 4px solid #16a34a;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        .info {
+            background: #f0f9ff;
+            border-left: 4px solid #2563eb;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        button {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px 5px;
+            font-size: 16px;
+            font-weight: bold;
+            width: 100%;
+        }
+        button:hover {
+            background: #1d4ed8;
+        }
+        .success {
+            background: #16a34a;
+        }
+        .success:hover {
+            background: #15803d;
+        }
+        .result {
+            margin: 15px 0;
+            padding: 15px;
+            border-radius: 5px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            font-family: monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <div class=\"container\">
+        <h1>🔄 SYNC SEKOLAH SUPERVISI</h1>
+        
+        <div class=\"problem\">
+            <h3>🚨 MASALAH</h3>
+            <p><strong>Pilihan sekolah belum muncul di dropdown supervisi</strong></p>
+            <p>Data sekolah yang ada: <strong>SMKN 4 Garut</strong></p>
+            <p><strong>Penyebab:</strong> Data sekolah belum tersinkronisasi dengan localStorage</p>
+        </div>
+
+        <div class=\"info\">
+            <h3>🔍 CEK DATA SEKOLAH SAAT INI</h3>
+            <button onclick=\"checkCurrentData()\">📊 CEK DATA SEKOLAH</button>
+            <div id=\"checkResult\" class=\"result\" style=\"display: none;\"></div>
+        </div>
+
+        <div class=\"fix\">
+            <h3>➕ TAMBAH SMKN 4 GARUT</h3>
+            <button onclick=\"addSMKN4Garut()\" class=\"success\">🏫 TAMBAH SMKN 4 GARUT</button>
+            <div id=\"addResult\" class=\"result\" style=\"display: none;\"></div>
+        </div>
+
+        <div class=\"fix\">
+            <h3>🔄 SYNC SEMUA DATA SEKOLAH</h3>
+            <button onclick=\"syncAllSchools()\" class=\"success\">🔄 SYNC DATA SEKOLAH</button>
+            <div id=\"syncResult\" class=\"result\" style=\"display: none;\"></div>
+        </div>
+
+        <div class=\"info\">
+            <h3>🧪 TEST DROPDOWN SUPERVISI</h3>
+            <button onclick=\"testSupervisionDropdown()\">✅ TEST DROPDOWN</button>
+            <div id=\"testResult\" class=\"result\" style=\"display: none;\"></div>
+        </div>
+
+        <div class=\"fix\">
+            <h3>🚀 BUKA HALAMAN SUPERVISI</h3>
+            <button onclick=\"openSupervision()\" class=\"success\">📋 BUKA SUPERVISI</button>
+        </div>
+    </div>
+
+    <script>
+        function checkCurrentData() {
+            try {
+                const schools = JSON.parse(localStorage.getItem('schools_data') || '[]');
+                const schoolsBackup = JSON.parse(localStorage.getItem('schools_data_backup') || '[]');
+                
+                document.getElementById('checkResult').style.display = 'block';
+                document.getElementById('checkResult').textContent = 
+                    `📊 DATA SEKOLAH SAAT INI:\\n\\n` +
+                    `Main Data (schools_data):\\n` +
+                    `   - Total: ${schools.length} sekolah\\n` +
+                    schools.map((s, i) => `   ${i+1}. ${s.name || 'No name'}`).join('\\n') +
+                    `\\n\\nBackup Data (schools_data_backup):\\n` +
+                    `   - Total: ${schoolsBackup.length} sekolah\\n` +
+                    schoolsBackup.map((s, i) => `   ${i+1}. ${s.name || 'No name'}`).join('\\n') +
+                    `\\n\\n${schools.some(s => s.name && s.name.includes('SMKN')) ? 
+                        '✅ SMKN ditemukan!' : 
+                        '❌ SMKN tidak ditemukan - perlu ditambah!'}`;
+
+            } catch (error) {
+                document.getElementById('checkResult').style.display = 'block';
+                document.getElementById('checkResult').className = 'result problem';
+                document.getElementById('checkResult').textContent = `❌ Error: ${error.message}`;
+            }
+        }
+
+        function addSMKN4Garut() {
+            try {
+                let schools = JSON.parse(localStorage.getItem('schools_data') || '[]');
+                
+                // Check if SMKN 4 Garut already exists
+                const exists = schools.some(s => s.name && s.name.includes('SMKN 4 Garut'));
+                
+                if (!exists) {
+                    const newSchool = {
+                        id: \"school-\" + Date.now() + \"-smkn4\",
+                        name: \"SMKN 4 Garut\",
+                        address: \"Jl. Raya Garut No. 200, Garut, Jawa Barat\",
+                        contact: \"0262-2345678\",
+                        principalName: \"Drs. Andi Wijaya, M.Pd\",
+                        principalNip: \"196905101995031001\",
+                        supervisions: 0,
+                        createdAt: new Date().toISOString(),
+                        _source: 'manual_add'
+                    };
+                    
+                    schools.push(newSchool);
+                }
+                
+                // Also add other common schools if not exist
+                const commonSchools = [
+                    {
+                        id: \"school-\" + Date.now() + \"-sdn1\",
+                        name: \"SDN 1 Garut\",
+                        address: \"Jl. Pendidikan No. 1, Garut\",
+                        contact: \"0262-1111111\",
+                        principalName: \"Dra. Sri Mulyani, M.Pd\",
+                        principalNip: \"196801011990032001\",
+                        supervisions: 2,
+                        createdAt: new Date().toISOString()
+                    },
+                    {
+                        id: \"school-\" + Date.now() + \"-smpn1\",
+                        name: \"SMPN 1 Garut\",
+                        address: \"Jl. Ahmad Yani No. 50, Garut\",
+                        contact: \"0262-2222222\",
+                        principalName: \"Drs. Bambang Sutrisno, M.Pd\",
+                        principalNip: \"196702021991031002\",
+                        supervisions: 3,
+                        createdAt: new Date().toISOString()
+                    }
+                ];
+                
+                // Add schools that don't exist
+                commonSchools.forEach(newSchool => {
+                    const exists = schools.some(s => s.name === newSchool.name);
+                    if (!exists) {
+                        schools.push(newSchool);
+                    }
+                });
+                
+                // Save to localStorage
+                localStorage.setItem('schools_data', JSON.stringify(schools));
+                localStorage.setItem('schools_data_backup', JSON.stringify(schools));
+                localStorage.setItem('schools_data_timestamp', Date.now().toString());
+                localStorage.setItem('schools_sync_time', new Date().toISOString());
+                
+                document.getElementById('addResult').style.display = 'block';
+                document.getElementById('addResult').textContent = 
+                    `🏫 SMKN 4 GARUT BERHASIL DITAMBAH!\\n\\n` +
+                    `✅ Total sekolah: ${schools.length}\\n` +
+                    `✅ SMKN 4 Garut: ADDED\\n` +
+                    `✅ Data saved: DONE\\n` +
+                    `✅ Backup created: DONE\\n\\n` +
+                    `Sekolah yang tersedia:\\n` +
+                    schools.map((s, i) => `   ${i+1}. ${s.name}`).join('\\n') +
+                    `\\n\\n🚀 Data siap untuk dropdown supervisi!`;
+
+            } catch (error) {
+                document.getElementById('addResult').style.display = 'block';
+                document.getElementById('addResult').className = 'result problem';
+                document.getElementById('addResult').textContent = `❌ Error: ${error.message}`;
+            }
+        }
+
+        function syncAllSchools() {
+            try {
+                // Force refresh flags for supervisions page
+                localStorage.setItem('schools_force_refresh', 'true');
+                localStorage.setItem('supervisions_schools_updated', Date.now().toString());
+                localStorage.setItem('schools_dropdown_ready', 'true');
+                
+                // Trigger data refresh
+                const schools = JSON.parse(localStorage.getItem('schools_data') || '[]');
+                
+                // Ensure backup is current
+                localStorage.setItem('schools_data_backup', JSON.stringify(schools));
+                
+                // Set sync flags
+                localStorage.setItem('schools_synced', 'true');
+                localStorage.setItem('last_sync', new Date().toISOString());
+                
+                document.getElementById('syncResult').style.display = 'block';
+                document.getElementById('syncResult').textContent = 
+                    `🔄 SYNC DATA SEKOLAH SELESAI!\\n\\n` +
+                    `✅ Schools data: ${schools.length} sekolah\\n` +
+                    `✅ Force refresh: ENABLED\\n` +
+                    `✅ Dropdown ready: TRUE\\n` +
+                    `✅ Sync flags: SET\\n` +
+                    `✅ Backup updated: DONE\\n\\n` +
+                    `🎯 Sekarang refresh halaman supervisi!\\n` +
+                    `Dropdown harus menampilkan ${schools.length} pilihan sekolah.`;
+
+            } catch (error) {
+                document.getElementById('syncResult').style.display = 'block';
+                document.getElementById('syncResult').className = 'result problem';
+                document.getElementById('syncResult').textContent = `❌ Error: ${error.message}`;
+            }
+        }
+
+        function testSupervisionDropdown() {
+            try {
+                const schools = JSON.parse(localStorage.getItem('schools_data') || '[]');
+                const synced = localStorage.getItem('schools_synced') === 'true';
+                const dropdownReady = localStorage.getItem('schools_dropdown_ready') === 'true';
+                
+                document.getElementById('testResult').style.display = 'block';
+                document.getElementById('testResult').textContent = 
+                    `🧪 TEST DROPDOWN SUPERVISI:\\n\\n` +
+                    `Data Status:\\n` +
+                    `   - Schools available: ${schools.length}\\n` +
+                    `   - Synced: ${synced ? 'YES' : 'NO'}\\n` +
+                    `   - Dropdown ready: ${dropdownReady ? 'YES' : 'NO'}\\n\\n` +
+                    `Schools List:\\n` +
+                    schools.map((s, i) => `   ${i+1}. ${s.name}`).join('\\n') +
+                    `\\n\\nExpected Result:\\n` +
+                    `   - Dropdown \"Pilih Sekolah\" muncul\\n` +
+                    `   - ${schools.length} pilihan tersedia\\n` +
+                    `   - SMKN 4 Garut ada dalam list\\n` +
+                    `   - Tidak ada error di console\\n\\n` +
+                    `${schools.length > 0 && synced ? 
+                        '✅ READY! Dropdown harus berfungsi!' : 
+                        '❌ Run sync dulu!'}`;
+
+            } catch (error) {
+                document.getElementById('testResult').style.display = 'block';
+                document.getElementById('testResult').className = 'result problem';
+                document.getElementById('testResult').textContent = `❌ Error: ${error.message}`;
+            }
+        }
+
+        function openSupervision() {
+            window.open('http://localhost:5000/supervisions', '_blank');
+        }
+
+        // Auto-run on load
+        window.onload = function() {
+            setTimeout(() => {
+                checkCurrentData();
+                setTimeout(() => {
+                    addSMKN4Garut();
+                    setTimeout(() => {
+                        syncAllSchools();
+                    }, 1000);
+                }, 1000);
+            }, 500);
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test localStorage Simple</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2563eb;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        button {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px 5px;
+            font-size: 14px;
+        }
+        button:hover {
+            background: #1d4ed8;
+        }
+        .result {
+            margin: 15px 0;
+            padding: 15px;
+            border-radius: 5px;
+            background: #f0f9ff;
+            border-left: 4px solid #2563eb;
+            font-family: monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+        }
+        .success {
+            background: #f0fdf4;
+            border-left-color: #16a34a;
+            color: #15803d;
+        }
+        .error {
+            background: #fef2f2;
+            border-left-color: #dc2626;
+            color: #dc2626;
+        }
+        .warning {
+            background: #fffbeb;
+            border-left-color: #f59e0b;
+            color: #d97706;
+        }
+        .actions {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .step {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            background: #f9fafb;
+        }
+        .step h3 {
+            margin-top: 0;
+            color: #1f2937;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Test localStorage Sekolah</h1>
+        <p style="text-align: center; color: #666; margin-bottom: 30px;">
+            Test sederhana untuk memverifikasi penyimpanan dan pembacaan data sekolah
+        </p>
+
+        <div class="step">
+            <h3>Step 1: Test Penyimpanan Data</h3>
+            <div class="actions">
+                <button onclick="testSaveSchool()">Simpan Sekolah Test</button>
+                <button onclick="clearSchoolsData()">Hapus Data</button>
+            </div>
+            <div id="saveResult" class="result" style="display: none;"></div>
+        </div>
+
+        <div class="step">
+            <h3>Step 2: Test Pembacaan Data</h3>
+            <div class="actions">
+                <button onclick="testReadSchools()">Baca Data Sekolah</button>
+                <button onclick="simulateReactQuery()">Simulasi React Query</button>
+            </div>
+            <div id="readResult" class="result" style="display: none;"></div>
+        </div>
+
+        <div class="step">
+            <h3>Step 3: Test Real-time Update</h3>
+            <div class="actions">
+                <button onclick="startRealTimeTest()">Mulai Test Real-time</button>
+                <button onclick="stopRealTimeTest()">Stop Test</button>
+            </div>
+            <div id="realtimeResult" class="result" style="display: none;"></div>
+        </div>
+
+        <div class="step">
+            <h3>Step 4: Instruksi Manual</h3>
+            <p style="color: #666; font-size: 14px;">
+                1. Klik "Simpan Sekolah Test" untuk menambah data<br>
+                2. Buka aplikasi utama di tab baru<br>
+                3. Login dan buka halaman "Sekolah Binaan"<br>
+                4. Periksa apakah data muncul<br>
+                5. Jika tidak muncul, buka Developer Tools (F12) dan lihat Console
+            </p>
+        </div>
+    </div>
+
+    <script>
+        let realtimeInterval = null;
+
+        function testSaveSchool() {
+            try {
+                // Baca data existing
+                const existingData = localStorage.getItem('schools_data');
+                const schools = existingData ? JSON.parse(existingData) : [];
+                
+                // Buat sekolah baru
+                const newSchool = {
+                    id: Date.now().toString(),
+                    name: `SDN Test ${Math.floor(Math.random() * 1000)}`,
+                    address: `Jl. Test No. ${Math.floor(Math.random() * 100)}`,
+                    contact: `08${Math.floor(Math.random() * 1000000000)}`,
+                    principalName: `Kepala Test ${Math.floor(Math.random() * 100)}`,
+                    principalNip: `19${Math.floor(Math.random() * 100000000)}`,
+                    supervisions: 0,
+                    createdAt: new Date().toISOString()
+                };
+                
+                // Tambah ke array
+                const updatedSchools = [...schools, newSchool];
+                
+                // Simpan ke localStorage
+                localStorage.setItem('schools_data', JSON.stringify(updatedSchools));
+                
+                // Verifikasi penyimpanan
+                const savedData = localStorage.getItem('schools_data');
+                const parsedSaved = JSON.parse(savedData);
+                
+                const result = `✅ BERHASIL SIMPAN SEKOLAH
+                
+Sekolah baru: ${newSchool.name}
+ID: ${newSchool.id}
+Total sekolah: ${parsedSaved.length}
+
+Data tersimpan di localStorage dengan key: 'schools_data'
+Ukuran data: ${(new Blob([savedData]).size / 1024).toFixed(2)} KB
+
+Struktur data:
+${JSON.stringify(newSchool, null, 2)}`;
+                
+                showResult('saveResult', result, 'success');
+                
+                // Trigger storage event
+                window.dispatchEvent(new StorageEvent('storage', {
+                    key: 'schools_data',
+                    newValue: savedData,
+                    oldValue: existingData
+                }));
+                
+            } catch (error) {
+                showResult('saveResult', `❌ ERROR: ${error.message}`, 'error');
+            }
+        }
+
+        function testReadSchools() {
+            try {
+                // Simulasi exact function dari schools.tsx
+                const queryFn = () => {
+                    try {
+                        console.log('🔍 Schools Query Function Called');
+                        if (typeof window !== 'undefined' && window.localStorage) {
+                            const schoolsData = localStorage.getItem('schools_data');
+                            console.log('🔍 Raw schools data:', schoolsData);
+                            if (schoolsData) {
+                                const parsed = JSON.parse(schoolsData);
+                                console.log('🔍 Parsed schools:', parsed);
+                                console.log('🔍 Is array?', Array.isArray(parsed));
+                                return Array.isArray(parsed) ? parsed : [];
+                            }
+                        }
+                        console.log('🔍 Returning empty array');
+                        return [];
+                    } catch (error) {
+                        console.warn('Error reading schools from localStorage:', error);
+                        return [];
+                    }
+                };
+
+                const schools = queryFn();
+                
+                const result = `📊 HASIL PEMBACAAN DATA
+
+Total sekolah ditemukan: ${schools.length}
+Type data: ${Array.isArray(schools) ? 'Array' : typeof schools}
+
+${schools.length > 0 ? `
+Sekolah pertama:
+- Nama: ${schools[0].name}
+- ID: ${schools[0].id}
+- Alamat: ${schools[0].address}
+
+Semua sekolah:
+${schools.map((s, i) => `${i + 1}. ${s.name} (ID: ${s.id})`).join('\n')}
+` : 'Tidak ada data sekolah'}
+
+✅ Function berjalan tanpa error
+📝 Cek console browser untuk log detail`;
+                
+                showResult('readResult', result, schools.length > 0 ? 'success' : 'warning');
+                
+            } catch (error) {
+                showResult('readResult', `❌ ERROR: ${error.message}`, 'error');
+            }
+        }
+
+        function simulateReactQuery() {
+            try {
+                // Simulasi React Query behavior
+                const queryKey = ['schools'];
+                const schools = JSON.parse(localStorage.getItem('schools_data') || '[]');
+                
+                const result = `⚛️ SIMULASI REACT QUERY
+
+Query Key: ${JSON.stringify(queryKey)}
+Data: ${schools.length} sekolah
+Stale Time: 0 (always fresh)
+Refetch On Mount: true
+
+Behavior:
+1. Component mount → Query function dipanggil
+2. localStorage dibaca → ${schools.length} sekolah
+3. Data di-render ke UI
+4. Mutation success → invalidateQueries
+5. Query function dipanggil lagi
+6. UI update dengan data terbaru
+
+${schools.length > 0 ? '✅ Data tersedia untuk render' : '⚠️ Tidak ada data untuk render'}`;
+                
+                showResult('readResult', result, 'success');
+                
+            } catch (error) {
+                showResult('readResult', `❌ ERROR: ${error.message}`, 'error');
+            }
+        }
+
+        function startRealTimeTest() {
+            if (realtimeInterval) {
+                clearInterval(realtimeInterval);
+            }
+
+            let lastData = localStorage.getItem('schools_data');
+            let checkCount = 0;
+            
+            realtimeInterval = setInterval(() => {
+                checkCount++;
+                const currentData = localStorage.getItem('schools_data');
+                
+                if (currentData !== lastData) {
+                    const oldCount = lastData ? JSON.parse(lastData).length : 0;
+                    const newCount = currentData ? JSON.parse(currentData).length : 0;
+                    
+                    const result = `🔄 PERUBAHAN TERDETEKSI (Check #${checkCount})
+
+Waktu: ${new Date().toLocaleTimeString()}
+Sekolah lama: ${oldCount}
+Sekolah baru: ${newCount}
+Status: ${newCount > oldCount ? 'DITAMBAH' : newCount < oldCount ? 'DIHAPUS' : 'DIUBAH'}
+
+✅ Real-time monitoring berfungsi!`;
+                    
+                    showResult('realtimeResult', result, 'success');
+                    lastData = currentData;
+                } else if (checkCount % 10 === 0) {
+                    showResult('realtimeResult', `📡 Monitoring aktif... (Check #${checkCount})\nTidak ada perubahan terdeteksi`, 'warning');
+                }
+            }, 1000);
+
+            showResult('realtimeResult', '📡 Real-time monitoring dimulai...\nMencari perubahan setiap 1 detik', 'success');
+        }
+
+        function stopRealTimeTest() {
+            if (realtimeInterval) {
+                clearInterval(realtimeInterval);
+                realtimeInterval = null;
+                showResult('realtimeResult', '⏹️ Real-time monitoring dihentikan', 'warning');
+            }
+        }
+
+        function clearSchoolsData() {
+            try {
+                const oldData = localStorage.getItem('schools_data');
+                const oldCount = oldData ? JSON.parse(oldData).length : 0;
+                
+                localStorage.removeItem('schools_data');
+                
+                showResult('saveResult', `🗑️ DATA DIHAPUS\n\nSekolah yang dihapus: ${oldCount}\nlocalStorage 'schools_data' telah dikosongkan`, 'warning');
+                
+                // Trigger storage event
+                window.dispatchEvent(new StorageEvent('storage', {
+                    key: 'schools_data',
+                    newValue: null,
+                    oldValue: oldData
+                }));
+                
+            } catch (error) {
+                showResult('saveResult', `❌ ERROR: ${error.message}`, 'error');
+            }
+        }
+
+        function showResult(elementId, message, type) {
+            const element = document.getElementById(elementId);
+            element.style.display = 'block';
+            element.className = `result ${type}`;
+            element.textContent = message;
+        }
+
+        // Auto-check on load
+        window.onload = function() {
+            testReadSchools();
+        };
+
+        // Listen for storage events
+        window.addEventListener('storage', function(e) {
+            if (e.key === 'schools_data') {
+                console.log('Storage event detected:', e);
+                testReadSchools();
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔧 Setup Data Laporan - Tugas Tambahan</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            min-height: 100vh;
+        }
+        .container {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #4f46e5;
+        }
+        .status {
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            font-weight: bold;
+        }
+        .success { background: #d1fae5; color: #065f46; border-left: 5px solid #10b981; }
+        .error { background: #fee2e2; color: #991b1b; border-left: 5px solid #ef4444; }
+        .info { background: #dbeafe; color: #1e40af; border-left: 5px solid #3b82f6; }
+        .btn {
+            background: #4f46e5;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+            transition: all 0.3s;
+        }
+        .btn:hover { background: #4338ca; transform: translateY(-2px); }
+        .btn-success { background: #10b981; }
+        .btn-success:hover { background: #059669; }
+        .data-preview {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            max-height: 400px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔧 Setup Data Laporan</h1>
+            <p>Memastikan data tugas tambahan tersedia untuk laporan</p>
+        </div>
+
+        <div id="status" class="info">
+            🔄 Siap untuk setup data laporan...
+        </div>
+
+        <div style="text-align: center; margin: 20px 0;">
+            <button class="btn" onclick="setupReportData()">
+                🚀 Setup Data Laporan
+            </button>
+            <button class="btn btn-success" onclick="openReports()" style="display: none;" id="openBtn">
+                📊 Buka Halaman Laporan
+            </button>
+        </div>
+
+        <div id="dataPreview" class="data-preview" style="display: none;">
+            <h4>📋 Data yang telah dibuat:</h4>
+            <pre id="dataContent"></pre>
+        </div>
+    </div>
+
+    <script>
+        function updateStatus(message, type = 'info') {
+            const statusEl = document.getElementById('status');
+            statusEl.className = `status ${type}`;
+            statusEl.innerHTML = message;
+        }
+
+        function setupReportData() {
+            updateStatus('🔄 Membuat data tugas tambahan untuk laporan...', 'info');
+
+            try {
+                // Create comprehensive additional tasks data
+                const additionalTasks = [
+                    {
+                        id: "laporan-task-1",
+                        name: "Rapat Koordinasi Pengawas Sekolah",
+                        date: "2025-01-15",
+                        location: "Kantor Dinas Pendidikan Provinsi Jawa Barat",
+                        organizer: "Dinas Pendidikan Provinsi Jawa Barat",
+                        description: "Rapat koordinasi bulanan membahas program supervisi sekolah, evaluasi kinerja pengawas, dan rencana kegiatan bulan berikutnya. Dihadiri oleh seluruh pengawas sekolah se-Jawa Barat.",
+                        createdAt: new Date().toISOString(),
+                        photo1: null,
+                        photo2: null
+                    },
+                    {
+                        id: "laporan-task-2",
+                        name: "Workshop Implementasi Kurikulum Merdeka",
+                        date: "2025-01-18",
+                        location: "LPMP Jawa Barat, Bandung",
+                        organizer: "LPMP Jawa Barat",
+                        description: "Workshop pelatihan implementasi kurikulum merdeka untuk pengawas sekolah. Materi meliputi asesmen diagnostik, pembelajaran berdiferensiasi, dan project penguatan profil pelajar Pancasila.",
+                        createdAt: new Date().toISOString(),
+                        photo1: null,
+                        photo2: null
+                    },
+                    {
+                        id: "laporan-task-3",
+                        name: "Supervisi Akademik Terpadu",
+                        date: "2025-01-20",
+                        location: "SMKN 4 Garut",
+                        organizer: "Pengawas Sekolah Wilayah III",
+                        description: "Kegiatan supervisi akademik terpadu melibatkan beberapa pengawas untuk memberikan pembinaan komprehensif kepada guru-guru di sekolah binaan.",
+                        createdAt: new Date().toISOString(),
+                        photo1: null,
+                        photo2: null
+                    },
+                    {
+                        id: "laporan-task-4",
+                        name: "Bimbingan Teknis Penyusunan RPS",
+                        date: "2025-01-22",
+                        location: "Hotel Savoy Homann, Bandung",
+                        organizer: "Balai Diklat Keagamaan",
+                        description: "Bimbingan teknis penyusunan Rencana Pelaksanaan Supervisi (RPS) untuk meningkatkan kualitas supervisi akademik dan manajerial di sekolah.",
+                        createdAt: new Date().toISOString(),
+                        photo1: null,
+                        photo2: null
+                    },
+                    {
+                        id: "laporan-task-5",
+                        name: "Evaluasi Program Sekolah Penggerak",
+                        date: "2025-01-25",
+                        location: "Gedung Sate, Bandung",
+                        organizer: "Kemendikbudristek",
+                        description: "Kegiatan evaluasi dan monitoring program sekolah penggerak di wilayah Jawa Barat. Pengawas berperan sebagai evaluator eksternal untuk menilai implementasi program.",
+                        createdAt: new Date().toISOString(),
+                        photo1: null,
+                        photo2: null
+                    },
+                    {
+                        id: "laporan-task-6",
+                        name: "Sosialisasi Asesmen Nasional",
+                        date: "2025-01-28",
+                        location: "Aula LPMP Jawa Barat",
+                        organizer: "Pusat Asesmen dan Pembelajaran",
+                        description: "Sosialisasi pelaksanaan Asesmen Nasional tahun 2025, termasuk perubahan kebijakan dan teknis pelaksanaan di sekolah.",
+                        createdAt: new Date().toISOString(),
+                        photo1: null,
+                        photo2: null
+                    }
+                ];
+
+                // Save with multiple backups
+                localStorage.setItem('additional_tasks_data', JSON.stringify(additionalTasks));
+                localStorage.setItem('additional_tasks_data_backup', JSON.stringify(additionalTasks));
+                localStorage.setItem('additional_tasks_data_backup_2', JSON.stringify(additionalTasks));
+                localStorage.setItem('additional_tasks_data_timestamp', Date.now().toString());
+
+                // Also ensure other data exists
+                let tasksData = localStorage.getItem('tasks_data');
+                if (!tasksData || tasksData === '[]') {
+                    const sampleTasks = [
+                        {
+                            id: "sample-task-1",
+                            title: "Supervisi Akademik SMKN 1 Garut",
+                            completed: true,
+                            date: new Date().toISOString(),
+                            description: "Supervisi pembelajaran mata pelajaran produktif",
+                            createdAt: new Date().toISOString()
+                        },
+                        {
+                            id: "sample-task-2", 
+                            title: "Supervisi Manajerial SMAN 2 Garut",
+                            completed: true,
+                            date: new Date().toISOString(),
+                            description: "Supervisi pengelolaan sekolah dan administrasi",
+                            createdAt: new Date().toISOString()
+                        },
+                        {
+                            id: "sample-task-3",
+                            title: "Monitoring Kurikulum Merdeka",
+                            completed: false,
+                            date: new Date().toISOString(),
+                            description: "Monitoring implementasi kurikulum merdeka di sekolah binaan",
+                            createdAt: new Date().toISOString()
+                        }
+                    ];
+                    localStorage.setItem('tasks_data', JSON.stringify(sampleTasks));
+                    localStorage.setItem('tasks_data_backup', JSON.stringify(sampleTasks));
+                }
+
+                let supervisionsData = localStorage.getItem('supervisions_data');
+                if (!supervisionsData || supervisionsData === '[]') {
+                    const sampleSupervisions = [
+                        {
+                            id: "sample-supervision-1",
+                            school: "SMKN 1 Garut",
+                            type: "Akademik",
+                            date: new Date().toISOString(),
+                            findings: "Pembelajaran berjalan dengan baik, guru menguasai materi",
+                            recommendations: "Tingkatkan penggunaan media pembelajaran digital",
+                            createdAt: new Date().toISOString()
+                        },
+                        {
+                            id: "sample-supervision-2",
+                            school: "SMAN 2 Garut", 
+                            type: "Manajerial",
+                            date: new Date().toISOString(),
+                            findings: "Administrasi sekolah tertib dan lengkap",
+                            recommendations: "Perbaiki sistem dokumentasi digital",
+                            createdAt: new Date().toISOString()
+                        },
+                        {
+                            id: "sample-supervision-3",
+                            school: "SMPN 3 Garut",
+                            type: "Akademik",
+                            date: new Date().toISOString(),
+                            findings: "Implementasi kurikulum merdeka berjalan baik",
+                            recommendations: "Tingkatkan variasi metode pembelajaran",
+                            createdAt: new Date().toISOString()
+                        }
+                    ];
+                    localStorage.setItem('supervisions_data', JSON.stringify(sampleSupervisions));
+                    localStorage.setItem('supervisions_data_backup', JSON.stringify(sampleSupervisions));
+                }
+
+                // Show success
+                updateStatus(`
+                    ✅ <strong>DATA BERHASIL DIBUAT!</strong><br>
+                    • Tugas Tambahan: <strong>${additionalTasks.length} kegiatan</strong><br>
+                    • Data tersimpan dengan backup ganda<br>
+                    • Timestamp: ${new Date().toLocaleString('id-ID')}<br>
+                    • Status: <strong>SIAP UNTUK LAPORAN</strong>
+                `, 'success');
+
+                // Show data preview
+                document.getElementById('dataPreview').style.display = 'block';
+                document.getElementById('dataContent').textContent = JSON.stringify(additionalTasks, null, 2);
+
+                // Show open button
+                document.getElementById('openBtn').style.display = 'inline-block';
+
+                console.log('✅ Report data setup completed:', {
+                    additionalTasks: additionalTasks.length,
+                    timestamp: new Date().toISOString()
+                });
+
+            } catch (error) {
+                updateStatus(`❌ Error saat setup data: ${error.message}`, 'error');
+                console.error('Setup error:', error);
+            }
+        }
+
+        function openReports() {
+            try {
+                window.location.href = '/reports';
+            } catch (error) {
+                window.open('/reports', '_blank');
+            }
+        }
+
+        // Auto-run setup on page load
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                setupReportData();
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

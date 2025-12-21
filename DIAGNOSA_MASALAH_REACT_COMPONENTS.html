@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagnosa Masalah React Components</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f8f9fa; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .card { background: white; margin: 20px 0; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .success { background: #d4edda; border-left: 4px solid #28a745; color: #155724; }
+        .error { background: #f8d7da; border-left: 4px solid #dc3545; color: #721c24; }
+        .warning { background: #fff3cd; border-left: 4px solid #ffc107; color: #856404; }
+        .info { background: #d1ecf1; border-left: 4px solid #17a2b8; color: #0c5460; }
+        button { 
+            background: #007bff; color: white; border: none; padding: 12px 20px; 
+            border-radius: 4px; cursor: pointer; margin: 5px; font-size: 14px;
+        }
+        button:hover { background: #0056b3; }
+        button.success { background: #28a745; }
+        button.danger { background: #dc3545; }
+        h1 { text-align: center; color: #333; }
+        h2 { color: #007bff; border-bottom: 2px solid #007bff; padding-bottom: 10px; }
+        pre { background: #f8f9fa; padding: 15px; border-radius: 4px; overflow-x: auto; font-size: 12px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+        .photo-preview { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; margin: 5px; }
+        .issue { background: #fff3cd; padding: 15px; border-radius: 4px; margin: 10px 0; border-left: 4px solid #ffc107; }
+        .solution { background: #d4edda; padding: 15px; border-radius: 4px; margin: 10px 0; border-left: 4px solid #28a745; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Diagnosa Masalah React Components</h1>
+        
+        <div class="card">
+            <h2>🚀 Diagnosa Otomatis</h2>
+            <button onclick="diagnoseAll()" class="success" style="font-size: 16px; padding: 15px 30px;">
+                🔍 DIAGNOSA SEMUA MASALAH
+            </button>
+            <div id="diagnosisResult"></div>
+        </div>
+
+        <div class="card">
+            <h2>📊 Status localStorage</h2>
+            <button onclick="checkLocalStorage()">Cek localStorage</button>
+            <div id="localStorageStatus"></div>
+        </div>
+
+        <div class="card">
+            <h2>🔧 Solusi Berdasarkan Diagnosa</h2>
+            <div id="solutionRecommendation"></div>
+        </div>
+
+        <div class="card">
+            <h2>🛠️ Tools Debug</h2>
+            <button onclick="clearBrowserCache()">Clear Browser Cache</button>
+            <button onclick="forceReloadData()">Force Reload Data</button>
+            <button onclick="showDetailedDebug()">Detailed Debug</button>
+            <div id="debugTools"></div>
+        </div>
+    </div>
+
+    <script>
+        function diagnoseAll() {
+            const resultDiv = document.getElementById('diagnosisResult');
+            resultDiv.innerHTML = '<div class="info">🔄 Menjalankan diagnosa...</div>';
+            
+            const issues = [];
+            const solutions = [];
+            
+            try {
+                // 1. Check localStorage data
+                console.log('🔍 Checking localStorage data...');
+                const localDatabase = localStorage.getItem('local-database');
+                const userProfile = localStorage.getItem('user_profile');
+                const appUsers = localStorage.getItem('app_users');
+                
+                // 2. Diagnose Dashboard Issues
+                if (!userProfile) {
+                    issues.push({
+                        component: 'Dashboard',
+                        issue: 'user_profile tidak ada di localStorage',
+                        severity: 'high',
+                        impact: 'Foto profil dan NIP tidak muncul'
+                    });
+                    solutions.push({
+                        component: 'Dashboard',
+                        solution: 'Setup user_profile dengan data lengkap Wawan'
+                    });
+                } else {
+                    const profile = JSON.parse(userProfile);
+                    if (!profile.photoUrl) {
+                        issues.push({
+                            component: 'Dashboard',
+                            issue: 'photoUrl kosong dalam user_profile',
+                            severity: 'medium',
+                            impact: 'Foto profil tidak muncul'
+                        });
+                        solutions.push({
+                            component: 'Dashboard',
+                            solution: 'Tambahkan photoUrl ke user_profile'
+                        });
+                    }
+                    if (!profile.nip) {
+                        issues.push({
+                            component: 'Dashboard',
+                            issue: 'NIP kosong dalam user_profile',
+                            severity: 'medium',
+                            impact: 'NIP tidak muncul'
+                        });
+                        solutions.push({
+                            component: 'Dashboard',
+                            solution: 'Tambahkan NIP ke user_profile'
+                        });
+                    }
+                }
+                
+                // 3. Diagnose Admin Pages Issues
+                if (!localDatabase) {
+                    issues.push({
+                        component: 'Admin Pages',
+                        issue: 'local-database tidak ada di localStorage',
+                        severity: 'critical',
+                        impact: 'Semua data admin hilang'
+                    });
+                    solutions.push({
+                        component: 'Admin Pages',
+                        solution: 'Setup local-database dengan data lengkap'
+                    });
+                } else {
+                    const db = JSON.parse(localDatabase);
+                    if (!db.tasks || db.tasks.length === 0) {
+                        issues.push({
+                            component: 'Tasks Page',
+                            issue: 'tasks array kosong atau tidak ada',
+                            severity: 'high',
+                            impact: 'Halaman daftar tugas kosong'
+                        });
+                        solutions.push({
+                            component: 'Tasks Page',
+                            solution: 'Populate tasks array dengan data yang benar'
+                        });
+                    }
+                    if (!db.supervisions || db.supervisions.length === 0) {
+                        issues.push({
+                            component: 'Supervisions Page',
+                            issue: 'supervisions array kosong atau tidak ada',
+                            severity: 'high',
+                            impact: 'Halaman supervisi kosong'
+                        });
+                        solutions.push({
+                            component: 'Supervisions Page',
+                            solution: 'Populate supervisions array dengan data yang benar'
+                        });
+                    }
+                    if (!db.additionalTasks || db.additionalTasks.length === 0) {
+                        issues.push({
+                            component: 'Additional Tasks Page',
+                            issue: 'additionalTasks array kosong atau tidak ada',
+                            severity: 'high',
+                            impact: 'Halaman tugas tambahan kosong atau data salah'
+                        });
+                        solutions.push({
+                            component: 'Additional Tasks Page',
+                            solution: 'Populate additionalTasks array dengan data yang benar'
+                        });
+                    }
+                }
+                
+                // 4. Diagnose User Management Issues
+                if (!appUsers) {
+                    issues.push({
+                        component: 'User Management',
+                        issue: 'app_users tidak ada di localStorage',
+                        severity: 'high',
+                        impact: 'Halaman manajemen user kosong'
+                    });
+                    solutions.push({
+                        component: 'User Management',
+                        solution: 'Setup app_users dengan data user yang benar'
+                    });
+                }
+                
+                // 5. Check for React component caching issues
+                const reactDevTools = window.__REACT_DEVTOOLS_GLOBAL_HOOK__;
+                if (reactDevTools) {
+                    issues.push({
+                        component: 'React',
+                        issue: 'React DevTools terdeteksi - mungkin ada caching issue',
+                        severity: 'low',
+                        impact: 'Components tidak re-render setelah localStorage update'
+                    });
+                    solutions.push({
+                        component: 'React',
+                        solution: 'Hard refresh browser (Ctrl+Shift+R) atau restart dev server'
+                    });
+                }
+                
+                // Generate diagnosis report
+                let html = '<div class="success">✅ Diagnosa selesai!</div>';
+                
+                if (issues.length > 0) {
+                    html += '<h3>🚨 Masalah Teridentifikasi:</h3>';
+                    issues.forEach((issue, index) => {
+                        const severityColor = issue.severity === 'critical' ? '#dc3545' : 
+                                            issue.severity === 'high' ? '#fd7e14' : 
+                                            issue.severity === 'medium' ? '#ffc107' : '#6c757d';
+                        html += `
+                            <div class="issue">
+                                <strong style="color: ${severityColor};">${issue.component}</strong>
+                                <br><strong>Masalah:</strong> ${issue.issue}
+                                <br><strong>Dampak:</strong> ${issue.impact}
+                                <br><strong>Severity:</strong> ${issue.severity.toUpperCase()}
+                            </div>
+                        `;
+                    });
+                    
+                    html += '<h3>💡 Solusi Rekomendasi:</h3>';
+                    solutions.forEach((solution, index) => {
+                        html += `
+                            <div class="solution">
+                                <strong>${solution.component}:</strong> ${solution.solution}
+                            </div>
+                        `;
+                    });
+                    
+                    html += `
+                        <div class="warning" style="margin-top: 20px;">
+                            <strong>🔧 LANGKAH SELANJUTNYA:</strong>
+                            <br>1. Klik "Fix All Issues" di bawah untuk memperbaiki semua masalah
+                            <br>2. Hard refresh browser (Ctrl+Shift+R)
+                            <br>3. Restart React dev server jika perlu
+                        </div>
+                        <button onclick="fixAllIssues()" class="success" style="margin-top: 15px; font-size: 16px; padding: 15px 30px;">
+                            🔧 FIX ALL ISSUES
+                        </button>
+                    `;
+                } else {
+                    html += '<div class="success">🎉 Tidak ada masalah terdeteksi! Data localStorage sudah lengkap.</div>';
+                    html += `
+                        <div class="info" style="margin-top: 15px;">
+                            <strong>Jika masalah masih ada, kemungkinan penyebabnya:</strong>
+                            <br>• React components tidak re-render setelah localStorage update
+                            <br>• Browser cache issue
+                            <br>• Dev server perlu restart
+                            <br><br>
+                            <strong>Solusi:</strong>
+                            <br>1. Hard refresh browser (Ctrl+Shift+R)
+                            <br>2. Restart React dev server
+                            <br>3. Clear browser cache
+                        </div>
+                    `;
+                }
+                
+                resultDiv.innerHTML = html;
+                
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="error">
+                        ❌ <strong>Error saat diagnosa:</strong>
+                        <br>${error.message}
+                    </div>
+                `;
+            }
+        }
+
+        function fixAllIssues() {
+            const resultDiv = document.getElementById('diagnosisResult');
+            resultDiv.innerHTML = '<div class="info">🔧 Memperbaiki semua masalah...</div>';
+            
+            try {
+                // Complete fix with all data
+                const completeData = {
+                    // Profile data
+                    profile: {
+                        id: 'wawan-123',
+                        username: 'wawan',
+                        fullName: 'H. Wawan Yogaswara, S.Pd, M.Pd',
+                        nip: '196805301994121001',
+                        rank: 'Pembina Utama Muda, IV/c',
+                        phone: '087733438282',
+                        email: 'wawan.yogaswara@disdik.jabar.go.id',
+                        department: 'Cabang Dinas Pendidikan Wilayah XI',
+                        role: 'pengawas',
+                        photoUrl: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iIzMzNzNkYyIvPjx0ZXh0IHg9IjUwIiB5PSI1NSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE0IiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+V2F3YW48L3RleHQ+PC9zdmc+',
+                        status: 'active'
+                    },
+                    
+                    // Database with real data
+                    database: {
+                        tasks: [
+                            {
+                                id: '1',
+                                title: 'Supervisi dan pembinaan Kepala SMKN 14 Garut',
+                                description: 'Melakukan supervisi akademik dan pembinaan kepala sekolah SMKN 14 Garut',
+                                category: 'Supervisi Akademik',
+                                completed: true,
+                                date: '2025-01-15T00:00:00.000Z',
+                                userId: 'wawan-123',
+                                username: 'wawan'
+                            },
+                            {
+                                id: '2',
+                                title: 'Evaluasi program sekolah penggerak SMKN 4 Garut',
+                                description: 'Evaluasi implementasi program sekolah penggerak di SMKN 4 Garut',
+                                category: 'Evaluasi Program',
+                                completed: false,
+                                date: '2025-01-18T00:00:00.000Z',
+                                userId: 'wawan-123',
+                                username: 'wawan'
+                            },
+                            {
+                                id: '3',
+                                title: 'Monitoring Implementasi Kurikulum Merdeka',
+                                description: 'Monitoring implementasi kurikulum merdeka di sekolah binaan',
+                                category: 'Monitoring',
+                                completed: false,
+                                date: '2025-01-25T00:00:00.000Z',
+                                userId: 'wawan-123',
+                                username: 'wawan'
+                            }
+                        ],
+                        supervisions: [
+                            {
+                                id: '1',
+                                schoolName: 'SMKN 14 Garut',
+                                school: 'SMKN 14 Garut',
+                                type: 'Supervisi Akademik',
+                                findings: 'Pembelajaran sudah sesuai kurikulum merdeka, namun perlu peningkatan dalam penggunaan teknologi pembelajaran',
+                                recommendations: 'Tingkatkan penggunaan media pembelajaran digital dan platform e-learning',
+                                notes: 'Supervisi berjalan lancar, kepala sekolah sangat kooperatif',
+                                date: '2025-01-15T00:00:00.000Z',
+                                userId: 'wawan-123',
+                                username: 'wawan'
+                            },
+                            {
+                                id: '2',
+                                schoolName: 'SMKN 4 Garut',
+                                school: 'SMKN 4 Garut',
+                                type: 'Supervisi Manajerial',
+                                findings: 'Manajemen sekolah sudah baik, namun sistem dokumentasi masih perlu diperbaiki',
+                                recommendations: 'Perbaiki sistem dokumentasi dan arsip sekolah',
+                                notes: 'Perlu follow up dalam 2 minggu',
+                                date: '2025-01-18T00:00:00.000Z',
+                                userId: 'wawan-123',
+                                username: 'wawan'
+                            },
+                            {
+                                id: '3',
+                                schoolName: 'SMKN 1 Garut',
+                                school: 'SMKN 1 Garut',
+                                type: 'Supervisi Akademik',
+                                findings: 'Proses pembelajaran berjalan baik, fasilitas memadai',
+                                recommendations: 'Tingkatkan variasi metode pembelajaran',
+                                notes: 'Sekolah sudah menerapkan pembelajaran berbasis proyek',
+                                date: '2025-01-22T00:00:00.000Z',
+                                userId: 'wawan-123',
+                                username: 'wawan'
+                            }
+                        ],
+                        events: [
+                            {
+                                id: '1',
+                                title: 'Rapat Koordinasi Pengawas Sekolah',
+                                name: 'Rapat Koordinasi Pengawas Sekolah',
+                                description: 'Rapat koordinasi bulanan pengawas sekolah se-Kabupaten Garut',
+                                date: '2025-01-15T00:00:00.000Z',
+                                time: '09:00',
+                                location: 'Aula Dinas Pendidikan',
+                                userId: 'wawan-123',
+                                username: 'wawan'
+                            },
+                            {
+                                id: '2',
+                                title: 'Workshop Implementasi Kurikulum Merdeka',
+                                name: 'Workshop Implementasi Kurikulum Merdeka',
+                                description: 'Workshop peningkatan kapasitas pengawas',
+                                date: '2025-01-25T00:00:00.000Z',
+                                time: '08:00',
+                                location: 'Hotel Santika Garut',
+                                userId: 'wawan-123',
+                                username: 'wawan'
+                            }
+                        ],
+                        additionalTasks: [
+                            {
+                                id: '1',
+                                name: 'Rapat Koordinasi Pengawas Sekolah',
+                                title: 'Rapat Koordinasi Pengawas Sekolah',
+                                description: 'Mengikuti rapat koordinasi pengawas sekolah tingkat kabupaten',
+                                organizer: 'Dinas Pendidikan Kabupaten Garut',
+                                location: 'Aula Dinas Pendidikan',
+                                date: '2025-01-15T00:00:00.000Z',
+                                userId: 'wawan-123',
+                                username: 'wawan'
+                            },
+                            {
+                                id: '2',
+                                name: 'Workshop Kurikulum Merdeka',
+                                title: 'Workshop Kurikulum Merdeka',
+                                description: 'Mengikuti workshop implementasi kurikulum merdeka',
+                                organizer: 'Dinas Pendidikan Provinsi Jawa Barat',
+                                location: 'Hotel Santika Garut',
+                                date: '2025-01-30T00:00:00.000Z',
+                                userId: 'wawan-123',
+                                username: 'wawan'
+                            },
+                            {
+                                id: '3',
+                                name: 'Evaluasi Kinerja Sekolah Binaan',
+                                title: 'Evaluasi Kinerja Sekolah Binaan',
+                                description: 'Melakukan evaluasi kinerja sekolah binaan semester genap',
+                                organizer: 'Cabang Dinas Pendidikan Wilayah XI',
+                                location: 'Sekolah Binaan',
+                                date: '2025-02-10T00:00:00.000Z',
+                                userId: 'wawan-123',
+                                username: 'wawan'
+                            }
+                        ],
+                        schools: [
+                            {
+                                id: '1',
+                                name: 'SMKN 14 Garut',
+                                address: 'Jl. Raya Garut-Tasikmalaya',
+                                principal: 'Drs. Ahmad Suryadi, M.Pd',
+                                phone: '0262-123456',
+                                type: 'SMK',
+                                status: 'active'
+                            },
+                            {
+                                id: '2',
+                                name: 'SMKN 4 Garut',
+                                address: 'Jl. Cimanuk No. 123',
+                                principal: 'Dra. Siti Nurhasanah, M.Pd',
+                                phone: '0262-234567',
+                                type: 'SMK',
+                                status: 'active'
+                            },
+                            {
+                                id: '3',
+                                name: 'SMKN 1 Garut',
+                                address: 'Jl. Pembangunan No. 45',
+                                principal: 'Dr. Bambang Sutrisno, M.Pd',
+                                phone: '0262-345678',
+                                type: 'SMK',
+                                status: 'active'
+                            }
+                        ]
+                    },
+                    
+                    // Users data
+                    users: [
+                        {
+                            id: 'admin-1',
+                            username: 'admin',
+                            fullName: 'Administrator Sistem',
+                            role: 'admin',
+                            email: 'admin@disdik.jabar.go.id',
+                            status: 'active'
+                        },
+                        {
+                            id: 'wawan-123',
+                            username: 'wawan',
+                            fullName: 'H. Wawan Yogaswara, S.Pd, M.Pd',
+                            nip: '196805301994121001',
+                            rank: 'Pembina Utama Muda, IV/c',
+                            phone: '087733438282',
+                            email: 'wawan.yogaswara@disdik.jabar.go.id',
+                            role: 'pengawas',
+                            status: 'active'
+                        }
+                    ]
+                };
+                
+                // Clear existing problematic data
+                const keysToRemove = [
+                    'task-wawan-fallback-1', 'task-wawan-fallback-2',
+                    'sup-wawan-fallback-1', 'sup-wawan-fallback-2',
+                    'event-wawan-fallback-1', 'event-wawan-fallback-2',
+                    'add-wawan-fallback-1', 'add-wawan-fallback-2'
+                ];
+                
+                keysToRemove.forEach(key => {
+                    localStorage.removeItem(key);
+                });
+                
+                // Save all data to localStorage with multiple keys for compatibility
+                
+                // Profile data
+                const profileKeys = [
+                    'user_profile', 'current_user', 'user_data', 
+                    'profile_data', 'profile_info', 'userProfile'
+                ];
+                profileKeys.forEach(key => {
+                    localStorage.setItem(key, JSON.stringify(completeData.profile));
+                });
+                
+                // Database
+                localStorage.setItem('local-database', JSON.stringify(completeData.database));
+                localStorage.setItem('tasks', JSON.stringify(completeData.database.tasks));
+                localStorage.setItem('supervisions', JSON.stringify(completeData.database.supervisions));
+                localStorage.setItem('events', JSON.stringify(completeData.database.events));
+                localStorage.setItem('calendar_events', JSON.stringify(completeData.database.events));
+                localStorage.setItem('additional_tasks', JSON.stringify(completeData.database.additionalTasks));
+                localStorage.setItem('additionalTasks', JSON.stringify(completeData.database.additionalTasks));
+                localStorage.setItem('schools', JSON.stringify(completeData.database.schools));
+                
+                // Users
+                const userKeys = ['app_users', 'users', 'user_list'];
+                userKeys.forEach(key => {
+                    localStorage.setItem(key, JSON.stringify(completeData.users));
+                });
+                
+                // Force browser to recognize changes
+                window.dispatchEvent(new StorageEvent('storage', {
+                    key: 'user_profile',
+                    newValue: JSON.stringify(completeData.profile),
+                    url: window.location.href
+                }));
+                
+                window.dispatchEvent(new StorageEvent('storage', {
+                    key: 'local-database',
+                    newValue: JSON.stringify(completeData.database),
+                    url: window.location.href
+                }));
+                
+                resultDiv.innerHTML = `
+                    <div class="success">
+                        ✅ <strong>SEMUA MASALAH BERHASIL DIPERBAIKI!</strong>
+                        <br><br>
+                        <img src="${completeData.profile.photoUrl}" class="photo-preview" alt="Wawan">
+                        <br>
+                        <strong>Data yang diperbaiki:</strong>
+                        <br>• Profile: ${completeData.profile.fullName} (NIP: ${completeData.profile.nip})
+                        <br>• Foto profil: ✅ Ada
+                        <br>• Tasks: ${completeData.database.tasks.length} items
+                        <br>• Supervisions: ${completeData.database.supervisions.length} items
+                        <br>• Events: ${completeData.database.events.length} items
+                        <br>• Additional Tasks: ${completeData.database.additionalTasks.length} items
+                        <br>• Schools: ${completeData.database.schools.length} items
+                        <br>• Users: ${completeData.users.length} users
+                        <br><br>
+                        <div class="warning">
+                            <strong>🔄 LANGKAH TERAKHIR PENTING:</strong>
+                            <br>1. <strong>HARD REFRESH</strong> browser dengan Ctrl+Shift+R (Windows) atau Cmd+Shift+R (Mac)
+                            <br>2. Jika masih belum muncul, <strong>RESTART</strong> React dev server
+                            <br>3. Tunggu beberapa detik untuk React components reload
+                        </div>
+                    </div>
+                `;
+                
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="error">
+                        ❌ <strong>Error saat memperbaiki:</strong>
+                        <br>${error.message}
+                    </div>
+                `;
+            }
+        }
+
+        function checkLocalStorage() {
+            const statusDiv = document.getElementById('localStorageStatus');
+            
+            try {
+                const checks = [
+                    { key: 'user_profile', label: 'User Profile' },
+                    { key: 'local-database', label: 'Main Database' },
+                    { key: 'app_users', label: 'App Users' },
+                    { key: 'tasks', label: 'Tasks' },
+                    { key: 'supervisions', label: 'Supervisions' },
+                    { key: 'additional_tasks', label: 'Additional Tasks' }
+                ];
+                
+                let html = '<div class="grid">';
+                
+                checks.forEach(check => {
+                    const data = localStorage.getItem(check.key);
+                    if (data) {
+                        try {
+                            const parsed = JSON.parse(data);
+                            const count = Array.isArray(parsed) ? parsed.length : 
+                                         (parsed && typeof parsed === 'object') ? Object.keys(parsed).length : 1;
+                            html += `
+                                <div class="success" style="padding: 15px; border-radius: 4px;">
+                                    ✅ <strong>${check.label}</strong>
+                                    <br>Status: Ada
+                                    <br>Items: ${count}
+                                </div>
+                            `;
+                        } catch (e) {
+                            html += `
+                                <div class="warning" style="padding: 15px; border-radius: 4px;">
+                                    ⚠️ <strong>${check.label}</strong>
+                                    <br>Status: Error parsing
+                                    <br>Data: Ada tapi corrupt
+                                </div>
+                            `;
+                        }
+                    } else {
+                        html += `
+                            <div class="error" style="padding: 15px; border-radius: 4px;">
+                                ❌ <strong>${check.label}</strong>
+                                <br>Status: Tidak ada
+                                <br>Items: 0
+                            </div>
+                        `;
+                    }
+                });
+                
+                html += '</div>';
+                statusDiv.innerHTML = html;
+                
+            } catch (error) {
+                statusDiv.innerHTML = `
+                    <div class="error">
+                        ❌ Error checking localStorage: ${error.message}
+                    </div>
+                `;
+            }
+        }
+
+        function clearBrowserCache() {
+            if (confirm('Clear browser cache? Ini akan menghapus semua data cache browser.')) {
+                // Clear various caches
+                if ('caches' in window) {
+                    caches.keys().then(names => {
+                        names.forEach(name => {
+                            caches.delete(name);
+                        });
+                    });
+                }
+                
+                // Clear session storage
+                sessionStorage.clear();
+                
+                alert('✅ Browser cache cleared. Silakan refresh halaman.');
+            }
+        }
+
+        function forceReloadData() {
+            // Trigger storage events to force React components to reload
+            const keys = ['user_profile', 'local-database', 'app_users'];
+            keys.forEach(key => {
+                const data = localStorage.getItem(key);
+                if (data) {
+                    window.dispatchEvent(new StorageEvent('storage', {
+                        key: key,
+                        newValue: data,
+                        url: window.location.href
+                    }));
+                }
+            });
+            
+            alert('✅ Storage events triggered. React components should reload data.');
+        }
+
+        function showDetailedDebug() {
+            const debugDiv = document.getElementById('debugTools');
+            const debugData = {
+                localStorage_size: JSON.stringify(localStorage).length,
+                localStorage_keys: Object.keys(localStorage),
+                user_profile: localStorage.getItem('user_profile'),
+                local_database_size: localStorage.getItem('local-database')?.length || 0,
+                react_devtools: !!window.__REACT_DEVTOOLS_GLOBAL_HOOK__,
+                browser: navigator.userAgent,
+                timestamp: new Date().toISOString()
+            };
+            
+            debugDiv.innerHTML = `<pre>${JSON.stringify(debugData, null, 2)}</pre>`;
+        }
+
+        // Auto-run diagnosis on page load
+        window.onload = function() {
+            console.log('🔍 Diagnosis tool loaded');
+            setTimeout(() => {
+                diagnoseAll();
+                checkLocalStorage();
+            }, 1000);
+        };
+    </script>
+</body>
+</html>

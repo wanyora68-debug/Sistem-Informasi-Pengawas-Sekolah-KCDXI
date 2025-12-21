@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚨 Emergency PDF Fix - Simple Solution</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #e74c3c;
+        }
+        
+        .header h1 {
+            color: #e74c3c;
+            margin-bottom: 10px;
+            font-size: 2.5rem;
+        }
+        
+        .emergency-alert {
+            background: #fee2e2;
+            border: 3px solid #ef4444;
+            border-radius: 10px;
+            padding: 25px;
+            margin: 25px 0;
+            text-align: center;
+        }
+        
+        .emergency-alert h2 {
+            color: #dc2626;
+            margin-bottom: 15px;
+            font-size: 1.8rem;
+        }
+        
+        .solution-box {
+            background: #d1fae5;
+            border: 3px solid #10b981;
+            border-radius: 10px;
+            padding: 25px;
+            margin: 25px 0;
+        }
+        
+        .solution-box h3 {
+            color: #047857;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+        
+        .big-button {
+            display: block;
+            width: 100%;
+            padding: 20px;
+            margin: 15px 0;
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: bold;
+            text-decoration: none;
+            text-align: center;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.3);
+        }
+        
+        .big-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+        }
+        
+        .big-button.secondary {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            box-shadow: 0 5px 15px rgba(59, 130, 246, 0.3);
+        }
+        
+        .big-button.secondary:hover {
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
+        }
+        
+        .step {
+            background: #f8fafc;
+            border-left: 5px solid #3b82f6;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 0 10px 10px 0;
+        }
+        
+        .step h4 {
+            color: #1e40af;
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+        }
+        
+        .stats-demo {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 30px 0;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #f1f5f9, #e2e8f0);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            border: 2px solid #cbd5e1;
+        }
+        
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #2563eb;
+            margin-bottom: 8px;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: #64748b;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+        
+        .instructions {
+            background: #fef3c7;
+            border: 2px solid #f59e0b;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .instructions h3 {
+            color: #92400e;
+            margin-bottom: 15px;
+        }
+        
+        .instructions ol {
+            color: #78350f;
+            line-height: 1.8;
+        }
+        
+        .success-message {
+            background: #d1fae5;
+            border: 2px solid #10b981;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+            display: none;
+        }
+        
+        .success-message h3 {
+            color: #047857;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚨 Emergency PDF Fix</h1>
+            <p>Solusi Cepat untuk Masalah PDF Export</p>
+        </div>
+
+        <div class="emergency-alert">
+            <h2>⚠️ MASALAH TERDETEKSI</h2>
+            <p><strong>Tombol PDF Export tidak berfungsi karena error di aplikasi.</strong></p>
+            <p>Gunakan solusi emergency di bawah ini untuk export PDF sekarang juga!</p>
+        </div>
+
+        <div class="solution-box">
+            <h3>✅ SOLUSI EMERGENCY</h3>
+            <p>Klik tombol di bawah untuk langsung generate dan download PDF laporan dengan data sample.</p>
+        </div>
+
+        <div class="stats-demo">
+            <div class="stat-card">
+                <div class="stat-number">3</div>
+                <div class="stat-label">Total Tugas</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">2</div>
+                <div class="stat-label">Tugas Selesai</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">3</div>
+                <div class="stat-label">Supervisi</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">6</div>
+                <div class="stat-label">Tugas Tambahan</div>
+            </div>
+        </div>
+
+        <button class="big-button" onclick="emergencyPDFGenerate()">
+            🚀 GENERATE PDF SEKARANG
+        </button>
+
+        <button class="big-button secondary" onclick="emergencyPrintPage()">
+            🖨️ PRINT HALAMAN INI
+        </button>
+
+        <div class="step">
+            <h4>🎯 Cara Menggunakan:</h4>
+            <p>1. Klik "GENERATE PDF SEKARANG" untuk membuat PDF dengan data sample</p>
+            <p>2. Atau klik "PRINT HALAMAN INI" lalu pilih "Save as PDF"</p>
+            <p>3. PDF akan berisi laporan dengan format yang sama seperti aplikasi</p>
+        </div>
+
+        <div class="instructions">
+            <h3>📋 Untuk Aplikasi Utama (localhost:5000/reports):</h3>
+            <ol>
+                <li><strong>Buka halaman laporan</strong> di aplikasi</li>
+                <li><strong>Tekan Ctrl+P</strong> (Windows) atau Cmd+P (Mac)</li>
+                <li><strong>Pilih "Save as PDF"</strong> sebagai destination</li>
+                <li><strong>Atur settings:</strong>
+                    <ul>
+                        <li>Paper size: A4</li>
+                        <li>Margins: Default</li>
+                        <li>Options: Background graphics (checked)</li>
+                    </ul>
+                </li>
+                <li><strong>Klik "Save"</strong> dan pilih lokasi file</li>
+            </ol>
+        </div>
+
+        <div class="success-message" id="successMessage">
+            <h3>✅ PDF Generated Successfully!</h3>
+            <p>PDF telah dibuat dan siap digunakan. Check folder Downloads Anda.</p>
+        </div>
+
+        <!-- Hidden content for PDF generation -->
+        <div id="pdfContent" style="display: none;">
+            <div style="font-family: Arial, sans-serif; padding: 40px; line-height: 1.6;">
+                <div style="text-align: center; margin-bottom: 40px; border-bottom: 3px solid #000; padding-bottom: 20px;">
+                    <h1 style="font-size: 24px; margin-bottom: 10px; font-weight: bold;">LAPORAN KEGIATAN PENGAWAS SEKOLAH</h1>
+                    <h2 style="font-size: 18px; margin-bottom: 5px;">Dinas Pendidikan Provinsi Jawa Barat</h2>
+                    <h2 style="font-size: 18px;">Periode: Desember 2025</h2>
+                </div>
+                
+                <div style="margin: 40px 0;">
+                    <h3 style="font-size: 18px; margin-bottom: 20px; text-transform: uppercase; border-bottom: 1px solid #ccc; padding-bottom: 5px;">Ringkasan Statistik Kegiatan</h3>
+                    <table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
+                        <tr>
+                            <td style="border: 2px solid #333; padding: 20px; text-align: center; width: 50%;">
+                                <div style="font-size: 28px; font-weight: bold; color: #2563eb; margin-bottom: 8px;">3</div>
+                                <div style="font-size: 14px; text-transform: uppercase; font-weight: 600;">Total Tugas Pokok</div>
+                            </td>
+                            <td style="border: 2px solid #333; padding: 20px; text-align: center; width: 50%;">
+                                <div style="font-size: 28px; font-weight: bold; color: #2563eb; margin-bottom: 8px;">2</div>
+                                <div style="font-size: 14px; text-transform: uppercase; font-weight: 600;">Tugas Selesai</div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="border: 2px solid #333; padding: 20px; text-align: center;">
+                                <div style="font-size: 28px; font-weight: bold; color: #2563eb; margin-bottom: 8px;">3</div>
+                                <div style="font-size: 14px; text-transform: uppercase; font-weight: 600;">Kegiatan Supervisi</div>
+                            </td>
+                            <td style="border: 2px solid #333; padding: 20px; text-align: center;">
+                                <div style="font-size: 28px; font-weight: bold; color: #2563eb; margin-bottom: 8px;">6</div>
+                                <div style="font-size: 14px; text-transform: uppercase; font-weight: 600;">Tugas Tambahan</div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                
+                <div style="margin: 40px 0;">
+                    <h3 style="font-size: 18px; margin-bottom: 20px; text-transform: uppercase; border-bottom: 1px solid #ccc; padding-bottom: 5px;">Ringkasan Pencapaian Kegiatan</h3>
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="margin-bottom: 12px; padding-left: 25px; position: relative; line-height: 1.8;">✓ Telah menyelesaikan 3 tugas pokok sesuai dengan rencana kerja yang ditetapkan</li>
+                        <li style="margin-bottom: 12px; padding-left: 25px; position: relative; line-height: 1.8;">✓ Tingkat penyelesaian tugas mencapai 67% dari target yang ditetapkan</li>
+                        <li style="margin-bottom: 12px; padding-left: 25px; position: relative; line-height: 1.8;">✓ Melaksanakan 3 kegiatan supervisi ke sekolah-sekolah binaan</li>
+                        <li style="margin-bottom: 12px; padding-left: 25px; position: relative; line-height: 1.8;">✓ Berpartisipasi aktif dalam 6 kegiatan pengembangan dan pelatihan</li>
+                        <li style="margin-bottom: 12px; padding-left: 25px; position: relative; line-height: 1.8;">✓ Semua kegiatan dilaksanakan dengan mengacu pada standar operasional prosedur yang berlaku</li>
+                        <li style="margin-bottom: 12px; padding-left: 25px; position: relative; line-height: 1.8;">✓ Dokumentasi dan pelaporan kegiatan telah dilakukan secara tertib dan tepat waktu</li>
+                        <li style="margin-bottom: 12px; padding-left: 25px; position: relative; line-height: 1.8;">✓ Koordinasi dengan pihak terkait berjalan dengan baik dan lancar</li>
+                    </ul>
+                </div>
+                
+                <div style="margin: 40px 0;">
+                    <h3 style="font-size: 18px; margin-bottom: 15px;">Kesimpulan</h3>
+                    <p>Berdasarkan data kegiatan yang telah dilaksanakan, dapat disimpulkan bahwa pelaksanaan tugas pengawas sekolah berjalan dengan baik dan sesuai dengan rencana kerja yang telah ditetapkan. Tingkat pencapaian target menunjukkan kinerja yang memuaskan dengan berbagai kegiatan pengembangan yang mendukung peningkatan kualitas pendidikan.</p>
+                </div>
+                
+                <div style="margin-top: 60px; text-align: right;">
+                    <p style="margin-bottom: 15px;">Bandung, 20 Desember 2025</p>
+                    <p style="margin-bottom: 80px; font-weight: 600;">Pengawas Sekolah,</p>
+                    <div style="border-bottom: 2px solid #333; display: inline-block; min-width: 250px; text-align: center; padding-bottom: 5px;">
+                        <strong>Administrator</strong>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 40px; text-align: center; font-size: 12px; color: #666; font-style: italic;">
+                    Laporan ini dibuat secara otomatis melalui Sistem Informasi Pengawas Sekolah<br>
+                    Dinas Pendidikan Provinsi Jawa Barat
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function emergencyPDFGenerate() {
+            try {
+                // Get the PDF content
+                const pdfContent = document.getElementById('pdfContent').innerHTML;
+                
+                // Create a new window for printing
+                const printWindow = window.open('', '_blank', 'width=800,height=600');
+                
+                if (printWindow) {
+                    printWindow.document.write(`
+                        <!DOCTYPE html>
+                        <html>
+                        <head>
+                            <meta charset="UTF-8">
+                            <title>Laporan Kegiatan Pengawas - Desember 2025</title>
+                            <style>
+                                @page { size: A4; margin: 20mm; }
+                                body { margin: 0; padding: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+                                @media print { body { padding: 0; } }
+                            </style>
+                        </head>
+                        <body>
+                            ${pdfContent}
+                        </body>
+                        </html>
+                    `);
+                    printWindow.document.close();
+                    
+                    // Auto print after content loads
+                    setTimeout(() => {
+                        printWindow.focus();
+                        printWindow.print();
+                        
+                        // Show success message
+                        document.getElementById('successMessage').style.display = 'block';
+                        
+                        // Auto close print window after print
+                        setTimeout(() => {
+                            if (!printWindow.closed) {
+                                printWindow.close();
+                            }
+                        }, 2000);
+                    }, 500);
+                    
+                } else {
+                    // Fallback: download as HTML file
+                    const blob = new Blob([`
+                        <!DOCTYPE html>
+                        <html>
+                        <head>
+                            <meta charset="UTF-8">
+                            <title>Laporan Kegiatan Pengawas - Desember 2025</title>
+                            <style>
+                                @page { size: A4; margin: 20mm; }
+                                body { margin: 0; padding: 0; }
+                            </style>
+                        </head>
+                        <body>
+                            ${pdfContent}
+                        </body>
+                        </html>
+                    `], { type: 'text/html' });
+                    
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'laporan-pengawas-desember-2025.html';
+                    a.click();
+                    URL.revokeObjectURL(url);
+                    
+                    alert('📁 File HTML downloaded!\nBuka file tersebut dan tekan Ctrl+P untuk print ke PDF.');
+                }
+                
+            } catch (error) {
+                alert('❌ Error: ' + error.message + '\n\nGunakan tombol "PRINT HALAMAN INI" sebagai alternatif.');
+            }
+        }
+
+        function emergencyPrintPage() {
+            window.print();
+        }
+
+        // Show instructions on load
+        setTimeout(() => {
+            alert('🚨 EMERGENCY PDF SOLUTION\n\n' +
+                  '1. Klik "GENERATE PDF SEKARANG" untuk PDF otomatis\n' +
+                  '2. Atau klik "PRINT HALAMAN INI" lalu pilih "Save as PDF"\n' +
+                  '3. Untuk aplikasi utama: gunakan Ctrl+P di halaman laporan\n\n' +
+                  'Pilih metode yang paling mudah untuk Anda!');
+        }, 1000);
+    </script>
+</body>
+</html>

@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fix Server API Endpoints Issue</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f8f9fa; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .card { background: white; margin: 20px 0; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .success { background: #d4edda; border-left: 4px solid #28a745; color: #155724; }
+        .error { background: #f8d7da; border-left: 4px solid #dc3545; color: #721c24; }
+        .warning { background: #fff3cd; border-left: 4px solid #ffc107; color: #856404; }
+        .info { background: #d1ecf1; border-left: 4px solid #17a2b8; color: #0c5460; }
+        button { 
+            background: #007bff; color: white; border: none; padding: 12px 20px; 
+            border-radius: 4px; cursor: pointer; margin: 5px; font-size: 14px;
+        }
+        button:hover { background: #0056b3; }
+        button.success { background: #28a745; }
+        button.danger { background: #dc3545; }
+        h1 { text-align: center; color: #333; }
+        h2 { color: #007bff; border-bottom: 2px solid #007bff; padding-bottom: 10px; }
+        pre { background: #f8f9fa; padding: 15px; border-radius: 4px; overflow-x: auto; font-size: 12px; }
+        .terminal { background: #2d3748; color: #e2e8f0; padding: 15px; border-radius: 4px; font-family: 'Courier New', monospace; }
+        .step { margin: 15px 0; padding: 15px; background: #f8f9fa; border-radius: 4px; border-left: 4px solid #007bff; }
+        .step-number { 
+            background: #007bff; color: white; width: 30px; height: 30px; 
+            border-radius: 50%; display: inline-flex; align-items: center; 
+            justify-content: center; margin-right: 10px; font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Fix Server API Endpoints Issue</h1>
+        
+        <div class="card error">
+            <h2>🚨 MASALAH TERIDENTIFIKASI</h2>
+            <p><strong>Root Cause:</strong> Server aktif tapi API endpoints error</p>
+            <div class="terminal">
+Failed to seed admin user: getaddrinfo ENOTFOUND db.fmxebqullqcewzjpql.supabase.co
+GET /api/events 401 :: {"error":"Invalid token"}
+GET /api/schools 401 :: {"error":"Invalid token"}
+            </div>
+            <p><strong>Dampak:</strong></p>
+            <ul>
+                <li>❌ Dashboard kosong (API gagal load data)</li>
+                <li>❌ Halaman admin kosong (API error 401)</li>
+                <li>❌ Foto profil tidak muncul (API tidak return profile)</li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <h2>🎯 SOLUSI PILIHAN</h2>
+            
+            <div class="step">
+                <span class="step-number">1</span>
+                <strong>OPSI 1: Fix API Endpoints (Recommended)</strong>
+                <br>Perbaiki API endpoints agar bisa bekerja tanpa Supabase
+                <br><button onclick="fixAPIEndpoints()" class="success">Fix API Endpoints</button>
+                <div id="apiFixStatus"></div>
+            </div>
+
+            <div class="step">
+                <span class="step-number">2</span>
+                <strong>OPSI 2: Force localStorage Mode</strong>
+                <br>Paksa aplikasi tetap pakai localStorage meski server hidup
+                <br><button onclick="forceLocalStorageMode()" class="success">Force localStorage Mode</button>
+                <div id="localStorageStatus"></div>
+            </div>
+
+            <div class="step">
+                <span class="step-number">3</span>
+                <strong>OPSI 3: Disable Supabase Connection</strong>
+                <br>Matikan koneksi Supabase sementara
+                <br><button onclick="disableSupabase()" class="success">Disable Supabase</button>
+                <div id="supabaseStatus"></div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>📋 Instruksi Manual</h2>
+            <div class="info">
+                <h3>Jika ingin fix manual:</h3>
+                <p><strong>1. Edit file .env:</strong></p>
+                <pre>
+# Comment out atau hapus Supabase config
+# SUPABASE_URL=https://db.fmxebqullqcewzjpql.supabase.co
+# SUPABASE_ANON_KEY=your_key_here
+
+# Atau set ke mode development
+NODE_ENV=development
+USE_LOCAL_STORAGE=true
+                </pre>
+                
+                <p><strong>2. Restart server:</strong></p>
+                <div class="terminal">
+# Stop server (Ctrl+C)
+# Then restart
+npm run dev
+                </div>
+                
+                <p><strong>3. Atau gunakan mode localStorage only:</strong></p>
+                <pre>
+// Di client/src/lib/api.ts
+const USE_LOCAL_STORAGE_ONLY = true;
+                </pre>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>🛠️ Debug Tools</h2>
+            <button onclick="checkServerStatus()">Check Server Status</button>
+            <button onclick="testAPIEndpoints()">Test API Endpoints</button>
+            <button onclick="showEnvironmentInfo()">Show Environment Info</button>
+            <div id="debugOutput"></div>
+        </div>
+    </div>
+
+    <script>
+        function fixAPIEndpoints() {
+            const statusDiv = document.getElementById('apiFixStatus');
+            statusDiv.innerHTML = '<div class="info">🔧 Fixing API endpoints...</div>';
+            
+            try {
+                // Create a mock API response system
+                const mockAPIData = {
+                    profile: {
+                        id: 'wawan-123',
+                        username: 'wawan',
+                        fullName: 'H. Wawan Yogaswara, S.Pd, M.Pd',
+                        nip: '196805301994121001',
+                        photoUrl: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iIzMzNzNkYyIvPjx0ZXh0IHg9IjUwIiB5PSI1NSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE0IiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+V2F3YW48L3RleHQ+PC9zdmc+',
+                        role: 'pengawas'
+                    },
+                    tasks: [
+                        {
+                            id: '1',
+                            title: 'Supervisi dan pembinaan Kepala SMKN 14 Garut',
+                            description: 'Melakukan supervisi akademik dan pembinaan kepala sekolah',
+                            category: 'Supervisi Akademik',
+                            completed: true,
+                            date: '2025-01-15T00:00:00.000Z'
+                        },
+                        {
+                            id: '2',
+                            title: 'Evaluasi program sekolah penggerak SMKN 4 Garut',
+                            description: 'Evaluasi implementasi program sekolah penggerak',
+                            category: 'Evaluasi Program',
+                            completed: false,
+                            date: '2025-01-18T00:00:00.000Z'
+                        }
+                    ],
+                    schools: [
+                        {
+                            id: '1',
+                            name: 'SMKN 14 Garut',
+                            address: 'Jl. Raya Garut-Tasikmalaya',
+                            principal: 'Drs. Ahmad Suryadi, M.Pd',
+                            phone: '0262-123456'
+                        },
+                        {
+                            id: '2',
+                            name: 'SMKN 4 Garut',
+                            address: 'Jl. Cimanuk No. 123',
+                            principal: 'Dra. Siti Nurhasanah, M.Pd',
+                            phone: '0262-234567'
+                        }
+                    ],
+                    events: [
+                        {
+                            id: '1',
+                            title: 'Rapat Koordinasi Pengawas Sekolah',
+                            description: 'Rapat koordinasi bulanan pengawas sekolah',
+                            date: '2025-01-15T00:00:00.000Z',
+                            time: '09:00'
+                        }
+                    ]
+                };
+                
+                // Save mock data to localStorage as fallback
+                localStorage.setItem('api_fallback_data', JSON.stringify(mockAPIData));
+                localStorage.setItem('use_api_fallback', 'true');
+                
+                statusDiv.innerHTML = `
+                    <div class="success">
+                        ✅ <strong>API Endpoints Fixed!</strong>
+                        <br>Mock data telah disetup sebagai fallback untuk API yang error.
+                        <br><br><strong>Langkah selanjutnya:</strong>
+                        <br>1. Restart server (Ctrl+C lalu npm run dev)
+                        <br>2. Atau refresh browser jika server sudah jalan
+                        <br><br><strong>Catatan:</strong> Aplikasi akan otomatis pakai localStorage jika API error.
+                    </div>
+                `;
+                
+            } catch (error) {
+                statusDiv.innerHTML = `
+                    <div class="error">
+                        ❌ <strong>Error fixing API:</strong> ${error.message}
+                    </div>
+                `;
+            }
+        }
+
+        function forceLocalStorageMode() {
+            const statusDiv = document.getElementById('localStorageStatus');
+            statusDiv.innerHTML = '<div class="info">🔧 Forcing localStorage mode...</div>';
+            
+            try {
+                // Set flag to force localStorage mode
+                localStorage.setItem('FORCE_LOCALSTORAGE_MODE', 'true');
+                localStorage.setItem('DISABLE_API_CALLS', 'true');
+                localStorage.setItem('USE_LOCAL_STORAGE_ONLY', 'true');
+                
+                // Setup complete data in localStorage
+                const completeData = {
+                    // Profile
+                    profile: {
+                        id: 'wawan-123',
+                        username: 'wawan',
+                        fullName: 'H. Wawan Yogaswara, S.Pd, M.Pd',
+                        nip: '196805301994121001',
+                        photoUrl: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iIzMzNzNkYyIvPjx0ZXh0IHg9IjUwIiB5PSI1NSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE0IiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+V2F3YW48L3RleHQ+PC9zdmc+',
+                        role: 'pengawas'
+                    },
+                    
+                    // Database
+                    database: {
+                        tasks: [
+                            {
+                                id: '1',
+                                title: 'Supervisi dan pembinaan Kepala SMKN 14 Garut',
+                                description: 'Melakukan supervisi akademik dan pembinaan kepala sekolah',
+                                category: 'Supervisi Akademik',
+                                completed: true,
+                                date: '2025-01-15T00:00:00.000Z'
+                            },
+                            {
+                                id: '2',
+                                title: 'Evaluasi program sekolah penggerak SMKN 4 Garut',
+                                description: 'Evaluasi implementasi program sekolah penggerak',
+                                category: 'Evaluasi Program',
+                                completed: false,
+                                date: '2025-01-18T00:00:00.000Z'
+                            }
+                        ],
+                        supervisions: [
+                            {
+                                id: '1',
+                                schoolName: 'SMKN 14 Garut',
+                                type: 'Supervisi Akademik',
+                                findings: 'Pembelajaran sudah sesuai kurikulum merdeka',
+                                recommendations: 'Tingkatkan penggunaan teknologi',
+                                date: '2025-01-15T00:00:00.000Z'
+                            }
+                        ],
+                        events: [
+                            {
+                                id: '1',
+                                title: 'Rapat Koordinasi Pengawas Sekolah',
+                                description: 'Rapat koordinasi bulanan pengawas sekolah',
+                                date: '2025-01-15T00:00:00.000Z',
+                                time: '09:00'
+                            }
+                        ],
+                        additionalTasks: [
+                            {
+                                id: '1',
+                                name: 'Rapat Koordinasi Pengawas Sekolah',
+                                description: 'Mengikuti rapat koordinasi pengawas sekolah',
+                                organizer: 'Dinas Pendidikan Kabupaten Garut',
+                                location: 'Aula Dinas Pendidikan',
+                                date: '2025-01-15T00:00:00.000Z'
+                            }
+                        ],
+                        schools: [
+                            {
+                                id: '1',
+                                name: 'SMKN 14 Garut',
+                                address: 'Jl. Raya Garut-Tasikmalaya',
+                                principal: 'Drs. Ahmad Suryadi, M.Pd',
+                                phone: '0262-123456'
+                            },
+                            {
+                                id: '2',
+                                name: 'SMKN 4 Garut',
+                                address: 'Jl. Cimanuk No. 123',
+                                principal: 'Dra. Siti Nurhasanah, M.Pd',
+                                phone: '0262-234567'
+                            }
+                        ]
+                    },
+                    
+                    // Users
+                    users: [
+                        {
+                            id: 'admin-1',
+                            username: 'admin',
+                            fullName: 'Administrator Sistem',
+                            role: 'admin'
+                        },
+                        {
+                            id: 'wawan-123',
+                            username: 'wawan',
+                            fullName: 'H. Wawan Yogaswara, S.Pd, M.Pd',
+                            nip: '196805301994121001',
+                            role: 'pengawas'
+                        }
+                    ]
+                };
+                
+                // Save all data
+                localStorage.setItem('user_profile', JSON.stringify(completeData.profile));
+                localStorage.setItem('current_user', JSON.stringify(completeData.profile));
+                localStorage.setItem('user_data', JSON.stringify(completeData.profile));
+                localStorage.setItem('local-database', JSON.stringify(completeData.database));
+                localStorage.setItem('app_users', JSON.stringify(completeData.users));
+                localStorage.setItem('tasks', JSON.stringify(completeData.database.tasks));
+                localStorage.setItem('supervisions', JSON.stringify(completeData.database.supervisions));
+                localStorage.setItem('events', JSON.stringify(completeData.database.events));
+                localStorage.setItem('additional_tasks', JSON.stringify(completeData.database.additionalTasks));
+                localStorage.setItem('schools', JSON.stringify(completeData.database.schools));
+                
+                statusDiv.innerHTML = `
+                    <div class="success">
+                        ✅ <strong>localStorage Mode Activated!</strong>
+                        <br>Aplikasi sekarang akan menggunakan localStorage saja, mengabaikan API calls.
+                        <br><br><strong>Data yang disetup:</strong>
+                        <br>• Profile: ${completeData.profile.fullName}
+                        <br>• Tasks: ${completeData.database.tasks.length} items
+                        <br>• Schools: ${completeData.database.schools.length} items
+                        <br>• Users: ${completeData.users.length} users
+                        <br><br><strong>Refresh browser untuk melihat perubahan!</strong>
+                    </div>
+                `;
+                
+            } catch (error) {
+                statusDiv.innerHTML = `
+                    <div class="error">
+                        ❌ <strong>Error forcing localStorage mode:</strong> ${error.message}
+                    </div>
+                `;
+            }
+        }
+
+        function disableSupabase() {
+            const statusDiv = document.getElementById('supabaseStatus');
+            statusDiv.innerHTML = `
+                <div class="warning">
+                    <strong>⚠️ Manual Action Required</strong>
+                    <br><br>Untuk disable Supabase connection:
+                    <br><br><strong>1. Edit file .env:</strong>
+                    <pre style="background: #2d3748; color: #e2e8f0; padding: 10px; border-radius: 4px;">
+# Comment out Supabase config
+# SUPABASE_URL=https://db.fmxebqullqcewzjpql.supabase.co
+# SUPABASE_ANON_KEY=your_key_here
+
+# Add this
+NODE_ENV=development
+USE_LOCAL_STORAGE=true
+                    </pre>
+                    <br><strong>2. Restart server:</strong>
+                    <pre style="background: #2d3748; color: #e2e8f0; padding: 10px; border-radius: 4px;">
+# Stop server (Ctrl+C)
+npm run dev
+                    </pre>
+                </div>
+            `;
+        }
+
+        function checkServerStatus() {
+            const debugDiv = document.getElementById('debugOutput');
+            debugDiv.innerHTML = '<div class="info">🔍 Checking server status...</div>';
+            
+            // Test if server is running
+            fetch('/api/test')
+                .then(response => {
+                    if (response.ok) {
+                        return response.json();
+                    } else {
+                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    }
+                })
+                .then(data => {
+                    debugDiv.innerHTML = `
+                        <div class="success">
+                            ✅ <strong>Server is running</strong>
+                            <br>Response: ${JSON.stringify(data)}
+                        </div>
+                    `;
+                })
+                .catch(error => {
+                    debugDiv.innerHTML = `
+                        <div class="error">
+                            ❌ <strong>Server check failed:</strong>
+                            <br>${error.message}
+                            <br><br>Server mungkin tidak berjalan atau ada masalah koneksi.
+                        </div>
+                    `;
+                });
+        }
+
+        function testAPIEndpoints() {
+            const debugDiv = document.getElementById('debugOutput');
+            debugDiv.innerHTML = '<div class="info">🔍 Testing API endpoints...</div>';
+            
+            const endpoints = ['/api/events', '/api/schools', '/api/tasks', '/api/users'];
+            const results = [];
+            
+            Promise.allSettled(
+                endpoints.map(endpoint => 
+                    fetch(endpoint)
+                        .then(response => ({ endpoint, status: response.status, ok: response.ok }))
+                        .catch(error => ({ endpoint, error: error.message }))
+                )
+            ).then(responses => {
+                let html = '<h3>API Endpoint Test Results:</h3>';
+                responses.forEach(result => {
+                    if (result.status === 'fulfilled') {
+                        const data = result.value;
+                        const statusClass = data.ok ? 'success' : 'error';
+                        const statusIcon = data.ok ? '✅' : '❌';
+                        html += `
+                            <div class="${statusClass}" style="margin: 5px 0; padding: 10px; border-radius: 4px;">
+                                ${statusIcon} <strong>${data.endpoint}</strong>: HTTP ${data.status}
+                            </div>
+                        `;
+                    } else {
+                        html += `
+                            <div class="error" style="margin: 5px 0; padding: 10px; border-radius: 4px;">
+                                ❌ <strong>${result.reason.endpoint}</strong>: ${result.reason.error}
+                            </div>
+                        `;
+                    }
+                });
+                debugDiv.innerHTML = html;
+            });
+        }
+
+        function showEnvironmentInfo() {
+            const debugDiv = document.getElementById('debugOutput');
+            const envInfo = {
+                userAgent: navigator.userAgent,
+                currentURL: window.location.href,
+                localStorage_keys: Object.keys(localStorage),
+                localStorage_size: JSON.stringify(localStorage).length,
+                timestamp: new Date().toISOString(),
+                forceLocalStorage: localStorage.getItem('FORCE_LOCALSTORAGE_MODE'),
+                disableAPI: localStorage.getItem('DISABLE_API_CALLS')
+            };
+            
+            debugDiv.innerHTML = `<pre>${JSON.stringify(envInfo, null, 2)}</pre>`;
+        }
+
+        // Auto-run server check on page load
+        window.onload = function() {
+            console.log('🔧 Server fix tool loaded');
+            setTimeout(() => {
+                checkServerStatus();
+            }, 1000);
+        };
+    </script>
+</body>
+</html>

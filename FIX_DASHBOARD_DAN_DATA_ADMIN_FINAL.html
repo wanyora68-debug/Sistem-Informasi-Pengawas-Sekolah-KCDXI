@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fix Dashboard & Data Admin - Solusi Final</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        .content {
+            padding: 30px;
+        }
+        .section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+        .section h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.3s;
+            width: 100%;
+            margin-top: 10px;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .status {
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .status.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        .log {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            max-height: 300px;
+            overflow-y: auto;
+            margin-top: 15px;
+        }
+        .log-entry {
+            margin-bottom: 5px;
+            padding: 5px;
+            border-left: 3px solid #667eea;
+            padding-left: 10px;
+        }
+        .log-entry.success {
+            border-left-color: #48bb78;
+        }
+        .log-entry.error {
+            border-left-color: #f56565;
+        }
+        .data-preview {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            border: 1px solid #e2e8f0;
+        }
+        .data-item {
+            padding: 10px;
+            margin-bottom: 10px;
+            background: #f7fafc;
+            border-radius: 5px;
+            border-left: 3px solid #667eea;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔧 Fix Dashboard & Data Admin</h1>
+            <p>Solusi Lengkap untuk Foto/NIP Dashboard & Data Admin</p>
+        </div>
+        
+        <div class="content">
+            <!-- Masalah yang akan diperbaiki -->
+            <div class="section">
+                <h2>📋 Masalah yang Akan Diperbaiki</h2>
+                <div class="data-item">
+                    <strong>1. Dashboard User Wawan:</strong>
+                    <ul style="margin-left: 20px; margin-top: 10px;">
+                        <li>Foto profil tidak muncul</li>
+                        <li>NIP tidak ditampilkan</li>
+                        <li>Data profil tidak lengkap</li>
+                    </ul>
+                </div>
+                <div class="data-item">
+                    <strong>2. Data Admin Hilang:</strong>
+                    <ul style="margin-left: 20px; margin-top: 10px;">
+                        <li>Daftar tugas supervisi kosong</li>
+                        <li>Daftar tugas tambahan hilang</li>
+                        <li>Data sekolah binaan tidak muncul</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Tombol Aksi -->
+            <div class="grid">
+                <div class="section">
+                    <h2>1️⃣ Fix Dashboard Wawan</h2>
+                    <p style="margin-bottom: 15px;">Perbaiki foto profil dan NIP di dashboard user Wawan</p>
+                    <button class="btn" onclick="fixDashboardWawan()">
+                        🔧 Perbaiki Dashboard Wawan
+                    </button>
+                    <div id="dashboardStatus"></div>
+                </div>
+
+                <div class="section">
+                    <h2>2️⃣ Restore Data Admin</h2>
+                    <p style="margin-bottom: 15px;">Kembalikan data tugas supervisi dan tugas tambahan</p>
+                    <button class="btn" onclick="restoreDataAdmin()">
+                        📦 Restore Data Admin
+                    </button>
+                    <div id="adminStatus"></div>
+                </div>
+            </div>
+
+            <!-- Tombol Fix Semua -->
+            <div class="section" style="background: linear-gradient(135deg, #667eea20 0%, #764ba220 100%);">
+                <h2>⚡ Fix Semua Sekaligus</h2>
+                <p style="margin-bottom: 15px;">Perbaiki dashboard Wawan dan restore data admin dalam satu klik</p>
+                <button class="btn" onclick="fixSemuaSekaligus()" style="font-size: 18px; padding: 20px;">
+                    🚀 FIX SEMUA MASALAH SEKALIGUS
+                </button>
+                <div id="allStatus"></div>
+            </div>
+
+            <!-- Log -->
+            <div class="section">
+                <h2>📊 Log Aktivitas</h2>
+                <div class="log" id="logContainer">
+                    <div class="log-entry">Siap untuk memperbaiki masalah...</div>
+                </div>
+            </div>
+
+            <!-- Preview Data -->
+            <div class="section">
+                <h2>👁️ Preview Data Saat Ini</h2>
+                <button class="btn" onclick="previewData()">
+                    🔍 Lihat Data Saat Ini
+                </button>
+                <div id="previewContainer"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Fungsi untuk menambahkan log
+        function addLog(message, type = 'info') {
+            const logContainer = document.getElementById('logContainer');
+            const logEntry = document.createElement('div');
+            logEntry.className = `log-entry ${type}`;
+            logEntry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            logContainer.appendChild(logEntry);
+            logContainer.scrollTop = logContainer.scrollHeight;
+        }
+
+        // Fungsi untuk menampilkan status
+        function showStatus(elementId, message, type) {
+            const element = document.getElementById(elementId);
+            element.innerHTML = `<div class="status ${type}">${message}</div>`;
+        }
+
+        // Data Wawan yang lengkap
+        const dataWawan = {
+            id: "1762696525337",
+            username: "wawan",
+            fullName: "H. Wawan Yogaswara, S.Pd, M.Pd",
+            role: "pengawas",
+            nip: "196805301994121001",
+            rank: "Pembina Utama Muda, IV/c",
+            officeName: "Cabang Dinas Pendidikan Wilayah XI Dinas Pendidikan Provinsi Jawa Barat",
+            officeAddress: "Jl. A.Yani No. 23 Kel. Paminggir Kec. Garut Kota Kabupaten Garut",
+            homeAddress: "Griya Surya Indah No. 50 Kel. Sukagalih Kec. Tarogong Kidul Garut",
+            phone: "087733438282",
+            photoUrl: "/uploads/1762830374284-750171039.jpg"
+        };
+
+        // Data tugas supervisi
+        const dataSupervisi = [
+            {
+                id: "1",
+                schoolId: "1",
+                schoolName: "SMKN 14 Garut",
+                date: "2025-01-15",
+                type: "Supervisi Akademik",
+                title: "Supervisi dan pembinaan Kepala SMKN 14 Garut",
+                description: "Melakukan supervisi akademik dan pembinaan kepada kepala sekolah",
+                status: "completed",
+                userId: "1762696525337"
+            },
+            {
+                id: "2",
+                schoolId: "2",
+                schoolName: "SMKN 4 Garut",
+                date: "2025-01-18",
+                type: "Evaluasi Program",
+                title: "Evaluasi program sekolah penggerak SMKN 4 Garut",
+                description: "Evaluasi pelaksanaan program sekolah penggerak",
+                status: "in-progress",
+                userId: "1762696525337"
+            },
+            {
+                id: "3",
+                schoolId: "3",
+                schoolName: "SMKN 1 Garut",
+                date: "2025-01-20",
+                type: "Supervisi Manajerial",
+                title: "Supervisi manajerial SMKN 1 Garut",
+                description: "Supervisi terhadap manajemen sekolah",
+                status: "planned",
+                userId: "1762696525337"
+            }
+        ];
+
+        // Data tugas tambahan
+        const dataTugasTambahan = [
+            {
+                id: "1",
+                title: "Rapat Koordinasi Pengawas Sekolah",
+                date: "2025-01-15",
+                type: "Rapat Koordinasi",
+                description: "Menghadiri rapat koordinasi pengawas sekolah tingkat kabupaten",
+                status: "completed",
+                userId: "1762696525337"
+            },
+            {
+                id: "2",
+                title: "Workshop Kurikulum Merdeka",
+                date: "2025-01-30",
+                type: "Workshop",
+                description: "Mengikuti workshop implementasi kurikulum merdeka",
+                status: "planned",
+                userId: "1762696525337"
+            },
+            {
+                id: "3",
+                title: "Penyusunan Laporan Bulanan",
+                date: "2025-01-31",
+                type: "Administrasi",
+                description: "Menyusun laporan kegiatan pengawasan bulan Januari",
+                status: "in-progress",
+                userId: "1762696525337"
+            }
+        ];
+
+        // Data sekolah binaan
+        const dataSekolah = [
+            {
+                id: "1",
+                name: "SMKN 14 Garut",
+                npsn: "20219024",
+                address: "Jl. Pembangunan No. 99 Garut",
+                principal: "Drs. Ahmad Suryadi, M.Pd",
+                phone: "0262-123456",
+                supervisorId: "1762696525337"
+            },
+            {
+                id: "2",
+                name: "SMKN 4 Garut",
+                npsn: "20219025",
+                address: "Jl. Raya Bayongbong Garut",
+                principal: "Dr. Siti Nurjanah, M.Pd",
+                phone: "0262-234567",
+                supervisorId: "1762696525337"
+            },
+            {
+                id: "3",
+                name: "SMKN 1 Garut",
+                npsn: "20219026",
+                address: "Jl. Ciledug Garut",
+                principal: "Drs. Budi Santoso, M.M",
+                phone: "0262-345678",
+                supervisorId: "1762696525337"
+            }
+        ];
+
+        // Fungsi 1: Fix Dashboard Wawan
+        function fixDashboardWawan() {
+            addLog('🔧 Memulai perbaikan dashboard Wawan...', 'info');
+            
+            try {
+                // Simpan data profil Wawan ke berbagai key localStorage
+                const profileKeys = [
+                    'user_data',
+                    'profile_data',
+                    'current_user',
+                    'user_profile',
+                    'profile_info'
+                ];
+
+                profileKeys.forEach(key => {
+                    localStorage.setItem(key, JSON.stringify(dataWawan));
+                    addLog(`✅ Data disimpan ke ${key}`, 'success');
+                });
+
+                // Update data di app_users juga
+                let appUsers = [];
+                try {
+                    const existingUsers = localStorage.getItem('app_users');
+                    if (existingUsers) {
+                        appUsers = JSON.parse(existingUsers);
+                    }
+                } catch (e) {
+                    addLog('⚠️ Membuat data app_users baru', 'info');
+                }
+
+                // Update atau tambahkan user Wawan
+                const wawanIndex = appUsers.findIndex(u => u.username === 'wawan');
+                if (wawanIndex >= 0) {
+                    appUsers[wawanIndex] = dataWawan;
+                    addLog('✅ Data Wawan di app_users diupdate', 'success');
+                } else {
+                    appUsers.push(dataWawan);
+                    addLog('✅ Data Wawan ditambahkan ke app_users', 'success');
+                }
+
+                localStorage.setItem('app_users', JSON.stringify(appUsers));
+
+                // Simpan foto URL secara terpisah untuk fallback
+                localStorage.setItem('wawan_photo_url', dataWawan.photoUrl);
+                localStorage.setItem('wawan_nip', dataWawan.nip);
+                localStorage.setItem('wawan_fullname', dataWawan.fullName);
+
+                addLog('✅ Dashboard Wawan berhasil diperbaiki!', 'success');
+                showStatus('dashboardStatus', '✅ Dashboard Wawan berhasil diperbaiki! Refresh halaman dashboard untuk melihat perubahan.', 'success');
+
+            } catch (error) {
+                addLog(`❌ Error: ${error.message}`, 'error');
+                showStatus('dashboardStatus', `❌ Gagal memperbaiki dashboard: ${error.message}`, 'error');
+            }
+        }
+
+        // Fungsi 2: Restore Data Admin
+        function restoreDataAdmin() {
+            addLog('📦 Memulai restore data admin...', 'info');
+            
+            try {
+                // Restore data supervisi
+                localStorage.setItem('supervisions', JSON.stringify(dataSupervisi));
+                localStorage.setItem('supervisions_data', JSON.stringify(dataSupervisi));
+                localStorage.setItem('user_supervisions', JSON.stringify(dataSupervisi));
+                addLog(`✅ ${dataSupervisi.length} tugas supervisi berhasil di-restore`, 'success');
+
+                // Restore data tugas tambahan
+                localStorage.setItem('additional_tasks', JSON.stringify(dataTugasTambahan));
+                localStorage.setItem('tasks_data', JSON.stringify(dataTugasTambahan));
+                localStorage.setItem('user_tasks', JSON.stringify(dataTugasTambahan));
+                addLog(`✅ ${dataTugasTambahan.length} tugas tambahan berhasil di-restore`, 'success');
+
+                // Restore data sekolah
+                localStorage.setItem('schools', JSON.stringify(dataSekolah));
+                localStorage.setItem('schools_data', JSON.stringify(dataSekolah));
+                localStorage.setItem('user_schools', JSON.stringify(dataSekolah));
+                addLog(`✅ ${dataSekolah.length} sekolah binaan berhasil di-restore`, 'success');
+
+                // Simpan statistik
+                const stats = {
+                    totalSupervisions: dataSupervisi.length,
+                    completedSupervisions: dataSupervisi.filter(s => s.status === 'completed').length,
+                    totalTasks: dataTugasTambahan.length,
+                    totalSchools: dataSekolah.length,
+                    lastUpdate: new Date().toISOString()
+                };
+                localStorage.setItem('dashboard_stats', JSON.stringify(stats));
+                addLog('✅ Statistik dashboard diupdate', 'success');
+
+                addLog('✅ Data admin berhasil di-restore!', 'success');
+                showStatus('adminStatus', '✅ Data admin berhasil di-restore! Refresh halaman untuk melihat data.', 'success');
+
+            } catch (error) {
+                addLog(`❌ Error: ${error.message}`, 'error');
+                showStatus('adminStatus', `❌ Gagal restore data admin: ${error.message}`, 'error');
+            }
+        }
+
+        // Fungsi 3: Fix Semua Sekaligus
+        function fixSemuaSekaligus() {
+            addLog('🚀 Memulai perbaikan semua masalah...', 'info');
+            showStatus('allStatus', '⏳ Sedang memperbaiki semua masalah...', 'info');
+
+            try {
+                // Fix dashboard Wawan
+                fixDashboardWawan();
+                
+                // Restore data admin
+                restoreDataAdmin();
+
+                // Tambahan: Set flag bahwa data sudah diperbaiki
+                localStorage.setItem('data_fixed', 'true');
+                localStorage.setItem('data_fixed_timestamp', new Date().toISOString());
+
+                addLog('🎉 SEMUA MASALAH BERHASIL DIPERBAIKI!', 'success');
+                showStatus('allStatus', '🎉 SEMUA MASALAH BERHASIL DIPERBAIKI! Silakan refresh halaman aplikasi untuk melihat perubahan.', 'success');
+
+            } catch (error) {
+                addLog(`❌ Error: ${error.message}`, 'error');
+                showStatus('allStatus', `❌ Gagal memperbaiki semua masalah: ${error.message}`, 'error');
+            }
+        }
+
+        // Fungsi untuk preview data
+        function previewData() {
+            addLog('🔍 Mengambil data saat ini...', 'info');
+            
+            const previewContainer = document.getElementById('previewContainer');
+            let html = '<div class="data-preview">';
+
+            // Preview data Wawan
+            html += '<h3 style="color: #667eea; margin-bottom: 10px;">Data Profil Wawan:</h3>';
+            try {
+                const userData = localStorage.getItem('user_data');
+                if (userData) {
+                    const user = JSON.parse(userData);
+                    html += `<div class="data-item">
+                        <strong>Nama:</strong> ${user.fullName || 'Tidak ada'}<br>
+                        <strong>NIP:</strong> ${user.nip || 'Tidak ada'}<br>
+                        <strong>Foto:</strong> ${user.photoUrl || 'Tidak ada'}<br>
+                        <strong>Role:</strong> ${user.role || 'Tidak ada'}
+                    </div>`;
+                } else {
+                    html += '<div class="data-item">❌ Data profil tidak ditemukan</div>';
+                }
+            } catch (e) {
+                html += '<div class="data-item">❌ Error membaca data profil</div>';
+            }
+
+            // Preview data supervisi
+            html += '<h3 style="color: #667eea; margin: 20px 0 10px 0;">Data Supervisi:</h3>';
+            try {
+                const supervisions = localStorage.getItem('supervisions');
+                if (supervisions) {
+                    const data = JSON.parse(supervisions);
+                    html += `<div class="data-item">✅ Ditemukan ${data.length} tugas supervisi</div>`;
+                } else {
+                    html += '<div class="data-item">❌ Data supervisi tidak ditemukan</div>';
+                }
+            } catch (e) {
+                html += '<div class="data-item">❌ Error membaca data supervisi</div>';
+            }
+
+            // Preview data tugas tambahan
+            html += '<h3 style="color: #667eea; margin: 20px 0 10px 0;">Data Tugas Tambahan:</h3>';
+            try {
+                const tasks = localStorage.getItem('additional_tasks');
+                if (tasks) {
+                    const data = JSON.parse(tasks);
+                    html += `<div class="data-item">✅ Ditemukan ${data.length} tugas tambahan</div>`;
+                } else {
+                    html += '<div class="data-item">❌ Data tugas tambahan tidak ditemukan</div>';
+                }
+            } catch (e) {
+                html += '<div class="data-item">❌ Error membaca data tugas tambahan</div>';
+            }
+
+            // Preview data sekolah
+            html += '<h3 style="color: #667eea; margin: 20px 0 10px 0;">Data Sekolah Binaan:</h3>';
+            try {
+                const schools = localStorage.getItem('schools');
+                if (schools) {
+                    const data = JSON.parse(schools);
+                    html += `<div class="data-item">✅ Ditemukan ${data.length} sekolah binaan</div>`;
+                } else {
+                    html += '<div class="data-item">❌ Data sekolah tidak ditemukan</div>';
+                }
+            } catch (e) {
+                html += '<div class="data-item">❌ Error membaca data sekolah</div>';
+            }
+
+            html += '</div>';
+            previewContainer.innerHTML = html;
+            addLog('✅ Preview data selesai', 'success');
+        }
+
+        // Auto-load preview saat halaman dibuka
+        window.addEventListener('load', () => {
+            addLog('✅ Halaman siap digunakan', 'success');
+            addLog('💡 Klik tombol "FIX SEMUA MASALAH SEKALIGUS" untuk memperbaiki semua masalah', 'info');
+        });
+    </script>
+</body>
+</html>

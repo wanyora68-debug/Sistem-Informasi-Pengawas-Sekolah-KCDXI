@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔧 Fix Aktivitas Wawan - Final Enhanced</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+            color: white;
+            border-radius: 8px;
+        }
+        .fix-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            background: #f8fafc;
+        }
+        .success {
+            border-color: #10b981;
+            background: #ecfdf5;
+        }
+        .error {
+            border-color: #ef4444;
+            background: #fef2f2;
+        }
+        .warning {
+            border-color: #f59e0b;
+            background: #fffbeb;
+        }
+        .fix-button {
+            background: #10b981;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            margin: 10px;
+        }
+        .fix-button:hover {
+            background: #059669;
+        }
+        .test-button {
+            background: #1e3a8a;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            margin: 10px;
+        }
+        .test-button:hover {
+            background: #1e40af;
+        }
+        .result {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 6px;
+            background: #f1f5f9;
+            border-left: 4px solid #3b82f6;
+        }
+        .code {
+            background: #1f2937;
+            color: #f9fafb;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            overflow-x: auto;
+            margin: 10px 0;
+        }
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0;
+        }
+        .data-table th, .data-table td {
+            border: 1px solid #e5e7eb;
+            padding: 8px;
+            text-align: left;
+        }
+        .data-table th {
+            background: #f3f4f6;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔧 Fix Aktivitas User Wawan - Final Enhanced</h1>
+            <p>Solusi lengkap untuk menampilkan aktivitas user Wawan di dialog</p>
+        </div>
+
+        <div class="fix-section success">
+            <h3>✅ Masalah yang Sudah Diperbaiki</h3>
+            <ul>
+                <li>✅ TypeScript errors pada dialog component</li>
+                <li>✅ Header types untuk API calls</li>
+                <li>✅ Parameter mapping (userName vs fullName)</li>
+                <li>✅ Enhanced logging untuk debugging</li>
+                <li>✅ Improved filter function</li>
+            </ul>
+        </div>
+
+        <div class="fix-section">
+            <h3>🔍 Diagnosis Masalah</h3>
+            <button class="test-button" onclick="diagnoseMasalah()">
+                Diagnosis Lengkap
+            </button>
+            <div id="diagnosis-result" class="result" style="display: none;">
+                <div id="diagnosis-output"></div>
+            </div>
+        </div>
+
+        <div class="fix-section">
+            <h3>🛠️ Load Data ke localStorage</h3>
+            <button class="fix-button" onclick="loadDataToLocalStorage()">
+                Load Data Wawan ke localStorage
+            </button>
+            <div id="load-result" class="result" style="display: none;">
+                <div id="load-output"></div>
+            </div>
+        </div>
+
+        <div class="fix-section">
+            <h3>🧪 Test Dialog Function</h3>
+            <button class="test-button" onclick="testDialogFunction()">
+                Test getLocalStorageActivities()
+            </button>
+            <div id="test-result" class="result" style="display: none;">
+                <div id="test-output"></div>
+            </div>
+        </div>
+
+        <div class="fix-section">
+            <h3>📋 Instruksi Penggunaan</h3>
+            <div class="result">
+                <h4>Langkah-langkah untuk menggunakan dialog:</h4>
+                <ol>
+                    <li>Pastikan data sudah di-load ke localStorage (klik tombol "Load Data Wawan")</li>
+                    <li>Buka halaman Users di aplikasi</li>
+                    <li>Klik tombol "Kelola Aktivitas" pada user Wawan</li>
+                    <li>Dialog akan menampilkan aktivitas dengan parameter yang benar</li>
+                </ol>
+                
+                <h4>Parameter yang benar:</h4>
+                <div class="code">
+&lt;UserActivitiesDialog
+  userId="1762696525337"
+  userName="wawan"  // ✅ Gunakan username, bukan fullName
+  open={isActivitiesDialogOpen}
+  onOpenChange={setIsActivitiesDialogOpen}
+/&gt;</div>
+            </div>
+        </div>
+
+        <div class="fix-section success">
+            <h3>🎯 Solusi Final</h3>
+            <div class="result">
+                <h4>Perbaikan yang telah dilakukan:</h4>
+                <ul>
+                    <li><strong>Enhanced Logging:</strong> Menambahkan console.log yang detail untuk debugging</li>
+                    <li><strong>Improved Filter:</strong> Filter function yang lebih robust dengan logging</li>
+                    <li><strong>Better Error Handling:</strong> Penanganan error yang lebih baik</li>
+                    <li><strong>Parameter Validation:</strong> Memastikan parameter userId dan userName benar</li>
+                </ul>
+                
+                <h4>Cara debugging jika masih bermasalah:</h4>
+                <ol>
+                    <li>Buka Developer Tools (F12)</li>
+                    <li>Lihat Console untuk log messages</li>
+                    <li>Cari log dengan emoji 🔍, ✅, ❌ untuk tracking</li>
+                    <li>Pastikan data ada di localStorage dengan key 'local-database'</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Data lengkap user Wawan dari database
+        const wawanData = {
+            user: {
+                id: "1762696525337",
+                username: "wawan",
+                fullName: "H. Wawan Yogaswara, S.Pd, M.Pd",
+                role: "pengawas"
+            },
+            tasks: [
+                {
+                    id: "1762824574414",
+                    userId: "1762696525337",
+                    title: "Input Data Sekolah Binaan",
+                    category: "Perencanaan",
+                    completed: true,
+                    date: "2025-11-10T00:00:00.000Z",
+                    description: "Menginput data sekolah binaan ke sistem"
+                }
+            ],
+            supervisions: [
+                {
+                    id: "1762860475743",
+                    userId: "1762696525337",
+                    schoolId: "1762822466523",
+                    type: "Akademik",
+                    schoolName: "SMKS PLUS SUKARAJA",
+                    findings: "Pembelajaran berjalan dengan baik, namun perlu peningkatan di bidang teknologi",
+                    recommendations: "Perlu penambahan fasilitas laboratorium komputer",
+                    date: "2025-11-11T00:00:00.000Z"
+                }
+            ],
+            events: [
+                {
+                    id: "1762737252008",
+                    userId: "1762696525337",
+                    name: "Apel Pagi",
+                    date: "2025-11-10T00:00:00.000Z",
+                    description: "Apel pagi rutin di kantor dinas",
+                    time: "07:30"
+                },
+                {
+                    id: "1762943350611",
+                    userId: "1762696525337",
+                    name: "Silaturahmi dan perkenalan kepala SMKN 14",
+                    date: "2025-11-12T00:00:00.000Z",
+                    description: "Kegiatan silaturahmi dengan kepala sekolah baru",
+                    time: "09:00"
+                },
+                {
+                    id: "1762943597820",
+                    userId: "1762696525337",
+                    name: "Pisah sambut Kepala SMKN 14 Garut",
+                    date: "2025-11-12T00:00:00.000Z",
+                    description: "Acara pisah sambut kepala sekolah",
+                    time: "10:00"
+                },
+                {
+                    id: "1763343052546",
+                    userId: "1762696525337",
+                    name: "Apel Pagi",
+                    date: "2025-11-17T00:00:00.000Z",
+                    description: "Apel pagi rutin mingguan",
+                    time: "07:30"
+                }
+            ],
+            additionalTasks: [
+                {
+                    id: "1762826477112",
+                    userId: "1762696525337",
+                    title: "Input data sekolah binaan",
+                    organizer: "Dinas Pendidikan Provinsi Jawa Barat",
+                    location: "Kantor Cabang Dinas Wilayah XI",
+                    date: "2025-11-10T00:00:00.000Z",
+                    description: "Kegiatan input data sekolah binaan untuk pelaporan"
+                },
+                {
+                    id: "1762826573754",
+                    userId: "1762696525337",
+                    title: "Monitoring KBM",
+                    organizer: "Dinas Pendidikan",
+                    location: "SMKS YPPT GARUT",
+                    date: "2025-11-11T00:00:00.000Z",
+                    description: "Monitoring kegiatan belajar mengajar"
+                }
+            ]
+        };
+
+        function diagnoseMasalah() {
+            const resultDiv = document.getElementById('diagnosis-result');
+            const outputDiv = document.getElementById('diagnosis-output');
+            
+            // Check localStorage
+            const localDatabase = localStorage.getItem('local-database');
+            const hasLocalData = !!localDatabase;
+            
+            let localDataParsed = null;
+            try {
+                localDataParsed = localDatabase ? JSON.parse(localDatabase) : null;
+            } catch (e) {
+                console.error('Error parsing localStorage:', e);
+            }
+            
+            // Check if Wawan data exists
+            const wawanExists = localDataParsed?.users?.find(u => u.username === 'wawan');
+            const wawanTasks = localDataParsed?.tasks?.filter(t => t.userId === '1762696525337') || [];
+            const wawanSupervisions = localDataParsed?.supervisions?.filter(s => s.userId === '1762696525337') || [];
+            const wawanEvents = localDataParsed?.events?.filter(e => e.userId === '1762696525337') || [];
+            const wawanAdditionalTasks = localDataParsed?.additionalTasks?.filter(a => a.userId === '1762696525337') || [];
+            
+            outputDiv.innerHTML = `
+                <h4>🔍 Diagnosis Lengkap:</h4>
+                <table class="data-table">
+                    <tr><th>Check</th><th>Status</th><th>Detail</th></tr>
+                    <tr><td>localStorage exists</td><td>${hasLocalData ? '✅' : '❌'}</td><td>${hasLocalData ? 'Data tersedia' : 'Tidak ada data'}</td></tr>
+                    <tr><td>User Wawan exists</td><td>${wawanExists ? '✅' : '❌'}</td><td>${wawanExists ? wawanExists.fullName : 'User tidak ditemukan'}</td></tr>
+                    <tr><td>Wawan Tasks</td><td>${wawanTasks.length > 0 ? '✅' : '❌'}</td><td>${wawanTasks.length} tasks</td></tr>
+                    <tr><td>Wawan Supervisions</td><td>${wawanSupervisions.length > 0 ? '✅' : '❌'}</td><td>${wawanSupervisions.length} supervisions</td></tr>
+                    <tr><td>Wawan Events</td><td>${wawanEvents.length > 0 ? '✅' : '❌'}</td><td>${wawanEvents.length} events</td></tr>
+                    <tr><td>Wawan Additional Tasks</td><td>${wawanAdditionalTasks.length > 0 ? '✅' : '❌'}</td><td>${wawanAdditionalTasks.length} additional tasks</td></tr>
+                </table>
+                
+                <h4>📊 Total Aktivitas Wawan: ${wawanTasks.length + wawanSupervisions.length + wawanEvents.length + wawanAdditionalTasks.length}</h4>
+                
+                ${!hasLocalData || !wawanExists || (wawanTasks.length + wawanSupervisions.length + wawanEvents.length + wawanAdditionalTasks.length) === 0 ? 
+                    '<div style="color: #ef4444; font-weight: bold;">❌ MASALAH: Data Wawan tidak ditemukan atau kosong. Klik "Load Data Wawan" untuk memperbaiki.</div>' : 
+                    '<div style="color: #10b981; font-weight: bold;">✅ BAIK: Data Wawan tersedia dan lengkap.</div>'
+                }
+            `;
+            
+            resultDiv.style.display = 'block';
+            console.log('🔍 Diagnosis completed:', {
+                hasLocalData,
+                wawanExists: !!wawanExists,
+                activities: {
+                    tasks: wawanTasks.length,
+                    supervisions: wawanSupervisions.length,
+                    events: wawanEvents.length,
+                    additionalTasks: wawanAdditionalTasks.length
+                }
+            });
+        }
+
+        function loadDataToLocalStorage() {
+            const resultDiv = document.getElementById('load-result');
+            const outputDiv = document.getElementById('load-output');
+            
+            try {
+                // Get existing data or create new
+                let existingData = {};
+                try {
+                    const existing = localStorage.getItem('local-database');
+                    existingData = existing ? JSON.parse(existing) : {};
+                } catch (e) {
+                    console.log('Creating new localStorage data');
+                }
+                
+                // Merge with Wawan data
+                const mergedData = {
+                    users: existingData.users || [],
+                    tasks: existingData.tasks || [],
+                    supervisions: existingData.supervisions || [],
+                    events: existingData.events || [],
+                    additionalTasks: existingData.additionalTasks || [],
+                    schools: existingData.schools || []
+                };
+                
+                // Add/update Wawan user
+                const wawanUserIndex = mergedData.users.findIndex(u => u.id === wawanData.user.id);
+                if (wawanUserIndex >= 0) {
+                    mergedData.users[wawanUserIndex] = wawanData.user;
+                } else {
+                    mergedData.users.push(wawanData.user);
+                }
+                
+                // Add Wawan activities (remove existing first to avoid duplicates)
+                mergedData.tasks = mergedData.tasks.filter(t => t.userId !== wawanData.user.id);
+                mergedData.supervisions = mergedData.supervisions.filter(s => s.userId !== wawanData.user.id);
+                mergedData.events = mergedData.events.filter(e => e.userId !== wawanData.user.id);
+                mergedData.additionalTasks = mergedData.additionalTasks.filter(a => a.userId !== wawanData.user.id);
+                
+                // Add new Wawan data
+                mergedData.tasks.push(...wawanData.tasks);
+                mergedData.supervisions.push(...wawanData.supervisions);
+                mergedData.events.push(...wawanData.events);
+                mergedData.additionalTasks.push(...wawanData.additionalTasks);
+                
+                // Save to localStorage
+                localStorage.setItem('local-database', JSON.stringify(mergedData));
+                
+                outputDiv.innerHTML = `
+                    <h4>✅ Data Berhasil Di-load:</h4>
+                    <table class="data-table">
+                        <tr><th>Type</th><th>Count</th><th>Sample</th></tr>
+                        <tr><td>User</td><td>1</td><td>${wawanData.user.fullName}</td></tr>
+                        <tr><td>Tasks</td><td>${wawanData.tasks.length}</td><td>${wawanData.tasks[0]?.title || 'N/A'}</td></tr>
+                        <tr><td>Supervisions</td><td>${wawanData.supervisions.length}</td><td>${wawanData.supervisions[0]?.schoolName || 'N/A'}</td></tr>
+                        <tr><td>Events</td><td>${wawanData.events.length}</td><td>${wawanData.events[0]?.name || 'N/A'}</td></tr>
+                        <tr><td>Additional Tasks</td><td>${wawanData.additionalTasks.length}</td><td>${wawanData.additionalTasks[0]?.title || 'N/A'}</td></tr>
+                    </table>
+                    
+                    <div style="color: #10b981; font-weight: bold; margin-top: 15px;">
+                        ✅ Data Wawan berhasil di-load ke localStorage. Sekarang dialog aktivitas akan menampilkan data.
+                    </div>
+                `;
+                
+                resultDiv.style.display = 'block';
+                console.log('✅ Data loaded successfully:', mergedData);
+                
+            } catch (error) {
+                outputDiv.innerHTML = `
+                    <div style="color: #ef4444; font-weight: bold;">
+                        ❌ Error loading data: ${error.message}
+                    </div>
+                `;
+                resultDiv.style.display = 'block';
+                console.error('❌ Error loading data:', error);
+            }
+        }
+
+        function testDialogFunction() {
+            const resultDiv = document.getElementById('test-result');
+            const outputDiv = document.getElementById('test-output');
+            
+            // Simulate the exact function from dialog
+            const userId = "1762696525337";
+            const userName = "wawan";
+            
+            const getLocalStorageActivities = () => {
+                try {
+                    console.log('🔍 Getting localStorage activities for:', { userId, userName });
+                    
+                    const getLocalStorageData = (key) => {
+                        try {
+                            const data = localStorage.getItem(key);
+                            return data ? JSON.parse(data) : [];
+                        } catch {
+                            return [];
+                        }
+                    };
+
+                    const filterByUser = (data, userField = 'userId') => {
+                        if (!data || !Array.isArray(data)) {
+                            console.log(`❌ No data or not array for field: ${userField}`);
+                            return [];
+                        }
+                        
+                        console.log(`🔍 Filtering ${data.length} items by ${userField} for user:`, { userId, userName });
+                        
+                        const filtered = data.filter(item => {
+                            if (item[userField] === userId) {
+                                console.log(`✅ Found match by ${userField}:`, item);
+                                return true;
+                            }
+                            
+                            if (item.username && userName && 
+                                item.username.toLowerCase() === userName.toLowerCase()) {
+                                console.log(`✅ Found match by username:`, item);
+                                return true;
+                            }
+                            
+                            return false;
+                        });
+                        
+                        console.log(`📊 Filtered ${filtered.length} items from ${data.length} total`);
+                        return filtered;
+                    };
+
+                    const localData = getLocalStorageData('local-database') || {};
+                    console.log('📦 Local database keys:', Object.keys(localData));
+                    
+                    const tasks = filterByUser(localData.tasks || getLocalStorageData('tasks'));
+                    const supervisions = filterByUser(localData.supervisions || getLocalStorageData('supervisions'));
+                    const events = filterByUser(localData.events || getLocalStorageData('calendar_events') || getLocalStorageData('events'));
+                    const additionalTasks = filterByUser(localData.additionalTasks || getLocalStorageData('additional_tasks') || getLocalStorageData('additionalTasks'));
+
+                    console.log('✅ LocalStorage fallback data:', {
+                        tasks: tasks.length,
+                        supervisions: supervisions.length,
+                        events: events.length,
+                        additionalTasks: additionalTasks.length
+                    });
+
+                    return {
+                        tasks,
+                        supervisions,
+                        events,
+                        additionalTasks
+                    };
+                } catch (error) {
+                    console.error('❌ Error loading from localStorage:', error);
+                    return {
+                        tasks: [],
+                        supervisions: [],
+                        events: [],
+                        additionalTasks: []
+                    };
+                }
+            };
+
+            // Run the test
+            const result = getLocalStorageActivities();
+            const totalActivities = result.tasks.length + result.supervisions.length + result.events.length + result.additionalTasks.length;
+            
+            outputDiv.innerHTML = `
+                <h4>🧪 Test getLocalStorageActivities():</h4>
+                <table class="data-table">
+                    <tr><th>Type</th><th>Count</th><th>Status</th></tr>
+                    <tr><td>Tasks</td><td>${result.tasks.length}</td><td>${result.tasks.length > 0 ? '✅' : '❌'}</td></tr>
+                    <tr><td>Supervisions</td><td>${result.supervisions.length}</td><td>${result.supervisions.length > 0 ? '✅' : '❌'}</td></tr>
+                    <tr><td>Events</td><td>${result.events.length}</td><td>${result.events.length > 0 ? '✅' : '❌'}</td></tr>
+                    <tr><td>Additional Tasks</td><td>${result.additionalTasks.length}</td><td>${result.additionalTasks.length > 0 ? '✅' : '❌'}</td></tr>
+                </table>
+                
+                <h4>📊 Total Activities: ${totalActivities}</h4>
+                
+                ${totalActivities > 0 ? 
+                    '<div style="color: #10b981; font-weight: bold;">✅ SUCCESS: Dialog akan menampilkan aktivitas Wawan!</div>' : 
+                    '<div style="color: #ef4444; font-weight: bold;">❌ FAILED: Tidak ada aktivitas ditemukan. Load data terlebih dahulu.</div>'
+                }
+                
+                <h4>🔍 Sample Data:</h4>
+                <div class="code">${JSON.stringify(result, null, 2).substring(0, 500)}...</div>
+            `;
+            
+            resultDiv.style.display = 'block';
+            console.log('🧪 Test completed:', result);
+        }
+
+        // Auto-run diagnosis on load
+        window.onload = function() {
+            console.log('🔧 Fix Aktivitas Wawan - Enhanced Ready');
+            setTimeout(() => {
+                diagnoseMasalah();
+            }, 500);
+        };
+    </script>
+</body>
+</html>

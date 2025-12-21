@@ -15,4 +15,21 @@ export default defineConfig({
     outDir: "../dist/public",
     emptyOutDir: true,
   },
+  server: {
+    historyApiFallback: true,
+    proxy: {
+      '/api': {
+        target: 'http://localhost:5000',
+        changeOrigin: true,
+      },
+      '/local-database.json': {
+        target: 'http://localhost:5000',
+        changeOrigin: true,
+      },
+      '/uploads': {
+        target: 'http://localhost:5000',
+        changeOrigin: true,
+      }
+    }
+  },
 });

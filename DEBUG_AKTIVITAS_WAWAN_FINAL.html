@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Debug Aktivitas Wawan Final</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; }
+        .success { color: green; }
+        .error { color: red; }
+        .info { color: blue; }
+        pre { background: #f5f5f5; padding: 10px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <h1>🔍 Debug Aktivitas User Wawan - Final Check</h1>
+    
+    <div class="section">
+        <h2>1. Current User Check</h2>
+        <div id="currentUserCheck"></div>
+    </div>
+    
+    <div class="section">
+        <h2>2. Local Database Check</h2>
+        <div id="databaseCheck"></div>
+    </div>
+    
+    <div class="section">
+        <h2>3. Wawan Activities Check</h2>
+        <div id="wawanActivitiesCheck"></div>
+    </div>
+    
+    <div class="section">
+        <h2>4. Fix Actions</h2>
+        <button onclick="fixWawanData()">🔧 Fix Wawan Data</button>
+        <button onclick="testDialog()">🧪 Test Dialog</button>
+        <div id="fixResults"></div>
+    </div>
+
+    <script>
+        function log(message, type = 'info') {
+            console.log(message);
+            return `<div class="${type}">${message}</div>`;
+        }
+
+        function checkCurrentUser() {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+            let html = '';
+            
+            html += log('📋 Current User Data:', 'info');
+            html += `<pre>${JSON.stringify(currentUser, null, 2)}</pre>`;
+            
+            if (currentUser.id) {
+                html += log(`✅ User ID: ${currentUser.id}`, 'success');
+                html += log(`✅ Username: ${currentUser.username}`, 'success');
+                html += log(`✅ Role: ${currentUser.role}`, 'success');
+            } else {
+                html += log('❌ No current user found', 'error');
+            }
+            
+            return html;
+        }
+
+        function checkDatabase() {
+            const localData = JSON.parse(localStorage.getItem('local-database') || '{}');
+            let html = '';
+            
+            html += log('📦 Local Database Structure:', 'info');
+            html += log(`- Users: ${localData.users?.length || 0}`, 'info');
+            html += log(`- Tasks: ${localData.tasks?.length || 0}`, 'info');
+            html += log(`- Supervisions: ${localData.supervisions?.length || 0}`, 'info');
+            html += log(`- Events: ${localData.events?.length || 0}`, 'info');
+            html += log(`- Additional Tasks: ${localData.additionalTasks?.length || 0}`, 'info');
+            
+            // Find Wawan user
+            const wawanUser = localData.users?.find(u => u.username === 'wawan');
+            if (wawanUser) {
+                html += log(`✅ Wawan user found: ID ${wawanUser.id}`, 'success');
+                html += `<pre>${JSON.stringify(wawanUser, null, 2)}</pre>`;
+            } else {
+                html += log('❌ Wawan user not found', 'error');
+            }
+            
+            return html;
+        }
+
+        function checkWawanActivities() {
+            const localData = JSON.parse(localStorage.getItem('local-database') || '{}');
+            const wawanUserId = "1762696525337"; // Wawan's ID from database
+            let html = '';
+            
+            html += log(`🔍 Checking activities for Wawan (ID: ${wawanUserId})`, 'info');
+            
+            // Check tasks
+            const tasks = localData.tasks?.filter(t => t.userId === wawanUserId) || [];
+            html += log(`📋 Tasks: ${tasks.length}`, tasks.length > 0 ? 'success' : 'error');
+            tasks.forEach(task => {
+                html += log(`  - ${task.title} (${task.date})`, 'info');
+            });
+            
+            // Check supervisions
+            const supervisions = localData.supervisions?.filter(s => s.userId === wawanUserId) || [];
+            html += log(`👁️ Supervisions: ${supervisions.length}`, supervisions.length > 0 ? 'success' : 'error');
+            supervisions.forEach(supervision => {
+                html += log(`  - ${supervision.type} at ${supervision.schoolId} (${supervision.date})`, 'info');
+            });
+            
+            // Check events
+            const events = localData.events?.filter(e => e.userId === wawanUserId) || [];
+            html += log(`📅 Events: ${events.length}`, events.length > 0 ? 'success' : 'error');
+            events.forEach(event => {
+                html += log(`  - ${event.title} (${event.date})`, 'info');
+            });
+            
+            // Check additional tasks
+            const additionalTasks = localData.additionalTasks?.filter(at => at.userId === wawanUserId) || [];
+            html += log(`➕ Additional Tasks: ${additionalTasks.length}`, additionalTasks.length > 0 ? 'success' : 'error');
+            additionalTasks.forEach(task => {
+                html += log(`  - ${task.name} at ${task.location} (${task.date})`, 'info');
+            });
+            
+            const totalActivities = tasks.length + supervisions.length + events.length + additionalTasks.length;
+            html += log(`📊 Total Activities: ${totalActivities}`, totalActivities > 0 ? 'success' : 'error');
+            
+            return html;
+        }
+
+        function fixWawanData() {
+            const fixResults = document.getElementById('fixResults');
+            let html = '';
+            
+            try {
+                // Set current user to Wawan
+                const wawanUser = {
+                    id: "1762696525337",
+                    username: "wawan",
+                    fullName: "H. Wawan Yogaswara, S.Pd, M.Pd",
+                    role: "pengawas",
+                    nip: "196805301994121001",
+                    photoUrl: "/uploads/1762830374284-750171039.jpg"
+                };
+                
+                localStorage.setItem('currentUser', JSON.stringify(wawanUser));
+                html += log('✅ Set current user to Wawan', 'success');
+                
+                // Clear any conflicting data
+                localStorage.removeItem('ultimate_fix_applied');
+                html += log('✅ Cleared conflicting flags', 'success');
+                
+                html += log('🔄 Please refresh the page and check the user activities dialog', 'info');
+                
+            } catch (error) {
+                html += log(`❌ Error: ${error.message}`, 'error');
+            }
+            
+            fixResults.innerHTML = html;
+        }
+
+        function testDialog() {
+            const fixResults = document.getElementById('fixResults');
+            let html = '';
+            
+            // Simulate the dialog logic
+            const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+            const localData = JSON.parse(localStorage.getItem('local-database') || '{}');
+            
+            if (!currentUser.id) {
+                html += log('❌ No current user - dialog will be empty', 'error');
+                fixResults.innerHTML = html;
+                return;
+            }
+            
+            const userId = currentUser.id;
+            const userName = currentUser.username;
+            const isAdmin = currentUser.role === 'admin';
+            
+            html += log(`🧪 Testing dialog for: ${userName} (${userId})`, 'info');
+            html += log(`🔑 Admin access: ${isAdmin}`, 'info');
+            
+            // Filter activities
+            const filterByUser = (data, userField = 'userId') => {
+                if (!data || !Array.isArray(data)) return [];
+                
+                return data.filter(item => {
+                    // Admin can see all data
+                    if (isAdmin) {
+                        if (item[userField] === userId) return true;
+                        if (item.username && userName && 
+                            item.username.toLowerCase() === userName.toLowerCase()) return true;
+                        if (userName && userName.toLowerCase() === 'wawan') {
+                            const textFields = ['title', 'name', 'description', 'notes', 'findings'];
+                            for (const field of textFields) {
+                                if (item[field] && typeof item[field] === 'string' && 
+                                    item[field].toLowerCase().includes('wawan')) {
+                                    return true;
+                                }
+                            }
+                        }
+                    } else {
+                        // Non-admin users
+                        if (item[userField] === userId) return true;
+                        if (item.username && userName && 
+                            item.username.toLowerCase() === userName.toLowerCase()) return true;
+                    }
+                    return false;
+                });
+            };
+            
+            const tasks = filterByUser(localData.tasks || []);
+            const supervisions = filterByUser(localData.supervisions || []);
+            const events = filterByUser(localData.events || []);
+            const additionalTasks = filterByUser(localData.additionalTasks || []);
+            
+            html += log(`📋 Filtered Tasks: ${tasks.length}`, 'info');
+            html += log(`👁️ Filtered Supervisions: ${supervisions.length}`, 'info');
+            html += log(`📅 Filtered Events: ${events.length}`, 'info');
+            html += log(`➕ Filtered Additional Tasks: ${additionalTasks.length}`, 'info');
+            
+            const total = tasks.length + supervisions.length + events.length + additionalTasks.length;
+            html += log(`📊 Total activities that should show: ${total}`, total > 0 ? 'success' : 'error');
+            
+            if (total === 0) {
+                html += log('❌ No activities will show in dialog', 'error');
+                html += log('💡 Try clicking "Fix Wawan Data" button above', 'info');
+            }
+            
+            fixResults.innerHTML = html;
+        }
+
+        // Initialize
+        document.getElementById('currentUserCheck').innerHTML = checkCurrentUser();
+        document.getElementById('databaseCheck').innerHTML = checkDatabase();
+        document.getElementById('wawanActivitiesCheck').innerHTML = checkWawanActivities();
+    </script>
+</body>
+</html>

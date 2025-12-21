@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Inject Data Langsung - Dashboard Fix</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; text-align: center; }
+        .container { max-width: 600px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .big-button { background: #4caf50; color: white; padding: 20px 40px; border: none; border-radius: 10px; cursor: pointer; font-size: 18px; margin: 10px; }
+        .big-button:hover { background: #45a049; }
+        .status { margin: 20px 0; padding: 15px; border-radius: 5px; }
+        .success { background: #e8f5e8; border: 2px solid #4caf50; }
+        .info { background: #e3f2fd; border: 2px solid #2196f3; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 Inject Data Langsung</h1>
+        <p><strong>Solusi cepat untuk mengisi data dashboard yang kosong</strong></p>
+        
+        <button class="big-button" onclick="injectDataAndOpen()">
+            💉 Inject Data & Buka Dashboard
+        </button>
+        
+        <div id="status" style="display: none;"></div>
+    </div>
+
+    <script>
+        function showStatus(message, type = 'info') {
+            const status = document.getElementById('status');
+            status.style.display = 'block';
+            status.innerHTML = message;
+            status.className = 'status ' + type;
+        }
+
+        function injectDataAndOpen() {
+            showStatus('🔄 Injecting data lengkap...', 'info');
+            
+            // Data lengkap untuk dashboard
+            const completeData = {
+                users: [
+                    {
+                        id: '1762696525337',
+                        username: 'wawan',
+                        fullName: 'H. Wawan Yogaswara, S.Pd, M.Pd',
+                        role: 'pengawas',
+                        photoUrl: '/uploads/1762830374284-750171039.jpg',
+                        nip: '196805301994121001',
+                        rank: 'Pembina Utama Muda, IV/c',
+                        officeName: 'Cabang Dinas Pendidikan Wilayah XI',
+                        phone: '087733438282'
+                    }
+                ],
+                tasks: [
+                    {
+                        id: '1762824574414',
+                        userId: '1762696525337',
+                        title: 'Input Data Sekolah Binaan',
+                        category: 'Perencanaan',
+                        description: 'Input data sekolah binaan ke dalam aplikasi kepengawasan',
+                        completed: true,
+                        date: '2024-12-20T00:00:00.000Z',
+                        createdAt: '2024-12-20T01:29:34.414Z'
+                    },
+                    {
+                        id: '1762824574415',
+                        userId: '1762696525337',
+                        title: 'Supervisi Pembelajaran Kelas',
+                        category: 'Supervisi',
+                        description: 'Melakukan supervisi pembelajaran di kelas',
+                        completed: false,
+                        date: '2024-12-21T00:00:00.000Z',
+                        createdAt: '2024-12-21T01:29:34.414Z'
+                    },
+                    {
+                        id: '1762824574416',
+                        userId: '1762696525337',
+                        title: 'Evaluasi Kurikulum Sekolah',
+                        category: 'Evaluasi',
+                        description: 'Evaluasi implementasi kurikulum di sekolah binaan',
+                        completed: true,
+                        date: '2024-12-19T00:00:00.000Z',
+                        createdAt: '2024-12-19T01:29:34.414Z'
+                    },
+                    {
+                        id: '1762824574417',
+                        userId: '1762696525337',
+                        title: 'Monitoring Administrasi Guru',
+                        category: 'Monitoring',
+                        description: 'Monitoring kelengkapan administrasi pembelajaran guru',
+                        completed: false,
+                        date: '2024-12-22T00:00:00.000Z',
+                        createdAt: '2024-12-22T01:29:34.414Z'
+                    },
+                    {
+                        id: '1762824574418',
+                        userId: '1762696525337',
+                        title: 'Pembinaan Guru Muda',
+                        category: 'Pembinaan',
+                        description: 'Memberikan pembinaan kepada guru-guru muda',
+                        completed: true,
+                        date: '2024-12-17T00:00:00.000Z',
+                        createdAt: '2024-12-17T01:29:34.414Z'
+                    }
+                ],
+                supervisions: [
+                    {
+                        id: '1762860475743',
+                        userId: '1762696525337',
+                        schoolId: '1762822466523',
+                        schoolName: 'SDN 1 Garut',
+                        type: 'Akademik',
+                        date: '2024-12-20T00:00:00.000Z',
+                        teacherName: 'Supyan Sauri',
+                        teacherNip: '196501011985031001',
+                        findings: 'Aktivitas guru dalam pembelajaran masih dominan',
+                        recommendations: 'Guru perlu menggunakan metode yang dapat meningkatkan aktivitas siswa',
+                        createdAt: '2024-12-20T01:29:34.414Z'
+                    },
+                    {
+                        id: '1762860475744',
+                        userId: '1762696525337',
+                        schoolId: '1762822466524',
+                        schoolName: 'SDN 2 Garut',
+                        type: 'Manajerial',
+                        date: '2024-12-18T00:00:00.000Z',
+                        teacherName: 'Siti Nurhaliza',
+                        teacherNip: '196701011986032001',
+                        findings: 'Administrasi sekolah sudah tertib',
+                        recommendations: 'Pertahankan kualitas administrasi yang sudah baik',
+                        createdAt: '2024-12-18T01:29:34.414Z'
+                    },
+                    {
+                        id: '1762860475745',
+                        userId: '1762696525337',
+                        schoolId: '1762822466525',
+                        schoolName: 'SDN 3 Garut',
+                        type: 'Akademik',
+                        date: '2024-12-15T00:00:00.000Z',
+                        teacherName: 'Ahmad Fauzi',
+                        teacherNip: '196801011987031002',
+                        findings: 'Metode pembelajaran sudah bervariasi',
+                        recommendations: 'Tingkatkan penggunaan media pembelajaran digital',
+                        createdAt: '2024-12-15T01:29:34.414Z'
+                    },
+                    {
+                        id: '1762860475746',
+                        userId: '1762696525337',
+                        schoolId: '1762822466526',
+                        schoolName: 'SDN 4 Garut',
+                        type: 'Akademik',
+                        date: '2024-12-12T00:00:00.000Z',
+                        teacherName: 'Rina Sari',
+                        teacherNip: '196901011988032001',
+                        findings: 'Penggunaan alat peraga masih kurang',
+                        recommendations: 'Perbanyak penggunaan alat peraga dalam pembelajaran',
+                        createdAt: '2024-12-12T01:29:34.414Z'
+                    }
+                ],
+                schools: [
+                    {
+                        id: '1762822466523',
+                        name: 'SDN 1 Garut',
+                        address: 'Jl. Raya Garut No. 1',
+                        principalName: 'Drs. Bambang Sutrisno',
+                        principalNip: '196001011980031001',
+                        phone: '0262-123456'
+                    },
+                    {
+                        id: '1762822466524',
+                        name: 'SDN 2 Garut',
+                        address: 'Jl. Raya Garut No. 2',
+                        principalName: 'Hj. Siti Aminah, S.Pd',
+                        principalNip: '196101011981032001',
+                        phone: '0262-123457'
+                    },
+                    {
+                        id: '1762822466525',
+                        name: 'SDN 3 Garut',
+                        address: 'Jl. Raya Garut No. 3',
+                        principalName: 'Drs. H. Abdul Rahman',
+                        principalNip: '196201011982031001',
+                        phone: '0262-123458'
+                    },
+                    {
+                        id: '1762822466526',
+                        name: 'SDN 4 Garut',
+                        address: 'Jl. Raya Garut No. 4',
+                        principalName: 'Hj. Nurhayati, S.Pd',
+                        principalNip: '196301011983032001',
+                        phone: '0262-123459'
+                    },
+                    {
+                        id: '1762822466527',
+                        name: 'SDN 5 Garut',
+                        address: 'Jl. Raya Garut No. 5',
+                        principalName: 'Drs. Yusuf Hidayat',
+                        principalNip: '196401011984031001',
+                        phone: '0262-123460'
+                    },
+                    {
+                        id: '1762822466528',
+                        name: 'SDN 6 Garut',
+                        address: 'Jl. Raya Garut No. 6',
+                        principalName: 'Hj. Dewi Sartika, S.Pd',
+                        principalNip: '196501011985032001',
+                        phone: '0262-123461'
+                    }
+                ],
+                additionalTasks: [
+                    {
+                        id: '1762824574418',
+                        userId: '1762696525337',
+                        title: 'Pelatihan Guru Metode Pembelajaran',
+                        description: 'Memberikan pelatihan kepada guru tentang metode pembelajaran modern',
+                        date: '2024-12-21T00:00:00.000Z',
+                        location: 'Aula SDN 1 Garut',
+                        participants: 25,
+                        createdAt: '2024-12-21T01:29:34.414Z'
+                    },
+                    {
+                        id: '1762824574419',
+                        userId: '1762696525337',
+                        title: 'Workshop Penyusunan RPP',
+                        description: 'Workshop penyusunan Rencana Pelaksanaan Pembelajaran yang efektif',
+                        date: '2024-12-23T00:00:00.000Z',
+                        location: 'Ruang Guru SDN 2 Garut',
+                        participants: 15,
+                        createdAt: '2024-12-23T01:29:34.414Z'
+                    },
+                    {
+                        id: '1762824574420',
+                        userId: '1762696525337',
+                        title: 'Seminar Pendidikan Karakter',
+                        description: 'Seminar tentang pentingnya pendidikan karakter di sekolah dasar',
+                        date: '2024-12-25T00:00:00.000Z',
+                        location: 'Gedung Serbaguna Garut',
+                        participants: 50,
+                        createdAt: '2024-12-25T01:29:34.414Z'
+                    }
+                ]
+            };
+
+            // Inject data ke localStorage
+            localStorage.setItem('local-database', JSON.stringify(completeData));
+            
+            // Set current user
+            localStorage.setItem('currentUser', JSON.stringify(completeData.users[0]));
+            
+            showStatus('✅ Data lengkap berhasil di-inject! Membuka dashboard...', 'success');
+            
+            setTimeout(() => {
+                window.open('http://localhost:5173', '_blank');
+            }, 1500);
+        }
+    </script>
+</body>
+</html>

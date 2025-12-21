@@ -153,6 +153,18 @@ Profile photo upload features documentation.
 ### 21. [UPDATE_LOGIN_CADISDIK.md](UPDATE_LOGIN_CADISDIK.md)
 Login page with Cadisdik photo documentation.
 
+### 22. [PDF_ENHANCED_SUCCESS_SUMMARY.md](PDF_ENHANCED_SUCCESS_SUMMARY.md)
+✅ **PDF Enhanced completion summary and success report.**
+
+### 23. [PANDUAN_PENGGUNAAN_PDF_ENHANCED.md](PANDUAN_PENGGUNAAN_PDF_ENHANCED.md)
+📖 **Complete user guide for PDF Enhanced feature.**
+
+### 24. [DEBUG_PDF_ENHANCED.md](DEBUG_PDF_ENHANCED.md)
+🔍 Debug guide for PDF Enhanced profile data issues.
+
+### 25. [DEBUG_FOTO_PDF.md](DEBUG_FOTO_PDF.md)
+📸 Debug guide for PDF Enhanced photo issues.
+
 ---
 
 ## 🐛 FIX DOCUMENTATION
@@ -226,11 +238,15 @@ School data restoration guide.
 16. SETUP_DATABASE.md
 17. QUICK_REFERENCE.md
 
-#### 🎨 Feature Documentation (4)
+#### 🎨 Feature Documentation (8)
 18. FITUR_ADMIN_MANAGEMENT.md
 19. FITUR_PROFIL_PENGAWAS.md
 20. FITUR_UPLOAD_FOTO_PROFIL.md
 21. UPDATE_LOGIN_CADISDIK.md
+22. PDF_ENHANCED_SUCCESS_SUMMARY.md ⭐⭐⭐⭐⭐
+23. PANDUAN_PENGGUNAAN_PDF_ENHANCED.md ⭐⭐⭐⭐
+24. DEBUG_PDF_ENHANCED.md
+25. DEBUG_FOTO_PDF.md
 
 #### 🐛 Fix Documentation (5)
 22. FIX_SAVE_DATA.md

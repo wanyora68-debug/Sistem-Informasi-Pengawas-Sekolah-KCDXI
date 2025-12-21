@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fix Browser Data Sync</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        .section {
+            background: #f5f5f5;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            border-left: 4px solid #007bff;
+        }
+        
+        .button {
+            background: #007bff;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+            display: block;
+            width: 100%;
+        }
+        
+        .button:hover {
+            background: #0056b3;
+        }
+        
+        .success {
+            background: #d4edda;
+            color: #155724;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        
+        .data-preview {
+            background: white;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        pre {
+            font-size: 12px;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔧 Fix Browser Data Sync</h1>
+    
+    <div class="section">
+        <h2>📊 Status Data Browser</h2>
+        <p>Periksa dan sinkronkan data localStorage antar browser:</p>
+        
+        <button class="button" onclick="checkCurrentData()">🔍 Periksa Data Saat Ini</button>
+        <button class="button" onclick="forceCreateAllData()">🚀 Force Create Semua Data</button>
+        <button class="button" onclick="clearAllData()">🗑️ Hapus Semua Data</button>
+        <button class="button" onclick="exportData()">📤 Export Data</button>
+        
+        <div id="result"></div>
+        <div id="dataPreview"></div>
+    </div>
+    
+    <div class="section">
+        <h2>🎯 Solusi Masalah Browser</h2>
+        <ul>
+            <li><strong>Chrome/Opera kosong:</strong> Data localStorage berbeda antar browser</li>
+            <li><strong>Edge ada data:</strong> Mungkin sudah pernah digunakan sebelumnya</li>
+            <li><strong>Solusi:</strong> Force create data di semua browser</li>
+        </ul>
+    </div>
+
+    <script>
+        function showResult(message, isSuccess = true) {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = `<div class="${isSuccess ? 'success' : 'error'}">${message}</div>`;
+        }
+
+        function showDataPreview(data) {
+            const previewDiv = document.getElementById('dataPreview');
+            previewDiv.innerHTML = `
+                <div class="data-preview">
+                    <h4>Preview Data:</h4>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                </div>
+            `;
+        }
+
+        function checkCurrentData() {
+            console.log('🔍 Checking current localStorage data...');
+            
+            const dataKeys = [
+                'user_data',
+                'tasks_data', 
+                'schools_data',
+                'supervisions_data',
+                'additional_tasks_data',
+                'events_data'
+            ];
+            
+            const currentData = {};
+            let totalItems = 0;
+            
+            dataKeys.forEach(key => {
+                const data = localStorage.getItem(key);
+                if (data) {
+                    try {
+                        const parsed = JSON.parse(data);
+                        currentData[key] = Array.isArray(parsed) ? parsed.length : 'object';
+                        if (Array.isArray(parsed)) {
+                            totalItems += parsed.length;
+                        }
+                    } catch (e) {
+                        currentData[key] = 'error parsing';
+                    }
+                } else {
+                    currentData[key] = 'kosong';
+                }
+            });
+            
+            showResult(`✅ Data diperiksa. Total items: ${totalItems}`, true);
+            showDataPreview(currentData);
+        }
+
+        function forceCreateAllData() {
+            console.log('🚀 Force creating all data...');
+            
+            try {
+                // 1. User Data
+                const userData = {
+                    username: "admin",
+                    fullName: "H. Wawan Yogaswara, S.Pd, M.Pd",
+                    role: "pengawas",
+                    photoUrl: "/images/profile-photo.jpg"
+                };
+                localStorage.setItem('user_data', JSON.stringify(userData));
+                
+                // 2. Schools Data
+                const schoolsData = [
+                    {
+                        id: "school-1",
+                        name: "SMKN 4 Garut",
+                        address: "Jl. Pembangunan No. 123, Garut",
+                        principal: "Drs. Ahmad Suryadi, M.Pd",
+                        phone: "0262-123456",
+                        email: "smkn4garut@gmail.com",
+                        type: "SMK",
+                        accreditation: "A",
+                        studentCount: 850,
+                        teacherCount: 45,
+                        createdAt: new Date().toISOString()
+                    },
+                    {
+                        id: "school-2", 
+                        name: "SMKN 14 Garut",
+                        address: "Jl. Raya Garut-Tasikmalaya Km 10",
+                        principal: "Dra. Siti Nurhasanah, M.Pd",
+                        phone: "0262-789012",
+                        email: "smkn14garut@gmail.com",
+                        type: "SMK",
+                        accreditation: "A",
+                        studentCount: 720,
+                        teacherCount: 38,
+                        createdAt: new Date().toISOString()
+                    },
+                    {
+                        id: "school-3",
+                        name: "SMA Negeri 1 Garut",
+                        address: "Jl. Cimanuk No. 456, Garut",
+                        principal: "Dr. Bambang Sutrisno, M.Pd",
+                        phone: "0262-345678",
+                        email: "sman1garut@gmail.com", 
+                        type: "SMA",
+                        accreditation: "A",
+                        studentCount: 960,
+                        teacherCount: 52,
+                        createdAt: new Date().toISOString()
+                    }
+                ];
+                localStorage.setItem('schools_data', JSON.stringify(schoolsData));
+                
+                // 3. Tasks Data
+                const tasksData = [
+                    {
+                        id: "task-1",
+                        title: "Supervisi dan pembinaan Kepala SMKN 14 Garut",
+                        description: "Melakukan supervisi pembelajaran mata pelajaran produktif dan memberikan pembinaan kepada kepala sekolah",
+                        category: "Supervisi Akademik",
+                        priority: "high",
+                        date: "2025-01-15",
+                        completed: true,
+                        createdAt: new Date().toISOString()
+                    },
+                    {
+                        id: "task-2",
+                        title: "Evaluasi program sekolah penggerak SMKN 4 Garut",
+                        description: "Mengevaluasi implementasi program sekolah penggerak dan memberikan rekomendasi perbaikan",
+                        category: "Evaluasi Program",
+                        priority: "medium",
+                        date: "2025-01-18",
+                        completed: false,
+                        createdAt: new Date().toISOString()
+                    },
+                    {
+                        id: "task-3",
+                        title: "Monitoring pelaksanaan kurikulum merdeka",
+                        description: "Memantau dan mengevaluasi pelaksanaan kurikulum merdeka di sekolah binaan",
+                        category: "Monitoring",
+                        priority: "high",
+                        date: "2025-01-20",
+                        completed: false,
+                        createdAt: new Date().toISOString()
+                    }
+                ];
+                localStorage.setItem('tasks_data', JSON.stringify(tasksData));
+                
+                // 4. Supervisions Data
+                const supervisionsData = [
+                    {
+                        id: "supervision-1",
+                        school: "SMKN 4 Garut",
+                        type: "Akademik",
+                        date: "2025-01-15",
+                        findings: "Pembelajaran berjalan dengan baik, namun perlu peningkatan penggunaan teknologi",
+                        recommendations: "Tingkatkan penggunaan media pembelajaran digital dan platform e-learning",
+                        followUpDate: "2025-02-15",
+                        status: "completed",
+                        createdAt: new Date().toISOString()
+                    },
+                    {
+                        id: "supervision-2",
+                        school: "SMKN 14 Garut",
+                        type: "Manajerial",
+                        date: "2025-01-18",
+                        findings: "Manajemen sekolah sudah baik, dokumentasi perlu diperbaiki",
+                        recommendations: "Perbaiki sistem dokumentasi dan arsip sekolah",
+                        followUpDate: "2025-02-18",
+                        status: "completed",
+                        createdAt: new Date().toISOString()
+                    },
+                    {
+                        id: "supervision-3",
+                        school: "SMA Negeri 1 Garut",
+                        type: "Akademik",
+                        date: "2025-01-20",
+                        findings: "Kualitas pembelajaran sangat baik, siswa aktif dan antusias",
+                        recommendations: "Pertahankan kualitas dan tingkatkan inovasi pembelajaran",
+                        followUpDate: "2025-02-20",
+                        status: "planned",
+                        createdAt: new Date().toISOString()
+                    }
+                ];
+                localStorage.setItem('supervisions_data', JSON.stringify(supervisionsData));
+                
+                // 5. Additional Tasks Data
+                const currentYear = new Date().getFullYear();
+                const currentMonth = String(new Date().getMonth() + 1).padStart(2, '0');
+                
+                const additionalTasksData = [
+                    {
+                        id: "additional-1",
+                        name: "Rapat Koordinasi Pengawas Sekolah",
+                        date: `${currentYear}-${currentMonth}-15`,
+                        location: "Kantor Dinas Pendidikan Provinsi Jawa Barat",
+                        organizer: "Dinas Pendidikan Provinsi Jawa Barat",
+                        description: "Rapat koordinasi bulanan membahas program supervisi sekolah, evaluasi kinerja pengawas, dan rencana kegiatan bulan berikutnya.",
+                        createdAt: `${currentYear}-${currentMonth}-15T10:00:00.000Z`
+                    },
+                    {
+                        id: "additional-2",
+                        name: "Workshop Implementasi Kurikulum Merdeka",
+                        date: `${currentYear}-${currentMonth}-18`,
+                        location: "LPMP Jawa Barat, Bandung",
+                        organizer: "LPMP Jawa Barat",
+                        description: "Workshop pelatihan implementasi kurikulum merdeka untuk pengawas sekolah.",
+                        createdAt: `${currentYear}-${currentMonth}-18T09:00:00.000Z`
+                    },
+                    {
+                        id: "additional-3",
+                        name: "Supervisi Akademik Terpadu",
+                        date: `${currentYear}-${currentMonth}-20`,
+                        location: "SMKN 4 Garut",
+                        organizer: "Pengawas Sekolah Wilayah III",
+                        description: "Kegiatan supervisi akademik terpadu melibatkan beberapa pengawas.",
+                        createdAt: `${currentYear}-${currentMonth}-20T08:00:00.000Z`
+                    },
+                    {
+                        id: "additional-4",
+                        name: "Bimbingan Teknis Penyusunan RPS",
+                        date: `${currentYear}-${currentMonth}-22`,
+                        location: "Hotel Savoy Homann, Bandung",
+                        organizer: "Balai Diklat Keagamaan",
+                        description: "Bimbingan teknis penyusunan Rencana Pelaksanaan Supervisi (RPS).",
+                        createdAt: `${currentYear}-${currentMonth}-22T13:00:00.000Z`
+                    },
+                    {
+                        id: "additional-5",
+                        name: "Evaluasi Program Sekolah Penggerak",
+                        date: `${currentYear}-${currentMonth}-25`,
+                        location: "Gedung Sate, Bandung",
+                        organizer: "Kemendikbudristek",
+                        description: "Kegiatan evaluasi dan monitoring program sekolah penggerak.",
+                        createdAt: `${currentYear}-${currentMonth}-25T14:00:00.000Z`
+                    },
+                    {
+                        id: "additional-6",
+                        name: "Sosialisasi Asesmen Nasional",
+                        date: `${currentYear}-${currentMonth}-28`,
+                        location: "Aula LPMP Jawa Barat",
+                        organizer: "Pusat Asesmen dan Pembelajaran",
+                        description: "Sosialisasi pelaksanaan Asesmen Nasional tahun 2025.",
+                        createdAt: `${currentYear}-${currentMonth}-28T10:00:00.000Z`
+                    }
+                ];
+                localStorage.setItem('additional_tasks_data', JSON.stringify(additionalTasksData));
+                
+                // 6. Events Data
+                const eventsData = [
+                    {
+                        id: "event-1",
+                        title: "Rapat Koordinasi Bulanan",
+                        date: "2025-01-25",
+                        time: "09:00",
+                        location: "Dinas Pendidikan",
+                        description: "Rapat koordinasi pengawas sekolah se-kabupaten",
+                        createdAt: new Date().toISOString()
+                    },
+                    {
+                        id: "event-2",
+                        title: "Workshop Kurikulum Merdeka",
+                        date: "2025-01-30",
+                        time: "08:00",
+                        location: "LPMP Jawa Barat",
+                        description: "Pelatihan implementasi kurikulum merdeka",
+                        createdAt: new Date().toISOString()
+                    }
+                ];
+                localStorage.setItem('events_data', JSON.stringify(eventsData));
+                
+                // Create backup
+                const allData = {
+                    user_data: userData,
+                    schools_data: schoolsData,
+                    tasks_data: tasksData,
+                    supervisions_data: supervisionsData,
+                    additional_tasks_data: additionalTasksData,
+                    events_data: eventsData
+                };
+                
+                localStorage.setItem('data_backup', JSON.stringify(allData));
+                localStorage.setItem('data_created_at', new Date().toISOString());
+                
+                showResult(`✅ Semua data berhasil dibuat! Total: ${schoolsData.length} sekolah, ${tasksData.length} tugas, ${supervisionsData.length} supervisi, ${additionalTasksData.length} tugas tambahan, ${eventsData.length} events`, true);
+                
+                // Show summary
+                const summary = {
+                    'User': 1,
+                    'Schools': schoolsData.length,
+                    'Tasks': tasksData.length,
+                    'Supervisions': supervisionsData.length,
+                    'Additional Tasks': additionalTasksData.length,
+                    'Events': eventsData.length
+                };
+                showDataPreview(summary);
+                
+            } catch (error) {
+                console.error('❌ Error creating data:', error);
+                showResult('❌ Error: ' + error.message, false);
+            }
+        }
+
+        function clearAllData() {
+            console.log('🗑️ Clearing all localStorage data...');
+            
+            const dataKeys = [
+                'user_data',
+                'tasks_data',
+                'schools_data', 
+                'supervisions_data',
+                'additional_tasks_data',
+                'events_data',
+                'data_backup',
+                'data_created_at'
+            ];
+            
+            dataKeys.forEach(key => {
+                localStorage.removeItem(key);
+            });
+            
+            showResult('✅ Semua data berhasil dihapus dari localStorage', true);
+        }
+
+        function exportData() {
+            console.log('📤 Exporting data...');
+            
+            const dataKeys = [
+                'user_data',
+                'tasks_data',
+                'schools_data',
+                'supervisions_data', 
+                'additional_tasks_data',
+                'events_data'
+            ];
+            
+            const exportData = {};
+            dataKeys.forEach(key => {
+                const data = localStorage.getItem(key);
+                if (data) {
+                    exportData[key] = JSON.parse(data);
+                }
+            });
+            
+            const dataStr = JSON.stringify(exportData, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            const url = URL.createObjectURL(dataBlob);
+            
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `pengawas-data-${new Date().toISOString().split('T')[0]}.json`;
+            link.click();
+            
+            showResult('✅ Data berhasil diexport ke file JSON', true);
+        }
+
+        // Auto-check on page load
+        window.onload = function() {
+            console.log('📄 Browser Data Sync page loaded');
+            checkCurrentData();
+        };
+    </script>
+</body>
+</html>

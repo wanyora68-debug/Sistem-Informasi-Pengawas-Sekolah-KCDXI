@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test PDF Export - Laporan Pengawas</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        .test-section {
+            background: #f5f5f5;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            border-left: 4px solid #007bff;
+        }
+        
+        .button {
+            background: #007bff;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        
+        .button:hover {
+            background: #0056b3;
+        }
+        
+        .success {
+            background: #d4edda;
+            color: #155724;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        
+        .stats-preview {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #007bff;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: #666;
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 Test PDF Export - Laporan Pengawas</h1>
+    
+    <div class="test-section">
+        <h2>📋 Test Export PDF Laporan</h2>
+        <p>Klik tombol di bawah untuk test fungsi export PDF dengan data sample:</p>
+        
+        <div class="stats-preview">
+            <div class="stat-card">
+                <div class="stat-number">3</div>
+                <div class="stat-label">Total Tugas</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">2</div>
+                <div class="stat-label">Tugas Selesai</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">3</div>
+                <div class="stat-label">Supervisi</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">6</div>
+                <div class="stat-label">Tugas Tambahan</div>
+            </div>
+        </div>
+        
+        <button class="button" onclick="testPDFExport()">📄 Test Export PDF</button>
+        <button class="button" onclick="testSimplePrint()">🖨️ Test Simple Print</button>
+        
+        <div id="result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>🔧 Troubleshooting</h2>
+        <ul>
+            <li><strong>Jika PDF tidak muncul:</strong> Pastikan popup tidak diblokir browser</li>
+            <li><strong>Jika print dialog tidak muncul:</strong> Coba refresh halaman dan test lagi</li>
+            <li><strong>Jika error:</strong> Lihat console browser (F12) untuk detail error</li>
+        </ul>
+    </div>
+
+    <script>
+        function showResult(message, isSuccess = true) {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = `<div class="${isSuccess ? 'success' : 'error'}">${message}</div>`;
+        }
+
+        function testPDFExport() {
+            console.log('🔄 Starting PDF export test...');
+            showResult('⏳ Memulai test export PDF...', true);
+            
+            try {
+                // Sample data
+                const stats = {
+                    totalTasks: 3,
+                    completedTasks: 2,
+                    supervisions: 3,
+                    additionalTasks: 6
+                };
+                
+                const period = new Date().toLocaleDateString('id-ID', { year: 'numeric', month: 'long' });
+                
+                // Create iframe for printing (more reliable than window.open)
+                const iframe = document.createElement('iframe');
+                iframe.style.position = 'fixed';
+                iframe.style.right = '0';
+                iframe.style.bottom = '0';
+                iframe.style.width = '0';
+                iframe.style.height = '0';
+                iframe.style.border = '0';
+                document.body.appendChild(iframe);
+                
+                const iframeDoc = iframe.contentWindow?.document;
+                if (!iframeDoc) {
+                    throw new Error('Tidak dapat membuat dokumen print');
+                }
+
+                const html = `
+                    <!DOCTYPE html>
+                    <html>
+                      <head>
+                        <meta charset="UTF-8">
+                        <title>Laporan Kegiatan Pengawas - ${period}</title>
+                        <style>
+                          @page {
+                            size: A4;
+                            margin: 20mm;
+                          }
+                          
+                          * {
+                            margin: 0;
+                            padding: 0;
+                            box-sizing: border-box;
+                          }
+                          
+                          body {
+                            font-family: 'Times New Roman', serif;
+                            line-height: 1.6;
+                            color: #333;
+                            padding: 20px;
+                          }
+                          
+                          .header {
+                            text-align: center;
+                            margin-bottom: 30px;
+                            border-bottom: 2px solid #000;
+                            padding-bottom: 20px;
+                          }
+                          
+                          .header h1 {
+                            font-size: 18px;
+                            font-weight: bold;
+                            margin-bottom: 10px;
+                            text-transform: uppercase;
+                          }
+                          
+                          .header h2 {
+                            font-size: 16px;
+                            font-weight: normal;
+                          }
+                          
+                          .stats-section {
+                            margin: 30px 0;
+                          }
+                          
+                          .stats-title {
+                            font-size: 14px;
+                            font-weight: bold;
+                            margin-bottom: 15px;
+                            text-transform: uppercase;
+                          }
+                          
+                          .stats-grid {
+                            display: table;
+                            width: 100%;
+                            border-collapse: collapse;
+                          }
+                          
+                          .stats-row {
+                            display: table-row;
+                          }
+                          
+                          .stat-item {
+                            display: table-cell;
+                            border: 1px solid #333;
+                            padding: 15px;
+                            text-align: center;
+                            width: 50%;
+                          }
+                          
+                          .stat-number {
+                            font-size: 24px;
+                            font-weight: bold;
+                            margin-bottom: 5px;
+                          }
+                          
+                          .stat-label {
+                            font-size: 12px;
+                            text-transform: uppercase;
+                          }
+                          
+                          .summary-section {
+                            margin: 30px 0;
+                          }
+                          
+                          .summary-title {
+                            font-size: 14px;
+                            font-weight: bold;
+                            margin-bottom: 15px;
+                            text-transform: uppercase;
+                          }
+                          
+                          .summary-list {
+                            list-style: none;
+                            padding: 0;
+                          }
+                          
+                          .summary-list li {
+                            margin-bottom: 8px;
+                            padding-left: 20px;
+                            position: relative;
+                          }
+                          
+                          .summary-list li:before {
+                            content: "•";
+                            position: absolute;
+                            left: 0;
+                            font-weight: bold;
+                          }
+                          
+                          .signature-section {
+                            margin-top: 50px;
+                            text-align: right;
+                          }
+                          
+                          .signature-date {
+                            margin-bottom: 10px;
+                          }
+                          
+                          .signature-title {
+                            margin-bottom: 60px;
+                          }
+                          
+                          .signature-name {
+                            font-weight: bold;
+                            border-bottom: 1px solid #333;
+                            display: inline-block;
+                            min-width: 200px;
+                            text-align: center;
+                          }
+                          
+                          @media print {
+                            body {
+                              padding: 0;
+                            }
+                          }
+                        </style>
+                      </head>
+                      <body>
+                        <div class="header">
+                          <h1>Laporan Kegiatan Pengawas Sekolah</h1>
+                          <h2>Periode: ${period}</h2>
+                        </div>
+                        
+                        <div class="stats-section">
+                          <div class="stats-title">Ringkasan Statistik</div>
+                          <div class="stats-grid">
+                            <div class="stats-row">
+                              <div class="stat-item">
+                                <div class="stat-number">${stats.totalTasks}</div>
+                                <div class="stat-label">Total Tugas</div>
+                              </div>
+                              <div class="stat-item">
+                                <div class="stat-number">${stats.completedTasks}</div>
+                                <div class="stat-label">Tugas Selesai</div>
+                              </div>
+                            </div>
+                            <div class="stats-row">
+                              <div class="stat-item">
+                                <div class="stat-number">${stats.supervisions}</div>
+                                <div class="stat-label">Supervisi</div>
+                              </div>
+                              <div class="stat-item">
+                                <div class="stat-number">${stats.additionalTasks}</div>
+                                <div class="stat-label">Tugas Tambahan</div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        
+                        <div class="summary-section">
+                          <div class="summary-title">Ringkasan Kegiatan</div>
+                          <ul class="summary-list">
+                            <li>Total ${stats.totalTasks} tugas pokok tercatat dalam periode ini</li>
+                            <li>${stats.completedTasks} tugas telah diselesaikan dengan baik</li>
+                            <li>Tingkat penyelesaian tugas mencapai ${Math.round((stats.completedTasks / stats.totalTasks) * 100)}%</li>
+                            <li>${stats.supervisions} kegiatan supervisi telah dilaksanakan</li>
+                            <li>Mengikuti ${stats.additionalTasks} kegiatan tambahan dan pengembangan</li>
+                            <li>Semua kegiatan dilaksanakan sesuai dengan rencana kerja yang telah ditetapkan</li>
+                          </ul>
+                        </div>
+                        
+                        <div class="signature-section">
+                          <div class="signature-date">Bandung, ${new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</div>
+                          <div class="signature-title">Pengawas Sekolah,</div>
+                          <div class="signature-name">Administrator</div>
+                        </div>
+                      </body>
+                    </html>
+                `;
+
+                iframeDoc.open();
+                iframeDoc.write(html);
+                iframeDoc.close();
+                
+                // Wait for content to load, then print
+                setTimeout(() => {
+                    try {
+                        iframe.contentWindow?.focus();
+                        iframe.contentWindow?.print();
+                        
+                        showResult('✅ PDF export berhasil! Dialog print akan muncul.', true);
+                        
+                        // Clean up after printing
+                        setTimeout(() => {
+                            document.body.removeChild(iframe);
+                        }, 1000);
+                        
+                        console.log('✅ PDF export initiated successfully');
+                    } catch (printError) {
+                        console.error('❌ Print error:', printError);
+                        document.body.removeChild(iframe);
+                        showResult('⚠️ Gagal membuka dialog print: ' + printError.message, false);
+                    }
+                }, 500);
+                
+            } catch (error) {
+                console.error('❌ PDF export error:', error);
+                showResult('❌ Error: ' + (error instanceof Error ? error.message : 'Terjadi kesalahan saat export PDF'), false);
+            }
+        }
+
+        function testSimplePrint() {
+            console.log('🔄 Starting simple print test...');
+            showResult('⏳ Memulai test simple print...', true);
+            
+            try {
+                window.print();
+                showResult('✅ Simple print berhasil! Dialog print akan muncul.', true);
+            } catch (error) {
+                console.error('❌ Simple print error:', error);
+                showResult('❌ Simple print error: ' + error.message, false);
+            }
+        }
+
+        // Auto-test on page load
+        window.onload = function() {
+            console.log('📄 Test PDF Export page loaded');
+            showResult('📄 Halaman test siap. Klik tombol untuk test export PDF.', true);
+        };
+    </script>
+</body>
+</html>

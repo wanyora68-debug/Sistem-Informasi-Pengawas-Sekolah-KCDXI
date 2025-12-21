@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Browser Data</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .button {
+            background: #007bff;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px;
+            display: block;
+            width: 100%;
+        }
+        
+        .result {
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+        
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .info { background: #d1ecf1; color: #0c5460; }
+    </style>
+</head>
+<body>
+    <h1>🧪 Test Browser Data</h1>
+    
+    <button class="button" onclick="checkData()">🔍 Periksa Data</button>
+    <button class="button" onclick="createData()">🚀 Buat Data</button>
+    <button class="button" onclick="clearData()">🗑️ Hapus Data</button>
+    
+    <div id="result"></div>
+
+    <script>
+        function showResult(message, type = 'info') {
+            document.getElementById('result').innerHTML = `<div class="result ${type}">${message}</div>`;
+        }
+
+        function checkData() {
+            const keys = ['user_data', 'schools_data', 'tasks_data', 'supervisions_data', 'additional_tasks_data'];
+            let report = '<h3>📊 Status Data localStorage:</h3><ul>';
+            let totalItems = 0;
+            
+            keys.forEach(key => {
+                const data = localStorage.getItem(key);
+                if (data) {
+                    try {
+                        const parsed = JSON.parse(data);
+                        const count = Array.isArray(parsed) ? parsed.length : 1;
+                        totalItems += count;
+                        report += `<li><strong>${key}:</strong> ${count} items ✅</li>`;
+                    } catch (e) {
+                        report += `<li><strong>${key}:</strong> Error parsing ❌</li>`;
+                    }
+                } else {
+                    report += `<li><strong>${key}:</strong> Kosong ⚠️</li>`;
+                }
+            });
+            
+            report += `</ul><p><strong>Total items: ${totalItems}</strong></p>`;
+            
+            if (totalItems > 0) {
+                report += '<p>✅ Data tersedia! Dashboard akan menampilkan data.</p>';
+                showResult(report, 'success');
+            } else {
+                report += '<p>⚠️ Data kosong! Klik "Buat Data" untuk membuat data default.</p>';
+                showResult(report, 'error');
+            }
+        }
+
+        function createData() {
+            try {
+                // User data
+                const userData = {
+                    username: "admin",
+                    fullName: "H. Wawan Yogaswara, S.Pd, M.Pd",
+                    role: "pengawas"
+                };
+                localStorage.setItem('user_data', JSON.stringify(userData));
+                
+                // Schools data
+                const schoolsData = [
+                    { id: "school-1", name: "SMKN 4 Garut", type: "SMK", studentCount: 850 },
+                    { id: "school-2", name: "SMKN 14 Garut", type: "SMK", studentCount: 720 },
+                    { id: "school-3", name: "SMA Negeri 1 Garut", type: "SMA", studentCount: 960 }
+                ];
+                localStorage.setItem('schools_data', JSON.stringify(schoolsData));
+                
+                // Tasks data
+                const tasksData = [
+                    { id: "task-1", title: "Supervisi SMKN 14 Garut", completed: true, date: "2025-01-15" },
+                    { id: "task-2", title: "Evaluasi program sekolah penggerak", completed: false, date: "2025-01-18" },
+                    { id: "task-3", title: "Monitoring kurikulum merdeka", completed: false, date: "2025-01-20" }
+                ];
+                localStorage.setItem('tasks_data', JSON.stringify(tasksData));
+                
+                // Supervisions data
+                const supervisionsData = [
+                    { id: "supervision-1", school: "SMKN 4 Garut", type: "Akademik", date: "2025-01-15" },
+                    { id: "supervision-2", school: "SMKN 14 Garut", type: "Manajerial", date: "2025-01-18" },
+                    { id: "supervision-3", school: "SMA Negeri 1 Garut", type: "Akademik", date: "2025-01-20" }
+                ];
+                localStorage.setItem('supervisions_data', JSON.stringify(supervisionsData));
+                
+                // Additional tasks data
+                const additionalTasksData = [
+                    { id: "additional-1", name: "Rapat Koordinasi Pengawas", date: "2025-01-15" },
+                    { id: "additional-2", name: "Workshop Kurikulum Merdeka", date: "2025-01-18" },
+                    { id: "additional-3", name: "Supervisi Akademik Terpadu", date: "2025-01-20" },
+                    { id: "additional-4", name: "Bimbingan Teknis RPS", date: "2025-01-22" },
+                    { id: "additional-5", name: "Evaluasi Sekolah Penggerak", date: "2025-01-25" },
+                    { id: "additional-6", name: "Sosialisasi Asesmen Nasional", date: "2025-01-28" }
+                ];
+                localStorage.setItem('additional_tasks_data', JSON.stringify(additionalTasksData));
+                
+                showResult(`
+                    <h3>✅ Data Berhasil Dibuat!</h3>
+                    <ul>
+                        <li>User: 1 item</li>
+                        <li>Schools: ${schoolsData.length} items</li>
+                        <li>Tasks: ${tasksData.length} items</li>
+                        <li>Supervisions: ${supervisionsData.length} items</li>
+                        <li>Additional Tasks: ${additionalTasksData.length} items</li>
+                    </ul>
+                    <p><strong>Refresh halaman aplikasi untuk melihat data!</strong></p>
+                `, 'success');
+                
+            } catch (error) {
+                showResult(`❌ Error: ${error.message}`, 'error');
+            }
+        }
+
+        function clearData() {
+            const keys = ['user_data', 'schools_data', 'tasks_data', 'supervisions_data', 'additional_tasks_data', 'events_data'];
+            keys.forEach(key => localStorage.removeItem(key));
+            showResult('✅ Semua data berhasil dihapus dari localStorage', 'success');
+        }
+
+        // Auto-check on load
+        window.onload = function() {
+            checkData();
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Setup Aktivitas User Wawan</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .button:hover {
+            background: #0056b3;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .code {
+            background: #f4f4f4;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 10px;
+            font-family: monospace;
+            font-size: 12px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🎯 Setup Aktivitas User Wawan</h1>
+        <p>Menambahkan data aktivitas untuk user H. Wawan Yogaswara</p>
+    </div>
+
+    <div class="container">
+        <h2>📋 Data Aktivitas yang Akan Ditambahkan</h2>
+        
+        <h3>1. Tugas Pokok</h3>
+        <ul>
+            <li>Supervisi Akademik SDN 1 Garut</li>
+            <li>Supervisi Manajerial SMPN 2 Garut</li>
+            <li>Monitoring Kurikulum Merdeka</li>
+        </ul>
+
+        <h3>2. Supervisi</h3>
+        <ul>
+            <li>Supervisi di SDN Sukagalih</li>
+            <li>Supervisi di SMPN Tarogong</li>
+            <li>Supervisi di SMA Garut Kota</li>
+        </ul>
+
+        <h3>3. Kegiatan</h3>
+        <ul>
+            <li>Rapat Koordinasi Pengawas</li>
+            <li>Workshop Kurikulum Merdeka</li>
+            <li>Sosialisasi Asesmen Nasional</li>
+        </ul>
+
+        <h3>4. Tugas Tambahan</h3>
+        <ul>
+            <li>Pelatihan Guru Penggerak</li>
+            <li>Bimbingan Teknis Kepala Sekolah</li>
+            <li>Evaluasi Kinerja Sekolah</li>
+        </ul>
+    </div>
+
+    <div class="container">
+        <h2>🚀 Setup Aktivitas</h2>
+        <button class="button" onclick="setupWawanActivities()">
+            📊 Setup Semua Aktivitas Wawan
+        </button>
+        <button class="button" onclick="clearAllActivities()">
+            🗑️ Clear Semua Aktivitas
+        </button>
+        <button class="button" onclick="checkActivities()">
+            🔍 Cek Aktivitas Tersimpan
+        </button>
+        
+        <div id="result"></div>
+    </div>
+
+    <div class="container">
+        <h2>📝 Data yang Disimpan</h2>
+        <div id="dataDisplay"></div>
+    </div>
+
+    <script>
+        function setupWawanActivities() {
+            const result = document.getElementById('result');
+            result.innerHTML = '<div class="info">⏳ Menyiapkan data aktivitas...</div>';
+
+            try {
+                // Data Tugas Pokok
+                const tasks = [
+                    {
+                        id: 'task_wawan_1',
+                        title: 'Supervisi Akademik SDN 1 Garut',
+                        description: 'Melakukan supervisi akademik untuk meningkatkan kualitas pembelajaran',
+                        category: 'Supervisi Akademik',
+                        completed: true,
+                        date: '2024-12-15',
+                        userId: '2',
+                        username: 'wawan'
+                    },
+                    {
+                        id: 'task_wawan_2',
+                        title: 'Supervisi Manajerial SMPN 2 Garut',
+                        description: 'Supervisi manajerial untuk perbaikan tata kelola sekolah',
+                        category: 'Supervisi Manajerial',
+                        completed: false,
+                        date: '2024-12-20',
+                        userId: '2',
+                        username: 'wawan'
+                    },
+                    {
+                        id: 'task_wawan_3',
+                        title: 'Monitoring Kurikulum Merdeka',
+                        description: 'Monitoring implementasi Kurikulum Merdeka di sekolah binaan',
+                        category: 'Monitoring',
+                        completed: true,
+                        date: '2024-12-10',
+                        userId: '2',
+                        username: 'wawan'
+                    }
+                ];
+
+                // Data Supervisi
+                const supervisions = [
+                    {
+                        id: 'supervision_wawan_1',
+                        schoolName: 'SDN Sukagalih',
+                        school: 'SDN Sukagalih',
+                        type: 'Supervisi Akademik',
+                        findings: 'Pembelajaran sudah sesuai dengan kurikulum yang berlaku',
+                        recommendations: 'Tingkatkan penggunaan media pembelajaran digital',
+                        notes: 'Guru sudah menerapkan pembelajaran aktif',
+                        date: '2024-12-12',
+                        userId: '2',
+                        username: 'wawan'
+                    },
+                    {
+                        id: 'supervision_wawan_2',
+                        schoolName: 'SMPN Tarogong',
+                        school: 'SMPN Tarogong',
+                        type: 'Supervisi Manajerial',
+                        findings: 'Administrasi sekolah perlu diperbaiki',
+                        recommendations: 'Perbaiki sistem administrasi dan dokumentasi',
+                        notes: 'Kepala sekolah kooperatif dalam perbaikan',
+                        date: '2024-12-14',
+                        userId: '2',
+                        username: 'wawan'
+                    },
+                    {
+                        id: 'supervision_wawan_3',
+                        schoolName: 'SMA Garut Kota',
+                        school: 'SMA Garut Kota',
+                        type: 'Supervisi Akademik',
+                        findings: 'Implementasi Kurikulum Merdeka berjalan baik',
+                        recommendations: 'Lanjutkan program pengembangan kompetensi guru',
+                        notes: 'Sekolah sudah siap untuk akreditasi',
+                        date: '2024-12-16',
+                        userId: '2',
+                        username: 'wawan'
+                    }
+                ];
+
+                // Data Kegiatan/Events
+                const events = [
+                    {
+                        id: 'event_wawan_1',
+                        title: 'Rapat Koordinasi Pengawas',
+                        name: 'Rapat Koordinasi Pengawas',
+                        description: 'Rapat koordinasi bulanan pengawas sekolah wilayah XI',
+                        date: '2024-12-18',
+                        time: '09:00',
+                        userId: '2',
+                        username: 'wawan'
+                    },
+                    {
+                        id: 'event_wawan_2',
+                        title: 'Workshop Kurikulum Merdeka',
+                        name: 'Workshop Kurikulum Merdeka',
+                        description: 'Workshop implementasi Kurikulum Merdeka untuk pengawas',
+                        date: '2024-12-22',
+                        time: '08:00',
+                        userId: '2',
+                        username: 'wawan'
+                    },
+                    {
+                        id: 'event_wawan_3',
+                        title: 'Sosialisasi Asesmen Nasional',
+                        name: 'Sosialisasi Asesmen Nasional',
+                        description: 'Sosialisasi pelaksanaan Asesmen Nasional tahun 2025',
+                        date: '2024-12-25',
+                        time: '13:00',
+                        userId: '2',
+                        username: 'wawan'
+                    }
+                ];
+
+                // Data Tugas Tambahan
+                const additionalTasks = [
+                    {
+                        id: 'additional_wawan_1',
+                        name: 'Pelatihan Guru Penggerak',
+                        title: 'Pelatihan Guru Penggerak',
+                        description: 'Mendampingi calon guru penggerak dalam program pelatihan',
+                        organizer: 'Kemendikbudristek',
+                        location: 'Garut',
+                        date: '2024-12-19',
+                        userId: '2',
+                        username: 'wawan'
+                    },
+                    {
+                        id: 'additional_wawan_2',
+                        name: 'Bimbingan Teknis Kepala Sekolah',
+                        title: 'Bimbingan Teknis Kepala Sekolah',
+                        description: 'Memberikan bimbingan teknis kepada kepala sekolah baru',
+                        organizer: 'Disdik Jabar',
+                        location: 'Bandung',
+                        date: '2024-12-21',
+                        userId: '2',
+                        username: 'wawan'
+                    },
+                    {
+                        id: 'additional_wawan_3',
+                        name: 'Evaluasi Kinerja Sekolah',
+                        title: 'Evaluasi Kinerja Sekolah',
+                        description: 'Melakukan evaluasi kinerja sekolah binaan semester ganjil',
+                        organizer: 'KCD Wilayah XI',
+                        location: 'Garut',
+                        date: '2024-12-23',
+                        userId: '2',
+                        username: 'wawan'
+                    }
+                ];
+
+                // Simpan ke localStorage
+                localStorage.setItem('tasks', JSON.stringify(tasks));
+                localStorage.setItem('supervisions', JSON.stringify(supervisions));
+                localStorage.setItem('calendar_events', JSON.stringify(events));
+                localStorage.setItem('additional_tasks', JSON.stringify(additionalTasks));
+
+                // Juga simpan dengan key user-specific
+                localStorage.setItem('tasks_2', JSON.stringify(tasks));
+                localStorage.setItem('tasks_wawan', JSON.stringify(tasks));
+                localStorage.setItem('supervisions_2', JSON.stringify(supervisions));
+                localStorage.setItem('supervisions_wawan', JSON.stringify(supervisions));
+                localStorage.setItem('events_2', JSON.stringify(events));
+                localStorage.setItem('events_wawan', JSON.stringify(events));
+                localStorage.setItem('additional_tasks_2', JSON.stringify(additionalTasks));
+                localStorage.setItem('additional_tasks_wawan', JSON.stringify(additionalTasks));
+
+                result.innerHTML = `
+                    <div class="success">
+                        ✅ Berhasil setup aktivitas untuk user Wawan!<br>
+                        📊 ${tasks.length} Tugas Pokok<br>
+                        🏫 ${supervisions.length} Supervisi<br>
+                        📅 ${events.length} Kegiatan<br>
+                        ➕ ${additionalTasks.length} Tugas Tambahan
+                    </div>
+                `;
+
+                checkActivities();
+
+            } catch (error) {
+                result.innerHTML = `<div class="error">❌ Error: ${error.message}</div>`;
+            }
+        }
+
+        function clearAllActivities() {
+            const keys = [
+                'tasks', 'supervisions', 'calendar_events', 'additional_tasks',
+                'tasks_2', 'tasks_wawan', 'supervisions_2', 'supervisions_wawan',
+                'events_2', 'events_wawan', 'additional_tasks_2', 'additional_tasks_wawan'
+            ];
+
+            keys.forEach(key => localStorage.removeItem(key));
+
+            document.getElementById('result').innerHTML = 
+                '<div class="info">🗑️ Semua aktivitas telah dihapus dari localStorage</div>';
+            
+            document.getElementById('dataDisplay').innerHTML = '';
+        }
+
+        function checkActivities() {
+            const dataDisplay = document.getElementById('dataDisplay');
+            
+            const tasks = JSON.parse(localStorage.getItem('tasks') || '[]');
+            const supervisions = JSON.parse(localStorage.getItem('supervisions') || '[]');
+            const events = JSON.parse(localStorage.getItem('calendar_events') || '[]');
+            const additionalTasks = JSON.parse(localStorage.getItem('additional_tasks') || '[]');
+
+            const wawanTasks = tasks.filter(t => t.username === 'wawan' || t.userId === '2');
+            const wawanSupervisions = supervisions.filter(s => s.username === 'wawan' || s.userId === '2');
+            const wawanEvents = events.filter(e => e.username === 'wawan' || e.userId === '2');
+            const wawanAdditionalTasks = additionalTasks.filter(a => a.username === 'wawan' || a.userId === '2');
+
+            dataDisplay.innerHTML = `
+                <div class="code">
+                    <strong>📊 Aktivitas User Wawan:</strong><br>
+                    Tugas Pokok: ${wawanTasks.length} item<br>
+                    Supervisi: ${wawanSupervisions.length} item<br>
+                    Kegiatan: ${wawanEvents.length} item<br>
+                    Tugas Tambahan: ${wawanAdditionalTasks.length} item<br><br>
+                    
+                    <strong>🔍 Detail Data:</strong><br>
+                    ${wawanTasks.length > 0 ? `Tasks: ${wawanTasks.map(t => t.title).join(', ')}<br>` : ''}
+                    ${wawanSupervisions.length > 0 ? `Supervisions: ${wawanSupervisions.map(s => s.schoolName).join(', ')}<br>` : ''}
+                    ${wawanEvents.length > 0 ? `Events: ${wawanEvents.map(e => e.title).join(', ')}<br>` : ''}
+                    ${wawanAdditionalTasks.length > 0 ? `Additional: ${wawanAdditionalTasks.map(a => a.name).join(', ')}<br>` : ''}
+                </div>
+            `;
+        }
+
+        // Auto-check on page load
+        window.addEventListener('load', checkActivities);
+    </script>
+</body>
+</html>

@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔄 Sync Admin Antar Browser</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            color: #2d3748;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+        .alert {
+            background: #fff3cd;
+            border: 2px solid #ffeaa7;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            color: #856404;
+        }
+        .success {
+            background: #d4edda;
+            border-color: #c3e6cb;
+            color: #155724;
+        }
+        .info {
+            background: #d1ecf1;
+            border-color: #bee5eb;
+            color: #0c5460;
+        }
+        .error {
+            background: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+        }
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 18px;
+            margin: 10px 5px;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        .btn-success {
+            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+        }
+        .btn-danger {
+            background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
+        }
+        .btn-warning {
+            background: linear-gradient(135deg, #ed8936 0%, #dd6b20 100%);
+        }
+        .browser-card {
+            background: #f7fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .browser-info {
+            display: flex;
+            align-items: center;
+        }
+        .browser-icon {
+            width: 40px;
+            height: 40px;
+            margin-right: 15px;
+            border-radius: 8px;
+        }
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        .status-active { background: #48bb78; }
+        .status-inactive { background: #f56565; }
+        .code-block {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            margin: 10px 0;
+            overflow-x: auto;
+            font-size: 14px;
+        }
+        .step {
+            background: #f7fafc;
+            border-left: 4px solid #4299e1;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔄 Sync Admin Antar Browser</h1>
+            <p>Aktifkan admin di semua browser (Chrome, Edge, Firefox, dll)</p>
+        </div>
+
+        <div class="alert info">
+            <h3>🔍 Masalah Teridentifikasi:</h3>
+            <p><strong>Chrome:</strong> Admin aktif ✅</p>
+            <p><strong>Edge:</strong> Admin tidak aktif ❌</p>
+            <p><strong>Penyebab:</strong> Setiap browser memiliki localStorage terpisah</p>
+        </div>
+
+        <div id="browser-status">
+            <h3>📊 Status Browser Saat Ini:</h3>
+            <div class="browser-card">
+                <div class="browser-info">
+                    <div class="browser-icon" style="background: #4285f4;">🌐</div>
+                    <div>
+                        <h4>Browser Saat Ini</h4>
+                        <p id="current-browser">Mendeteksi...</p>
+                    </div>
+                </div>
+                <div id="current-status">
+                    <span class="status-indicator status-inactive"></span>
+                    <span>Memeriksa...</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="step">
+            <h3>🚀 Solusi Cepat untuk Edge:</h3>
+            <button class="btn btn-success" onclick="activateAdminInCurrentBrowser()">
+                ⚡ AKTIFKAN ADMIN DI BROWSER INI
+            </button>
+            <button class="btn btn-warning" onclick="copyDataFromChrome()">
+                📋 COPY DATA DARI CHROME
+            </button>
+        </div>
+
+        <div class="step">
+            <h3>📋 Cara Manual untuk Edge:</h3>
+            <ol>
+                <li><strong>Buka Edge</strong> dan pergi ke: http://localhost:5000</li>
+                <li><strong>Tekan F12</strong> untuk buka Developer Console</li>
+                <li><strong>Paste script ini</strong> di Console:
+                    <div class="code-block" id="manual-script">
+// Aktifkan admin di Edge
+const adminUser = {
+  id: 'admin-1',
+  username: 'admin',
+  fullName: 'Administrator',
+  role: 'admin',
+  email: 'admin@disdik.jabar.go.id',
+  department: 'Cabang Dinas Pendidikan Wilayah XI',
+  status: 'active',
+  lastLogin: new Date().toISOString(),
+  createdAt: new Date().toISOString(),
+  updatedAt: new Date().toISOString()
+};
+
+// Setup users data
+const users = [
+  adminUser,
+  {
+    id: 'wawan-123',
+    username: 'wawan',
+    fullName: 'H. Wawan Yogaswara, S.Pd, M.Pd',
+    role: 'pengawas',
+    nip: '196805301994121001',
+    rank: 'Pembina Utama Muda, IV/c',
+    phone: '087733438282',
+    email: 'wawan.yogaswara@disdik.jabar.go.id',
+    department: 'Cabang Dinas Pendidikan Wilayah XI',
+    status: 'active',
+    lastLogin: new Date().toISOString(),
+    createdAt: '2024-01-01T00:00:00.000Z',
+    updatedAt: new Date().toISOString()
+  }
+];
+
+// Simpan semua data
+localStorage.setItem('app_users', JSON.stringify(users));
+localStorage.setItem('users', JSON.stringify(users));
+localStorage.setItem('user_data', JSON.stringify(adminUser));
+localStorage.setItem('auth_token', 'admin-token-' + Date.now());
+
+// Refresh halaman
+location.reload();
+                    </div>
+                </li>
+                <li><strong>Tekan Enter</strong> dan halaman akan refresh</li>
+                <li><strong>Login sebagai admin</strong> jika diperlukan</li>
+                <li><strong>Masuk ke halaman Users</strong> - tombol admin seharusnya aktif</li>
+            </ol>
+        </div>
+
+        <div class="step">
+            <h3>🔧 Alternatif Lain:</h3>
+            <button class="btn" onclick="openInAllBrowsers()">
+                🌐 BUKA DI SEMUA BROWSER
+            </button>
+            <button class="btn btn-danger" onclick="resetAndSetup()">
+                🔄 RESET & SETUP ULANG
+            </button>
+        </div>
+
+        <div id="result-container"></div>
+
+        <div class="step">
+            <h3>💡 Tips Mencegah Masalah Ini:</h3>
+            <ul>
+                <li><strong>Gunakan satu browser utama</strong> untuk development</li>
+                <li><strong>Bookmark helper ini</strong> untuk setup cepat di browser lain</li>
+                <li><strong>Simpan script manual</strong> untuk emergency</li>
+                <li><strong>Pertimbangkan database production</strong> untuk data persistent</li>
+            </ul>
+        </div>
+
+        <div class="alert success">
+            <h3>✅ Setelah Admin Aktif di Edge:</h3>
+            <p>Semua tombol admin akan berfungsi:</p>
+            <ul>
+                <li>👁️ <strong>View</strong> - Lihat detail user</li>
+                <li>✏️ <strong>Edit</strong> - Edit informasi user</li>
+                <li>📊 <strong>Activities</strong> - Kelola aktivitas user</li>
+                <li>🔑 <strong>Reset Password</strong> - Reset password user</li>
+                <li>🗑️ <strong>Delete</strong> - Hapus user (kecuali admin)</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // Detect browser
+        function detectBrowser() {
+            const userAgent = navigator.userAgent;
+            let browserName = 'Unknown Browser';
+            
+            if (userAgent.includes('Chrome') && !userAgent.includes('Edg')) {
+                browserName = 'Google Chrome';
+            } else if (userAgent.includes('Edg')) {
+                browserName = 'Microsoft Edge';
+            } else if (userAgent.includes('Firefox')) {
+                browserName = 'Mozilla Firefox';
+            } else if (userAgent.includes('Safari') && !userAgent.includes('Chrome')) {
+                browserName = 'Safari';
+            } else if (userAgent.includes('Opera')) {
+                browserName = 'Opera';
+            }
+            
+            return browserName;
+        }
+
+        // Check current status
+        function checkCurrentStatus() {
+            const browserName = detectBrowser();
+            document.getElementById('current-browser').textContent = browserName;
+            
+            const userData = localStorage.getItem('user_data');
+            const statusElement = document.getElementById('current-status');
+            
+            if (userData) {
+                try {
+                    const user = JSON.parse(userData);
+                    if (user.role === 'admin') {
+                        statusElement.innerHTML = '<span class="status-indicator status-active"></span><span>Admin Aktif ✅</span>';
+                    } else {
+                        statusElement.innerHTML = '<span class="status-indicator status-inactive"></span><span>Login sebagai: ' + user.role + '</span>';
+                    }
+                } catch (e) {
+                    statusElement.innerHTML = '<span class="status-indicator status-inactive"></span><span>Data Error</span>';
+                }
+            } else {
+                statusElement.innerHTML = '<span class="status-indicator status-inactive"></span><span>Belum Login</span>';
+            }
+        }
+
+        // Activate admin in current browser
+        function activateAdminInCurrentBrowser() {
+            const resultContainer = document.getElementById('result-container');
+            
+            try {
+                // Create admin user
+                const adminUser = {
+                    id: 'admin-1',
+                    username: 'admin',
+                    fullName: 'Administrator',
+                    role: 'admin',
+                    email: 'admin@disdik.jabar.go.id',
+                    department: 'Cabang Dinas Pendidikan Wilayah XI',
+                    status: 'active',
+                    lastLogin: new Date().toISOString(),
+                    createdAt: new Date().toISOString(),
+                    updatedAt: new Date().toISOString()
+                };
+
+                // Create users array with admin and wawan
+                const users = [
+                    adminUser,
+                    {
+                        id: 'wawan-123',
+                        username: 'wawan',
+                        fullName: 'H. Wawan Yogaswara, S.Pd, M.Pd',
+                        role: 'pengawas',
+                        nip: '196805301994121001',
+                        rank: 'Pembina Utama Muda, IV/c',
+                        phone: '087733438282',
+                        email: 'wawan.yogaswara@disdik.jabar.go.id',
+                        department: 'Cabang Dinas Pendidikan Wilayah XI',
+                        status: 'active',
+                        lastLogin: new Date().toISOString(),
+                        createdAt: '2024-01-01T00:00:00.000Z',
+                        updatedAt: new Date().toISOString()
+                    }
+                ];
+
+                // Save all data
+                localStorage.setItem('app_users', JSON.stringify(users));
+                localStorage.setItem('users', JSON.stringify(users));
+                localStorage.setItem('user_data', JSON.stringify(adminUser));
+                localStorage.setItem('auth_token', 'admin-token-' + Date.now());
+
+                const browserName = detectBrowser();
+                resultContainer.innerHTML = `
+                    <div class="alert success">
+                        <h3>✅ Admin Berhasil Diaktifkan di ${browserName}!</h3>
+                        <p>✅ Data admin tersimpan</p>
+                        <p>✅ Data users tersimpan</p>
+                        <p>✅ Auth token dibuat</p>
+                        <p>✅ Login sebagai admin berhasil</p>
+                        <button class="btn btn-success" onclick="location.reload()">🔄 REFRESH HALAMAN</button>
+                        <button class="btn" onclick="window.open('http://localhost:5000/users', '_blank')">👥 TEST HALAMAN USERS</button>
+                    </div>
+                `;
+
+                // Update status
+                setTimeout(() => {
+                    checkCurrentStatus();
+                }, 1000);
+
+            } catch (error) {
+                resultContainer.innerHTML = `
+                    <div class="alert error">
+                        <h3>❌ Error Mengaktifkan Admin:</h3>
+                        <p>${error.message}</p>
+                        <p>Silakan gunakan cara manual di atas.</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Copy data from Chrome (simulation)
+        function copyDataFromChrome() {
+            const resultContainer = document.getElementById('result-container');
+            
+            resultContainer.innerHTML = `
+                <div class="alert info">
+                    <h3>📋 Cara Copy Data dari Chrome:</h3>
+                    <ol>
+                        <li><strong>Buka Chrome</strong> dan pergi ke: http://localhost:5000</li>
+                        <li><strong>Tekan F12</strong> → Console</li>
+                        <li><strong>Jalankan:</strong> <code>console.log(JSON.stringify(localStorage))</code></li>
+                        <li><strong>Copy output</strong> yang muncul</li>
+                        <li><strong>Kembali ke Edge</strong> dan jalankan script manual di atas</li>
+                    </ol>
+                    <p><strong>Atau lebih mudah:</strong> Gunakan tombol "AKTIFKAN ADMIN DI BROWSER INI" di atas.</p>
+                </div>
+            `;
+        }
+
+        // Open in all browsers
+        function openInAllBrowsers() {
+            const urls = [
+                'http://localhost:5000',
+                'http://localhost:5000/users'
+            ];
+            
+            urls.forEach(url => {
+                window.open(url, '_blank');
+            });
+
+            const resultContainer = document.getElementById('result-container');
+            resultContainer.innerHTML = `
+                <div class="alert info">
+                    <h3>🌐 Membuka di Browser Lain:</h3>
+                    <p>Halaman telah dibuka di tab baru. Untuk setiap browser:</p>
+                    <ol>
+                        <li>Gunakan script manual di atas</li>
+                        <li>Atau buka file ini di browser tersebut</li>
+                        <li>Klik "AKTIFKAN ADMIN DI BROWSER INI"</li>
+                    </ol>
+                </div>
+            `;
+        }
+
+        // Reset and setup
+        function resetAndSetup() {
+            if (confirm('Hapus semua data dan setup ulang?')) {
+                localStorage.clear();
+                sessionStorage.clear();
+                
+                const resultContainer = document.getElementById('result-container');
+                resultContainer.innerHTML = `
+                    <div class="alert success">
+                        <h3>🔄 Data Dihapus!</h3>
+                        <p>Sekarang klik "AKTIFKAN ADMIN DI BROWSER INI" untuk setup ulang.</p>
+                    </div>
+                `;
+                
+                checkCurrentStatus();
+            }
+        }
+
+        // Initialize
+        window.onload = function() {
+            checkCurrentStatus();
+        };
+    </script>
+</body>
+</html>

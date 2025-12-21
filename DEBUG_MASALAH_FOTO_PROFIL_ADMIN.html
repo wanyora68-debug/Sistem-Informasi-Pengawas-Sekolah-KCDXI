@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Masalah Foto Profil Admin</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .step {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background: #f9f9f9;
+        }
+        .success { border-color: #4CAF50; background: #f0fff0; }
+        .error { border-color: #f44336; background: #fff0f0; }
+        .warning { border-color: #ff9800; background: #fff8e1; }
+        .info { border-color: #2196F3; background: #f0f8ff; }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background: #0056b3; }
+        .danger { background: #dc3545; }
+        .danger:hover { background: #c82333; }
+        pre {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .log {
+            max-height: 300px;
+            overflow-y: auto;
+            background: #000;
+            color: #0f0;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Debug Masalah Foto Profil Admin</h1>
+        <p>Investigasi masalah foto profil admin yang menampilkan foto user Wawan</p>
+
+        <div class="step warning">
+            <h3>⚠️ Masalah yang Ditemukan</h3>
+            <p>Admin menampilkan foto profil user Wawan, bukan foto admin. Ini bisa jadi penyebab masalah akses data aktivitas.</p>
+        </div>
+
+        <div class="step">
+            <h3>🔧 Debug Actions</h3>
+            <button onclick="checkCurrentUser()">👤 Check Current User</button>
+            <button onclick="checkAuthToken()">🔑 Check Auth Token</button>
+            <button onclick="checkUserSession()">📋 Check User Session</button>
+            <button onclick="checkPhotoSources()">📸 Check Photo Sources</button>
+            <button onclick="fixUserSession()">🔧 Fix User Session</button>
+        </div>
+
+        <div class="step">
+            <h3>📊 Analysis Results</h3>
+            <div id="analysisResults"></div>
+        </div>
+
+        <div class="step">
+            <h3>📋 Debug Log</h3>
+            <div id="logOutput" class="log"></div>
+            <button onclick="clearLog()">🗑️ Clear Log</button>
+        </div>
+    </div>
+
+    <script>
+        let logElement = document.getElementById('logOutput');
+        
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const color = type === 'error' ? '#ff6b6b' : type === 'success' ? '#51cf66' : type === 'warning' ? '#ffd43b' : '#74c0fc';
+            logElement.innerHTML += `<div style="color: ${color}">[${timestamp}] ${message}</div>`;
+            logElement.scrollTop = logElement.scrollHeight;
+            console.log(message);
+        }
+
+        function clearLog() {
+            logElement.innerHTML = '';
+        }
+
+        function checkCurrentUser() {
+            log('👤 Checking current user...', 'info');
+            
+            try {
+                // Check localStorage for user data
+                const token = localStorage.getItem('token');
+                const userProfile = localStorage.getItem('userProfile');
+                const currentUser = localStorage.getItem('currentUser');
+                
+                log(`🔑 Token exists: ${!!token}`, token ? 'success' : 'error');
+                log(`👤 User profile exists: ${!!userProfile}`, userProfile ? 'success' : 'error');
+                log(`📋 Current user exists: ${!!currentUser}`, currentUser ? 'success' : 'error');
+                
+                if (token) {
+                    try {
+                        // Decode JWT token to see user info
+                        const tokenParts = token.split('.');
+                        if (tokenParts.length === 3) {
+                            const payload = JSON.parse(atob(tokenParts[1]));
+                            log(`🎯 Token payload: ${JSON.stringify(payload, null, 2)}`, 'info');
+                            
+                            document.getElementById('analysisResults').innerHTML += `
+                                <h4>🔑 Token Analysis:</h4>
+                                <pre>${JSON.stringify(payload, null, 2)}</pre>
+                            `;
+                        }
+                    } catch (e) {
+                        log(`❌ Failed to decode token: ${e.message}`, 'error');
+                    }
+                }
+                
+                if (userProfile) {
+                    try {
+                        const profile = JSON.parse(userProfile);
+                        log(`👤 User profile: ${JSON.stringify(profile, null, 2)}`, 'info');
+                        
+                        document.getElementById('analysisResults').innerHTML += `
+                            <h4>👤 User Profile:</h4>
+                            <pre>${JSON.stringify(profile, null, 2)}</pre>
+                        `;
+                    } catch (e) {
+                        log(`❌ Failed to parse user profile: ${e.message}`, 'error');
+                    }
+                }
+                
+                if (currentUser) {
+                    try {
+                        const user = JSON.parse(currentUser);
+                        log(`📋 Current user: ${JSON.stringify(user, null, 2)}`, 'info');
+                        
+                        document.getElementById('analysisResults').innerHTML += `
+                            <h4>📋 Current User:</h4>
+                            <pre>${JSON.stringify(user, null, 2)}</pre>
+                        `;
+                    } catch (e) {
+                        log(`❌ Failed to parse current user: ${e.message}`, 'error');
+                    }
+                }
+                
+            } catch (error) {
+                log(`❌ Error checking current user: ${error.message}`, 'error');
+            }
+        }
+
+        function checkAuthToken() {
+            log('🔑 Checking auth token validity...', 'info');
+            
+            try {
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    log('❌ No auth token found', 'error');
+                    return;
+                }
+                
+                // Test token with API call
+                fetch('/api/auth/me', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => {
+                    log(`📡 Auth API response: ${response.status}`, response.ok ? 'success' : 'error');
+                    return response.json();
+                })
+                .then(data => {
+                    log(`✅ Auth API data: ${JSON.stringify(data, null, 2)}`, 'success');
+                    
+                    document.getElementById('analysisResults').innerHTML += `
+                        <h4>🔑 Auth API Response:</h4>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                })
+                .catch(error => {
+                    log(`❌ Auth API error: ${error.message}`, 'error');
+                });
+                
+            } catch (error) {
+                log(`❌ Error checking auth token: ${error.message}`, 'error');
+            }
+        }
+
+        function checkUserSession() {
+            log('📋 Checking user session data...', 'info');
+            
+            try {
+                // Check all possible session storage keys
+                const sessionKeys = [
+                    'user',
+                    'currentUser',
+                    'userProfile',
+                    'loggedInUser',
+                    'authUser',
+                    'userData'
+                ];
+                
+                const sessionData = {};
+                
+                sessionKeys.forEach(key => {
+                    const localValue = localStorage.getItem(key);
+                    const sessionValue = sessionStorage.getItem(key);
+                    
+                    if (localValue) {
+                        try {
+                            sessionData[`localStorage.${key}`] = JSON.parse(localValue);
+                        } catch {
+                            sessionData[`localStorage.${key}`] = localValue;
+                        }
+                    }
+                    
+                    if (sessionValue) {
+                        try {
+                            sessionData[`sessionStorage.${key}`] = JSON.parse(sessionValue);
+                        } catch {
+                            sessionData[`sessionStorage.${key}`] = sessionValue;
+                        }
+                    }
+                });
+                
+                log(`📊 Session data found: ${Object.keys(sessionData).length} entries`, 'info');
+                
+                document.getElementById('analysisResults').innerHTML += `
+                    <h4>📋 Session Data Analysis:</h4>
+                    <pre>${JSON.stringify(sessionData, null, 2)}</pre>
+                `;
+                
+                // Check if there's user ID mismatch
+                const userIds = [];
+                Object.entries(sessionData).forEach(([key, value]) => {
+                    if (value && typeof value === 'object') {
+                        if (value.id) userIds.push({ source: key, id: value.id });
+                        if (value.userId) userIds.push({ source: key, userId: value.userId });
+                        if (value.username) userIds.push({ source: key, username: value.username });
+                    }
+                });
+                
+                if (userIds.length > 0) {
+                    log(`🎯 User IDs found: ${JSON.stringify(userIds, null, 2)}`, 'info');
+                    
+                    // Check for conflicts
+                    const uniqueIds = [...new Set(userIds.map(u => u.id || u.userId || u.username))];
+                    if (uniqueIds.length > 1) {
+                        log(`⚠️ CONFLICT DETECTED: Multiple user IDs in session: ${uniqueIds.join(', ')}`, 'warning');
+                    } else {
+                        log(`✅ Consistent user ID: ${uniqueIds[0]}`, 'success');
+                    }
+                }
+                
+            } catch (error) {
+                log(`❌ Error checking user session: ${error.message}`, 'error');
+            }
+        }
+
+        function checkPhotoSources() {
+            log('📸 Checking photo sources...', 'info');
+            
+            try {
+                // Check localStorage for photo data
+                const localDb = JSON.parse(localStorage.getItem('local-database') || '{}');
+                const users = localDb.users || [];
+                
+                log(`👥 Found ${users.length} users in database`, 'info');
+                
+                const photoAnalysis = users.map(user => ({
+                    id: user.id,
+                    username: user.username,
+                    name: user.name,
+                    hasPhoto: !!user.photo,
+                    photoSize: user.photo ? user.photo.length : 0,
+                    photoPreview: user.photo ? user.photo.substring(0, 50) + '...' : 'No photo'
+                }));
+                
+                log(`📸 Photo analysis: ${JSON.stringify(photoAnalysis, null, 2)}`, 'info');
+                
+                document.getElementById('analysisResults').innerHTML += `
+                    <h4>📸 Photo Sources Analysis:</h4>
+                    <pre>${JSON.stringify(photoAnalysis, null, 2)}</pre>
+                `;
+                
+                // Check current user's photo
+                const currentUser = localStorage.getItem('currentUser');
+                if (currentUser) {
+                    try {
+                        const user = JSON.parse(currentUser);
+                        const userInDb = users.find(u => u.id === user.id || u.username === user.username);
+                        
+                        if (userInDb) {
+                            log(`🎯 Current user photo match: ${!!userInDb.photo}`, userInDb.photo ? 'success' : 'warning');
+                        } else {
+                            log(`❌ Current user not found in database`, 'error');
+                        }
+                    } catch (e) {
+                        log(`❌ Error parsing current user: ${e.message}`, 'error');
+                    }
+                }
+                
+            } catch (error) {
+                log(`❌ Error checking photo sources: ${error.message}`, 'error');
+            }
+        }
+
+        function fixUserSession() {
+            log('🔧 Attempting to fix user session...', 'info');
+            
+            try {
+                // Clear potentially conflicting session data
+                const keysToCheck = [
+                    'user',
+                    'currentUser', 
+                    'userProfile',
+                    'loggedInUser',
+                    'authUser',
+                    'userData'
+                ];
+                
+                keysToCheck.forEach(key => {
+                    if (localStorage.getItem(key)) {
+                        log(`🗑️ Clearing localStorage.${key}`, 'warning');
+                        localStorage.removeItem(key);
+                    }
+                    if (sessionStorage.getItem(key)) {
+                        log(`🗑️ Clearing sessionStorage.${key}`, 'warning');
+                        sessionStorage.removeItem(key);
+                    }
+                });
+                
+                // Force re-authentication
+                const token = localStorage.getItem('token');
+                if (token) {
+                    log('🔄 Re-authenticating with existing token...', 'info');
+                    
+                    fetch('/api/auth/me', {
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(userData => {
+                        log(`✅ Re-authentication successful: ${JSON.stringify(userData, null, 2)}`, 'success');
+                        
+                        // Store clean user data
+                        localStorage.setItem('currentUser', JSON.stringify(userData));
+                        
+                        log('🎯 Clean user session established', 'success');
+                        log('🔄 Please refresh the page to see changes', 'info');
+                    })
+                    .catch(error => {
+                        log(`❌ Re-authentication failed: ${error.message}`, 'error');
+                        log('🔄 You may need to login again', 'warning');
+                    });
+                } else {
+                    log('❌ No token found - please login again', 'error');
+                }
+                
+            } catch (error) {
+                log(`❌ Error fixing user session: ${error.message}`, 'error');
+            }
+        }
+
+        // Initialize
+        log('🚀 Debug tool loaded', 'success');
+        log('💡 Click "Check Current User" to start diagnosis', 'info');
+    </script>
+</body>
+</html>

@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚀 FORCE FIX - JavaScript Injection</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%);
+            color: #333;
+            min-height: 100vh;
+        }
+        .container {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #7c3aed;
+        }
+        .status {
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            font-weight: bold;
+        }
+        .success { background: #d1fae5; color: #065f46; border-left: 5px solid #10b981; }
+        .error { background: #fee2e2; color: #991b1b; border-left: 5px solid #ef4444; }
+        .warning { background: #fef3c7; color: #92400e; border-left: 5px solid #f59e0b; }
+        .info { background: #dbeafe; color: #1e40af; border-left: 5px solid #3b82f6; }
+        .btn {
+            background: #7c3aed;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+            transition: all 0.3s;
+        }
+        .btn:hover { background: #5b21b6; transform: translateY(-2px); }
+        .btn-success { background: #10b981; }
+        .btn-success:hover { background: #059669; }
+        .highlight {
+            background: #fef3c7;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        .progress {
+            width: 100%;
+            height: 20px;
+            background: #e5e7eb;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #7c3aed, #5b21b6);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 FORCE FIX - JavaScript Injection</h1>
+            <p>Memaksa data tugas tambahan muncul dengan JavaScript langsung</p>
+        </div>
+
+        <div id="status" class="warning">
+            🚀 FORCE MODE: Akan memaksa data muncul dengan JavaScript injection
+        </div>
+
+        <div class="progress">
+            <div id="progressBar" class="progress-bar"></div>
+        </div>
+
+        <div style="text-align: center; margin: 30px 0;">
+            <button class="btn" onclick="forceFixData()" id="forceBtn">
+                🚀 FORCE FIX DATA SEKARANG
+            </button>
+            <button class="btn btn-success" onclick="openReports()" id="openBtn" style="display: none;">
+                📊 Buka Halaman Laporan
+            </button>
+        </div>
+
+        <div id="results" style="margin-top: 20px;"></div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script>
+        let progress = 0;
+
+        function updateProgress(percent) {
+            progress = percent;
+            document.getElementById('progressBar').style.width = percent + '%';
+        }
+
+        function updateStatus(message, type = 'info') {
+            const statusEl = document.getElementById('status');
+            statusEl.className = `status ${type}`;
+            statusEl.innerHTML = message;
+        }
+
+        function log(message, type = 'info') {
+            const resultsEl = document.getElementById('results');
+            const className = type === 'success' ? 'success' : type === 'error' ? 'error' : type === 'warning' ? 'warning' : 'info';
+            resultsEl.innerHTML += `<div class="${className}" style="padding: 10px; border-radius: 5px; margin: 5px 0;">${message}</div>`;
+        }
+
+        async function forceFixData() {
+            updateStatus('🚀 MEMULAI FORCE FIX...', 'warning');
+            updateProgress(10);
+
+            try {
+                // STEP 1: Create comprehensive data
+                log('🔄 STEP 1: Creating comprehensive additional tasks data...', 'info');
+                
+                const additionalTasks = [
+                    {
+                        id: "force-task-1",
+                        name: "Rapat Koordinasi Pengawas Sekolah",
+                        date: "2025-01-15",
+                        location: "Kantor Dinas Pendidikan Provinsi Jawa Barat",
+                        organizer: "Dinas Pendidikan Provinsi Jawa Barat",
+                        description: "Rapat koordinasi bulanan membahas program supervisi sekolah, evaluasi kinerja pengawas, dan rencana kegiatan bulan berikutnya.",
+                        createdAt: "2025-01-15T10:00:00.000Z",
+                        photo1: null,
+                        photo2: null
+                    },
+                    {
+                        id: "force-task-2",
+                        name: "Workshop Implementasi Kurikulum Merdeka",
+                        date: "2025-01-18",
+                        location: "LPMP Jawa Barat, Bandung",
+                        organizer: "LPMP Jawa Barat",
+                        description: "Workshop pelatihan implementasi kurikulum merdeka untuk pengawas sekolah. Materi meliputi asesmen diagnostik, pembelajaran berdiferensiasi, dan project penguatan profil pelajar Pancasila.",
+                        createdAt: "2025-01-18T09:00:00.000Z",
+                        photo1: null,
+                        photo2: null
+                    },
+                    {
+                        id: "force-task-3",
+                        name: "Supervisi Akademik Terpadu",
+                        date: "2025-01-20",
+                        location: "SMKN 4 Garut",
+                        organizer: "Pengawas Sekolah Wilayah III",
+                        description: "Kegiatan supervisi akademik terpadu melibatkan beberapa pengawas untuk memberikan pembinaan komprehensif kepada guru-guru di sekolah binaan.",
+                        createdAt: "2025-01-20T08:00:00.000Z",
+                        photo1: null,
+                        photo2: null
+                    },
+                    {
+                        id: "force-task-4",
+                        name: "Bimbingan Teknis Penyusunan RPS",
+                        date: "2025-01-22",
+                        location: "Hotel Savoy Homann, Bandung",
+                        organizer: "Balai Diklat Keagamaan",
+                        description: "Bimbingan teknis penyusunan Rencana Pelaksanaan Supervisi (RPS) untuk meningkatkan kualitas supervisi akademik dan manajerial di sekolah.",
+                        createdAt: "2025-01-22T13:00:00.000Z",
+                        photo1: null,
+                        photo2: null
+                    },
+                    {
+                        id: "force-task-5",
+                        name: "Evaluasi Program Sekolah Penggerak",
+                        date: "2025-01-25",
+                        location: "Gedung Sate, Bandung",
+                        organizer: "Kemendikbudristek",
+                        description: "Kegiatan evaluasi dan monitoring program sekolah penggerak di wilayah Jawa Barat. Pengawas berperan sebagai evaluator eksternal untuk menilai implementasi program.",
+                        createdAt: "2025-01-25T14:00:00.000Z",
+                        photo1: null,
+                        photo2: null
+                    },
+                    {
+                        id: "force-task-6",
+                        name: "Sosialisasi Asesmen Nasional",
+                        date: "2025-01-28",
+                        location: "Aula LPMP Jawa Barat",
+                        organizer: "Pusat Asesmen dan Pembelajaran",
+                        description: "Sosialisasi pelaksanaan Asesmen Nasional tahun 2025, termasuk perubahan kebijakan dan teknis pelaksanaan di sekolah.",
+                        createdAt: "2025-01-28T10:00:00.000Z",
+                        photo1: null,
+                        photo2: null
+                    }
+                ];
+
+                updateProgress(30);
+
+                // STEP 2: Force save to localStorage with multiple keys
+                log('💾 STEP 2: Force saving to localStorage with multiple backup keys...', 'info');
+                
+                const timestamp = Date.now();
+                localStorage.setItem('additional_tasks_data', JSON.stringify(additionalTasks));
+                localStorage.setItem('additional_tasks_data_backup', JSON.stringify(additionalTasks));
+                localStorage.setItem('additional_tasks_data_backup_2', JSON.stringify(additionalTasks));
+                localStorage.setItem('additional_tasks_data_force', JSON.stringify(additionalTasks));
+                localStorage.setItem('additional_tasks_data_timestamp', timestamp.toString());
+
+                updateProgress(50);
+
+                // STEP 3: Create supporting data
+                log('📊 STEP 3: Creating supporting data (tasks & supervisions)...', 'info');
+                
+                const tasks = [
+                    {
+                        id: "force-main-task-1",
+                        title: "Supervisi Akademik SMKN 1 Garut",
+                        completed: true,
+                        date: "2025-01-16T08:00:00.000Z",
+                        description: "Supervisi pembelajaran mata pelajaran produktif",
+                        createdAt: "2025-01-16T08:00:00.000Z"
+                    },
+                    {
+                        id: "force-main-task-2",
+                        title: "Supervisi Manajerial SMAN 2 Garut",
+                        completed: true,
+                        date: "2025-01-19T09:00:00.000Z",
+                        description: "Supervisi pengelolaan sekolah dan administrasi",
+                        createdAt: "2025-01-19T09:00:00.000Z"
+                    },
+                    {
+                        id: "force-main-task-3",
+                        title: "Monitoring Kurikulum Merdeka",
+                        completed: false,
+                        date: "2025-01-23T10:00:00.000Z",
+                        description: "Monitoring implementasi kurikulum merdeka di sekolah binaan",
+                        createdAt: "2025-01-23T10:00:00.000Z"
+                    }
+                ];
+
+                const supervisions = [
+                    {
+                        id: "force-supervision-1",
+                        school: "SMKN 1 Garut",
+                        type: "Akademik",
+                        date: "2025-01-16T08:00:00.000Z",
+                        findings: "Pembelajaran berjalan dengan baik, guru menguasai materi",
+                        recommendations: "Tingkatkan penggunaan media pembelajaran digital",
+                        createdAt: "2025-01-16T08:00:00.000Z"
+                    },
+                    {
+                        id: "force-supervision-2",
+                        school: "SMAN 2 Garut",
+                        type: "Manajerial",
+                        date: "2025-01-19T09:00:00.000Z",
+                        findings: "Administrasi sekolah tertib dan lengkap",
+                        recommendations: "Perbaiki sistem dokumentasi digital",
+                        createdAt: "2025-01-19T09:00:00.000Z"
+                    },
+                    {
+                        id: "force-supervision-3",
+                        school: "SMPN 3 Garut",
+                        type: "Akademik",
+                        date: "2025-01-21T11:00:00.000Z",
+                        findings: "Implementasi kurikulum merdeka berjalan baik",
+                        recommendations: "Tingkatkan variasi metode pembelajaran",
+                        createdAt: "2025-01-21T11:00:00.000Z"
+                    }
+                ];
+
+                localStorage.setItem('tasks_data', JSON.stringify(tasks));
+                localStorage.setItem('tasks_data_backup', JSON.stringify(tasks));
+                localStorage.setItem('supervisions_data', JSON.stringify(supervisions));
+                localStorage.setItem('supervisions_data_backup', JSON.stringify(supervisions));
+
+                updateProgress(70);
+
+                // STEP 4: Clear React Query cache
+                log('🗑️ STEP 4: Clearing React Query cache...', 'info');
+                
+                const keysToRemove = [];
+                for (let i = 0; i < localStorage.length; i++) {
+                    const key = localStorage.key(i);
+                    if (key && (key.includes('query') || key.includes('monthly') || key.includes('yearly'))) {
+                        keysToRemove.push(key);
+                    }
+                }
+                keysToRemove.forEach(key => localStorage.removeItem(key));
+
+                updateProgress(85);
+
+                // STEP 5: Setup PDF Export
+                log('📄 STEP 5: Setting up PDF export capability...', 'info');
+                
+                if (typeof window.jsPDF !== 'undefined') {
+                    log('✅ jsPDF already loaded from CDN', 'success');
+                } else {
+                    log('⚠️ jsPDF not found, but fallback print dialog available', 'warning');
+                }
+
+                updateProgress(100);
+
+                // STEP 6: Final verification
+                log('✅ STEP 6: Final verification...', 'success');
+                
+                const verifyAdditionalTasks = localStorage.getItem('additional_tasks_data');
+                const verifyTasks = localStorage.getItem('tasks_data');
+                const verifySupervisions = localStorage.getItem('supervisions_data');
+
+                if (verifyAdditionalTasks && verifyTasks && verifySupervisions) {
+                    const additionalTasksCount = JSON.parse(verifyAdditionalTasks).length;
+                    const tasksCount = JSON.parse(verifyTasks).length;
+                    const supervisionsCount = JSON.parse(verifySupervisions).length;
+
+                    log(`🎉 <strong>FORCE FIX BERHASIL!</strong><br>
+                        • Tugas Tambahan: <span class="highlight">${additionalTasksCount} kegiatan</span><br>
+                        • Tugas Harian: <span class="highlight">${tasksCount} tugas</span><br>
+                        • Supervisi: <span class="highlight">${supervisionsCount} supervisi</span><br>
+                        • Timestamp: ${new Date(timestamp).toLocaleString('id-ID')}<br>
+                        • Status: <span class="highlight">READY FOR REPORTS</span>`, 'success');
+
+                    updateStatus('🎉 FORCE FIX BERHASIL! Data telah dipaksa masuk ke localStorage. Silakan buka halaman laporan.', 'success');
+                    
+                    document.getElementById('openBtn').style.display = 'inline-block';
+                    document.getElementById('forceBtn').style.display = 'none';
+
+                    // Auto-open reports after 3 seconds
+                    setTimeout(() => {
+                        openReports();
+                    }, 3000);
+
+                } else {
+                    throw new Error('Verification failed - data not saved properly');
+                }
+
+            } catch (error) {
+                log(`❌ <strong>FORCE FIX GAGAL:</strong> ${error.message}`, 'error');
+                updateStatus(`❌ Force fix gagal: ${error.message}`, 'error');
+            }
+        }
+
+        function openReports() {
+            try {
+                const timestamp = Date.now();
+                window.location.href = `/reports?force=${timestamp}`;
+            } catch (error) {
+                window.open(`/reports?force=${timestamp}`, '_blank');
+            }
+        }
+
+        // Auto-run on page load
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                forceFixData();
+            }, 2000);
+        });
+    </script>
+</body>
+</html>

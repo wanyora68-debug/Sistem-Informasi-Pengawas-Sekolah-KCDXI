@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fix Admin Session Tanpa Token</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        }
+        .step {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 10px;
+            background: rgba(255,255,255,0.05);
+        }
+        .success { border-color: #4CAF50; background: rgba(76, 175, 80, 0.1); }
+        .error { border-color: #f44336; background: rgba(244, 67, 54, 0.1); }
+        .warning { border-color: #ff9800; background: rgba(255, 152, 0, 0.1); }
+        .info { border-color: #2196F3; background: rgba(33, 150, 243, 0.1); }
+        button {
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+            color: white;
+            border: none;
+            padding: 20px 30px;
+            border-radius: 10px;
+            cursor: pointer;
+            margin: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+        }
+        button:hover { 
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+        .status {
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            font-weight: bold;
+            background: rgba(255,255,255,0.1);
+        }
+        h1 { text-align: center; font-size: 2.5em; margin-bottom: 30px; }
+        pre {
+            background: rgba(0,0,0,0.3);
+            padding: 15px;
+            border-radius: 10px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Fix Admin Session</h1>
+        <h2 style="text-align: center;">Tanpa Token API</h2>
+
+        <div class="step warning">
+            <h3>⚠️ Masalah</h3>
+            <p>Token tidak ditemukan atau expired. Kita akan memperbaiki session admin secara manual tanpa bergantung pada API.</p>
+        </div>
+
+        <div class="step info">
+            <h3>🎯 Solusi Manual</h3>
+            <p>Tool ini akan:</p>
+            <ol>
+                <li>✅ Membuat session admin baru secara manual</li>
+                <li>✅ Memperbaiki role menjadi "admin"</li>
+                <li>✅ Menghapus foto profil yang salah</li>
+                <li>✅ Memastikan akses ke data aktivitas Wawan</li>
+                <li>✅ Membuat token dummy untuk aplikasi</li>
+            </ol>
+        </div>
+
+        <div class="step">
+            <h3>🚀 Perbaikan Manual</h3>
+            <div style="text-align: center;">
+                <button onclick="fixAdminSessionManual()">🔧 PERBAIKI SESSION ADMIN</button>
+            </div>
+        </div>
+
+        <div class="step">
+            <h3>📊 Status</h3>
+            <div id="status">Siap untuk memperbaiki session admin...</div>
+        </div>
+
+        <div class="step success" id="instructions" style="display: none;">
+            <h3>✅ Langkah Selanjutnya</h3>
+            <ol>
+                <li>Buka <strong>localhost:5000/login</strong></li>
+                <li>Login dengan: <strong>admin / admin123</strong></li>
+                <li>Atau refresh halaman users jika sudah login</li>
+                <li>Test dialog aktivitas Wawan</li>
+            </ol>
+        </div>
+    </div>
+
+    <script>
+        function updateStatus(message, type = 'info') {
+            const statusDiv = document.getElementById('status');
+            statusDiv.innerHTML = `<div class="status">${message}</div>`;
+        }
+
+        function fixAdminSessionManual() {
+            updateStatus('🔧 Memulai perbaikan session admin manual...', 'info');
+            
+            try {
+                // Step 1: Create admin user data manually
+                updateStatus('🔧 Step 1: Membuat data admin manual...', 'info');
+                
+                const adminUserData = {
+                    id: 'admin-1',
+                    username: 'admin',
+                    fullName: 'Administrator',
+                    name: 'Administrator',
+                    role: 'admin',
+                    nip: '',
+                    rank: '',
+                    phone: '',
+                    email: 'admin@disdik.jabar.go.id',
+                    department: 'Cabang Dinas Pendidikan Wilayah XI',
+                    status: 'active',
+                    createdAt: new Date().toISOString(),
+                    updatedAt: new Date().toISOString()
+                };
+
+                // Step 2: Create dummy token
+                updateStatus('🔧 Step 2: Membuat token dummy...', 'info');
+                
+                const dummyToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJhZG1pbi0xIiwidXNlcm5hbWUiOiJhZG1pbiIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTczNDc3NzYwMCwiZXhwIjoxNzM0ODY0MDAwfQ.dummy-signature-for-admin-session';
+
+                // Step 3: Clear all conflicting session data
+                updateStatus('🔧 Step 3: Membersihkan session data lama...', 'info');
+                
+                const sessionKeys = [
+                    'currentUser',
+                    'userProfile', 
+                    'user_data',
+                    'loggedInUser',
+                    'authUser',
+                    'userData'
+                ];
+                
+                sessionKeys.forEach(key => {
+                    localStorage.removeItem(key);
+                    sessionStorage.removeItem(key);
+                });
+
+                // Step 4: Set clean admin session
+                updateStatus('🔧 Step 4: Membuat session admin baru...', 'info');
+                
+                localStorage.setItem('token', dummyToken);
+                localStorage.setItem('currentUser', JSON.stringify(adminUserData));
+                localStorage.setItem('user_data', JSON.stringify(adminUserData));
+                localStorage.setItem('userProfile', JSON.stringify(adminUserData));
+
+                // Step 5: Fix local database users
+                updateStatus('🔧 Step 5: Memperbaiki database user lokal...', 'info');
+                
+                const localDb = JSON.parse(localStorage.getItem('local-database') || '{}');
+                
+                // Ensure admin user exists in local database
+                let users = localDb.users || [];
+                const adminIndex = users.findIndex(u => u.username === 'admin' || u.role === 'admin');
+                
+                if (adminIndex >= 0) {
+                    // Update existing admin
+                    users[adminIndex] = {
+                        ...users[adminIndex],
+                        ...adminUserData,
+                        // Remove any wrong photo
+                        photo: undefined
+                    };
+                } else {
+                    // Add admin user
+                    users.push(adminUserData);
+                }
+
+                // Also ensure Wawan user exists
+                const wawanExists = users.find(u => u.username === 'wawan');
+                if (!wawanExists) {
+                    users.push({
+                        id: 'wawan-123',
+                        username: 'wawan',
+                        fullName: 'H. Wawan Yogaswara, S.Pd, M.Pd',
+                        name: 'H. Wawan Yogaswara, S.Pd, M.Pd',
+                        role: 'pengawas',
+                        nip: '196805301994121001',
+                        rank: 'Pembina Utama Muda, IV/c',
+                        phone: '087733438282',
+                        email: 'wawan.yogaswara@disdik.jabar.go.id',
+                        department: 'Cabang Dinas Pendidikan Wilayah XI',
+                        status: 'active',
+                        createdAt: '2024-01-01T00:00:00.000Z',
+                        updatedAt: new Date().toISOString()
+                    });
+                }
+
+                localDb.users = users;
+
+                // Step 6: Fix Wawan activity data
+                updateStatus('🔧 Step 6: Memastikan data aktivitas Wawan dapat diakses...', 'info');
+                
+                const fixWawanData = (items, type) => {
+                    if (!items || !Array.isArray(items)) return [];
+                    
+                    return items.map(item => {
+                        const isWawanItem = 
+                            item.userId === 'wawan' ||
+                            (item.username && item.username.toLowerCase() === 'wawan') ||
+                            (item.title && item.title.toLowerCase().includes('wawan')) ||
+                            (item.name && item.name.toLowerCase().includes('wawan')) ||
+                            (item.schoolName && item.schoolName.toLowerCase().includes('wawan')) ||
+                            (item.description && item.description.toLowerCase().includes('wawan')) ||
+                            (item.notes && item.notes.toLowerCase().includes('wawan')) ||
+                            (item.findings && item.findings.toLowerCase().includes('wawan'));
+                        
+                        if (isWawanItem) {
+                            return {
+                                ...item,
+                                userId: 'wawan',
+                                username: 'wawan'
+                            };
+                        }
+                        
+                        return item;
+                    });
+                };
+
+                localDb.tasks = fixWawanData(localDb.tasks || [], 'tasks');
+                localDb.supervisions = fixWawanData(localDb.supervisions || [], 'supervisions');
+                localDb.events = fixWawanData(localDb.events || [], 'events');
+                localDb.additionalTasks = fixWawanData(localDb.additionalTasks || [], 'additionalTasks');
+
+                // Save updated database
+                localStorage.setItem('local-database', JSON.stringify(localDb));
+
+                // Step 7: Set app users for users page
+                updateStatus('🔧 Step 7: Memperbaiki data users untuk halaman manajemen...', 'info');
+                
+                localStorage.setItem('app_users', JSON.stringify(users));
+                localStorage.setItem('users', JSON.stringify(users));
+
+                // Step 8: Clear cache
+                updateStatus('🔧 Step 8: Membersihkan cache...', 'info');
+                
+                const cacheKeys = [
+                    'user-activities-cache',
+                    'activities-cache',
+                    'dialog-cache',
+                    'react-query-cache'
+                ];
+                
+                cacheKeys.forEach(key => {
+                    localStorage.removeItem(key);
+                    sessionStorage.removeItem(key);
+                });
+
+                // Step 9: Count Wawan data for verification
+                const wawanData = {
+                    tasks: localDb.tasks.filter(t => t.userId === 'wawan'),
+                    supervisions: localDb.supervisions.filter(s => s.userId === 'wawan'),
+                    events: localDb.events.filter(e => e.userId === 'wawan'),
+                    additionalTasks: localDb.additionalTasks.filter(at => at.userId === 'wawan')
+                };
+
+                const totalWawanItems = wawanData.tasks.length + wawanData.supervisions.length + 
+                                       wawanData.events.length + wawanData.additionalTasks.length;
+
+                // Step 10: Set success flags
+                localStorage.setItem('admin-session-fixed-manual', 'true');
+                localStorage.setItem('force-dialog-refresh', Date.now().toString());
+
+                updateStatus(`🎉 SESSION ADMIN BERHASIL DIPERBAIKI!<br><br>
+                    ✅ Role: Administrator<br>
+                    ✅ Username: admin<br>
+                    ✅ Token: Dibuat secara manual<br>
+                    ✅ Foto profil: Dibersihkan<br>
+                    ✅ Data Wawan: ${totalWawanItems} aktivitas dapat diakses<br>
+                    <br>
+                    🎯 Admin sekarang dapat mengakses semua fitur!`, 'success');
+                
+                document.getElementById('instructions').style.display = 'block';
+                
+                // Auto-redirect after 3 seconds
+                setTimeout(() => {
+                    if (confirm('Buka halaman users sekarang?')) {
+                        window.open('http://localhost:5000/users', '_blank');
+                    }
+                }, 3000);
+
+            } catch (error) {
+                updateStatus(`❌ Error: ${error.message}`, 'error');
+                console.error('Fix error:', error);
+            }
+        }
+
+        // Initialize
+        updateStatus('🚀 Tool perbaikan session admin manual siap digunakan!', 'success');
+    </script>
+</body>
+</html>

@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Load Database to localStorage</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .header {
+            background: #2563eb;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .status {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+        .success {
+            background: #dcfce7;
+            color: #166534;
+            border: 1px solid #bbf7d0;
+        }
+        .error {
+            background: #fef2f2;
+            color: #dc2626;
+            border: 1px solid #fecaca;
+        }
+        .info {
+            background: #dbeafe;
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+        }
+        button {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        button:hover {
+            background: #1d4ed8;
+        }
+        button:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+        }
+        .data-summary {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+        .data-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .data-item:last-child {
+            border-bottom: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Load Database to localStorage</h1>
+            <p>Memuat data dari local-database.json ke localStorage untuk aplikasi</p>
+        </div>
+
+        <div id="status"></div>
+
+        <button onclick="loadDatabase()">Load Database</button>
+        <button onclick="checkLocalStorage()">Check localStorage</button>
+        <button onclick="clearLocalStorage()">Clear localStorage</button>
+
+        <div id="dataSummary" class="data-summary" style="display: none;">
+            <h3>Data Summary</h3>
+            <div id="dataItems"></div>
+        </div>
+    </div>
+
+    <script>
+        function showStatus(message, type = 'info') {
+            const statusDiv = document.getElementById('status');
+            statusDiv.innerHTML = `<div class="status ${type}">${message}</div>`;
+        }
+
+        function loadDatabase() {
+            showStatus('Loading database...', 'info');
+            
+            fetch('./local-database.json')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // Store the complete database
+                    localStorage.setItem('local-database', JSON.stringify(data));
+                    
+                    // Also store individual collections for compatibility
+                    if (data.users) {
+                        localStorage.setItem('app_users', JSON.stringify(data.users));
+                    }
+                    if (data.tasks) {
+                        localStorage.setItem('tasks', JSON.stringify(data.tasks));
+                    }
+                    if (data.supervisions) {
+                        localStorage.setItem('supervisions', JSON.stringify(data.supervisions));
+                    }
+                    if (data.events) {
+                        localStorage.setItem('events', JSON.stringify(data.events));
+                        localStorage.setItem('calendar_events', JSON.stringify(data.events));
+                    }
+                    if (data.additionalTasks) {
+                        localStorage.setItem('additional_tasks', JSON.stringify(data.additionalTasks));
+                        localStorage.setItem('additionalTasks', JSON.stringify(data.additionalTasks));
+                    }
+                    if (data.schools) {
+                        localStorage.setItem('schools', JSON.stringify(data.schools));
+                    }
+
+                    showStatus('✅ Database berhasil dimuat ke localStorage!', 'success');
+                    checkLocalStorage();
+                })
+                .catch(error => {
+                    console.error('Error loading database:', error);
+                    showStatus(`❌ Error loading database: ${error.message}`, 'error');
+                });
+        }
+
+        function checkLocalStorage() {
+            const data = localStorage.getItem('local-database');
+            
+            if (!data) {
+                showStatus('❌ Tidak ada data di localStorage', 'error');
+                document.getElementById('dataSummary').style.display = 'none';
+                return;
+            }
+
+            try {
+                const parsedData = JSON.parse(data);
+                
+                const summary = {
+                    'Users': parsedData.users ? parsedData.users.length : 0,
+                    'Tasks': parsedData.tasks ? parsedData.tasks.length : 0,
+                    'Supervisions': parsedData.supervisions ? parsedData.supervisions.length : 0,
+                    'Events': parsedData.events ? parsedData.events.length : 0,
+                    'Additional Tasks': parsedData.additionalTasks ? parsedData.additionalTasks.length : 0,
+                    'Schools': parsedData.schools ? parsedData.schools.length : 0
+                };
+
+                // Check for Wawan's data specifically
+                const wawanUserId = "1762696525337";
+                const wawanTasks = parsedData.tasks ? parsedData.tasks.filter(t => t.userId === wawanUserId) : [];
+                const wawanSupervisions = parsedData.supervisions ? parsedData.supervisions.filter(s => s.userId === wawanUserId) : [];
+                const wawanEvents = parsedData.events ? parsedData.events.filter(e => e.userId === wawanUserId) : [];
+                const wawanAdditionalTasks = parsedData.additionalTasks ? parsedData.additionalTasks.filter(a => a.userId === wawanUserId) : [];
+
+                showStatus('✅ Data ditemukan di localStorage', 'success');
+                
+                let dataItemsHtml = '';
+                Object.entries(summary).forEach(([key, value]) => {
+                    dataItemsHtml += `<div class="data-item"><span>${key}:</span><span>${value} items</span></div>`;
+                });
+
+                dataItemsHtml += '<hr style="margin: 15px 0;">';
+                dataItemsHtml += '<h4>Data User Wawan:</h4>';
+                dataItemsHtml += `<div class="data-item"><span>Tasks:</span><span>${wawanTasks.length} items</span></div>`;
+                dataItemsHtml += `<div class="data-item"><span>Supervisions:</span><span>${wawanSupervisions.length} items</span></div>`;
+                dataItemsHtml += `<div class="data-item"><span>Events:</span><span>${wawanEvents.length} items</span></div>`;
+                dataItemsHtml += `<div class="data-item"><span>Additional Tasks:</span><span>${wawanAdditionalTasks.length} items</span></div>`;
+
+                document.getElementById('dataItems').innerHTML = dataItemsHtml;
+                document.getElementById('dataSummary').style.display = 'block';
+
+            } catch (error) {
+                showStatus(`❌ Error parsing localStorage data: ${error.message}`, 'error');
+                document.getElementById('dataSummary').style.display = 'none';
+            }
+        }
+
+        function clearLocalStorage() {
+            if (confirm('Apakah Anda yakin ingin menghapus semua data dari localStorage?')) {
+                localStorage.removeItem('local-database');
+                localStorage.removeItem('app_users');
+                localStorage.removeItem('tasks');
+                localStorage.removeItem('supervisions');
+                localStorage.removeItem('events');
+                localStorage.removeItem('calendar_events');
+                localStorage.removeItem('additional_tasks');
+                localStorage.removeItem('additionalTasks');
+                localStorage.removeItem('schools');
+                
+                showStatus('✅ localStorage berhasil dibersihkan', 'success');
+                document.getElementById('dataSummary').style.display = 'none';
+            }
+        }
+
+        // Auto-check on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            checkLocalStorage();
+        });
+    </script>
+</body>
+</html>

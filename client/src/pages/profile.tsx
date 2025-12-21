@@ -31,26 +31,60 @@ export default function ProfilePage() {
   const { data: user, isLoading } = useQuery<UserProfile>({
     queryKey: ["/api/auth/me"],
     queryFn: async () => {
-      // Get user data from localStorage (same as dashboard)
-      const userData = localStorage.getItem('user_data');
+      console.log('🔄 Loading user profile data...');
+      
+      // Get user data from localStorage with auto-recovery
+      let userData = localStorage.getItem('user_data');
+      
+      // AUTO-RECOVERY: If main data is missing, try backup
+      if (!userData) {
+        const backup = localStorage.getItem('user_data_backup');
+        if (backup) {
+          localStorage.setItem('user_data', backup);
+          userData = backup;
+          console.log('🔄 User data auto-recovered from backup');
+        }
+      }
+      
       if (userData) {
         const parsedUser = JSON.parse(userData);
         
-        // Get additional profile data from localStorage
-        const profileData = localStorage.getItem('profile_data');
+        // Get additional profile data from localStorage with auto-recovery
+        let profileData = localStorage.getItem('profile_data');
+        
+        // AUTO-RECOVERY: If main profile data is missing, try backup
+        if (!profileData) {
+          const profileBackup = localStorage.getItem('profile_data_backup');
+          if (profileBackup) {
+            localStorage.setItem('profile_data', profileBackup);
+            profileData = profileBackup;
+            console.log('🔄 Profile data auto-recovered from backup');
+          }
+        }
+        
         const parsedProfile = profileData ? JSON.parse(profileData) : {};
         
-        return {
+        // Create backup every time we successfully read data
+        localStorage.setItem('user_data_backup', userData);
+        localStorage.setItem('profile_data_backup', JSON.stringify(parsedProfile));
+        localStorage.setItem('profile_data_timestamp', Date.now().toString());
+        
+        const userProfile = {
           id: parsedUser.username,
           username: parsedUser.username,
           fullName: parsedUser.fullName,
           role: parsedUser.role,
           ...parsedProfile
         };
+        
+        console.log('✅ User profile loaded:', userProfile);
+        return userProfile;
       }
       
       throw new Error('No user data found');
     },
+    refetchInterval: 5000, // Auto-refresh every 5 seconds to detect changes
+    refetchIntervalInBackground: true,
   });
 
   const [formData, setFormData] = useState({
@@ -79,7 +113,9 @@ export default function ProfilePage() {
 
   const updateProfileMutation = useMutation({
     mutationFn: async (data: typeof formData) => {
-      // Save profile data to localStorage
+      console.log('🔄 Updating profile data:', data);
+      
+      // Save profile data to localStorage with backup system
       const currentProfileData = localStorage.getItem('profile_data');
       const currentProfile = currentProfileData ? JSON.parse(currentProfileData) : {};
       
@@ -89,7 +125,20 @@ export default function ProfilePage() {
         updatedAt: new Date().toISOString()
       };
       
+      // PROTECTED SAVE: Save to multiple locations
       localStorage.setItem('profile_data', JSON.stringify(updatedProfile));
+      localStorage.setItem('profile_data_backup', JSON.stringify(updatedProfile));
+      localStorage.setItem('profile_data_timestamp', Date.now().toString());
+      
+      // ENHANCED: Also save to user_profile for PDF compatibility
+      localStorage.setItem('user_profile', JSON.stringify(updatedProfile));
+      localStorage.setItem('current_user', JSON.stringify({
+        ...updatedProfile,
+        name: data.fullName,
+        fullName: data.fullName
+      }));
+      
+      console.log('✅ Profile data saved to localStorage (multiple locations for PDF compatibility)');
       
       // Also update user_data with fullName if changed
       const userData = localStorage.getItem('user_data');
@@ -97,6 +146,8 @@ export default function ProfilePage() {
         const parsedUserData = JSON.parse(userData);
         parsedUserData.fullName = data.fullName;
         localStorage.setItem('user_data', JSON.stringify(parsedUserData));
+        localStorage.setItem('user_data_backup', JSON.stringify(parsedUserData));
+        console.log('✅ User data updated');
       }
       
       return updatedProfile;
@@ -119,29 +170,65 @@ export default function ProfilePage() {
 
   const uploadPhotoMutation = useMutation({
     mutationFn: async (file: File) => {
+      console.log('🔄 Starting photo upload:', file.name, file.size, file.type);
+      
       return new Promise((resolve, reject) => {
         const reader = new FileReader();
         reader.onload = (e) => {
-          const base64 = e.target?.result as string;
-          
-          // Save photo to localStorage
-          const currentProfileData = localStorage.getItem('profile_data');
-          const currentProfile = currentProfileData ? JSON.parse(currentProfileData) : {};
-          
-          const updatedProfile = {
-            ...currentProfile,
-            photoUrl: base64,
-            updatedAt: new Date().toISOString()
-          };
-          
-          localStorage.setItem('profile_data', JSON.stringify(updatedProfile));
-          resolve(updatedProfile);
+          try {
+            const base64 = e.target?.result as string;
+            console.log('✅ File converted to base64, length:', base64.length);
+            
+            // Save photo to localStorage
+            const currentProfileData = localStorage.getItem('profile_data');
+            const currentProfile = currentProfileData ? JSON.parse(currentProfileData) : {};
+            
+            const updatedProfile = {
+              ...currentProfile,
+              photoUrl: base64,
+              updatedAt: new Date().toISOString()
+            };
+            
+            // PROTECTED SAVE: Save to multiple locations
+            localStorage.setItem('profile_data', JSON.stringify(updatedProfile));
+            localStorage.setItem('profile_data_backup', JSON.stringify(updatedProfile));
+            localStorage.setItem('profile_data_timestamp', Date.now().toString());
+            localStorage.setItem('photo_upload_time', new Date().toISOString());
+            
+            // ENHANCED: Also save to user_profile for PDF compatibility
+            localStorage.setItem('user_profile', JSON.stringify(updatedProfile));
+            
+            // ENHANCED: Save photo to uploaded_photos array for PDF gallery
+            const uploadedPhotos = JSON.parse(localStorage.getItem('uploaded_photos') || '[]');
+            uploadedPhotos.unshift({
+              url: base64,
+              caption: 'Foto Profil Pengawas',
+              date: new Date().toISOString(),
+              type: 'profile'
+            });
+            // Keep only last 10 photos
+            if (uploadedPhotos.length > 10) {
+              uploadedPhotos.splice(10);
+            }
+            localStorage.setItem('uploaded_photos', JSON.stringify(uploadedPhotos));
+            
+            console.log('✅ Photo saved to localStorage with backup and PDF compatibility');
+            
+            resolve(updatedProfile);
+          } catch (error) {
+            console.error('❌ Error saving photo:', error);
+            reject(error);
+          }
         };
-        reader.onerror = () => reject(new Error('Failed to read file'));
+        reader.onerror = (error) => {
+          console.error('❌ FileReader error:', error);
+          reject(new Error('Failed to read file'));
+        };
         reader.readAsDataURL(file);
       });
     },
     onSuccess: () => {
+      console.log('✅ Photo upload mutation successful');
       queryClient.invalidateQueries({ queryKey: ["/api/auth/me"] });
       toast({
         title: "Berhasil",
@@ -149,6 +236,7 @@ export default function ProfilePage() {
       });
     },
     onError: (error: Error) => {
+      console.error('❌ Photo upload mutation error:', error);
       toast({
         title: "Gagal",
         description: error.message,
@@ -175,12 +263,22 @@ export default function ProfilePage() {
 
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
+    console.log('📷 Photo file selected:', file);
+    
     if (file) {
+      console.log('📊 File details:', {
+        name: file.name,
+        size: file.size,
+        type: file.type,
+        sizeInMB: (file.size / 1024 / 1024).toFixed(2)
+      });
+      
       // Validate file type
       if (!file.type.startsWith('image/')) {
+        console.error('❌ Invalid file type:', file.type);
         toast({
           title: "Error",
-          description: "File harus berupa gambar",
+          description: "File harus berupa gambar (JPG, PNG)",
           variant: "destructive",
         });
         return;
@@ -188,15 +286,19 @@ export default function ProfilePage() {
       
       // Validate file size (max 5MB)
       if (file.size > 5 * 1024 * 1024) {
+        console.error('❌ File too large:', file.size);
         toast({
           title: "Error",
-          description: "Ukuran file maksimal 5MB",
+          description: `Ukuran file terlalu besar (${(file.size / 1024 / 1024).toFixed(2)}MB). Maksimal 5MB`,
           variant: "destructive",
         });
         return;
       }
 
+      console.log('✅ File validation passed, starting upload...');
       uploadPhotoMutation.mutate(file);
+    } else {
+      console.log('❌ No file selected');
     }
   };
 

@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solusi Langsung Dialog Wawan Kosong</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .step {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background: #f9f9f9;
+        }
+        .success { border-color: #4CAF50; background: #f0fff0; }
+        .error { border-color: #f44336; background: #fff0f0; }
+        .warning { border-color: #ff9800; background: #fff8e1; }
+        .info { border-color: #2196F3; background: #f0f8ff; }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        button:hover { background: #0056b3; }
+        .success-btn { background: #28a745; }
+        .success-btn:hover { background: #218838; }
+        .status {
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Solusi Langsung Dialog Wawan Kosong</h1>
+        <p>Tool untuk langsung memperbaiki masalah dialog aktivitas Wawan yang kosong</p>
+
+        <div class="step warning">
+            <h3>⚠️ Masalah</h3>
+            <p>Dialog aktivitas user Wawan menampilkan "Belum ada tugas pokok" padahal data sudah ada di localStorage.</p>
+        </div>
+
+        <div class="step info">
+            <h3>🎯 Solusi</h3>
+            <p>Klik tombol di bawah untuk langsung memperbaiki masalah ini:</p>
+            <button onclick="fixWawanDialog()" class="success-btn">🔧 PERBAIKI SEKARANG</button>
+        </div>
+
+        <div class="step">
+            <h3>📊 Status</h3>
+            <div id="status">Klik tombol perbaiki untuk memulai...</div>
+        </div>
+
+        <div class="step info">
+            <h3>📋 Langkah Manual (jika tombol tidak bekerja)</h3>
+            <ol>
+                <li>Buka <strong>localhost:5000/users</strong></li>
+                <li>Tekan <strong>F12</strong> untuk buka Developer Tools</li>
+                <li>Masuk ke tab <strong>Console</strong></li>
+                <li>Copy paste kode ini dan tekan Enter:</li>
+            </ol>
+            <textarea readonly style="width: 100%; height: 100px; font-family: monospace;">
+// Force refresh dialog data
+localStorage.setItem('force-refresh-dialog', Date.now());
+window.location.reload();
+            </textarea>
+        </div>
+    </div>
+
+    <script>
+        function updateStatus(message, type = 'info') {
+            const statusDiv = document.getElementById('status');
+            statusDiv.innerHTML = `<div class="status ${type}">${message}</div>`;
+        }
+
+        async function fixWawanDialog() {
+            updateStatus('🔄 Memulai perbaikan...', 'info');
+            
+            try {
+                // Step 1: Ensure Wawan data has proper identifiers
+                updateStatus('📝 Step 1: Memastikan data Wawan memiliki identifier yang benar...', 'info');
+                
+                const localDb = JSON.parse(localStorage.getItem('local-database') || '{}');
+                
+                const fixWawanData = (items, type) => {
+                    if (!items || !Array.isArray(items)) return [];
+                    
+                    let fixedCount = 0;
+                    const fixed = items.map(item => {
+                        const isWawanItem = 
+                            item.userId === 'wawan' ||
+                            (item.username && item.username.toLowerCase() === 'wawan') ||
+                            (item.title && item.title.toLowerCase().includes('wawan')) ||
+                            (item.name && item.name.toLowerCase().includes('wawan')) ||
+                            (item.schoolName && item.schoolName.toLowerCase().includes('wawan')) ||
+                            (item.description && item.description.toLowerCase().includes('wawan')) ||
+                            (item.notes && item.notes.toLowerCase().includes('wawan')) ||
+                            (item.findings && item.findings.toLowerCase().includes('wawan'));
+                        
+                        if (isWawanItem && item.userId !== 'wawan') {
+                            fixedCount++;
+                            return {
+                                ...item,
+                                userId: 'wawan',
+                                username: 'wawan'
+                            };
+                        }
+                        
+                        return item;
+                    });
+                    
+                    if (fixedCount > 0) {
+                        updateStatus(`✅ Fixed ${fixedCount} ${type} items`, 'success');
+                    }
+                    
+                    return fixed;
+                };
+
+                const updatedData = {
+                    ...localDb,
+                    tasks: fixWawanData(localDb.tasks || [], 'task'),
+                    supervisions: fixWawanData(localDb.supervisions || [], 'supervision'),
+                    events: fixWawanData(localDb.events || [], 'event'),
+                    additionalTasks: fixWawanData(localDb.additionalTasks || [], 'additional task')
+                };
+
+                localStorage.setItem('local-database', JSON.stringify(updatedData));
+                
+                // Step 2: Clear any cached data
+                updateStatus('🗑️ Step 2: Membersihkan cache...', 'info');
+                
+                const cacheKeys = [
+                    'user-activities-cache',
+                    'activities-cache',
+                    'dialog-cache',
+                    'react-query-cache'
+                ];
+                
+                cacheKeys.forEach(key => {
+                    if (localStorage.getItem(key)) {
+                        localStorage.removeItem(key);
+                    }
+                });
+
+                // Step 3: Set force refresh flag
+                updateStatus('🔄 Step 3: Mengatur flag refresh...', 'info');
+                localStorage.setItem('force-refresh-dialog', Date.now().toString());
+
+                // Step 4: Count final data
+                const wawanData = {
+                    tasks: updatedData.tasks.filter(t => t.userId === 'wawan'),
+                    supervisions: updatedData.supervisions.filter(s => s.userId === 'wawan'),
+                    events: updatedData.events.filter(e => e.userId === 'wawan'),
+                    additionalTasks: updatedData.additionalTasks.filter(at => at.userId === 'wawan')
+                };
+
+                const totalItems = wawanData.tasks.length + wawanData.supervisions.length + 
+                                 wawanData.events.length + wawanData.additionalTasks.length;
+
+                if (totalItems > 0) {
+                    updateStatus(`✅ BERHASIL! Ditemukan ${totalItems} aktivitas Wawan (${wawanData.tasks.length} tugas, ${wawanData.supervisions.length} supervisi, ${wawanData.events.length} kegiatan, ${wawanData.additionalTasks.length} tugas tambahan)`, 'success');
+                    
+                    setTimeout(() => {
+                        updateStatus('🎯 Sekarang buka localhost:5000/users dan coba dialog aktivitas Wawan!', 'success');
+                    }, 2000);
+                } else {
+                    updateStatus('⚠️ Tidak ada data Wawan ditemukan. Pastikan data sudah ada di localStorage.', 'warning');
+                }
+
+            } catch (error) {
+                updateStatus(`❌ Error: ${error.message}`, 'error');
+            }
+        }
+
+        // Initialize
+        updateStatus('🚀 Tool siap digunakan. Klik tombol "PERBAIKI SEKARANG" untuk memulai.', 'info');
+    </script>
+</body>
+</html>

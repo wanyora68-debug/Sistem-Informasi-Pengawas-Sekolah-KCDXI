@@ -34,7 +34,7 @@ export default function LoginPage() {
       console.log('Attempting client-side login...');
       
       // Client-side authentication - bypass API completely
-      const validUsers = {
+      const validUsers: Record<string, { password: string; role: string; fullName: string }> = {
         admin: { password: 'admin123', role: 'admin', fullName: 'Administrator' },
         wawan: { password: 'wawan123', role: 'pengawas', fullName: 'H. Wawan Yogaswara, S.Pd, M.Pd' }
       };
@@ -255,22 +255,7 @@ export default function LoginPage() {
                   {isLoading ? "Memproses..." : "Masuk"}
                 </Button>
                 
-                {/* Login Hints */}
-                <div className="mt-4 pt-4 border-t border-gray-200">
-                  <div className="text-center">
-                    <p className="text-xs text-gray-500 mb-2">Akun Demo:</p>
-                    <div className="grid grid-cols-2 gap-4 text-xs text-gray-600">
-                      <div className="bg-gray-50 p-2 rounded">
-                        <p className="font-medium">Admin</p>
-                        <p>admin / admin123</p>
-                      </div>
-                      <div className="bg-gray-50 p-2 rounded">
-                        <p className="font-medium">Pengawas</p>
-                        <p>wawan / wawan123</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+
               </form>
             </CardContent>
             </Card>

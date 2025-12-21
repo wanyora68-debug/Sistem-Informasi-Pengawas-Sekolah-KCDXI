@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚀 QUICK TEST APP</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #f0f9ff;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border: 3px solid #2563eb;
+        }
+        h1 {
+            color: #2563eb;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .test {
+            background: #f8fafc;
+            border-left: 4px solid #2563eb;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        .success {
+            background: #f0fdf4;
+            border-left: 4px solid #16a34a;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        button {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px 5px;
+            font-size: 16px;
+            font-weight: bold;
+            width: 100%;
+        }
+        button:hover {
+            background: #1d4ed8;
+        }
+        .link {
+            background: #16a34a;
+        }
+        .link:hover {
+            background: #15803d;
+        }
+        .result {
+            margin: 15px 0;
+            padding: 15px;
+            border-radius: 5px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            font-family: monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 QUICK TEST APP</h1>
+        
+        <div class="success">
+            <h3>✅ SERVER STATUS</h3>
+            <p>Server Express sudah berjalan di port 5000</p>
+            <p>Aplikasi siap untuk ditest!</p>
+        </div>
+
+        <div class="test">
+            <h3>🌐 AKSES APLIKASI</h3>
+            <p>Klik tombol di bawah untuk membuka aplikasi:</p>
+            <button onclick="openApp()" class="link">🚀 BUKA APLIKASI</button>
+        </div>
+
+        <div class="test">
+            <h3>🧪 TEST CHECKLIST</h3>
+            <p>Yang harus dicek setelah membuka aplikasi:</p>
+            <ul>
+                <li>✅ Login berhasil (admin / admin123)</li>
+                <li>✅ Dashboard muncul tanpa error</li>
+                <li>✅ Halaman "Tugas Tambahan" bisa dibuka</li>
+                <li>✅ Data muncul (2 tugas tambahan sample)</li>
+                <li>✅ Tidak ada error 405 di console</li>
+                <li>✅ Tombol "Tambah Kegiatan" berfungsi</li>
+            </ul>
+        </div>
+
+        <div class="test">
+            <h3>🔍 MONITOR CONSOLE</h3>
+            <p>Buka Developer Tools (F12) dan cek Console:</p>
+            <ul>
+                <li>❌ Tidak boleh ada error 405</li>
+                <li>❌ Tidak boleh ada "Failed to load resource"</li>
+                <li>✅ Boleh ada log localStorage operations</li>
+                <li>✅ Boleh ada log "auto-recovered from backup"</li>
+            </ul>
+            <button onclick="showConsoleInstructions()">📋 CARA CEK CONSOLE</button>
+            <div id="consoleInstructions" class="result" style="display: none;"></div>
+        </div>
+
+        <div class="test">
+            <h3>🎯 EXPECTED RESULT</h3>
+            <p><strong>SUKSES jika:</strong></p>
+            <ul>
+                <li>✅ Aplikasi terbuka tanpa error</li>
+                <li>✅ Login berhasil</li>
+                <li>✅ Data tugas tambahan muncul</li>
+                <li>✅ Console bersih dari error 405</li>
+                <li>✅ Semua fitur CRUD berfungsi</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        function openApp() {
+            // Open the application in a new tab
+            window.open('http://localhost:5000', '_blank');
+        }
+
+        function showConsoleInstructions() {
+            const instructions = `📋 CARA CEK CONSOLE:
+
+1. Buka aplikasi di tab baru
+2. Tekan F12 atau klik kanan → Inspect
+3. Klik tab "Console"
+4. Refresh halaman (Ctrl+R)
+5. Cek apakah ada error merah
+6. Cari error yang mengandung:
+   - "405 Method Not Allowed"
+   - "Failed to load resource"
+   - "/api/additional-tasks"
+   - "/api/schools"
+
+✅ GOOD SIGNS:
+   - "auto-recovered from backup"
+   - "localStorage operations"
+   - "Data loaded from localStorage"
+
+❌ BAD SIGNS:
+   - "405 Method Not Allowed"
+   - "Failed to fetch"
+   - "Network error"`;
+
+            document.getElementById('consoleInstructions').style.display = 'block';
+            document.getElementById('consoleInstructions').textContent = instructions;
+        }
+    </script>
+</body>
+</html>

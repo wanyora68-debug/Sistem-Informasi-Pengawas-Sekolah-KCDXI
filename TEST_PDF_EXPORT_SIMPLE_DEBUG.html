@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔧 Debug PDF Export - Simple Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #2563eb;
+        }
+        
+        .test-button {
+            display: inline-block;
+            padding: 15px 30px;
+            margin: 10px;
+            background-color: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        
+        .test-button:hover {
+            background-color: #1d4ed8;
+            transform: translateY(-2px);
+        }
+        
+        .test-button.secondary {
+            background-color: #6b7280;
+        }
+        
+        .test-button.secondary:hover {
+            background-color: #4b5563;
+        }
+        
+        .log-area {
+            background: #1f2937;
+            color: #f9fafb;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            max-height: 300px;
+            overflow-y: auto;
+            margin-top: 20px;
+            white-space: pre-wrap;
+        }
+        
+        .success { color: #10b981; }
+        .error { color: #ef4444; }
+        .warning { color: #f59e0b; }
+        .info { color: #3b82f6; }
+        
+        .stats-demo {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .stat-card {
+            background: #f8fafc;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .stat-number {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #2563eb;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 0.8rem;
+            color: #64748b;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔧 Debug PDF Export</h1>
+            <p>Test sederhana untuk memverifikasi fungsi PDF export</p>
+        </div>
+
+        <div class="stats-demo">
+            <div class="stat-card">
+                <div class="stat-number">3</div>
+                <div class="stat-label">Total Tugas</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">2</div>
+                <div class="stat-label">Tugas Selesai</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">3</div>
+                <div class="stat-label">Supervisi</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">6</div>
+                <div class="stat-label">Tugas Tambahan</div>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin: 30px 0;">
+            <button class="test-button" onclick="testBasicPDF()">
+                📄 Test Basic PDF Export
+            </button>
+            
+            <button class="test-button" onclick="testWindowOpen()">
+                🪟 Test Window.open
+            </button>
+            
+            <button class="test-button" onclick="testIframe()">
+                🖼️ Test Iframe Method
+            </button>
+            
+            <button class="test-button secondary" onclick="testDirectPrint()">
+                🖨️ Test Direct Print
+            </button>
+            
+            <button class="test-button secondary" onclick="clearLog()">
+                🗑️ Clear Log
+            </button>
+        </div>
+
+        <div id="log" class="log-area">
+            <span class="info">📋 Debug log akan muncul di sini...</span>
+        </div>
+    </div>
+
+    <script>
+        // Logging function
+        function log(message, type = 'info') {
+            const logArea = document.getElementById('log');
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = document.createElement('div');
+            logEntry.className = type;
+            logEntry.innerHTML = `[${timestamp}] ${message}`;
+            logArea.appendChild(logEntry);
+            logArea.scrollTop = logArea.scrollHeight;
+        }
+
+        // Clear log
+        function clearLog() {
+            document.getElementById('log').innerHTML = '<span class="info">📋 Log cleared...</span>';
+        }
+
+        // Sample data
+        const sampleStats = {
+            totalTasks: 3,
+            completedTasks: 2,
+            supervisions: 3,
+            additionalTasks: 6
+        };
+
+        const period = "Desember 2025";
+
+        // Generate simple PDF HTML
+        function generateSimplePDFHTML(stats, period) {
+            return `
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <meta charset="UTF-8">
+                    <title>Laporan Test - ${period}</title>
+                    <style>
+                        @page { size: A4; margin: 20mm; }
+                        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; padding: 20px; }
+                        .header { text-align: center; margin-bottom: 30px; border-bottom: 2px solid #000; padding-bottom: 20px; }
+                        .header h1 { font-size: 24px; margin-bottom: 10px; }
+                        .stats { display: table; width: 100%; border-collapse: collapse; margin: 20px 0; }
+                        .stat-row { display: table-row; }
+                        .stat-cell { display: table-cell; border: 1px solid #333; padding: 15px; text-align: center; }
+                        .stat-number { font-size: 20px; font-weight: bold; color: #2563eb; }
+                        .stat-label { font-size: 12px; text-transform: uppercase; }
+                        .summary { margin: 20px 0; }
+                        .signature { margin-top: 50px; text-align: right; }
+                        @media print { body { padding: 0; } }
+                    </style>
+                </head>
+                <body>
+                    <div class="header">
+                        <h1>LAPORAN KEGIATAN PENGAWAS SEKOLAH</h1>
+                        <h2>Periode: ${period}</h2>
+                    </div>
+                    
+                    <div class="stats">
+                        <div class="stat-row">
+                            <div class="stat-cell">
+                                <div class="stat-number">${stats.totalTasks}</div>
+                                <div class="stat-label">Total Tugas</div>
+                            </div>
+                            <div class="stat-cell">
+                                <div class="stat-number">${stats.completedTasks}</div>
+                                <div class="stat-label">Tugas Selesai</div>
+                            </div>
+                        </div>
+                        <div class="stat-row">
+                            <div class="stat-cell">
+                                <div class="stat-number">${stats.supervisions}</div>
+                                <div class="stat-label">Supervisi</div>
+                            </div>
+                            <div class="stat-cell">
+                                <div class="stat-number">${stats.additionalTasks}</div>
+                                <div class="stat-label">Tugas Tambahan</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="summary">
+                        <h3>Ringkasan Kegiatan:</h3>
+                        <ul>
+                            <li>Total ${stats.totalTasks} tugas pokok tercatat</li>
+                            <li>${stats.completedTasks} tugas telah diselesaikan (${Math.round((stats.completedTasks/stats.totalTasks)*100)}%)</li>
+                            <li>${stats.supervisions} kegiatan supervisi dilaksanakan</li>
+                            <li>Mengikuti ${stats.additionalTasks} kegiatan tambahan</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="signature">
+                        <p>Bandung, ${new Date().toLocaleDateString('id-ID')}</p>
+                        <p style="margin: 20px 0 60px 0;">Pengawas Sekolah,</p>
+                        <p style="border-bottom: 1px solid #000; display: inline-block; min-width: 200px; text-align: center;">Administrator</p>
+                    </div>
+                </body>
+                </html>
+            `;
+        }
+
+        // Test 1: Basic PDF Export (same as reports.tsx)
+        function testBasicPDF() {
+            log('🔄 Testing Basic PDF Export...', 'info');
+            
+            try {
+                // Method 1: Try window.open first
+                const tryWindowOpen = () => {
+                    log('🪟 Trying window.open method...', 'info');
+                    const printWindow = window.open('', '_blank', 'width=800,height=600');
+                    if (!printWindow) {
+                        log('❌ Window.open blocked by browser', 'warning');
+                        return false;
+                    }
+                    
+                    const html = generateSimplePDFHTML(sampleStats, period);
+                    printWindow.document.write(html);
+                    printWindow.document.close();
+                    
+                    setTimeout(() => {
+                        printWindow.focus();
+                        printWindow.print();
+                        setTimeout(() => {
+                            if (!printWindow.closed) {
+                                printWindow.close();
+                            }
+                        }, 1000);
+                    }, 500);
+                    
+                    log('✅ Window.open method successful', 'success');
+                    return true;
+                };
+                
+                // Method 2: Fallback to iframe
+                const tryIframeMethod = () => {
+                    log('🖼️ Trying iframe fallback method...', 'info');
+                    const iframe = document.createElement('iframe');
+                    iframe.style.position = 'fixed';
+                    iframe.style.right = '0';
+                    iframe.style.bottom = '0';
+                    iframe.style.width = '0';
+                    iframe.style.height = '0';
+                    iframe.style.border = '0';
+                    document.body.appendChild(iframe);
+                    
+                    const iframeDoc = iframe.contentWindow?.document;
+                    if (!iframeDoc) {
+                        throw new Error('Cannot create iframe document');
+                    }
+                    
+                    const html = generateSimplePDFHTML(sampleStats, period);
+                    iframeDoc.open();
+                    iframeDoc.write(html);
+                    iframeDoc.close();
+                    
+                    setTimeout(() => {
+                        try {
+                            iframe.contentWindow?.focus();
+                            iframe.contentWindow?.print();
+                            setTimeout(() => {
+                                if (document.body.contains(iframe)) {
+                                    document.body.removeChild(iframe);
+                                }
+                            }, 1000);
+                            log('✅ Iframe method successful', 'success');
+                        } catch (printError) {
+                            log('❌ Iframe print error: ' + printError.message, 'error');
+                            if (document.body.contains(iframe)) {
+                                document.body.removeChild(iframe);
+                            }
+                        }
+                    }, 500);
+                };
+                
+                // Try window.open first, fallback to iframe
+                if (!tryWindowOpen()) {
+                    tryIframeMethod();
+                }
+                
+            } catch (error) {
+                log('❌ Basic PDF export error: ' + error.message, 'error');
+            }
+        }
+
+        // Test 2: Window.open only
+        function testWindowOpen() {
+            log('🪟 Testing window.open method only...', 'info');
+            
+            try {
+                const printWindow = window.open('', '_blank', 'width=800,height=600');
+                if (!printWindow) {
+                    log('❌ Window.open blocked by browser', 'error');
+                    log('💡 Tip: Allow popups for this site and try again', 'warning');
+                    return;
+                }
+                
+                const html = generateSimplePDFHTML(sampleStats, period);
+                printWindow.document.write(html);
+                printWindow.document.close();
+                
+                setTimeout(() => {
+                    printWindow.focus();
+                    printWindow.print();
+                    log('✅ Window.open method completed', 'success');
+                }, 500);
+                
+            } catch (error) {
+                log('❌ Window.open error: ' + error.message, 'error');
+            }
+        }
+
+        // Test 3: Iframe only
+        function testIframe() {
+            log('🖼️ Testing iframe method only...', 'info');
+            
+            try {
+                const iframe = document.createElement('iframe');
+                iframe.style.position = 'fixed';
+                iframe.style.right = '0';
+                iframe.style.bottom = '0';
+                iframe.style.width = '0';
+                iframe.style.height = '0';
+                iframe.style.border = '0';
+                document.body.appendChild(iframe);
+                
+                const iframeDoc = iframe.contentWindow?.document;
+                if (!iframeDoc) {
+                    log('❌ Cannot create iframe document', 'error');
+                    return;
+                }
+                
+                const html = generateSimplePDFHTML(sampleStats, period);
+                iframeDoc.open();
+                iframeDoc.write(html);
+                iframeDoc.close();
+                
+                setTimeout(() => {
+                    try {
+                        iframe.contentWindow?.focus();
+                        iframe.contentWindow?.print();
+                        setTimeout(() => {
+                            if (document.body.contains(iframe)) {
+                                document.body.removeChild(iframe);
+                            }
+                        }, 1000);
+                        log('✅ Iframe method completed', 'success');
+                    } catch (error) {
+                        log('❌ Iframe print error: ' + error.message, 'error');
+                        if (document.body.contains(iframe)) {
+                            document.body.removeChild(iframe);
+                        }
+                    }
+                }, 500);
+                
+            } catch (error) {
+                log('❌ Iframe method error: ' + error.message, 'error');
+            }
+        }
+
+        // Test 4: Direct print
+        function testDirectPrint() {
+            log('🖨️ Testing direct print method...', 'info');
+            try {
+                window.print();
+                log('✅ Direct print method completed', 'success');
+            } catch (error) {
+                log('❌ Direct print error: ' + error.message, 'error');
+            }
+        }
+
+        // Initial setup
+        log('🚀 PDF Export Debug Test loaded successfully', 'success');
+        log('📊 Sample data ready for testing', 'info');
+        log('🔧 Click any test button to begin debugging', 'info');
+        log('', 'info');
+        log('💡 TIPS:', 'warning');
+        log('- Allow popups for this site', 'warning');
+        log('- Check browser console for additional errors', 'warning');
+        log('- Try different browsers if one fails', 'warning');
+    </script>
+</body>
+</html>

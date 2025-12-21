@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Emergency Fix - Foto Admin Hilang</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .alert { padding: 15px; margin: 15px 0; border-radius: 5px; }
+        .alert-danger { background: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; }
+        .alert-success { background: #d4edda; border: 1px solid #c3e6cb; color: #155724; }
+        .alert-warning { background: #fff3cd; border: 1px solid #ffeaa7; color: #856404; }
+        .alert-info { background: #d1ecf1; border: 1px solid #bee5eb; color: #0c5460; }
+        button { padding: 12px 20px; margin: 8px; background: #007cba; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 14px; }
+        button:hover { background: #005a87; }
+        button.danger { background: #dc3545; }
+        button.danger:hover { background: #c82333; }
+        button.success { background: #28a745; }
+        button.success:hover { background: #218838; }
+        pre { background: #f8f9fa; padding: 15px; border-radius: 5px; overflow-x: auto; font-size: 12px; }
+        .step { margin: 20px 0; padding: 15px; border-left: 4px solid #007cba; background: #f8f9fa; }
+        .result { margin: 15px 0; padding: 15px; border-radius: 5px; }
+        .success { color: #28a745; font-weight: bold; }
+        .error { color: #dc3545; font-weight: bold; }
+        .warning { color: #ffc107; font-weight: bold; }
+        .info { color: #17a2b8; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚨 Emergency Fix - Foto Admin Hilang</h1>
+        
+        <div class="alert alert-danger">
+            <strong>⚠️ Masalah Terdeteksi:</strong>
+            <ul>
+                <li>Halaman tidak bisa diakses (server crash)</li>
+                <li>Foto admin menghilang dari dashboard</li>
+                <li>Kemungkinan ada error di kode dashboard</li>
+            </ul>
+        </div>
+
+        <div class="step">
+            <h3>🔍 Step 1: Diagnosa Masalah</h3>
+            <button onclick="diagnoseProblem()">Diagnosa Masalah</button>
+            <div id="diagnoseResult"></div>
+        </div>
+
+        <div class="step">
+            <h3>🔧 Step 2: Fix Data User</h3>
+            <button onclick="fixUserData()">Fix Data User</button>
+            <button onclick="resetToAdmin()" class="success">Reset ke Admin</button>
+            <div id="fixUserResult"></div>
+        </div>
+
+        <div class="step">
+            <h3>📸 Step 3: Restore Foto Admin</h3>
+            <button onclick="restoreAdminPhoto()">Restore Foto Admin</button>
+            <div id="restorePhotoResult"></div>
+        </div>
+
+        <div class="step">
+            <h3>🧹 Step 4: Clean Up</h3>
+            <button onclick="cleanupData()" class="danger">Clean Up Data</button>
+            <div id="cleanupResult"></div>
+        </div>
+
+        <div class="step">
+            <h3>✅ Step 5: Verifikasi</h3>
+            <button onclick="verifyFix()">Verifikasi Perbaikan</button>
+            <div id="verifyResult"></div>
+        </div>
+
+        <div class="alert alert-info">
+            <strong>📋 Instruksi:</strong>
+            <ol>
+                <li>Jalankan diagnosa untuk melihat masalah</li>
+                <li>Fix data user untuk memastikan login benar</li>
+                <li>Restore foto admin yang hilang</li>
+                <li>Clean up data yang konflik</li>
+                <li>Verifikasi bahwa semuanya sudah benar</li>
+                <li><strong>Refresh halaman dashboard setelah selesai</strong></li>
+            </ol>
+        </div>
+    </div>
+
+    <script>
+        function log(message, type = 'info') {
+            console.log(message);
+            const className = type === 'success' ? 'success' : type === 'error' ? 'error' : type === 'warning' ? 'warning' : 'info';
+            return `<div class="${className}">${message}</div>`;
+        }
+
+        function diagnoseProblem() {
+            const result = document.getElementById('diagnoseResult');
+            let html = '';
+            
+            try {
+                html += log('🔍 Mendiagnosa masalah...', 'info');
+                
+                // Check current user
+                const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+                html += log(`👤 Current User: ${currentUser.username || 'None'} (${currentUser.role || 'No role'})`, 'info');
+                
+                if (!currentUser.id) {
+                    html += log('❌ MASALAH: Tidak ada current user', 'error');
+                } else {
+                    html += log('✅ Current user ada', 'success');
+                }
+                
+                // Check local database
+                const localData = JSON.parse(localStorage.getItem('local-database') || '{}');
+                const users = localData.users || [];
+                html += log(`📊 Database users: ${users.length}`, 'info');
+                
+                // Find admin user
+                const adminUser = users.find(u => u.role === 'admin');
+                if (adminUser) {
+                    html += log(`✅ Admin user ditemukan: ${adminUser.fullName}`, 'success');
+                    html += log(`📸 Admin photo: ${adminUser.photoUrl || 'No photo'}`, adminUser.photoUrl ? 'success' : 'warning');
+                } else {
+                    html += log('❌ MASALAH: Admin user tidak ditemukan', 'error');
+                }
+                
+                // Check if current user matches database
+                if (currentUser.id) {
+                    const dbUser = users.find(u => u.id === currentUser.id);
+                    if (dbUser) {
+                        html += log('✅ Current user cocok dengan database', 'success');
+                        if (dbUser.photoUrl !== currentUser.photoUrl) {
+                            html += log('⚠️ Photo URL tidak sinkron', 'warning');
+                        }
+                    } else {
+                        html += log('❌ MASALAH: Current user tidak ada di database', 'error');
+                    }
+                }
+                
+                // Check for conflicting data
+                const conflictKeys = [
+                    'ultimate_fix_applied',
+                    'wawan_fullname',
+                    'wawan_nip',
+                    'wawan_photo_url',
+                    'user_data',
+                    'profile_data'
+                ];
+                
+                const foundConflicts = [];
+                conflictKeys.forEach(key => {
+                    if (localStorage.getItem(key)) {
+                        foundConflicts.push(key);
+                    }
+                });
+                
+                if (foundConflicts.length > 0) {
+                    html += log(`⚠️ Data konflik ditemukan: ${foundConflicts.join(', ')}`, 'warning');
+                } else {
+                    html += log('✅ Tidak ada data konflik', 'success');
+                }
+                
+            } catch (error) {
+                html += log(`❌ Error saat diagnosa: ${error.message}`, 'error');
+            }
+            
+            result.innerHTML = `<div class="result">${html}</div>`;
+        }
+
+        function fixUserData() {
+            const result = document.getElementById('fixUserResult');
+            let html = '';
+            
+            try {
+                html += log('🔧 Memperbaiki data user...', 'info');
+                
+                const localData = JSON.parse(localStorage.getItem('local-database') || '{}');
+                const users = localData.users || [];
+                
+                // Find admin user
+                const adminUser = users.find(u => u.role === 'admin');
+                if (!adminUser) {
+                    html += log('❌ Admin user tidak ditemukan di database', 'error');
+                    result.innerHTML = `<div class="result">${html}</div>`;
+                    return;
+                }
+                
+                // Set current user to admin
+                const currentUser = {
+                    id: adminUser.id,
+                    username: adminUser.username,
+                    fullName: adminUser.fullName,
+                    role: adminUser.role,
+                    nip: adminUser.nip || '',
+                    photoUrl: adminUser.photoUrl || null
+                };
+                
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                localStorage.setItem('token', 'admin-token');
+                
+                html += log('✅ Current user berhasil di-set ke admin', 'success');
+                html += log(`👤 ${adminUser.fullName}`, 'info');
+                html += log(`📸 Photo: ${adminUser.photoUrl || 'No photo'}`, 'info');
+                
+            } catch (error) {
+                html += log(`❌ Error: ${error.message}`, 'error');
+            }
+            
+            result.innerHTML = `<div class="result">${html}</div>`;
+        }
+
+        function resetToAdmin() {
+            const result = document.getElementById('fixUserResult');
+            let html = '';
+            
+            try {
+                html += log('🔄 Reset ke admin...', 'info');
+                
+                // Hard-coded admin data as fallback
+                const adminUser = {
+                    id: "1762696424712",
+                    username: "admin",
+                    fullName: "Administrator",
+                    role: "admin",
+                    nip: "",
+                    photoUrl: "/uploads/1762984516465-513200650.jpg"
+                };
+                
+                localStorage.setItem('currentUser', JSON.stringify(adminUser));
+                localStorage.setItem('token', 'admin-token');
+                
+                html += log('✅ Berhasil reset ke admin', 'success');
+                html += log(`👤 ${adminUser.fullName}`, 'info');
+                html += log(`📸 Photo: ${adminUser.photoUrl}`, 'info');
+                
+            } catch (error) {
+                html += log(`❌ Error: ${error.message}`, 'error');
+            }
+            
+            result.innerHTML = `<div class="result">${html}</div>`;
+        }
+
+        function restoreAdminPhoto() {
+            const result = document.getElementById('restorePhotoResult');
+            let html = '';
+            
+            try {
+                html += log('📸 Mengembalikan foto admin...', 'info');
+                
+                const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+                const localData = JSON.parse(localStorage.getItem('local-database') || '{}');
+                
+                if (currentUser.role !== 'admin') {
+                    html += log('⚠️ Current user bukan admin, akan di-set ke admin dulu', 'warning');
+                    const adminUser = localData.users?.find(u => u.role === 'admin');
+                    if (adminUser) {
+                        currentUser.id = adminUser.id;
+                        currentUser.username = adminUser.username;
+                        currentUser.fullName = adminUser.fullName;
+                        currentUser.role = adminUser.role;
+                        currentUser.photoUrl = adminUser.photoUrl;
+                        localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                    }
+                }
+                
+                // Ensure admin has photo
+                if (!currentUser.photoUrl) {
+                    // Try to get from database
+                    const adminUser = localData.users?.find(u => u.role === 'admin');
+                    if (adminUser && adminUser.photoUrl) {
+                        currentUser.photoUrl = adminUser.photoUrl;
+                        localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                        html += log(`✅ Foto admin dipulihkan: ${adminUser.photoUrl}`, 'success');
+                    } else {
+                        // Use default admin photo
+                        currentUser.photoUrl = "/uploads/1762984516465-513200650.jpg";
+                        localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                        html += log('✅ Menggunakan foto admin default', 'success');
+                    }
+                } else {
+                    html += log(`✅ Foto admin sudah ada: ${currentUser.photoUrl}`, 'success');
+                }
+                
+            } catch (error) {
+                html += log(`❌ Error: ${error.message}`, 'error');
+            }
+            
+            result.innerHTML = `<div class="result">${html}</div>`;
+        }
+
+        function cleanupData() {
+            const result = document.getElementById('cleanupResult');
+            let html = '';
+            
+            try {
+                html += log('🧹 Membersihkan data konflik...', 'info');
+                
+                const keysToRemove = [
+                    'ultimate_fix_applied',
+                    'wawan_fullname',
+                    'wawan_nip',
+                    'wawan_photo_url',
+                    'user_data',
+                    'profile_data',
+                    'profile_info'
+                ];
+                
+                let removedCount = 0;
+                keysToRemove.forEach(key => {
+                    if (localStorage.getItem(key)) {
+                        localStorage.removeItem(key);
+                        removedCount++;
+                        html += log(`🗑️ Removed: ${key}`, 'info');
+                    }
+                });
+                
+                // Clear React Query cache
+                const cacheKeys = [];
+                for (let i = 0; i < localStorage.length; i++) {
+                    const key = localStorage.key(i);
+                    if (key && (key.includes('react-query') || key.includes('cache'))) {
+                        cacheKeys.push(key);
+                    }
+                }
+                
+                cacheKeys.forEach(key => {
+                    localStorage.removeItem(key);
+                    removedCount++;
+                });
+                
+                html += log(`✅ Berhasil membersihkan ${removedCount} item`, 'success');
+                
+            } catch (error) {
+                html += log(`❌ Error: ${error.message}`, 'error');
+            }
+            
+            result.innerHTML = `<div class="result">${html}</div>`;
+        }
+
+        function verifyFix() {
+            const result = document.getElementById('verifyResult');
+            let html = '';
+            
+            try {
+                html += log('✅ Memverifikasi perbaikan...', 'info');
+                
+                const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+                const localData = JSON.parse(localStorage.getItem('local-database') || '{}');
+                
+                // Check current user
+                if (currentUser.id && currentUser.role === 'admin') {
+                    html += log(`✅ Current user: ${currentUser.fullName} (Admin)`, 'success');
+                } else {
+                    html += log('❌ Current user tidak valid', 'error');
+                }
+                
+                // Check photo
+                if (currentUser.photoUrl) {
+                    html += log(`✅ Foto admin: ${currentUser.photoUrl}`, 'success');
+                } else {
+                    html += log('❌ Foto admin masih hilang', 'error');
+                }
+                
+                // Check database consistency
+                const dbUser = localData.users?.find(u => u.id === currentUser.id);
+                if (dbUser) {
+                    html += log('✅ Data konsisten dengan database', 'success');
+                } else {
+                    html += log('⚠️ Data tidak konsisten dengan database', 'warning');
+                }
+                
+                html += log('', 'info');
+                html += log('📋 Langkah selanjutnya:', 'info');
+                html += log('1. Refresh halaman dashboard (Ctrl+F5)', 'info');
+                html += log('2. Periksa apakah foto admin muncul', 'info');
+                html += log('3. Jika masih bermasalah, coba logout dan login ulang', 'info');
+                
+            } catch (error) {
+                html += log(`❌ Error: ${error.message}`, 'error');
+            }
+            
+            result.innerHTML = `<div class="result">${html}</div>`;
+        }
+
+        // Auto-diagnose on load
+        window.onload = function() {
+            diagnoseProblem();
+        };
+    </script>
+</body>
+</html>

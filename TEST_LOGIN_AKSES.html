@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Akses Login</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .test-button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .test-button:hover {
+            background: #0056b3;
+        }
+        .status {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .status.success { background: #d4edda; color: #155724; }
+        .status.error { background: #f8d7da; color: #721c24; }
+        .status.warning { background: #fff3cd; color: #856404; }
+        .code-block {
+            background: #f4f4f4;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            overflow-x: auto;
+        }
+        .checklist {
+            list-style: none;
+            padding: 0;
+        }
+        .checklist li {
+            padding: 5px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .checklist li:before {
+            content: "❌ ";
+            margin-right: 8px;
+        }
+        .checklist li.success:before {
+            content: "✅ ";
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🔐 Test Akses Halaman Login</h1>
+        <p>Verifikasi halaman login dapat diakses dengan benar</p>
+    </div>
+
+    <div class="container">
+        <h2>🚀 Quick Test</h2>
+        <p>Klik tombol di bawah untuk test akses langsung:</p>
+        
+        <a href="/login" class="test-button" target="_blank">
+            🔗 Buka Halaman Login
+        </a>
+        
+        <a href="/" class="test-button" target="_blank">
+            🏠 Buka Dashboard (akan redirect ke login)
+        </a>
+        
+        <button class="test-button" onclick="testLoginAccess()">
+            🧪 Test JavaScript Access
+        </button>
+        
+        <button class="test-button" onclick="clearStorage()">
+            🗑️ Clear Storage & Refresh
+        </button>
+    </div>
+
+    <div class="container">
+        <h2>📋 Checklist Diagnosis</h2>
+        <ul class="checklist" id="checklist">
+            <li id="check-url">URL /login dapat diakses</li>
+            <li id="check-server">Development server berjalan</li>
+            <li id="check-routing">Routing wouter berfungsi</li>
+            <li id="check-components">Komponen UI ter-load</li>
+            <li id="check-storage">localStorage bersih</li>
+            <li id="check-console">Tidak ada error di console</li>
+        </ul>
+    </div>
+
+    <div class="container">
+        <h2>🔧 Troubleshooting Steps</h2>
+        
+        <h3>1. Periksa Development Server</h3>
+        <div class="code-block">
+# Pastikan server berjalan di port yang benar
+npm run dev
+# atau
+yarn dev
+
+# Periksa di browser:
+http://localhost:5173/login
+# atau port lain yang ditampilkan di terminal
+        </div>
+
+        <h3>2. Periksa Console Browser</h3>
+        <div class="code-block">
+# Buka Developer Tools (F12)
+# Lihat tab Console untuk error
+# Lihat tab Network untuk failed requests
+        </div>
+
+        <h3>3. Clear Browser Data</h3>
+        <div class="code-block">
+# Hard refresh
+Ctrl + Shift + R
+
+# Clear localStorage
+localStorage.clear();
+
+# Clear cache
+F12 -> Application -> Storage -> Clear Storage
+        </div>
+
+        <h3>4. Test Manual Navigation</h3>
+        <div class="code-block">
+# Di browser console, test routing:
+window.location.href = '/login';
+
+# Atau test dengan history API:
+history.pushState({}, '', '/login');
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>🎯 Kredensial Login</h2>
+        <p>Gunakan kredensial berikut untuk test login:</p>
+        
+        <div class="code-block">
+<strong>Admin:</strong>
+Username: admin
+Password: admin123
+
+<strong>Pengawas:</strong>
+Username: wawan  
+Password: wawan123
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>📊 Status Test</h2>
+        <div id="test-results">
+            <p>Klik tombol test untuk melihat hasil...</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>🚨 Solusi Umum</h2>
+        
+        <h3>Jika halaman login tidak muncul:</h3>
+        <ol>
+            <li><strong>Restart server:</strong> Stop (Ctrl+C) dan jalankan ulang <code>npm run dev</code></li>
+            <li><strong>Check port:</strong> Pastikan mengakses port yang benar (biasanya 5173)</li>
+            <li><strong>Clear cache:</strong> Hard refresh browser dengan Ctrl+Shift+R</li>
+            <li><strong>Check routing:</strong> Pastikan file App.tsx tidak ada error</li>
+            <li><strong>Check dependencies:</strong> Jalankan <code>npm install</code> jika perlu</li>
+        </ol>
+
+        <h3>Jika ada error 404:</h3>
+        <ol>
+            <li>Periksa apakah development server berjalan</li>
+            <li>Pastikan mengakses URL yang benar</li>
+            <li>Check konfigurasi Vite di vite.config.ts</li>
+        </ol>
+
+        <h3>Jika halaman blank/kosong:</h3>
+        <ol>
+            <li>Buka F12 dan lihat Console untuk error JavaScript</li>
+            <li>Periksa Network tab untuk failed resource loading</li>
+            <li>Clear localStorage dan cookies</li>
+            <li>Test di browser incognito/private</li>
+        </ol>
+    </div>
+
+    <script>
+        // Test functions
+        function testLoginAccess() {
+            const results = document.getElementById('test-results');
+            results.innerHTML = '<p>🧪 Running tests...</p>';
+            
+            let testResults = [];
+            
+            // Test 1: Check if we can navigate to login
+            try {
+                const currentUrl = window.location.href;
+                testResults.push(`✅ Current URL: ${currentUrl}`);
+                
+                // Test localStorage
+                localStorage.setItem('test', 'value');
+                const testValue = localStorage.getItem('test');
+                if (testValue === 'value') {
+                    testResults.push('✅ localStorage working');
+                    localStorage.removeItem('test');
+                } else {
+                    testResults.push('❌ localStorage not working');
+                }
+                
+                // Test if login route exists
+                if (window.location.pathname === '/login') {
+                    testResults.push('✅ Already on login page');
+                } else {
+                    testResults.push('ℹ️ Not on login page, will test navigation');
+                }
+                
+                // Check for React/Vite
+                if (window.React || document.querySelector('[data-reactroot]') || document.querySelector('#root')) {
+                    testResults.push('✅ React app detected');
+                } else {
+                    testResults.push('⚠️ React app not detected');
+                }
+                
+            } catch (error) {
+                testResults.push(`❌ Test error: ${error.message}`);
+            }
+            
+            results.innerHTML = testResults.map(result => `<p>${result}</p>`).join('');
+        }
+        
+        function clearStorage() {
+            try {
+                localStorage.clear();
+                sessionStorage.clear();
+                
+                // Clear auth token specifically
+                localStorage.removeItem('auth_token');
+                localStorage.removeItem('user_data');
+                
+                alert('✅ Storage cleared! Refreshing page...');
+                window.location.reload();
+            } catch (error) {
+                alert('❌ Error clearing storage: ' + error.message);
+            }
+        }
+        
+        // Auto-run basic checks on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if we're on the right domain/port
+            const url = window.location.href;
+            const isLocalhost = url.includes('localhost') || url.includes('127.0.0.1');
+            
+            if (isLocalhost) {
+                document.getElementById('check-server').classList.add('success');
+            }
+            
+            // Check if localStorage works
+            try {
+                localStorage.setItem('test', 'test');
+                localStorage.removeItem('test');
+                document.getElementById('check-storage').classList.add('success');
+            } catch (e) {
+                // localStorage not available
+            }
+            
+            // Check console for errors
+            const originalError = console.error;
+            let hasErrors = false;
+            console.error = function(...args) {
+                hasErrors = true;
+                originalError.apply(console, args);
+            };
+            
+            setTimeout(() => {
+                if (!hasErrors) {
+                    document.getElementById('check-console').classList.add('success');
+                }
+            }, 1000);
+        });
+        
+        // Test login navigation
+        function testLoginNavigation() {
+            try {
+                // Try to navigate to login
+                window.location.href = '/login';
+            } catch (error) {
+                alert('Navigation error: ' + error.message);
+            }
+        }
+    </script>
+</body>
+</html>

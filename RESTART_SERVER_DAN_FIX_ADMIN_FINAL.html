@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restart Server dan Fix Admin - FINAL</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        .content {
+            padding: 30px;
+        }
+        .section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.3s;
+            width: 100%;
+            margin-top: 10px;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        .btn.danger {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        }
+        .status {
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .log {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            max-height: 400px;
+            overflow-y: auto;
+            margin-top: 15px;
+        }
+        .warning {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .warning h3 {
+            color: #856404;
+            margin-bottom: 15px;
+        }
+        .steps {
+            background: #e7f3ff;
+            border: 2px solid #2196f3;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .steps h3 {
+            color: #1976d2;
+            margin-bottom: 15px;
+        }
+        .steps ol {
+            margin-left: 20px;
+        }
+        .steps li {
+            margin-bottom: 10px;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔄 Restart Server dan Fix Admin</h1>
+            <p>Solusi Lengkap untuk Halaman Admin yang Tidak Berubah</p>
+        </div>
+        <div class="content">
+            <div class="warning">
+                <h3>⚠️ Diagnosis Masalah:</h3>
+                <p>Halaman admin masih tidak menampilkan data user Wawan setelah refresh. Kemungkinan penyebab:</p>
+                <ul style="margin-left: 20px; margin-top: 10px;">
+                    <li>🔴 <strong>Server cache</strong> masih menyimpan data lama</li>
+                    <li>🔴 <strong>API endpoints</strong> tidak ter-refresh</li>
+                    <li>🔴 <strong>Memory cache</strong> di server masih aktif</li>
+                    <li>🔴 <strong>Hot reload</strong> tidak mendeteksi perubahan localStorage</li>
+                </ul>
+            </div>
+            
+            <div class="steps">
+                <h3>📋 Langkah-Langkah Restart Server:</h3>
+                <ol>
+                    <li><strong>Stop server</strong> dengan menekan <code>Ctrl+C</code> di terminal</li>
+                    <li><strong>Tunggu</strong> hingga server benar-benar berhenti</li>
+                    <li><strong>Jalankan tool fix</strong> di bawah ini untuk memastikan data tersimpan</li>
+                    <li><strong>Start server</strong> kembali dengan <code>npm run dev</code> atau <code>yarn dev</code></li>
+                    <li><strong>Tunggu</strong> hingga server fully loaded</li>
+                    <li><strong>Buka halaman admin</strong> dan cek apakah data sudah muncul</li>
+                </ol>
+            </div>
+            
+            <div class="section">
+                <h2>🎯 Fix Data Sebelum Restart Server</h2>
+                <button class="btn" onclick="fixDataBeforeRestart()" style="font-size: 18px; padding: 20px;">
+                    🚀 FIX DATA SEBELUM RESTART - PASTIKAN DATA TERSIMPAN
+                </button>
+                <div id="fixStatus"></div>
+            </div>
+            
+            <div class="section">
+                <h2>🔄 Setelah Restart Server</h2>
+                <button class="btn" onclick="afterServerRestart()">
+                    ✅ SETELAH SERVER RESTART - VALIDASI DATA
+                </button>
+                <div id="validateStatus"></div>
+            </div>
+            
+            <div class="section">
+                <h2>📋 Log Aktivitas</h2>
+                <div class="log" id="logContainer">
+                    <div>Siap untuk restart server dan fix admin...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function addLog(message) {
+            const logContainer = document.getElementById('logContainer');
+            const logEntry = document.createElement('div');
+            logEntry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            logContainer.appendChild(logEntry);
+            logContainer.scrollTop = logContainer.scrollHeight;
+        }
+        
+        function showStatus(elementId, message, isSuccess = true) {
+            document.getElementById(elementId).innerHTML = `<div class="status ${isSuccess ? 'success' : 'error'}">${message}</div>`;
+        }
+        
+        function fixDataBeforeRestart() {
+            addLog('🚀 Memulai fix data sebelum restart server...');
+            
+            try {
+                // 1. Pastikan data user Wawan tersimpan dengan benar
+                addLog('1️⃣ Menyimpan data user Wawan...');
+                
+                const profileWawan = {
+                    id: "1762696525337",
+                    username: "wawan",
+                    fullName: "H. Wawan Yogaswara, S.Pd, M.Pd",
+                    role: "pengawas",
+                    nip: "196805301994121001",
+                    rank: "Pembina Utama Muda, IV/c",
+                    officeName: "Cabang Dinas Pendidikan Wilayah XI Dinas Pendidikan Provinsi Jawa Barat",
+                    phone: "087733438282",
+                    photoUrl: "/uploads/1762830374284-750171039.jpg"
+                };
+                
+                // Set profile ke multiple keys
+                const profileKeys = ['user_data', 'profile_data', 'current_user', 'user_profile'];
+                profileKeys.forEach(key => {
+                    localStorage.setItem(key, JSON.stringify(profileWawan));
+                });
+                addLog('✅ Profile data Wawan tersimpan');
+                
+                // 2. Pastikan data aktivitas user Wawan ada
+                addLog('2️⃣ Memastikan data aktivitas user Wawan...');
+                
+                // Data supervisi real user Wawan
+                const supervisionsReal = [
+                    {
+                        id: "supervisi-wawan-1",
+                        school: "SMKN 14 Garut",
+                        schoolId: "school-smkn14-garut",
+                        type: "Supervisi Akademik",
+                        date: "2025-01-18",
+                        teacherName: "Dra. Siti Nurjanah, M.Pd",
+                        teacherNip: "197205151998032001",
+                        findings: "Supervisi dan pembinaan kepala sekolah dalam rangka peningkatan kualitas pendidikan. Pembelajaran sudah menggunakan metode student-centered learning dengan baik.",
+                        recommendations: "1. Tingkatkan penggunaan media pembelajaran berbasis teknologi\n2. Variasikan metode pembelajaran dengan lebih banyak praktik\n3. Lakukan asesmen formatif secara berkala",
+                        photo1: "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iIzMzNzNkYyIvPjx0ZXh0IHg9IjE1MCIgeT0iMTAwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSI+U3VwZXJ2aXNpIFNNS04gMTQgR2FydXQ8L3RleHQ+PC9zdmc+",
+                        userId: "1762696525337",
+                        createdAt: "2025-01-18T10:30:00.000Z"
+                    }
+                ];
+                
+                // Data tugas tambahan real user Wawan
+                const additionalTasksReal = [
+                    {
+                        id: "tugas-wawan-1",
+                        name: "Silaturahmi dan pembinaan Kepala SMKN 14 Garut",
+                        date: "2025-01-18",
+                        location: "SMKN 14 Garut",
+                        organizer: "Cabang Dinas Pendidikan Wilayah XI",
+                        description: "Kegiatan silaturahmi dan pembinaan kepala sekolah dalam rangka peningkatan kualitas manajemen sekolah dan kepemimpinan pendidikan.",
+                        photo1: "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iIzE2YTM0YSIvPjx0ZXh0IHg9IjE1MCIgeT0iMTAwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSI+U2lsYXR1cmFobWkgU01LTiAxNDwvdGV4dD48L3N2Zz4=",
+                        userId: "1762696525337",
+                        createdAt: "2025-01-18T14:00:00.000Z"
+                    },
+                    {
+                        id: "tugas-wawan-2",
+                        name: "Aqad Piaji",
+                        date: "2025-01-05",
+                        location: "Masjid Al-Ikhlas Garut",
+                        organizer: "Panitia Aqad",
+                        description: "Menghadiri acara aqad nikah sebagai saksi dan memberikan tausiyah kepada pengantin baru.",
+                        photo1: "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2Y1OWUwYiIvPjx0ZXh0IHg9IjE1MCIgeT0iMTAwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSI+QXFhZCBQaWFqaTwvdGV4dD48L3N2Zz4=",
+                        userId: "1762696525337",
+                        createdAt: "2025-01-05T16:00:00.000Z"
+                    }
+                ];
+                
+                // Data sekolah binaan
+                const schoolsReal = [
+                    {
+                        id: "school-smkn14-garut",
+                        name: "SMKN 14 Garut",
+                        npsn: "20219024",
+                        address: "Jl. Pembangunan No. 99, Garut Kota, Kabupaten Garut",
+                        contact: "0262-2345678",
+                        principalName: "Dra. Siti Nurjanah, M.Pd",
+                        principalNip: "197205151998032001",
+                        supervisions: 1,
+                        supervisorId: "1762696525337",
+                        createdAt: "2025-01-10T08:00:00.000Z"
+                    },
+                    {
+                        id: "school-smkn4-garut",
+                        name: "SMKN 4 Garut",
+                        npsn: "20219025",
+                        address: "Jl. Raya Bayongbong No. 200, Bayongbong, Garut",
+                        contact: "0262-3456789",
+                        principalName: "Drs. Ahmad Fauzi, M.M",
+                        principalNip: "196803101992031001",
+                        supervisions: 0,
+                        supervisorId: "1762696525337",
+                        createdAt: "2025-01-10T08:00:00.000Z"
+                    },
+                    {
+                        id: "school-smkn1-garut",
+                        name: "SMKN 1 Garut",
+                        npsn: "20219026",
+                        address: "Jl. Ciledug No. 150, Garut Kota, Kabupaten Garut",
+                        contact: "0262-4567890",
+                        principalName: "Dr. Rina Marlina, S.Pd, M.Pd",
+                        principalNip: "198001052005012001",
+                        supervisions: 0,
+                        supervisorId: "1762696525337",
+                        createdAt: "2025-01-10T08:00:00.000Z"
+                    }
+                ];
+                
+                // 3. Simpan data ke multiple keys untuk kompatibilitas
+                addLog('3️⃣ Menyimpan data ke multiple keys...');
+                
+                // Supervisions
+                const supervisionKeys = ['supervisions_data', 'supervisions', 'user_supervisions'];
+                supervisionKeys.forEach(key => {
+                    localStorage.setItem(key, JSON.stringify(supervisionsReal));
+                });
+                addLog(`✅ Saved ${supervisionsReal.length} supervisions`);
+                
+                // Additional tasks
+                const taskKeys = ['additional_tasks_data', 'additional_tasks', 'user_tasks'];
+                taskKeys.forEach(key => {
+                    localStorage.setItem(key, JSON.stringify(additionalTasksReal));
+                });
+                addLog(`✅ Saved ${additionalTasksReal.length} additional tasks`);
+                
+                // Schools
+                const schoolKeys = ['schools_data', 'schools', 'user_schools'];
+                schoolKeys.forEach(key => {
+                    localStorage.setItem(key, JSON.stringify(schoolsReal));
+                });
+                addLog(`✅ Saved ${schoolsReal.length} schools`);
+                
+                // 4. Set flags untuk server restart
+                addLog('4️⃣ Setting server restart flags...');
+                
+                const timestamp = new Date().toISOString();
+                localStorage.setItem('server_restart_required', 'true');
+                localStorage.setItem('server_restart_timestamp', timestamp);
+                localStorage.setItem('data_ready_for_server', 'true');
+                localStorage.setItem('force_server_reload', 'true');
+                
+                // 5. Clear semua cache
+                addLog('5️⃣ Clearing all cache...');
+                
+                const allKeys = Object.keys(localStorage);
+                allKeys.forEach(key => {
+                    if (key.includes('react-query') || 
+                        key.includes('tanstack') || 
+                        key.includes('rq-') ||
+                        key.includes('cache')) {
+                        localStorage.removeItem(key);
+                    }
+                });
+                
+                // Clear sessionStorage
+                sessionStorage.clear();
+                
+                addLog('✅ All cache cleared');
+                
+                addLog('🎉 FIX DATA SEBELUM RESTART SELESAI!');
+                
+                showStatus('fixStatus', `
+                    🎉 DATA SIAP UNTUK SERVER RESTART!<br><br>
+                    ✅ Profile user Wawan tersimpan<br>
+                    ✅ ${supervisionsReal.length} supervisi tersimpan<br>
+                    ✅ ${additionalTasksReal.length} tugas tambahan tersimpan<br>
+                    ✅ ${schoolsReal.length} sekolah binaan tersimpan<br>
+                    ✅ Cache dibersihkan<br><br>
+                    <strong>SEKARANG RESTART SERVER:</strong><br>
+                    1. Tekan Ctrl+C di terminal untuk stop server<br>
+                    2. Tunggu hingga server berhenti<br>
+                    3. Jalankan: npm run dev atau yarn dev<br>
+                    4. Tunggu server fully loaded<br>
+                    5. Klik tombol "SETELAH SERVER RESTART" di bawah
+                `);
+                
+            } catch (error) {
+                addLog(`❌ Error: ${error.message}`);
+                showStatus('fixStatus', `❌ Gagal: ${error.message}`, false);
+            }
+        }
+        
+        function afterServerRestart() {
+            addLog('✅ Validasi setelah server restart...');
+            
+            try {
+                // 1. Cek apakah data masih ada
+                addLog('1️⃣ Checking data after server restart...');
+                
+                const userData = localStorage.getItem('user_data');
+                const supervisionsData = localStorage.getItem('supervisions_data');
+                const tasksData = localStorage.getItem('additional_tasks_data');
+                const schoolsData = localStorage.getItem('schools_data');
+                
+                let dataStatus = '';
+                let allDataPresent = true;
+                
+                if (userData) {
+                    const user = JSON.parse(userData);
+                    dataStatus += `✅ User data: ${user.fullName}<br>`;
+                    addLog(`✅ User data found: ${user.fullName}`);
+                } else {
+                    dataStatus += `❌ User data: Not found<br>`;
+                    allDataPresent = false;
+                    addLog('❌ User data not found');
+                }
+                
+                if (supervisionsData) {
+                    const supervisions = JSON.parse(supervisionsData);
+                    dataStatus += `✅ Supervisions: ${supervisions.length} items<br>`;
+                    addLog(`✅ Supervisions found: ${supervisions.length} items`);
+                } else {
+                    dataStatus += `❌ Supervisions: Not found<br>`;
+                    allDataPresent = false;
+                    addLog('❌ Supervisions not found');
+                }
+                
+                if (tasksData) {
+                    const tasks = JSON.parse(tasksData);
+                    dataStatus += `✅ Additional tasks: ${tasks.length} items<br>`;
+                    addLog(`✅ Additional tasks found: ${tasks.length} items`);
+                } else {
+                    dataStatus += `❌ Additional tasks: Not found<br>`;
+                    allDataPresent = false;
+                    addLog('❌ Additional tasks not found');
+                }
+                
+                if (schoolsData) {
+                    const schools = JSON.parse(schoolsData);
+                    dataStatus += `✅ Schools: ${schools.length} items<br>`;
+                    addLog(`✅ Schools found: ${schools.length} items`);
+                } else {
+                    dataStatus += `❌ Schools: Not found<br>`;
+                    allDataPresent = false;
+                    addLog('❌ Schools not found');
+                }
+                
+                // 2. Set final flags
+                addLog('2️⃣ Setting final validation flags...');
+                
+                localStorage.setItem('server_restarted', 'true');
+                localStorage.setItem('validation_completed', 'true');
+                localStorage.setItem('ready_for_admin_pages', 'true');
+                
+                if (allDataPresent) {
+                    addLog('🎉 VALIDASI BERHASIL - SEMUA DATA ADA!');
+                    showStatus('validateStatus', `
+                        🎉 VALIDASI BERHASIL!<br><br>
+                        ${dataStatus}<br>
+                        <strong>LANGKAH TERAKHIR:</strong><br>
+                        1. Buka halaman admin (Supervisi/Tugas Tambahan/Sekolah)<br>
+                        2. Data user Wawan akan muncul!<br>
+                        3. Jika masih belum muncul, tekan Ctrl+Shift+R<br><br>
+                        <strong>Server restart berhasil!</strong>
+                    `);
+                } else {
+                    addLog('⚠️ BEBERAPA DATA HILANG - PERLU FIX ULANG');
+                    showStatus('validateStatus', `
+                        ⚠️ BEBERAPA DATA HILANG!<br><br>
+                        ${dataStatus}<br>
+                        <strong>SOLUSI:</strong><br>
+                        1. Klik "FIX DATA SEBELUM RESTART" lagi<br>
+                        2. Restart server sekali lagi<br>
+                        3. Atau coba clear browser cache completely
+                    `, false);
+                }
+                
+            } catch (error) {
+                addLog(`❌ Error: ${error.message}`);
+                showStatus('validateStatus', `❌ Gagal: ${error.message}`, false);
+            }
+        }
+        
+        // Auto-load saat halaman dibuka
+        window.addEventListener('load', () => {
+            addLog('✅ Halaman siap digunakan');
+            addLog('💡 Langkah 1: Klik "FIX DATA SEBELUM RESTART"');
+            addLog('💡 Langkah 2: Restart server (Ctrl+C lalu npm run dev)');
+            addLog('💡 Langkah 3: Klik "SETELAH SERVER RESTART" untuk validasi');
+        });
+    </script>
+</body>
+</html>

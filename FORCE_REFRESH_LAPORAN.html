@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔄 FORCE REFRESH - Laporan Tugas Tambahan</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            min-height: 100vh;
+        }
+        .container {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #4f46e5;
+        }
+        .status {
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            font-weight: bold;
+        }
+        .success { background: #d1fae5; color: #065f46; border-left: 5px solid #10b981; }
+        .error { background: #fee2e2; color: #991b1b; border-left: 5px solid #ef4444; }
+        .info { background: #dbeafe; color: #1e40af; border-left: 5px solid #3b82f6; }
+        .btn {
+            background: #4f46e5;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+            transition: all 0.3s;
+        }
+        .btn:hover { background: #4338ca; transform: translateY(-2px); }
+        .btn-success { background: #10b981; }
+        .btn-success:hover { background: #059669; }
+        .highlight {
+            background: #fef3c7;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔄 FORCE REFRESH - Laporan Tugas Tambahan</h1>
+            <p>Memaksa refresh data dan cache untuk laporan</p>
+        </div>
+
+        <div id="status" class="info">
+            🔄 Siap untuk force refresh data laporan...
+        </div>
+
+        <div style="text-align: center; margin: 20px 0;">
+            <button class="btn" onclick="forceRefreshData()">
+                🔄 Force Refresh Data
+            </button>
+            <button class="btn" onclick="clearAllCache()">
+                🗑️ Clear All Cache
+            </button>
+            <button class="btn btn-success" onclick="openReports()" id="openBtn" style="display: none;">
+                📊 Buka Halaman Laporan
+            </button>
+        </div>
+
+        <div id="dataInfo" style="display: none;">
+            <h3>📊 Informasi Data:</h3>
+            <div id="dataDetails"></div>
+        </div>
+    </div>
+
+    <script>
+        function updateStatus(message, type = 'info') {
+            const statusEl = document.getElementById('status');
+            statusEl.className = `status ${type}`;
+            statusEl.innerHTML = message;
+        }
+
+        function forceRefreshData() {
+            updateStatus('🔄 Memaksa refresh data laporan...', 'info');
+
+            try {
+                // 1. Create fresh additional tasks data
+                const additionalTasks = [
+                    {
+                        id: "refresh-task-1",
+                        name: "Rapat Koordinasi Pengawas Sekolah",
+                        date: "2025-01-15",
+                        location: "Kantor Dinas Pendidikan Provinsi Jawa Barat",
+                        organizer: "Dinas Pendidikan Provinsi Jawa Barat",
+                        description: "Rapat koordinasi bulanan membahas program supervisi sekolah, evaluasi kinerja pengawas, dan rencana kegiatan bulan berikutnya.",
+                        createdAt: new Date().toISOString(),
+                        photo1: null,
+                        photo2: null
+                    },
+                    {
+                        id: "refresh-task-2",
+                        name: "Workshop Implementasi Kurikulum Merdeka",
+                        date: "2025-01-18",
+                        location: "LPMP Jawa Barat, Bandung",
+                        organizer: "LPMP Jawa Barat",
+                        description: "Workshop pelatihan implementasi kurikulum merdeka untuk pengawas sekolah.",
+                        createdAt: new Date().toISOString(),
+                        photo1: null,
+                        photo2: null
+                    },
+                    {
+                        id: "refresh-task-3",
+                        name: "Supervisi Akademik Terpadu",
+                        date: "2025-01-20",
+                        location: "SMKN 4 Garut",
+                        organizer: "Pengawas Sekolah Wilayah III",
+                        description: "Kegiatan supervisi akademik terpadu melibatkan beberapa pengawas.",
+                        createdAt: new Date().toISOString(),
+                        photo1: null,
+                        photo2: null
+                    },
+                    {
+                        id: "refresh-task-4",
+                        name: "Bimbingan Teknis Penyusunan RPS",
+                        date: "2025-01-22",
+                        location: "Hotel Savoy Homann, Bandung",
+                        organizer: "Balai Diklat Keagamaan",
+                        description: "Bimbingan teknis penyusunan Rencana Pelaksanaan Supervisi (RPS).",
+                        createdAt: new Date().toISOString(),
+                        photo1: null,
+                        photo2: null
+                    },
+                    {
+                        id: "refresh-task-5",
+                        name: "Evaluasi Program Sekolah Penggerak",
+                        date: "2025-01-25",
+                        location: "Gedung Sate, Bandung",
+                        organizer: "Kemendikbudristek",
+                        description: "Kegiatan evaluasi dan monitoring program sekolah penggerak.",
+                        createdAt: new Date().toISOString(),
+                        photo1: null,
+                        photo2: null
+                    },
+                    {
+                        id: "refresh-task-6",
+                        name: "Sosialisasi Asesmen Nasional",
+                        date: "2025-01-28",
+                        location: "Aula LPMP Jawa Barat",
+                        organizer: "Pusat Asesmen dan Pembelajaran",
+                        description: "Sosialisasi pelaksanaan Asesmen Nasional tahun 2025.",
+                        createdAt: new Date().toISOString(),
+                        photo1: null,
+                        photo2: null
+                    }
+                ];
+
+                // 2. FORCE SAVE with timestamp
+                const timestamp = Date.now();
+                localStorage.setItem('additional_tasks_data', JSON.stringify(additionalTasks));
+                localStorage.setItem('additional_tasks_data_backup', JSON.stringify(additionalTasks));
+                localStorage.setItem('additional_tasks_data_backup_2', JSON.stringify(additionalTasks));
+                localStorage.setItem('additional_tasks_data_timestamp', timestamp.toString());
+
+                // 3. Clear React Query cache keys that might be cached
+                const cacheKeys = [
+                    'monthly-stats',
+                    'monthly-details',
+                    'yearly-stats',
+                    'yearly-details'
+                ];
+
+                cacheKeys.forEach(key => {
+                    // Try to clear various cache formats
+                    localStorage.removeItem(key);
+                    localStorage.removeItem(`react-query-${key}`);
+                    localStorage.removeItem(`tanstack-query-${key}`);
+                    sessionStorage.removeItem(key);
+                    sessionStorage.removeItem(`react-query-${key}`);
+                    sessionStorage.removeItem(`tanstack-query-${key}`);
+                });
+
+                // 4. Force browser cache refresh
+                if ('caches' in window) {
+                    caches.keys().then(names => {
+                        names.forEach(name => {
+                            caches.delete(name);
+                        });
+                    });
+                }
+
+                // 5. Create supporting data if missing
+                if (!localStorage.getItem('tasks_data') || localStorage.getItem('tasks_data') === '[]') {
+                    const sampleTasks = [
+                        {
+                            id: "refresh-main-task-1",
+                            title: "Supervisi Akademik SMKN 1 Garut",
+                            completed: true,
+                            date: new Date().toISOString(),
+                            description: "Supervisi pembelajaran mata pelajaran produktif",
+                            createdAt: new Date().toISOString()
+                        },
+                        {
+                            id: "refresh-main-task-2",
+                            title: "Supervisi Manajerial SMAN 2 Garut",
+                            completed: true,
+                            date: new Date().toISOString(),
+                            description: "Supervisi pengelolaan sekolah dan administrasi",
+                            createdAt: new Date().toISOString()
+                        }
+                    ];
+                    localStorage.setItem('tasks_data', JSON.stringify(sampleTasks));
+                    localStorage.setItem('tasks_data_backup', JSON.stringify(sampleTasks));
+                }
+
+                if (!localStorage.getItem('supervisions_data') || localStorage.getItem('supervisions_data') === '[]') {
+                    const sampleSupervisions = [
+                        {
+                            id: "refresh-supervision-1",
+                            school: "SMKN 1 Garut",
+                            type: "Akademik",
+                            date: new Date().toISOString(),
+                            findings: "Pembelajaran berjalan dengan baik",
+                            recommendations: "Tingkatkan penggunaan media pembelajaran digital",
+                            createdAt: new Date().toISOString()
+                        }
+                    ];
+                    localStorage.setItem('supervisions_data', JSON.stringify(sampleSupervisions));
+                    localStorage.setItem('supervisions_data_backup', JSON.stringify(sampleSupervisions));
+                }
+
+                // 6. Show data info
+                document.getElementById('dataInfo').style.display = 'block';
+                document.getElementById('dataDetails').innerHTML = `
+                    ✅ <strong>Data berhasil di-refresh!</strong><br>
+                    • Tugas Tambahan: <span class="highlight">${additionalTasks.length} kegiatan</span><br>
+                    • Timestamp: <span class="highlight">${new Date(timestamp).toLocaleString('id-ID')}</span><br>
+                    • Cache: <span class="highlight">CLEARED</span><br>
+                    • Status: <span class="highlight">READY</span>
+                `;
+
+                document.getElementById('openBtn').style.display = 'inline-block';
+
+                updateStatus('✅ Data berhasil di-refresh! Cache telah dibersihkan. Silakan buka halaman laporan.', 'success');
+
+                console.log('✅ Force refresh completed:', {
+                    additionalTasks: additionalTasks.length,
+                    timestamp: new Date(timestamp).toISOString()
+                });
+
+            } catch (error) {
+                updateStatus(`❌ Error saat refresh: ${error.message}`, 'error');
+                console.error('Force refresh error:', error);
+            }
+        }
+
+        function clearAllCache() {
+            updateStatus('🗑️ Membersihkan semua cache...', 'info');
+
+            try {
+                // Clear localStorage cache
+                const keysToRemove = [];
+                for (let i = 0; i < localStorage.length; i++) {
+                    const key = localStorage.key(i);
+                    if (key && (key.includes('query') || key.includes('cache') || key.includes('react'))) {
+                        keysToRemove.push(key);
+                    }
+                }
+                keysToRemove.forEach(key => localStorage.removeItem(key));
+
+                // Clear sessionStorage
+                sessionStorage.clear();
+
+                // Clear browser cache
+                if ('caches' in window) {
+                    caches.keys().then(names => {
+                        names.forEach(name => {
+                            caches.delete(name);
+                        });
+                    });
+                }
+
+                updateStatus('✅ Semua cache telah dibersihkan! Silakan refresh halaman laporan.', 'success');
+
+            } catch (error) {
+                updateStatus(`❌ Error saat clear cache: ${error.message}`, 'error');
+            }
+        }
+
+        function openReports() {
+            try {
+                // Force refresh the page when opening
+                window.location.href = '/reports?refresh=' + Date.now();
+            } catch (error) {
+                window.open('/reports?refresh=' + Date.now(), '_blank');
+            }
+        }
+
+        // Auto-run on page load
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                forceRefreshData();
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

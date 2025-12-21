@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>✅ TEST FINAL - CLEAN VERSION</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #16a34a;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .step {
+            margin: 20px 0;
+            padding: 20px;
+            border: 2px solid #16a34a;
+            border-radius: 8px;
+            background: #f0fdf4;
+        }
+        .step h3 {
+            color: #16a34a;
+            margin-top: 0;
+        }
+        button {
+            background: #16a34a;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px 5px;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        button:hover {
+            background: #15803d;
+        }
+        .result {
+            margin: 15px 0;
+            padding: 15px;
+            border-radius: 5px;
+            background: #f0fdf4;
+            border-left: 4px solid #16a34a;
+            font-family: monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+        }
+        .instructions {
+            background: #fffbeb;
+            border-left: 4px solid #f59e0b;
+            color: #d97706;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>✅ TEST FINAL - CLEAN VERSION</h1>
+        <p style="text-align: center; color: #666; margin-bottom: 30px;">
+            File sudah diperbaiki dengan implementasi yang bersih. Mari test sekarang!
+        </p>
+
+        <!-- Step 1 -->
+        <div class="step">
+            <h3>1. Setup Data Test</h3>
+            <button onclick="setupCleanData()">SETUP DATA BERSIH</button>
+            <div id="setupResult" class="result" style="display: none;"></div>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="step">
+            <h3>2. Instruksi Test</h3>
+            <div class="instructions">
+                <strong>LANGKAH TEST:</strong><br>
+                1. Klik "SETUP DATA BERSIH" di atas<br>
+                2. Buka aplikasi utama di tab baru<br>
+                3. Login dan buka halaman "Sekolah Binaan"<br>
+                4. Data harus muncul langsung!<br>
+                5. Buka halaman "Tugas Tambahan"<br>
+                6. Data harus muncul langsung!<br>
+                7. Test tambah data baru melalui form
+            </div>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="step">
+            <h3>3. Verifikasi Hasil</h3>
+            <button onclick="verifyResults()">CEK HASIL</button>
+            <div id="verifyResult" class="result" style="display: none;"></div>
+        </div>
+
+        <!-- Step 4 -->
+        <div class="step">
+            <h3>4. Yang Harus Berhasil</h3>
+            <div class="instructions">
+                <strong>✅ KRITERIA SUKSES:</strong><br>
+                • Halaman Sekolah Binaan menampilkan data<br>
+                • Halaman Tugas Tambahan menampilkan data<br>
+                • Form tambah sekolah berfungsi<br>
+                • Form tambah tugas berfungsi<br>
+                • Data muncul langsung tanpa refresh<br>
+                • Toast "Berhasil" muncul setelah save<br>
+                • Tidak ada error di console
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function setupCleanData() {
+            try {
+                // Clear all existing data
+                localStorage.clear();
+                
+                // Setup clean schools data
+                const schools = [
+                    {
+                        id: "clean-school-1",
+                        name: "SDN Clean Test 01",
+                        address: "Jl. Clean Test No. 1",
+                        contact: "081234567890",
+                        principalName: "Kepala Clean Test 1",
+                        principalNip: "123456789",
+                        supervisions: 0,
+                        createdAt: new Date().toISOString()
+                    },
+                    {
+                        id: "clean-school-2",
+                        name: "SDN Clean Test 02", 
+                        address: "Jl. Clean Test No. 2",
+                        contact: "081234567891",
+                        principalName: "Kepala Clean Test 2",
+                        principalNip: "123456790",
+                        supervisions: 0,
+                        createdAt: new Date().toISOString()
+                    }
+                ];
+                
+                // Setup clean additional tasks data
+                const tasks = [
+                    {
+                        id: "clean-task-1",
+                        name: "Rapat Clean Test 1",
+                        date: "2024-12-19",
+                        location: "Kantor Clean Test",
+                        organizer: "Tim Clean Test",
+                        description: "Rapat koordinasi clean test untuk memastikan semua berfungsi",
+                        createdAt: new Date().toISOString()
+                    },
+                    {
+                        id: "clean-task-2",
+                        name: "Workshop Clean Test 2",
+                        date: "2024-12-20",
+                        location: "Aula Clean Test",
+                        organizer: "Penyelenggara Clean Test",
+                        description: "Workshop implementasi clean code untuk aplikasi",
+                        createdAt: new Date().toISOString()
+                    }
+                ];
+                
+                // Save to localStorage
+                localStorage.setItem('schools_data', JSON.stringify(schools));
+                localStorage.setItem('additional_tasks_data', JSON.stringify(tasks));
+                
+                document.getElementById('setupResult').style.display = 'block';
+                document.getElementById('setupResult').textContent = 
+                    `🎉 DATA BERSIH BERHASIL DIBUAT!\n\n` +
+                    `✅ Sekolah Binaan: ${schools.length} sekolah\n` +
+                    `✅ Tugas Tambahan: ${tasks.length} tugas\n\n` +
+                    `📝 Data tersimpan dengan key:\n` +
+                    `- schools_data\n` +
+                    `- additional_tasks_data\n\n` +
+                    `🚀 SEKARANG BUKA APLIKASI UTAMA DAN TEST!`;
+                
+            } catch (error) {
+                document.getElementById('setupResult').style.display = 'block';
+                document.getElementById('setupResult').className = 'step';
+                document.getElementById('setupResult').textContent = `❌ Error: ${error.message}`;
+            }
+        }
+        
+        function verifyResults() {
+            try {
+                const schoolsData = localStorage.getItem('schools_data');
+                const tasksData = localStorage.getItem('additional_tasks_data');
+                
+                const schools = schoolsData ? JSON.parse(schoolsData) : [];
+                const tasks = tasksData ? JSON.parse(tasksData) : [];
+                
+                document.getElementById('verifyResult').style.display = 'block';
+                document.getElementById('verifyResult').textContent = 
+                    `📊 STATUS VERIFIKASI:\n\n` +
+                    `🏫 Sekolah Binaan:\n` +
+                    `   - Count: ${schools.length}\n` +
+                    `   - Status: ${schools.length > 0 ? '✅ ADA DATA' : '❌ KOSONG'}\n\n` +
+                    `📋 Tugas Tambahan:\n` +
+                    `   - Count: ${tasks.length}\n` +
+                    `   - Status: ${tasks.length > 0 ? '✅ ADA DATA' : '❌ KOSONG'}\n\n` +
+                    `🎯 OVERALL: ${schools.length > 0 && tasks.length > 0 ? 
+                        '✅ SIAP UNTUK TEST!' : 
+                        '❌ SETUP DATA DULU!'}\n\n` +
+                    `${schools.length > 0 && tasks.length > 0 ? 
+                        'Buka aplikasi utama sekarang!' : 
+                        'Klik "SETUP DATA BERSIH" terlebih dahulu.'}`;
+                
+            } catch (error) {
+                document.getElementById('verifyResult').style.display = 'block';
+                document.getElementById('verifyResult').className = 'step';
+                document.getElementById('verifyResult').textContent = `❌ Error: ${error.message}`;
+            }
+        }
+        
+        // Auto-verify on load
+        window.onload = function() {
+            verifyResults();
+        };
+    </script>
+</body>
+</html>

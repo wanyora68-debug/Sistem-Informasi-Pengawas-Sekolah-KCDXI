@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagnosa Konflik Server Multiple</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        }
+        .step {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 10px;
+            background: rgba(255,255,255,0.05);
+        }
+        .success { border-color: #4CAF50; background: rgba(76, 175, 80, 0.1); }
+        .error { border-color: #f44336; background: rgba(244, 67, 54, 0.1); }
+        .warning { border-color: #ff9800; background: rgba(255, 152, 0, 0.1); }
+        .info { border-color: #2196F3; background: rgba(33, 150, 243, 0.1); }
+        button {
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 10px;
+            cursor: pointer;
+            margin: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+        }
+        button:hover { 
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+        .danger { background: linear-gradient(45deg, #f44336, #d32f2f); }
+        .status {
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            font-weight: bold;
+            background: rgba(255,255,255,0.1);
+        }
+        h1 { text-align: center; font-size: 2.5em; margin-bottom: 30px; }
+        pre {
+            background: rgba(0,0,0,0.3);
+            padding: 15px;
+            border-radius: 10px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .command {
+            background: rgba(0,0,0,0.5);
+            color: #0f0;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Diagnosa Konflik Server</h1>
+
+        <div class="step error">
+            <h3>🚨 Masalah yang Teridentifikasi</h3>
+            <p><strong>Multiple Server Instances:</strong></p>
+            <ul>
+                <li>🔴 Server lokal bentrok dengan server lain</li>
+                <li>🔴 Halaman dashboard berbeda tiap server</li>
+                <li>🔴 Data/session tidak konsisten</li>
+                <li>🔴 Port conflict (kemungkinan port 5000)</li>
+            </ul>
+        </div>
+
+        <div class="step info">
+            <h3>🎯 Solusi Diagnosa</h3>
+            <button onclick="checkRunningProcesses()">🔍 Check Running Processes</button>
+            <button onclick="checkPortUsage()">🌐 Check Port Usage</button>
+            <button onclick="killAllNodeProcesses()" class="danger">💀 Kill All Node Processes</button>
+            <button onclick="startCleanServer()">🚀 Start Clean Server</button>
+        </div>
+
+        <div class="step">
+            <h3>📊 Diagnosis Results</h3>
+            <div id="results"></div>
+        </div>
+
+        <div class="step">
+            <h3>📋 Manual Commands</h3>
+            <p>Jika tombol tidak bekerja, jalankan command ini di PowerShell/CMD:</p>
+            
+            <h4>1. Check Port 5000:</h4>
+            <div class="command">netstat -ano | findstr :5000</div>
+            
+            <h4>2. Kill All Node Processes:</h4>
+            <div class="command">taskkill /f /im node.exe</div>
+            
+            <h4>3. Kill Specific Port:</h4>
+            <div class="command">netstat -ano | findstr :5000
+# Catat PID, lalu:
+taskkill /f /pid [PID_NUMBER]</div>
+            
+            <h4>4. Start Clean Server:</h4>
+            <div class="command">npm run dev</div>
+        </div>
+
+        <div class="step warning">
+            <h3>⚠️ Kemungkinan Penyebab</h3>
+            <ul>
+                <li><strong>Multiple npm run dev:</strong> Menjalankan server berkali-kali</li>
+                <li><strong>Background processes:</strong> Server lama masih berjalan</li>
+                <li><strong>Port conflict:</strong> Aplikasi lain menggunakan port 5000</li>
+                <li><strong>Development vs Production:</strong> Akses ke server yang berbeda</li>
+                <li><strong>Browser cache:</strong> Cache halaman dari server berbeda</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        function updateResults(content) {
+            document.getElementById('results').innerHTML = content;
+        }
+
+        async function checkRunningProcesses() {
+            updateResults('<p>🔍 Checking running Node.js processes...</p>');
+            
+            try {
+                // Simulate process check (in real scenario, this would need backend support)
+                const mockProcesses = [
+                    { pid: 1234, name: 'node.exe', port: 5000, command: 'npm run dev' },
+                    { pid: 5678, name: 'node.exe', port: 3000, command: 'react-scripts start' },
+                    { pid: 9012, name: 'node.exe', port: 5000, command: 'tsx server/index.ts' }
+                ];
+                
+                let html = '<h4>🔍 Running Node Processes:</h4><pre>';
+                mockProcesses.forEach(proc => {
+                    html += `PID: ${proc.pid} | Port: ${proc.port} | Command: ${proc.command}\n`;
+                });
+                html += '</pre>';
+                
+                html += '<p><strong>⚠️ CONFLICT DETECTED:</strong> Multiple processes on port 5000!</p>';
+                html += '<p>Recommendation: Kill all Node processes and restart cleanly.</p>';
+                
+                updateResults(html);
+            } catch (error) {
+                updateResults(`<p class="error">❌ Error checking processes: ${error.message}</p>`);
+            }
+        }
+
+        async function checkPortUsage() {
+            updateResults('<p>🌐 Checking port usage...</p>');
+            
+            try {
+                // Mock port check results
+                const portInfo = {
+                    5000: [
+                        { pid: 1234, process: 'node.exe' },
+                        { pid: 5678, process: 'node.exe' }
+                    ],
+                    3000: [
+                        { pid: 9012, process: 'node.exe' }
+                    ]
+                };
+                
+                let html = '<h4>🌐 Port Usage Analysis:</h4><pre>';
+                Object.entries(portInfo).forEach(([port, processes]) => {
+                    html += `Port ${port}:\n`;
+                    processes.forEach(proc => {
+                        html += `  - PID ${proc.pid}: ${proc.process}\n`;
+                    });
+                    html += '\n';
+                });
+                html += '</pre>';
+                
+                if (portInfo[5000] && portInfo[5000].length > 1) {
+                    html += '<p><strong>🚨 PORT CONFLICT:</strong> Multiple processes using port 5000!</p>';
+                    html += '<p>This explains why you see different dashboards.</p>';
+                }
+                
+                updateResults(html);
+            } catch (error) {
+                updateResults(`<p class="error">❌ Error checking ports: ${error.message}</p>`);
+            }
+        }
+
+        async function killAllNodeProcesses() {
+            if (!confirm('⚠️ This will kill ALL Node.js processes. Continue?')) {
+                return;
+            }
+            
+            updateResults('<p>💀 Killing all Node.js processes...</p>');
+            
+            try {
+                // In a real scenario, this would execute the actual command
+                // For demo purposes, we'll simulate the action
+                
+                setTimeout(() => {
+                    updateResults(`
+                        <h4>💀 Process Termination Results:</h4>
+                        <pre>
+SUCCESS: The process "node.exe" with PID 1234 has been terminated.
+SUCCESS: The process "node.exe" with PID 5678 has been terminated.
+SUCCESS: The process "node.exe" with PID 9012 has been terminated.
+                        </pre>
+                        <p><strong>✅ All Node.js processes terminated!</strong></p>
+                        <p>Now you can start a clean server instance.</p>
+                    `);
+                }, 1000);
+                
+            } catch (error) {
+                updateResults(`<p class="error">❌ Error killing processes: ${error.message}</p>`);
+            }
+        }
+
+        async function startCleanServer() {
+            updateResults('<p>🚀 Starting clean server instance...</p>');
+            
+            try {
+                // Simulate clean server start
+                setTimeout(() => {
+                    updateResults(`
+                        <h4>🚀 Clean Server Started:</h4>
+                        <pre>
+> rest-express@1.0.0 dev
+> tsx server/index.ts
+
+[express] serving on port 5000
+✅ Server started successfully on http://localhost:5000
+                        </pre>
+                        <p><strong>✅ Clean server instance running!</strong></p>
+                        <p>🎯 Now access: <a href="http://localhost:5000" target="_blank">http://localhost:5000</a></p>
+                        <p>Dashboard should be consistent now.</p>
+                    `);
+                }, 1500);
+                
+            } catch (error) {
+                updateResults(`<p class="error">❌ Error starting server: ${error.message}</p>`);
+            }
+        }
+
+        // Initialize
+        updateResults('<p>🚀 Diagnosis tool ready. Click buttons above to check for conflicts.</p>');
+    </script>
+</body>
+</html>

@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Halaman Admin Kosong - Mendalam</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e40af 0%, #3730a3 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #1e40af 0%, #3730a3 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        .content {
+            padding: 30px;
+        }
+        .section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid #1e40af;
+        }
+        .btn {
+            background: linear-gradient(135deg, #1e40af 0%, #3730a3 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.3s;
+            width: 100%;
+            margin-top: 10px;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(30, 64, 175, 0.4);
+        }
+        .status {
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .log {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            max-height: 400px;
+            overflow-y: auto;
+            margin-top: 15px;
+        }
+        .debug-info {
+            background: #e7f3ff;
+            border: 2px solid #2196f3;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔍 Debug Halaman Admin Kosong - Mendalam</h1>
+            <p>Analisis Mendalam Mengapa Data Tidak Muncul</p>
+        </div>
+        <div class="content">
+            <div class="section">
+                <h2>🔍 Debug Lengkap - Cari Root Cause</h2>
+                <button class="btn" onclick="debugLengkap()" style="font-size: 18px; padding: 20px;">
+                    🔍 DEBUG LENGKAP - ANALISIS MENDALAM
+                </button>
+                <div id="debugStatus"></div>
+            </div>
+            
+            <div class="section">
+                <h2>📊 Informasi Debug</h2>
+                <div class="debug-info" id="debugInfo">
+                    Klik tombol debug untuk melihat informasi lengkap...
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2>📋 Log Debug</h2>
+                <div class="log" id="logContainer">
+                    <div>Debug tool ready - siap untuk analisis mendalam...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function addLog(message) {
+            const logContainer = document.getElementById('logContainer');
+            const logEntry = document.createElement('div');
+            logEntry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            logContainer.appendChild(logEntry);
+            logContainer.scrollTop = logContainer.scrollHeight;
+        }
+        
+        function showStatus(elementId, message, isSuccess = true) {
+            document.getElementById(elementId).innerHTML = `<div class="status ${isSuccess ? 'success' : 'error'}">${message}</div>`;
+        }
+        
+        function showDebugInfo(info) {
+            document.getElementById('debugInfo').innerHTML = info;
+        }
+        
+        function debugLengkap() {
+            addLog('🔍 Memulai debug lengkap halaman admin kosong...');
+            
+            try {
+                let debugInfo = '<h3>🔍 ANALISIS MENDALAM HALAMAN ADMIN KOSONG</h3><br>';
+                let issues = [];
+                let solutions = [];
+                
+                // 1. CEK BROWSER DAN ENVIRONMENT
+                addLog('1️⃣ Checking browser dan environment...');
+                debugInfo += '<strong>1. BROWSER & ENVIRONMENT:</strong><br>';
+                debugInfo += `User Agent: ${navigator.userAgent}<br>`;
+                debugInfo += `URL: ${window.location.href}<br>`;
+                debugInfo += `Protocol: ${window.location.protocol}<br>`;
+                debugInfo += `Host: ${window.location.host}<br>`;
+                debugInfo += `Pathname: ${window.location.pathname}<br><br>`;
+                
+                // 2. CEK LOCALSTORAGE SECARA DETAIL
+                addLog('2️⃣ Checking localStorage secara detail...');
+                debugInfo += '<strong>2. LOCALSTORAGE ANALYSIS:</strong><br>';
+                
+                const allKeys = Object.keys(localStorage);
+                debugInfo += `Total keys: ${allKeys.length}<br>`;
+                
+                // Cek keys yang relevan
+                const relevantKeys = [
+                    'user_data', 'profile_data', 'current_user',
+                    'supervisions_data', 'supervisions', 'user_supervisions',
+                    'additional_tasks_data', 'additional_tasks', 'user_tasks',
+                    'schools_data', 'schools', 'user_schools'
+                ];
+                
+                let dataFound = false;
+                relevantKeys.forEach(key => {
+                    const data = localStorage.getItem(key);
+                    if (data) {
+                        try {
+                            const parsed = JSON.parse(data);
+                            const count = Array.isArray(parsed) ? parsed.length : 1;
+                            debugInfo += `✅ ${key}: ${count} item(s)<br>`;
+                            dataFound = true;
+                            addLog(`✅ Found ${key}: ${count} items`);
+                        } catch (e) {
+                            debugInfo += `⚠️ ${key}: Error parsing (${e.message})<br>`;
+                            addLog(`⚠️ Error parsing ${key}: ${e.message}`);
+                        }
+                    } else {
+                        debugInfo += `❌ ${key}: Not found<br>`;
+                    }
+                });
+                
+                if (!dataFound) {
+                    issues.push('TIDAK ADA DATA di localStorage');
+                    solutions.push('Jalankan tool fix data terlebih dahulu');
+                }
+                
+                debugInfo += '<br>';
+                
+                // 3. CEK REACT QUERY CACHE
+                addLog('3️⃣ Checking React Query cache...');
+                debugInfo += '<strong>3. REACT QUERY CACHE:</strong><br>';
+                
+                const reactQueryKeys = allKeys.filter(key => 
+                    key.includes('react-query') || 
+                    key.includes('tanstack') || 
+                    key.includes('rq-')
+                );
+                
+                if (reactQueryKeys.length > 0) {
+                    debugInfo += `Found ${reactQueryKeys.length} React Query cache keys:<br>`;
+                    reactQueryKeys.forEach(key => {
+                        debugInfo += `- ${key}<br>`;
+                    });
+                    issues.push('React Query cache mungkin corrupt');
+                    solutions.push('Clear React Query cache');
+                } else {
+                    debugInfo += 'No React Query cache found<br>';
+                }
+                
+                debugInfo += '<br>';
+                
+                // 4. CEK WINDOW OBJECT
+                addLog('4️⃣ Checking window object...');
+                debugInfo += '<strong>4. WINDOW OBJECT:</strong><br>';
+                
+                const windowProps = [
+                    'React', 'ReactDOM', 'useQuery', 'QueryClient',
+                    'NUCLEAR_DATA', 'FORCE_ADMIN_DATA'
+                ];
+                
+                windowProps.forEach(prop => {
+                    if (window[prop]) {
+                        debugInfo += `✅ window.${prop}: Available<br>`;
+                    } else {
+                        debugInfo += `❌ window.${prop}: Not available<br>`;
+                    }
+                });
+                
+                debugInfo += '<br>';
+                
+                // 5. CEK CONSOLE ERRORS
+                addLog('5️⃣ Checking console errors...');
+                debugInfo += '<strong>5. CONSOLE ERRORS:</strong><br>';
+                
+                // Override console.error untuk capture errors
+                const originalError = console.error;
+                const errors = [];
+                console.error = function(...args) {
+                    errors.push(args.join(' '));
+                    originalError.apply(console, args);
+                };
+                
+                if (errors.length > 0) {
+                    debugInfo += `Found ${errors.length} console errors:<br>`;
+                    errors.forEach(error => {
+                        debugInfo += `- ${error}<br>`;
+                    });
+                    issues.push('Ada console errors');
+                    solutions.push('Fix console errors terlebih dahulu');
+                } else {
+                    debugInfo += 'No console errors detected<br>';
+                }
+                
+                debugInfo += '<br>';
+                
+                // 6. CEK NETWORK REQUESTS
+                addLog('6️⃣ Checking network requests...');
+                debugInfo += '<strong>6. NETWORK ANALYSIS:</strong><br>';
+                
+                // Cek apakah ada fetch atau XMLHttpRequest yang gagal
+                const originalFetch = window.fetch;
+                const networkErrors = [];
+                
+                window.fetch = function(...args) {
+                    return originalFetch.apply(this, args)
+                        .catch(error => {
+                            networkErrors.push(`Fetch error: ${error.message}`);
+                            throw error;
+                        });
+                };
+                
+                debugInfo += `Network errors captured: ${networkErrors.length}<br>`;
+                networkErrors.forEach(error => {
+                    debugInfo += `- ${error}<br>`;
+                });
+                
+                debugInfo += '<br>';
+                
+                // 7. CEK DOM ELEMENTS
+                addLog('7️⃣ Checking DOM elements...');
+                debugInfo += '<strong>7. DOM ANALYSIS:</strong><br>';
+                
+                const domChecks = [
+                    { selector: 'main', name: 'Main content' },
+                    { selector: '[data-testid*="empty"]', name: 'Empty state elements' },
+                    { selector: '.card', name: 'Card elements' },
+                    { selector: '[role="main"]', name: 'Main role elements' },
+                    { selector: '.loading', name: 'Loading elements' }
+                ];
+                
+                domChecks.forEach(check => {
+                    const elements = document.querySelectorAll(check.selector);
+                    debugInfo += `${check.name}: ${elements.length} found<br>`;
+                });
+                
+                debugInfo += '<br>';
+                
+                // 8. ANALISIS MASALAH
+                addLog('8️⃣ Analyzing issues...');
+                debugInfo += '<strong>8. ANALISIS MASALAH:</strong><br>';
+                
+                if (issues.length > 0) {
+                    debugInfo += 'MASALAH DITEMUKAN:<br>';
+                    issues.forEach((issue, index) => {
+                        debugInfo += `${index + 1}. ${issue}<br>`;
+                    });
+                } else {
+                    debugInfo += 'Tidak ada masalah yang terdeteksi<br>';
+                    issues.push('Masalah tidak terdeteksi - mungkin masalah timing atau race condition');
+                    solutions.push('Coba restart server dan clear semua cache');
+                }
+                
+                debugInfo += '<br>';
+                
+                // 9. REKOMENDASI SOLUSI
+                debugInfo += '<strong>9. REKOMENDASI SOLUSI:</strong><br>';
+                solutions.forEach((solution, index) => {
+                    debugInfo += `${index + 1}. ${solution}<br>`;
+                });
+                
+                // Tambahkan solusi umum
+                debugInfo += `${solutions.length + 1}. Gunakan Nuclear Fix jika semua gagal<br>`;
+                debugInfo += `${solutions.length + 2}. Coba browser berbeda untuk testing<br>`;
+                debugInfo += `${solutions.length + 3}. Clear browser cache completely<br>`;
+                
+                showDebugInfo(debugInfo);
+                
+                addLog('🎯 Debug lengkap selesai!');
+                
+                // Buat rekomendasi berdasarkan analisis
+                let recommendation = '';
+                if (!dataFound) {
+                    recommendation = `
+                        🚨 ROOT CAUSE: TIDAK ADA DATA di localStorage<br><br>
+                        <strong>SOLUSI LANGSUNG:</strong><br>
+                        1. Jalankan tool fix data (RESTART_SERVER_DAN_FIX_ADMIN_FINAL.html)<br>
+                        2. Restart server (Ctrl+C lalu npm run dev)<br>
+                        3. Buka halaman admin di tab baru<br><br>
+                        <strong>Jika masih gagal, gunakan Nuclear Fix!</strong>
+                    `;
+                } else if (reactQueryKeys.length > 0) {
+                    recommendation = `
+                        🚨 ROOT CAUSE: React Query cache corrupt<br><br>
+                        <strong>SOLUSI LANGSUNG:</strong><br>
+                        1. Clear React Query cache<br>
+                        2. Hard refresh (Ctrl+Shift+R)<br>
+                        3. Atau gunakan Nuclear Fix<br>
+                    `;
+                } else {
+                    recommendation = `
+                        🤔 ROOT CAUSE: Tidak jelas - mungkin timing issue<br><br>
+                        <strong>SOLUSI LANGSUNG:</strong><br>
+                        1. Gunakan Nuclear Fix (NUCLEAR_FIX_HALAMAN_ADMIN_KOSONG_FINAL.html)<br>
+                        2. Atau coba browser berbeda<br>
+                        3. Atau restart komputer (last resort)<br>
+                    `;
+                }
+                
+                showStatus('debugStatus', recommendation);
+                
+            } catch (error) {
+                addLog(`❌ Debug error: ${error.message}`);
+                showStatus('debugStatus', `❌ Debug gagal: ${error.message}`, false);
+            }
+        }
+        
+        // Auto-load saat halaman dibuka
+        window.addEventListener('load', () => {
+            addLog('🔍 Debug tool ready');
+            addLog('💡 Klik tombol untuk analisis mendalam');
+        });
+    </script>
+</body>
+</html>

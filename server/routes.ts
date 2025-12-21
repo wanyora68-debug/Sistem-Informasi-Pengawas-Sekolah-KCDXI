@@ -66,6 +66,72 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Serve uploaded files
   app.use("/uploads", express.static("uploads"));
 
+  // Development endpoints (no auth required) - for frontend development
+  app.get("/api/dev/data", async (req, res) => {
+    try {
+      // Get all data without user filtering for development
+      const allUsers = await db.getAllUsers();
+      
+      // Get data for all users (since methods require userId, we'll get raw data)
+      const allTasks: any[] = [];
+      const allSupervisions: any[] = [];
+      const allSchools: any[] = [];
+      const allAdditionalTasks: any[] = [];
+      
+      // Collect data from all users
+      for (const user of allUsers) {
+        const userTasks = await db.getTasks(user.id);
+        const userSupervisions = await db.getSupervisions(user.id);
+        const userSchools = await db.getSchools(user.id);
+        const userAdditionalTasks = await db.getAdditionalTasks(user.id);
+        
+        allTasks.push(...userTasks);
+        allSupervisions.push(...userSupervisions);
+        allSchools.push(...userSchools);
+        allAdditionalTasks.push(...userAdditionalTasks);
+      }
+      
+      res.json({
+        tasks: allTasks,
+        supervisions: allSupervisions,
+        schools: allSchools,
+        additionalTasks: allAdditionalTasks,
+        users: allUsers
+      });
+    } catch (error) {
+      console.error("Dev data error:", error);
+      res.status(500).json({ error: "Failed to fetch dev data" });
+    }
+  });
+
+  // Development endpoint for specific user data
+  app.get("/api/dev/user/:username", async (req, res) => {
+    try {
+      const { username } = req.params;
+      const user = await db.getUserByUsername(username);
+      
+      if (!user) {
+        return res.status(404).json({ error: "User not found" });
+      }
+
+      const tasks = await db.getTasks(user.id);
+      const supervisions = await db.getSupervisions(user.id);
+      const additionalTasks = await db.getAdditionalTasks(user.id);
+      const schools = await db.getSchools(user.id);
+
+      res.json({
+        user,
+        tasks,
+        supervisions,
+        additionalTasks,
+        schools
+      });
+    } catch (error) {
+      console.error("Dev user data error:", error);
+      res.status(500).json({ error: "Failed to fetch user data" });
+    }
+  });
+
   // Auth routes
   app.post("/api/auth/register", async (req, res) => {
     try {

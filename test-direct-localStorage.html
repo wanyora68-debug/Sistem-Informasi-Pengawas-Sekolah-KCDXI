@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Direct localStorage</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        button {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px 5px;
+        }
+        .result {
+            margin: 15px 0;
+            padding: 15px;
+            border-radius: 5px;
+            background: #f0f9ff;
+            border-left: 4px solid #2563eb;
+            white-space: pre-wrap;
+            font-family: monospace;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔍 Test Direct localStorage</h1>
+    
+    <h3>1. Test Sekolah</h3>
+    <button onclick="addSchool()">Tambah Sekolah</button>
+    <button onclick="readSchools()">Baca Sekolah</button>
+    <button onclick="clearSchools()">Hapus Sekolah</button>
+    <div id="schoolResult" class="result"></div>
+    
+    <h3>2. Test Tugas Tambahan</h3>
+    <button onclick="addTask()">Tambah Tugas</button>
+    <button onclick="readTasks()">Baca Tugas</button>
+    <button onclick="clearTasks()">Hapus Tugas</button>
+    <div id="taskResult" class="result"></div>
+    
+    <h3>3. Instruksi</h3>
+    <p>1. Klik tombol "Tambah" untuk menambah data</p>
+    <p>2. Klik tombol "Baca" untuk membaca data</p>
+    <p>3. Buka aplikasi utama dan cek apakah data muncul</p>
+    <p>4. Jika tidak muncul, ada masalah dengan React Query</p>
+
+    <script>
+        function addSchool() {
+            try {
+                const schoolsData = localStorage.getItem('schools_data');
+                const currentSchools = schoolsData ? JSON.parse(schoolsData) : [];
+                
+                const newSchool = {
+                    id: Date.now().toString(),
+                    name: `SDN Test ${Math.floor(Math.random() * 100)}`,
+                    address: `Jl. Test No. ${Math.floor(Math.random() * 100)}`,
+                    contact: `08${Math.floor(Math.random() * 1000000000)}`,
+                    principalName: `Kepala Test ${Math.floor(Math.random() * 100)}`,
+                    principalNip: `19${Math.floor(Math.random() * 100000000)}`,
+                    supervisions: 0,
+                    createdAt: new Date().toISOString()
+                };
+                
+                const updatedSchools = [...currentSchools, newSchool];
+                localStorage.setItem('schools_data', JSON.stringify(updatedSchools));
+                
+                document.getElementById('schoolResult').textContent = 
+                    `✅ Sekolah ditambahkan: ${newSchool.name}\nTotal sekolah: ${updatedSchools.length}`;
+                    
+            } catch (error) {
+                document.getElementById('schoolResult').textContent = `❌ Error: ${error.message}`;
+            }
+        }
+        
+        function readSchools() {
+            try {
+                const schoolsData = localStorage.getItem('schools_data');
+                if (!schoolsData) {
+                    document.getElementById('schoolResult').textContent = '❌ Tidak ada data sekolah';
+                    return;
+                }
+                
+                const schools = JSON.parse(schoolsData);
+                document.getElementById('schoolResult').textContent = 
+                    `📊 Data Sekolah (${schools.length} sekolah):\n${JSON.stringify(schools, null, 2)}`;
+                    
+            } catch (error) {
+                document.getElementById('schoolResult').textContent = `❌ Error: ${error.message}`;
+            }
+        }
+        
+        function clearSchools() {
+            localStorage.removeItem('schools_data');
+            document.getElementById('schoolResult').textContent = '🗑️ Data sekolah dihapus';
+        }
+        
+        function addTask() {
+            try {
+                const tasksData = localStorage.getItem('additional_tasks_data');
+                const currentTasks = tasksData ? JSON.parse(tasksData) : [];
+                
+                const newTask = {
+                    id: Date.now().toString(),
+                    name: `Kegiatan Test ${Math.floor(Math.random() * 100)}`,
+                    date: new Date().toISOString().split('T')[0],
+                    location: `Lokasi Test ${Math.floor(Math.random() * 100)}`,
+                    organizer: `Penyelenggara Test ${Math.floor(Math.random() * 100)}`,
+                    description: `Deskripsi kegiatan test`,
+                    createdAt: new Date().toISOString()
+                };
+                
+                const updatedTasks = [...currentTasks, newTask];
+                localStorage.setItem('additional_tasks_data', JSON.stringify(updatedTasks));
+                
+                document.getElementById('taskResult').textContent = 
+                    `✅ Tugas ditambahkan: ${newTask.name}\nTotal tugas: ${updatedTasks.length}`;
+                    
+            } catch (error) {
+                document.getElementById('taskResult').textContent = `❌ Error: ${error.message}`;
+            }
+        }
+        
+        function readTasks() {
+            try {
+                const tasksData = localStorage.getItem('additional_tasks_data');
+                if (!tasksData) {
+                    document.getElementById('taskResult').textContent = '❌ Tidak ada data tugas tambahan';
+                    return;
+                }
+                
+                const tasks = JSON.parse(tasksData);
+                document.getElementById('taskResult').textContent = 
+                    `📊 Data Tugas Tambahan (${tasks.length} tugas):\n${JSON.stringify(tasks, null, 2)}`;
+                    
+            } catch (error) {
+                document.getElementById('taskResult').textContent = `❌ Error: ${error.message}`;
+            }
+        }
+        
+        function clearTasks() {
+            localStorage.removeItem('additional_tasks_data');
+            document.getElementById('taskResult').textContent = '🗑️ Data tugas tambahan dihapus';
+        }
+        
+        // Auto-check on load
+        window.onload = function() {
+            readSchools();
+            readTasks();
+        };
+    </script>
+</body>
+</html>

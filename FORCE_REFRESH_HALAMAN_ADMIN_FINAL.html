@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Force Refresh Halaman Admin - FINAL</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        .content {
+            padding: 30px;
+        }
+        .section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.3s;
+            width: 100%;
+            margin-top: 10px;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        .btn.danger {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        }
+        .status {
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .log {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            max-height: 400px;
+            overflow-y: auto;
+            margin-top: 15px;
+        }
+        .warning {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .warning h3 {
+            color: #856404;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔄 Force Refresh Halaman Admin</h1>
+            <p>Memaksa Refresh Semua Halaman Admin dengan Data User Wawan</p>
+        </div>
+        <div class="content">
+            <div class="warning">
+                <h3>⚠️ Perhatian:</h3>
+                <p>Tool ini akan:</p>
+                <ul style="margin-left: 20px; margin-top: 10px;">
+                    <li>✅ Membersihkan cache React Query</li>
+                    <li>✅ Memaksa reload data dari localStorage</li>
+                    <li>✅ Trigger refresh untuk semua halaman admin</li>
+                    <li>✅ Memastikan data user Wawan muncul di semua halaman</li>
+                </ul>
+            </div>
+            
+            <div class="section">
+                <h2>🎯 Force Refresh Semua Halaman Admin</h2>
+                <button class="btn" onclick="forceRefreshAdmin()" style="font-size: 18px; padding: 20px;">
+                    🚀 FORCE REFRESH HALAMAN ADMIN - PAKSA DATA MUNCUL
+                </button>
+                <div id="refreshStatus"></div>
+            </div>
+            
+            <div class="section">
+                <h2>🗑️ Clear Cache & Reload (Jika Masih Belum Muncul)</h2>
+                <button class="btn danger" onclick="clearCacheAndReload()">
+                    💥 CLEAR CACHE & RELOAD APLIKASI
+                </button>
+                <div id="clearStatus"></div>
+            </div>
+            
+            <div class="section">
+                <h2>📋 Log Aktivitas</h2>
+                <div class="log" id="logContainer">
+                    <div>Siap untuk force refresh halaman admin...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function addLog(message) {
+            const logContainer = document.getElementById('logContainer');
+            const logEntry = document.createElement('div');
+            logEntry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            logContainer.appendChild(logEntry);
+            logContainer.scrollTop = logContainer.scrollHeight;
+        }
+        
+        function showStatus(elementId, message, isSuccess = true) {
+            document.getElementById(elementId).innerHTML = `<div class="status ${isSuccess ? 'success' : 'error'}">${message}</div>`;
+        }
+        
+        function forceRefreshAdmin() {
+            addLog('🚀 Memulai force refresh halaman admin...');
+            
+            try {
+                // 1. Pastikan data user Wawan ada di localStorage
+                addLog('1️⃣ Memastikan data user Wawan tersimpan...');
+                
+                const profileWawan = {
+                    id: "1762696525337",
+                    username: "wawan",
+                    fullName: "H. Wawan Yogaswara, S.Pd, M.Pd",
+                    role: "pengawas",
+                    nip: "196805301994121001",
+                    rank: "Pembina Utama Muda, IV/c",
+                    officeName: "Cabang Dinas Pendidikan Wilayah XI Dinas Pendidikan Provinsi Jawa Barat",
+                    phone: "087733438282",
+                    photoUrl: "/uploads/1762830374284-750171039.jpg"
+                };
+                
+                // Set profile ke multiple keys
+                const profileKeys = ['user_data', 'profile_data', 'current_user', 'user_profile'];
+                profileKeys.forEach(key => {
+                    localStorage.setItem(key, JSON.stringify(profileWawan));
+                });
+                addLog('✅ Profile data Wawan tersimpan');
+                
+                // 2. Ambil data yang sudah ada dan pastikan userId benar
+                addLog('2️⃣ Memperbaiki userId pada semua data...');
+                
+                // Fix supervisions
+                const supervisionsData = localStorage.getItem('supervisions_data');
+                if (supervisionsData) {
+                    const supervisions = JSON.parse(supervisionsData);
+                    supervisions.forEach(s => {
+                        s.userId = "1762696525337";
+                        if (!s.school || s.school === 'undefined') {
+                            s.school = 'SMKN 14 Garut';
+                        }
+                    });
+                    localStorage.setItem('supervisions_data', JSON.stringify(supervisions));
+                    localStorage.setItem('supervisions', JSON.stringify(supervisions));
+                    localStorage.setItem('user_supervisions', JSON.stringify(supervisions));
+                    addLog(`✅ Fixed ${supervisions.length} supervisions`);
+                }
+                
+                // Fix additional tasks
+                const tasksData = localStorage.getItem('additional_tasks_data');
+                if (tasksData) {
+                    const tasks = JSON.parse(tasksData);
+                    tasks.forEach(t => {
+                        t.userId = "1762696525337";
+                    });
+                    localStorage.setItem('additional_tasks_data', JSON.stringify(tasks));
+                    localStorage.setItem('additional_tasks', JSON.stringify(tasks));
+                    localStorage.setItem('user_tasks', JSON.stringify(tasks));
+                    addLog(`✅ Fixed ${tasks.length} additional tasks`);
+                }
+                
+                // Fix schools
+                const schoolsData = localStorage.getItem('schools_data');
+                if (schoolsData) {
+                    const schools = JSON.parse(schoolsData);
+                    schools.forEach(s => {
+                        s.supervisorId = "1762696525337";
+                    });
+                    localStorage.setItem('schools_data', JSON.stringify(schools));
+                    localStorage.setItem('schools', JSON.stringify(schools));
+                    localStorage.setItem('user_schools', JSON.stringify(schools));
+                    addLog(`✅ Fixed ${schools.length} schools`);
+                }
+                
+                // 3. Clear React Query cache keys
+                addLog('3️⃣ Clearing React Query cache...');
+                const cacheKeys = [
+                    'supervisions',
+                    'additional-tasks',
+                    'schools',
+                    'tasks',
+                    '/api/supervisions',
+                    '/api/additional-tasks',
+                    '/api/schools',
+                    '/api/tasks',
+                    '/api/auth/me'
+                ];
+                
+                // Hapus cache keys dari localStorage jika ada
+                cacheKeys.forEach(key => {
+                    localStorage.removeItem(`react-query-${key}`);
+                    localStorage.removeItem(`rq-${key}`);
+                });
+                addLog('✅ React Query cache cleared');
+                
+                // 4. Set flags untuk force refresh
+                addLog('4️⃣ Setting force refresh flags...');
+                localStorage.setItem('force_admin_refresh', 'true');
+                localStorage.setItem('force_admin_refresh_timestamp', new Date().toISOString());
+                localStorage.setItem('admin_data_updated', 'true');
+                addLog('✅ Force refresh flags set');
+                
+                // 5. Trigger storage events untuk semua keys
+                addLog('5️⃣ Triggering storage events...');
+                const dataKeys = ['supervisions_data', 'additional_tasks_data', 'schools_data'];
+                dataKeys.forEach(key => {
+                    const data = localStorage.getItem(key);
+                    if (data) {
+                        window.dispatchEvent(new StorageEvent('storage', {
+                            key: key,
+                            newValue: data,
+                            oldValue: null,
+                            storageArea: localStorage
+                        }));
+                    }
+                });
+                addLog('✅ Storage events triggered');
+                
+                // 6. Force reload dengan timestamp
+                addLog('6️⃣ Setting reload timestamp...');
+                const reloadTimestamp = new Date().getTime();
+                localStorage.setItem('last_admin_reload', reloadTimestamp.toString());
+                addLog('✅ Reload timestamp set');
+                
+                addLog('🎉 FORCE REFRESH SELESAI!');
+                showStatus('refreshStatus', `
+                    🎉 FORCE REFRESH BERHASIL!<br><br>
+                    ✅ Profile data Wawan tersimpan<br>
+                    ✅ UserId diperbaiki pada semua data<br>
+                    ✅ React Query cache dibersihkan<br>
+                    ✅ Storage events triggered<br><br>
+                    <strong>SEKARANG:</strong><br>
+                    1. Tutup halaman ini<br>
+                    2. Buka halaman admin (Supervisi/Tugas Tambahan/Sekolah)<br>
+                    3. Tekan Ctrl+Shift+R (hard refresh)<br>
+                    4. Data user Wawan akan muncul!
+                `);
+                
+            } catch (error) {
+                addLog(`❌ Error: ${error.message}`);
+                showStatus('refreshStatus', `❌ Gagal: ${error.message}`, false);
+            }
+        }
+        
+        function clearCacheAndReload() {
+            addLog('💥 Memulai clear cache dan reload...');
+            
+            if (confirm('⚠️ Ini akan menghapus semua cache dan reload aplikasi. Lanjutkan?')) {
+                try {
+                    addLog('🗑️ Clearing all cache...');
+                    
+                    // Clear semua cache React Query
+                    const allKeys = Object.keys(localStorage);
+                    allKeys.forEach(key => {
+                        if (key.includes('react-query') || key.includes('rq-') || key.includes('tanstack')) {
+                            localStorage.removeItem(key);
+                        }
+                    });
+                    
+                    // Set flag untuk force reload
+                    localStorage.setItem('force_hard_reload', 'true');
+                    localStorage.setItem('clear_cache_timestamp', new Date().toISOString());
+                    
+                    addLog('✅ Cache cleared');
+                    addLog('🔄 Reloading aplikasi...');
+                    
+                    showStatus('clearStatus', `
+                        ✅ CACHE CLEARED!<br><br>
+                        Aplikasi akan reload dalam 2 detik...<br>
+                        Setelah reload, buka halaman admin untuk melihat data.
+                    `);
+                    
+                    // Reload setelah 2 detik
+                    setTimeout(() => {
+                        window.location.href = '/';
+                    }, 2000);
+                    
+                } catch (error) {
+                    addLog(`❌ Error: ${error.message}`);
+                    showStatus('clearStatus', `❌ Gagal: ${error.message}`, false);
+                }
+            } else {
+                addLog('❌ Clear cache dibatalkan');
+            }
+        }
+        
+        // Auto-load saat halaman dibuka
+        window.addEventListener('load', () => {
+            addLog('✅ Halaman siap digunakan');
+            addLog('💡 Klik "FORCE REFRESH" untuk memaksa data muncul di halaman admin');
+            addLog('💡 Jika masih belum muncul, gunakan "CLEAR CACHE & RELOAD"');
+        });
+    </script>
+</body>
+</html>

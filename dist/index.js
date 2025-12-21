@@ -1200,6 +1200,58 @@ async function registerRoutes(app2) {
     await seedAdminUser();
   }
   app2.use("/uploads", express.static("uploads"));
+  app2.get("/api/dev/data", async (req, res) => {
+    try {
+      const allUsers = await db2.getAllUsers();
+      const allTasks = [];
+      const allSupervisions = [];
+      const allSchools = [];
+      const allAdditionalTasks = [];
+      for (const user of allUsers) {
+        const userTasks = await db2.getTasks(user.id);
+        const userSupervisions = await db2.getSupervisions(user.id);
+        const userSchools = await db2.getSchools(user.id);
+        const userAdditionalTasks = await db2.getAdditionalTasks(user.id);
+        allTasks.push(...userTasks);
+        allSupervisions.push(...userSupervisions);
+        allSchools.push(...userSchools);
+        allAdditionalTasks.push(...userAdditionalTasks);
+      }
+      res.json({
+        tasks: allTasks,
+        supervisions: allSupervisions,
+        schools: allSchools,
+        additionalTasks: allAdditionalTasks,
+        users: allUsers
+      });
+    } catch (error) {
+      console.error("Dev data error:", error);
+      res.status(500).json({ error: "Failed to fetch dev data" });
+    }
+  });
+  app2.get("/api/dev/user/:username", async (req, res) => {
+    try {
+      const { username } = req.params;
+      const user = await db2.getUserByUsername(username);
+      if (!user) {
+        return res.status(404).json({ error: "User not found" });
+      }
+      const tasks2 = await db2.getTasks(user.id);
+      const supervisions2 = await db2.getSupervisions(user.id);
+      const additionalTasks2 = await db2.getAdditionalTasks(user.id);
+      const schools2 = await db2.getSchools(user.id);
+      res.json({
+        user,
+        tasks: tasks2,
+        supervisions: supervisions2,
+        additionalTasks: additionalTasks2,
+        schools: schools2
+      });
+    } catch (error) {
+      console.error("Dev user data error:", error);
+      res.status(500).json({ error: "Failed to fetch user data" });
+    }
+  });
   app2.post("/api/auth/register", async (req, res) => {
     try {
       const data = insertUserSchema.parse(req.body);
@@ -1908,6 +1960,23 @@ var vite_config_default = defineConfig({
   build: {
     outDir: "../dist/public",
     emptyOutDir: true
+  },
+  server: {
+    historyApiFallback: true,
+    proxy: {
+      "/api": {
+        target: "http://localhost:5000",
+        changeOrigin: true
+      },
+      "/local-database.json": {
+        target: "http://localhost:5000",
+        changeOrigin: true
+      },
+      "/uploads": {
+        target: "http://localhost:5000",
+        changeOrigin: true
+      }
+    }
   }
 });
 
@@ -1966,7 +2035,7 @@ async function setupVite(app2, server) {
   });
 }
 function serveStatic(app2) {
-  const distPath = path4.resolve(import.meta.dirname, "public");
+  const distPath = path4.resolve(import.meta.dirname, "..", "dist", "public");
   if (!fs3.existsSync(distPath)) {
     throw new Error(
       `Could not find the build directory: ${distPath}, make sure to build the client first`

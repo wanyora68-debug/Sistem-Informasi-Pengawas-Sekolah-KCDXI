@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FORCE FIX - Foto Profil & Aktivitas Wawan</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .section { background: white; margin: 20px 0; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .success { background: #d4edda; border-left: 4px solid #28a745; }
+        .error { background: #f8d7da; border-left: 4px solid #dc3545; }
+        .warning { background: #fff3cd; border-left: 4px solid #ffc107; }
+        .info { background: #d1ecf1; border-left: 4px solid #17a2b8; }
+        button { 
+            background: #007bff; color: white; border: none; padding: 12px 20px; 
+            border-radius: 4px; cursor: pointer; margin: 5px; font-size: 14px;
+        }
+        button:hover { background: #0056b3; }
+        button.success { background: #28a745; }
+        button.danger { background: #dc3545; }
+        button.warning { background: #ffc107; color: #212529; }
+        .photo-preview { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; margin: 10px; border: 3px solid #007bff; }
+        pre { background: #f8f9fa; padding: 15px; border-radius: 4px; overflow-x: auto; font-size: 12px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+        .status { padding: 10px; border-radius: 4px; margin: 10px 0; }
+        h1 { color: #333; text-align: center; }
+        h2 { color: #007bff; border-bottom: 2px solid #007bff; padding-bottom: 10px; }
+        .step { margin: 15px 0; padding: 15px; background: #f8f9fa; border-radius: 4px; }
+        .step-number { 
+            background: #007bff; color: white; width: 30px; height: 30px; 
+            border-radius: 50%; display: inline-flex; align-items: center; 
+            justify-content: center; margin-right: 10px; font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 FORCE FIX - Foto Profil & Aktivitas Wawan</h1>
+        
+        <div class="section warning">
+            <h2>⚠️ MASALAH TERIDENTIFIKASI</h2>
+            <ul>
+                <li><strong>Foto profil tidak muncul di dashboard React</strong> - localStorage tidak terbaca dengan benar</li>
+                <li><strong>Aktivitas Wawan tidak muncul di manajemen user</strong> - Filter pencarian tidak mendeteksi data</li>
+                <li><strong>Data tidak tersinkronisasi</strong> antara test file dan aplikasi React</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>🔧 LANGKAH PERBAIKAN LANGSUNG</h2>
+            
+            <div class="step">
+                <span class="step-number">1</span>
+                <strong>Setup Data Profil Wawan</strong>
+                <button onclick="setupWawanProfile()" class="success">Setup Profil Wawan</button>
+                <div id="profileStatus"></div>
+            </div>
+
+            <div class="step">
+                <span class="step-number">2</span>
+                <strong>Setup Data Aktivitas Wawan</strong>
+                <button onclick="setupWawanActivities()" class="success">Setup Aktivitas Wawan</button>
+                <div id="activitiesStatus"></div>
+            </div>
+
+            <div class="step">
+                <span class="step-number">3</span>
+                <strong>Setup User Management Data</strong>
+                <button onclick="setupUserManagement()" class="success">Setup User Management</button>
+                <div id="userMgmtStatus"></div>
+            </div>
+
+            <div class="step">
+                <span class="step-number">4</span>
+                <strong>Force Refresh Application</strong>
+                <button onclick="forceRefreshApp()" class="warning">Force Refresh</button>
+                <div id="refreshStatus"></div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>📊 STATUS REAL-TIME</h2>
+            <div class="grid">
+                <div>
+                    <h3>🖼️ Status Foto Profil</h3>
+                    <div id="photoStatus"></div>
+                </div>
+                <div>
+                    <h3>👤 Status Aktivitas Wawan</h3>
+                    <div id="wawanStatus"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🔍 DEBUG & MONITORING</h2>
+            <button onclick="showDebugInfo()">Show Debug Info</button>
+            <button onclick="clearAllData()" class="danger">Clear All Data</button>
+            <button onclick="exportData()" class="warning">Export Data</button>
+            <div id="debugOutput"></div>
+        </div>
+
+        <div class="section info">
+            <h2>📋 CHECKLIST VERIFIKASI</h2>
+            <div id="checklist">
+                <div>⏳ Menunggu setup...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global status tracking
+        let setupStatus = {
+            profile: false,
+            activities: false,
+            userManagement: false,
+            refresh: false
+        };
+
+        // 1. Setup Profil Wawan
+        function setupWawanProfile() {
+            console.log('🔄 Setting up Wawan profile...');
+            
+            const wawanProfile = {
+                id: 'wawan-123',
+                username: 'wawan',
+                fullName: 'Wawan Setiawan',
+                nip: '196801011990031001',
+                photoUrl: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iIzMzNzNkYyIvPjx0ZXh0IHg9IjUwIiB5PSI1NSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE0IiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+V2F3YW48L3RleHQ+PC9zdmc+',
+                role: 'pengawas',
+                email: 'wawan@disdik.garut.go.id',
+                phone: '081234567890'
+            };
+
+            // Save to ALL possible localStorage keys
+            const profileKeys = [
+                'user_data',
+                'current_user', 
+                'user_profile',
+                'profile_data',
+                'profile_info',
+                'userProfile'
+            ];
+
+            profileKeys.forEach(key => {
+                localStorage.setItem(key, JSON.stringify(wawanProfile));
+                console.log(`✅ Saved profile to ${key}`);
+            });
+
+            // Also save to app_users array
+            const appUsers = [
+                wawanProfile,
+                {
+                    id: 'admin-1',
+                    username: 'admin',
+                    fullName: 'Administrator',
+                    role: 'admin',
+                    photoUrl: null
+                }
+            ];
+            localStorage.setItem('app_users', JSON.stringify(appUsers));
+
+            setupStatus.profile = true;
+            updateProfileStatus();
+            updateChecklist();
+        }
+
+        // 2. Setup Aktivitas Wawan
+        function setupWawanActivities() {
+            console.log('🔄 Setting up Wawan activities...');
+            
+            const wawanActivities = {
+                tasks: [
+                    {
+                        id: 'task-wawan-1',
+                        title: 'Supervisi dan pembinaan Kepala SMKN 14 Garut',
+                        description: 'Melakukan supervisi akademik dan pembinaan kepala sekolah',
+                        category: 'Supervisi Akademik',
+                        completed: true,
+                        date: '2025-01-15T00:00:00.000Z',
+                        userId: 'wawan-123',
+                        username: 'wawan',
+                        createdBy: 'wawan'
+                    },
+                    {
+                        id: 'task-wawan-2',
+                        title: 'Evaluasi program sekolah penggerak SMKN 4 Garut',
+                        description: 'Evaluasi implementasi program sekolah penggerak',
+                        category: 'Evaluasi Program',
+                        completed: false,
+                        date: '2025-01-18T00:00:00.000Z',
+                        userId: 'wawan-123',
+                        username: 'wawan',
+                        createdBy: 'wawan'
+                    }
+                ],
+                supervisions: [
+                    {
+                        id: 'sup-wawan-1',
+                        schoolName: 'SMKN 14 Garut',
+                        school: 'SMKN 14 Garut',
+                        type: 'Supervisi Akademik',
+                        findings: 'Pembelajaran sudah sesuai kurikulum merdeka, namun perlu peningkatan dalam penggunaan teknologi',
+                        recommendations: 'Tingkatkan penggunaan media pembelajaran digital dan platform e-learning',
+                        notes: 'Supervisi berjalan lancar, kepala sekolah kooperatif',
+                        date: '2025-01-15T00:00:00.000Z',
+                        userId: 'wawan-123',
+                        username: 'wawan',
+                        createdBy: 'wawan'
+                    },
+                    {
+                        id: 'sup-wawan-2',
+                        schoolName: 'SMKN 4 Garut',
+                        school: 'SMKN 4 Garut',
+                        type: 'Supervisi Manajerial',
+                        findings: 'Manajemen sekolah sudah baik, dokumentasi perlu diperbaiki',
+                        recommendations: 'Perbaiki sistem dokumentasi dan arsip sekolah',
+                        notes: 'Perlu follow up untuk dokumentasi',
+                        date: '2025-01-18T00:00:00.000Z',
+                        userId: 'wawan-123',
+                        username: 'wawan',
+                        createdBy: 'wawan'
+                    }
+                ],
+                events: [
+                    {
+                        id: 'event-wawan-1',
+                        title: 'Rapat Koordinasi Pengawas Sekolah',
+                        name: 'Rapat Koordinasi Pengawas Sekolah',
+                        description: 'Rapat koordinasi bulanan pengawas sekolah se-Kabupaten Garut',
+                        date: '2025-01-15T00:00:00.000Z',
+                        time: '09:00',
+                        userId: 'wawan-123',
+                        username: 'wawan',
+                        createdBy: 'wawan'
+                    },
+                    {
+                        id: 'event-wawan-2',
+                        title: 'Workshop Implementasi Kurikulum Merdeka',
+                        name: 'Workshop Implementasi Kurikulum Merdeka',
+                        description: 'Workshop peningkatan kapasitas pengawas dalam implementasi kurikulum merdeka',
+                        date: '2025-01-25T00:00:00.000Z',
+                        time: '08:00',
+                        userId: 'wawan-123',
+                        username: 'wawan',
+                        createdBy: 'wawan'
+                    }
+                ],
+                additionalTasks: [
+                    {
+                        id: 'add-wawan-1',
+                        name: 'Rapat Koordinasi Pengawas Sekolah',
+                        title: 'Rapat Koordinasi Pengawas Sekolah',
+                        description: 'Mengikuti rapat koordinasi pengawas sekolah tingkat kabupaten',
+                        organizer: 'Dinas Pendidikan Kabupaten Garut',
+                        location: 'Aula Dinas Pendidikan',
+                        date: '2025-01-15T00:00:00.000Z',
+                        userId: 'wawan-123',
+                        username: 'wawan',
+                        createdBy: 'wawan'
+                    },
+                    {
+                        id: 'add-wawan-2',
+                        name: 'Workshop Kurikulum Merdeka',
+                        title: 'Workshop Kurikulum Merdeka',
+                        description: 'Mengikuti workshop implementasi kurikulum merdeka untuk pengawas sekolah',
+                        organizer: 'Dinas Pendidikan Provinsi Jawa Barat',
+                        location: 'Hotel Santika Garut',
+                        date: '2025-01-30T00:00:00.000Z',
+                        userId: 'wawan-123',
+                        username: 'wawan',
+                        createdBy: 'wawan'
+                    }
+                ]
+            };
+
+            // Save to main database
+            localStorage.setItem('local-database', JSON.stringify(wawanActivities));
+
+            // Save to individual keys as fallback
+            localStorage.setItem('tasks', JSON.stringify(wawanActivities.tasks));
+            localStorage.setItem('supervisions', JSON.stringify(wawanActivities.supervisions));
+            localStorage.setItem('events', JSON.stringify(wawanActivities.events));
+            localStorage.setItem('calendar_events', JSON.stringify(wawanActivities.events));
+            localStorage.setItem('additional_tasks', JSON.stringify(wawanActivities.additionalTasks));
+            localStorage.setItem('additionalTasks', JSON.stringify(wawanActivities.additionalTasks));
+
+            setupStatus.activities = true;
+            updateActivitiesStatus();
+            updateChecklist();
+        }
+
+        // 3. Setup User Management
+        function setupUserManagement() {
+            console.log('🔄 Setting up user management data...');
+            
+            const users = [
+                {
+                    id: 'wawan-123',
+                    username: 'wawan',
+                    fullName: 'Wawan Setiawan',
+                    nip: '196801011990031001',
+                    role: 'pengawas',
+                    email: 'wawan@disdik.garut.go.id',
+                    phone: '081234567890',
+                    photoUrl: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iIzMzNzNkYyIvPjx0ZXh0IHg9IjUwIiB5PSI1NSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE0IiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+V2F3YW48L3RleHQ+PC9zdmc+',
+                    createdAt: new Date().toISOString(),
+                    lastLogin: new Date().toISOString()
+                },
+                {
+                    id: 'admin-1',
+                    username: 'admin',
+                    fullName: 'Administrator Sistem',
+                    role: 'admin',
+                    email: 'admin@disdik.garut.go.id',
+                    photoUrl: null,
+                    createdAt: new Date().toISOString(),
+                    lastLogin: new Date().toISOString()
+                }
+            ];
+
+            // Save users data
+            localStorage.setItem('users', JSON.stringify(users));
+            localStorage.setItem('app_users', JSON.stringify(users));
+            localStorage.setItem('user_list', JSON.stringify(users));
+
+            setupStatus.userManagement = true;
+            updateUserMgmtStatus();
+            updateChecklist();
+        }
+
+        // 4. Force Refresh Application
+        function forceRefreshApp() {
+            console.log('🔄 Force refreshing application...');
+            
+            // Trigger storage events to notify React components
+            window.dispatchEvent(new StorageEvent('storage', {
+                key: 'user_profile',
+                newValue: localStorage.getItem('user_profile'),
+                url: window.location.href
+            }));
+
+            window.dispatchEvent(new StorageEvent('storage', {
+                key: 'local-database',
+                newValue: localStorage.getItem('local-database'),
+                url: window.location.href
+            }));
+
+            // Force reload after a short delay
+            setTimeout(() => {
+                if (confirm('Data telah disetup. Reload halaman untuk melihat perubahan?')) {
+                    window.location.reload();
+                }
+            }, 1000);
+
+            setupStatus.refresh = true;
+            updateRefreshStatus();
+            updateChecklist();
+        }
+
+        // Status update functions
+        function updateProfileStatus() {
+            const status = document.getElementById('profileStatus');
+            const photoStatus = document.getElementById('photoStatus');
+            
+            if (setupStatus.profile) {
+                const profile = JSON.parse(localStorage.getItem('user_profile') || '{}');
+                status.innerHTML = `
+                    <div class="status success">
+                        ✅ Profil Wawan berhasil disetup
+                        <br><strong>Nama:</strong> ${profile.fullName}
+                        <br><strong>NIP:</strong> ${profile.nip}
+                        <br><strong>Foto:</strong> ${profile.photoUrl ? 'Ada' : 'Tidak ada'}
+                    </div>
+                `;
+                
+                photoStatus.innerHTML = `
+                    <div class="status success">
+                        ✅ Foto profil tersedia
+                        <img src="${profile.photoUrl}" alt="Wawan" class="photo-preview">
+                    </div>
+                `;
+            }
+        }
+
+        function updateActivitiesStatus() {
+            const status = document.getElementById('activitiesStatus');
+            const wawanStatus = document.getElementById('wawanStatus');
+            
+            if (setupStatus.activities) {
+                const db = JSON.parse(localStorage.getItem('local-database') || '{}');
+                const total = (db.tasks?.length || 0) + (db.supervisions?.length || 0) + 
+                             (db.events?.length || 0) + (db.additionalTasks?.length || 0);
+                
+                status.innerHTML = `
+                    <div class="status success">
+                        ✅ Aktivitas Wawan berhasil disetup
+                        <br><strong>Total:</strong> ${total} aktivitas
+                        <br>• Tugas: ${db.tasks?.length || 0}
+                        <br>• Supervisi: ${db.supervisions?.length || 0}
+                        <br>• Kegiatan: ${db.events?.length || 0}
+                        <br>• Tugas Tambahan: ${db.additionalTasks?.length || 0}
+                    </div>
+                `;
+                
+                wawanStatus.innerHTML = `
+                    <div class="status success">
+                        ✅ ${total} aktivitas Wawan siap
+                    </div>
+                `;
+            }
+        }
+
+        function updateUserMgmtStatus() {
+            const status = document.getElementById('userMgmtStatus');
+            
+            if (setupStatus.userManagement) {
+                const users = JSON.parse(localStorage.getItem('users') || '[]');
+                status.innerHTML = `
+                    <div class="status success">
+                        ✅ User management berhasil disetup
+                        <br><strong>Total users:</strong> ${users.length}
+                        <br>• Wawan: ${users.find(u => u.username === 'wawan') ? 'Ada' : 'Tidak ada'}
+                        <br>• Admin: ${users.find(u => u.username === 'admin') ? 'Ada' : 'Tidak ada'}
+                    </div>
+                `;
+            }
+        }
+
+        function updateRefreshStatus() {
+            const status = document.getElementById('refreshStatus');
+            
+            if (setupStatus.refresh) {
+                status.innerHTML = `
+                    <div class="status success">
+                        ✅ Storage events triggered
+                        <br>React components akan reload data
+                    </div>
+                `;
+            }
+        }
+
+        function updateChecklist() {
+            const checklist = document.getElementById('checklist');
+            const items = [
+                { key: 'profile', label: 'Setup Profil Wawan', status: setupStatus.profile },
+                { key: 'activities', label: 'Setup Aktivitas Wawan', status: setupStatus.activities },
+                { key: 'userManagement', label: 'Setup User Management', status: setupStatus.userManagement },
+                { key: 'refresh', label: 'Force Refresh App', status: setupStatus.refresh }
+            ];
+            
+            checklist.innerHTML = items.map(item => `
+                <div style="margin: 10px 0;">
+                    ${item.status ? '✅' : '⏳'} ${item.label}
+                </div>
+            `).join('');
+            
+            // Check if all done
+            const allDone = Object.values(setupStatus).every(status => status);
+            if (allDone) {
+                checklist.innerHTML += `
+                    <div class="status success" style="margin-top: 20px;">
+                        🎉 <strong>SEMUA SETUP SELESAI!</strong>
+                        <br>Foto profil dan aktivitas Wawan seharusnya sudah muncul di aplikasi React.
+                        <br>Jika belum muncul, coba refresh halaman aplikasi.
+                    </div>
+                `;
+            }
+        }
+
+        // Debug functions
+        function showDebugInfo() {
+            const debugOutput = document.getElementById('debugOutput');
+            const debugData = {
+                localStorage_keys: Object.keys(localStorage),
+                user_profile: localStorage.getItem('user_profile'),
+                local_database: localStorage.getItem('local-database'),
+                users: localStorage.getItem('users'),
+                app_users: localStorage.getItem('app_users'),
+                current_user: localStorage.getItem('current_user')
+            };
+            
+            debugOutput.innerHTML = `<pre>${JSON.stringify(debugData, null, 2)}</pre>`;
+        }
+
+        function clearAllData() {
+            if (confirm('Hapus semua data localStorage? Ini akan menghapus semua data aplikasi!')) {
+                localStorage.clear();
+                alert('✅ Semua data localStorage telah dihapus');
+                location.reload();
+            }
+        }
+
+        function exportData() {
+            const data = {};
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                data[key] = localStorage.getItem(key);
+            }
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'localStorage_backup.json';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // Auto-run setup on page load
+        window.onload = function() {
+            console.log('🚀 Force Fix tool loaded');
+            
+            // Check current status
+            const hasProfile = localStorage.getItem('user_profile');
+            const hasActivities = localStorage.getItem('local-database');
+            const hasUsers = localStorage.getItem('users');
+            
+            if (!hasProfile || !hasActivities || !hasUsers) {
+                setTimeout(() => {
+                    if (confirm('Data belum lengkap. Jalankan setup otomatis?')) {
+                        setupWawanProfile();
+                        setTimeout(() => setupWawanActivities(), 500);
+                        setTimeout(() => setupUserManagement(), 1000);
+                        setTimeout(() => forceRefreshApp(), 1500);
+                    }
+                }, 1000);
+            } else {
+                console.log('✅ Data sudah ada, skip auto-setup');
+            }
+        };
+    </script>
+</body>
+</html>

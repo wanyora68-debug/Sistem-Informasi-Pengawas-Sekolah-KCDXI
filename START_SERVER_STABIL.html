@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Start Server Stabil</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
+        .container { max-width: 800px; margin: 0 auto; }
+        .section { margin: 20px 0; padding: 20px; background: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .success { color: #22c55e; font-weight: bold; }
+        .error { color: #ef4444; font-weight: bold; }
+        .info { color: #3b82f6; }
+        .warning { color: #f59e0b; font-weight: bold; }
+        button { padding: 12px 20px; margin: 8px; background: #3b82f6; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; }
+        button:hover { background: #2563eb; }
+        button.success { background: #22c55e; }
+        button.warning { background: #f59e0b; }
+        button.danger { background: #ef4444; }
+        pre { background: #f8fafc; padding: 15px; border-radius: 6px; overflow-x: auto; font-size: 13px; border: 1px solid #e2e8f0; }
+        .result { margin: 15px 0; padding: 15px; border-left: 4px solid #3b82f6; background: #f8fafc; border-radius: 0 6px 6px 0; }
+        .status-indicator { display: inline-block; width: 12px; height: 12px; border-radius: 50%; margin-right: 8px; }
+        .status-online { background: #22c55e; }
+        .status-offline { background: #ef4444; }
+        .status-loading { background: #f59e0b; animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        .header { text-align: center; margin-bottom: 30px; }
+        .header h1 { color: #1f2937; margin-bottom: 10px; }
+        .header p { color: #6b7280; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 Start Server Stabil</h1>
+            <p>Tool untuk memastikan server berjalan dengan stabil</p>
+        </div>
+        
+        <div class="section">
+            <h2>📊 Status Server</h2>
+            <div id="serverStatus">
+                <span class="status-indicator status-loading"></span>
+                <span>Checking server status...</span>
+            </div>
+            <button onclick="checkServerStatus()">🔍 Cek Status</button>
+            <button onclick="testConnection()">🌐 Test Koneksi</button>
+        </div>
+        
+        <div class="section">
+            <h2>🔄 Server Control</h2>
+            <button class="success" onclick="startServer()">▶️ Start Server</button>
+            <button class="warning" onclick="restartServer()">🔄 Restart Server</button>
+            <button class="danger" onclick="stopServer()">⏹️ Stop Server</button>
+            <div id="serverControlResult"></div>
+        </div>
+        
+        <div class="section">
+            <h2>🛠️ Quick Fixes</h2>
+            <button onclick="fixCommonIssues()">🔧 Fix Common Issues</button>
+            <button onclick="clearCache()">🧹 Clear Cache</button>
+            <button onclick="resetUserSession()">👤 Reset User Session</button>
+            <div id="quickFixResult"></div>
+        </div>
+        
+        <div class="section">
+            <h2>📋 Manual Instructions</h2>
+            <div class="result">
+                <h3>🖥️ Cara Manual Start Server:</h3>
+                <ol>
+                    <li><strong>Buka Command Prompt atau PowerShell</strong></li>
+                    <li><strong>Navigate ke folder project:</strong>
+                        <pre>cd "D:\Data Ibu\SchoolGuardManager"</pre>
+                    </li>
+                    <li><strong>Start server:</strong>
+                        <pre>npm run dev</pre>
+                    </li>
+                    <li><strong>Tunggu hingga muncul pesan:</strong>
+                        <pre>[express] serving on port 5000</pre>
+                    </li>
+                    <li><strong>Akses aplikasi di browser:</strong>
+                        <pre>http://localhost:5000</pre>
+                    </li>
+                </ol>
+                
+                <h3>🔧 Jika Server Tidak Bisa Start:</h3>
+                <ol>
+                    <li><strong>Cek port yang digunakan:</strong>
+                        <pre>netstat -ano | findstr :5000</pre>
+                    </li>
+                    <li><strong>Kill process yang menggunakan port 5000:</strong>
+                        <pre>taskkill /PID [PID_NUMBER] /F</pre>
+                    </li>
+                    <li><strong>Clear npm cache:</strong>
+                        <pre>npm cache clean --force</pre>
+                    </li>
+                    <li><strong>Reinstall dependencies:</strong>
+                        <pre>npm install</pre>
+                    </li>
+                    <li><strong>Restart komputer jika perlu</strong></li>
+                </ol>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>🎯 Quick Access</h2>
+            <button onclick="openApp()">🌐 Buka Aplikasi</button>
+            <button onclick="openLoginPage()">🔐 Buka Halaman Login</button>
+            <button onclick="openDashboard()">📊 Buka Dashboard</button>
+            <div id="quickAccessResult"></div>
+        </div>
+    </div>
+
+    <script>
+        function log(message, type = 'info') {
+            console.log(message);
+            const className = type === 'success' ? 'success' : type === 'error' ? 'error' : type === 'warning' ? 'warning' : 'info';
+            return `<div class="${className}">${message}</div>`;
+        }
+
+        function updateServerStatus(status, message) {
+            const statusElement = document.getElementById('serverStatus');
+            const indicator = status === 'online' ? 'status-online' : status === 'offline' ? 'status-offline' : 'status-loading';
+            statusElement.innerHTML = `<span class="status-indicator ${indicator}"></span><span>${message}</span>`;
+        }
+
+        function checkServerStatus() {
+            updateServerStatus('loading', 'Checking server status...');
+            
+            fetch('http://localhost:5000/api/health')
+                .then(response => {
+                    if (response.ok) {
+                        updateServerStatus('online', 'Server is ONLINE and responding ✅');
+                        return response.text();
+                    } else {
+                        updateServerStatus('offline', `Server responding but with error status: ${response.status} ⚠️`);
+                        throw new Error(`HTTP ${response.status}`);
+                    }
+                })
+                .then(data => {
+                    console.log('Server response:', data);
+                })
+                .catch(error => {
+                    updateServerStatus('offline', 'Server is OFFLINE or not responding ❌');
+                    console.error('Server check failed:', error);
+                });
+        }
+
+        function testConnection() {
+            updateServerStatus('loading', 'Testing connection...');
+            
+            // Test multiple endpoints
+            const endpoints = [
+                'http://localhost:5000',
+                'http://localhost:5000/api/health',
+                'http://localhost:5000/api/users'
+            ];
+            
+            let results = [];
+            let completed = 0;
+            
+            endpoints.forEach((endpoint, index) => {
+                fetch(endpoint)
+                    .then(response => {
+                        results[index] = `✅ ${endpoint} - Status: ${response.status}`;
+                    })
+                    .catch(error => {
+                        results[index] = `❌ ${endpoint} - Error: ${error.message}`;
+                    })
+                    .finally(() => {
+                        completed++;
+                        if (completed === endpoints.length) {
+                            const allOnline = results.every(r => r.includes('✅'));
+                            updateServerStatus(allOnline ? 'online' : 'offline', 
+                                allOnline ? 'All endpoints responding ✅' : 'Some endpoints not responding ⚠️');
+                            
+                            const result = document.getElementById('serverControlResult');
+                            result.innerHTML = `<div class="result">
+                                <h3>Connection Test Results:</h3>
+                                ${results.map(r => `<div>${r}</div>`).join('')}
+                            </div>`;
+                        }
+                    });
+            });
+        }
+
+        function startServer() {
+            const result = document.getElementById('serverControlResult');
+            let html = '';
+            
+            html += log('🚀 Starting server...', 'info');
+            html += log('⚠️ Server harus distart manual via terminal', 'warning');
+            html += log('', 'info');
+            html += log('📋 Langkah-langkah:', 'info');
+            html += log('1. Buka Command Prompt', 'info');
+            html += log('2. cd "D:\\Data Ibu\\SchoolGuardManager"', 'info');
+            html += log('3. npm run dev', 'info');
+            html += log('4. Tunggu pesan "[express] serving on port 5000"', 'info');
+            
+            result.innerHTML = `<div class="result">${html}</div>`;
+            
+            // Auto-check status after 5 seconds
+            setTimeout(checkServerStatus, 5000);
+        }
+
+        function restartServer() {
+            const result = document.getElementById('serverControlResult');
+            let html = '';
+            
+            html += log('🔄 Restarting server...', 'warning');
+            html += log('⚠️ Server restart harus dilakukan manual', 'warning');
+            html += log('', 'info');
+            html += log('📋 Langkah restart:', 'info');
+            html += log('1. Di terminal yang menjalankan server, tekan Ctrl+C', 'info');
+            html += log('2. Tunggu server berhenti', 'info');
+            html += log('3. Jalankan lagi: npm run dev', 'info');
+            html += log('4. Tunggu pesan "[express] serving on port 5000"', 'info');
+            
+            result.innerHTML = `<div class="result">${html}</div>`;
+        }
+
+        function stopServer() {
+            const result = document.getElementById('serverControlResult');
+            let html = '';
+            
+            html += log('⏹️ Stopping server...', 'warning');
+            html += log('📋 Cara stop server:', 'info');
+            html += log('1. Di terminal yang menjalankan server, tekan Ctrl+C', 'info');
+            html += log('2. Atau tutup terminal window', 'info');
+            
+            result.innerHTML = `<div class="result">${html}</div>`;
+            
+            // Update status
+            setTimeout(() => updateServerStatus('offline', 'Server stopped'), 2000);
+        }
+
+        function fixCommonIssues() {
+            const result = document.getElementById('quickFixResult');
+            let html = '';
+            
+            try {
+                html += log('🔧 Fixing common issues...', 'info');
+                
+                // Clear conflicting localStorage data
+                const conflictKeys = [
+                    'ultimate_fix_applied',
+                    'wawan_fullname',
+                    'wawan_nip',
+                    'wawan_photo_url'
+                ];
+                
+                conflictKeys.forEach(key => {
+                    if (localStorage.getItem(key)) {
+                        localStorage.removeItem(key);
+                        html += log(`🧹 Removed conflicting key: ${key}`, 'success');
+                    }
+                });
+                
+                // Ensure stable user session
+                const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+                if (currentUser.id) {
+                    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                    html += log('✅ Stabilized user session', 'success');
+                }
+                
+                html += log('✅ Common issues fixed', 'success');
+                
+            } catch (error) {
+                html += log(`❌ Error: ${error.message}`, 'error');
+            }
+            
+            result.innerHTML = `<div class="result">${html}</div>`;
+        }
+
+        function clearCache() {
+            const result = document.getElementById('quickFixResult');
+            let html = '';
+            
+            try {
+                html += log('🧹 Clearing cache...', 'info');
+                
+                let cacheCleared = 0;
+                const keysToRemove = [];
+                
+                for (let i = 0; i < localStorage.length; i++) {
+                    const key = localStorage.key(i);
+                    if (key && (key.includes('react-query') || key.includes('cache') || key.includes('query'))) {
+                        keysToRemove.push(key);
+                    }
+                }
+                
+                keysToRemove.forEach(key => {
+                    localStorage.removeItem(key);
+                    cacheCleared++;
+                });
+                
+                html += log(`🧹 Cleared ${cacheCleared} cache entries`, 'success');
+                html += log('✅ Cache cleared successfully', 'success');
+                
+            } catch (error) {
+                html += log(`❌ Error: ${error.message}`, 'error');
+            }
+            
+            result.innerHTML = `<div class="result">${html}</div>`;
+        }
+
+        function resetUserSession() {
+            const result = document.getElementById('quickFixResult');
+            let html = '';
+            
+            try {
+                html += log('👤 Resetting user session...', 'info');
+                
+                // Get database
+                const localData = JSON.parse(localStorage.getItem('local-database') || '{}');
+                const users = localData.users || [];
+                
+                if (users.length > 0) {
+                    // Set to admin user by default
+                    const adminUser = users.find(u => u.role === 'admin') || users[0];
+                    
+                    const currentUser = {
+                        id: adminUser.id,
+                        username: adminUser.username,
+                        fullName: adminUser.fullName,
+                        role: adminUser.role,
+                        nip: adminUser.nip || '',
+                        photoUrl: adminUser.photoUrl || null
+                    };
+                    
+                    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                    localStorage.setItem('token', adminUser.role + '-session-token');
+                    
+                    html += log(`✅ Session reset to: ${adminUser.fullName} (${adminUser.role})`, 'success');
+                } else {
+                    html += log('❌ No users found in database', 'error');
+                }
+                
+            } catch (error) {
+                html += log(`❌ Error: ${error.message}`, 'error');
+            }
+            
+            result.innerHTML = `<div class="result">${html}</div>`;
+        }
+
+        function openApp() {
+            const result = document.getElementById('quickAccessResult');
+            window.open('http://localhost:5000', '_blank');
+            result.innerHTML = `<div class="result">${log('🌐 Membuka aplikasi di tab baru...', 'info')}</div>`;
+        }
+
+        function openLoginPage() {
+            const result = document.getElementById('quickAccessResult');
+            window.open('http://localhost:5000/login', '_blank');
+            result.innerHTML = `<div class="result">${log('🔐 Membuka halaman login di tab baru...', 'info')}</div>`;
+        }
+
+        function openDashboard() {
+            const result = document.getElementById('quickAccessResult');
+            window.open('http://localhost:5000/dashboard', '_blank');
+            result.innerHTML = `<div class="result">${log('📊 Membuka dashboard di tab baru...', 'info')}</div>`;
+        }
+
+        // Auto-check server status on load
+        window.onload = function() {
+            setTimeout(checkServerStatus, 1000);
+            
+            // Auto-refresh status every 30 seconds
+            setInterval(checkServerStatus, 30000);
+        };
+    </script>
+</body>
+</html>

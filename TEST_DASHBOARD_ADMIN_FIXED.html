@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Dashboard & Admin - Verifikasi Fix</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        .content {
+            padding: 30px;
+        }
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+        .test-section h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+        .test-result {
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+        .test-result.pass {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .test-result.fail {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.3s;
+            width: 100%;
+            margin-top: 10px;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        .data-item {
+            background: white;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border-left: 3px solid #667eea;
+        }
+        .summary {
+            background: linear-gradient(135deg, #667eea20 0%, #764ba220 100%);
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            text-align: center;
+        }
+        .summary.success {
+            background: linear-gradient(135deg, #48bb7820 0%, #38a16920 100%);
+        }
+        .summary.warning {
+            background: linear-gradient(135deg, #ed8f3620 0%, #f6ad5520 100%);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🧪 Test Dashboard & Admin</h1>
+            <p>Verifikasi Hasil Perbaikan</p>
+        </div>
+        
+        <div class="content">
+            <button class="btn" onclick="runAllTests()">
+                🚀 Jalankan Semua Test
+            </button>
+
+            <!-- Test Dashboard Wawan -->
+            <div class="test-section">
+                <h2>1️⃣ Test Dashboard Wawan</h2>
+                <div id="dashboardTests"></div>
+            </div>
+
+            <!-- Test Data Admin -->
+            <div class="test-section">
+                <h2>2️⃣ Test Data Admin</h2>
+                <div id="adminTests"></div>
+            </div>
+
+            <!-- Summary -->
+            <div id="testSummary"></div>
+        </div>
+    </div>
+
+    <script>
+        let testResults = {
+            passed: 0,
+            failed: 0,
+            total: 0
+        };
+
+        function runTest(testName, testFunction) {
+            testResults.total++;
+            try {
+                const result = testFunction();
+                if (result.success) {
+                    testResults.passed++;
+                    return `<div class="test-result pass">✅ ${testName}: ${result.message}</div>`;
+                } else {
+                    testResults.failed++;
+                    return `<div class="test-result fail">❌ ${testName}: ${result.message}</div>`;
+                }
+            } catch (error) {
+                testResults.failed++;
+                return `<div class="test-result fail">❌ ${testName}: Error - ${error.message}</div>`;
+            }
+        }
+
+        function testWawanProfile() {
+            const userData = localStorage.getItem('user_data');
+            if (!userData) {
+                return { success: false, message: 'Data user_data tidak ditemukan' };
+            }
+            
+            const user = JSON.parse(userData);
+            if (!user.fullName || !user.nip) {
+                return { success: false, message: 'Data profil tidak lengkap' };
+            }
+            
+            return { success: true, message: `Profil lengkap: ${user.fullName} (${user.nip})` };
+        }
+
+        function testWawanPhoto() {
+            const userData = localStorage.getItem('user_data');
+            if (!userData) {
+                return { success: false, message: 'Data user tidak ditemukan' };
+            }
+            
+            const user = JSON.parse(userData);
+            if (!user.photoUrl) {
+                return { success: false, message: 'URL foto tidak ada' };
+            }
+            
+            return { success: true, message: `Foto URL: ${user.photoUrl.substring(0, 50)}...` };
+        }
+
+        function testAppUsers() {
+            const appUsers = localStorage.getItem('app_users');
+            if (!appUsers) {
+                return { success: false, message: 'Data app_users tidak ditemukan' };
+            }
+            
+            const users = JSON.parse(appUsers);
+            const wawan = users.find(u => u.username === 'wawan');
+            if (!wawan) {
+                return { success: false, message: 'User Wawan tidak ditemukan di app_users' };
+            }
+            
+            return { success: true, message: `User Wawan ditemukan dengan ${users.length} total users` };
+        }
+
+        function testSupervisions() {
+            const supervisions = localStorage.getItem('supervisions');
+            if (!supervisions) {
+                return { success: false, message: 'Data supervisi tidak ditemukan' };
+            }
+            
+            const data = JSON.parse(supervisions);
+            if (data.length === 0) {
+                return { success: false, message: 'Data supervisi kosong' };
+            }
+            
+            return { success: true, message: `Ditemukan ${data.length} tugas supervisi` };
+        }
+
+        function testAdditionalTasks() {
+            const tasks = localStorage.getItem('additional_tasks');
+            if (!tasks) {
+                return { success: false, message: 'Data tugas tambahan tidak ditemukan' };
+            }
+            
+            const data = JSON.parse(tasks);
+            if (data.length === 0) {
+                return { success: false, message: 'Data tugas tambahan kosong' };
+            }
+            
+            return { success: true, message: `Ditemukan ${data.length} tugas tambahan` };
+        }
+
+        function testSchools() {
+            const schools = localStorage.getItem('schools');
+            if (!schools) {
+                return { success: false, message: 'Data sekolah tidak ditemukan' };
+            }
+            
+            const data = JSON.parse(schools);
+            if (data.length === 0) {
+                return { success: false, message: 'Data sekolah kosong' };
+            }
+            
+            return { success: true, message: `Ditemukan ${data.length} sekolah binaan` };
+        }
+
+        function testDashboardStats() {
+            const stats = localStorage.getItem('dashboard_stats');
+            if (!stats) {
+                return { success: false, message: 'Statistik dashboard tidak ditemukan' };
+            }
+            
+            const data = JSON.parse(stats);
+            return { success: true, message: `Stats: ${data.totalSupervisions} supervisi, ${data.totalTasks} tugas, ${data.totalSchools} sekolah` };
+        }
+
+        function runAllTests() {
+            // Reset results
+            testResults = { passed: 0, failed: 0, total: 0 };
+
+            // Test Dashboard Wawan
+            let dashboardHtml = '';
+            dashboardHtml += runTest('Profil Wawan', testWawanProfile);
+            dashboardHtml += runTest('Foto Wawan', testWawanPhoto);
+            dashboardHtml += runTest('Data App Users', testAppUsers);
+            document.getElementById('dashboardTests').innerHTML = dashboardHtml;
+
+            // Test Data Admin
+            let adminHtml = '';
+            adminHtml += runTest('Data Supervisi', testSupervisions);
+            adminHtml += runTest('Data Tugas Tambahan', testAdditionalTasks);
+            adminHtml += runTest('Data Sekolah', testSchools);
+            adminHtml += runTest('Statistik Dashboard', testDashboardStats);
+            document.getElementById('adminTests').innerHTML = adminHtml;
+
+            // Show summary
+            showSummary();
+        }
+
+        function showSummary() {
+            const summaryDiv = document.getElementById('testSummary');
+            const percentage = Math.round((testResults.passed / testResults.total) * 100);
+            
+            let summaryClass = 'success';
+            let summaryIcon = '🎉';
+            let summaryTitle = 'SEMUA TEST BERHASIL!';
+            let summaryMessage = 'Dashboard dan data admin sudah diperbaiki dengan sempurna.';
+            
+            if (testResults.failed > 0) {
+                if (percentage >= 70) {
+                    summaryClass = 'warning';
+                    summaryIcon = '⚠️';
+                    summaryTitle = 'SEBAGIAN TEST BERHASIL';
+                    summaryMessage = 'Beberapa masalah masih perlu diperbaiki.';
+                } else {
+                    summaryClass = 'warning';
+                    summaryIcon = '❌';
+                    summaryTitle = 'BANYAK TEST GAGAL';
+                    summaryMessage = 'Perlu menjalankan ulang file fix.';
+                }
+            }
+
+            summaryDiv.innerHTML = `
+                <div class="summary ${summaryClass}">
+                    <h2>${summaryIcon} ${summaryTitle}</h2>
+                    <p style="margin: 15px 0; font-size: 18px;">${summaryMessage}</p>
+                    <div style="font-size: 24px; font-weight: bold; margin: 20px 0;">
+                        ${testResults.passed}/${testResults.total} Test Berhasil (${percentage}%)
+                    </div>
+                    ${testResults.failed > 0 ? `
+                        <div style="margin-top: 20px; padding: 15px; background: rgba(255,255,255,0.8); border-radius: 8px;">
+                            <strong>Saran:</strong><br>
+                            ${testResults.failed > 3 ? 'Jalankan ulang file FIX_DASHBOARD_DAN_DATA_ADMIN_FINAL.html' : 'Periksa data yang gagal dan perbaiki secara manual'}
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+        }
+
+        // Auto-run tests when page loads
+        window.addEventListener('load', () => {
+            setTimeout(runAllTests, 1000);
+        });
+    </script>
+</body>
+</html>

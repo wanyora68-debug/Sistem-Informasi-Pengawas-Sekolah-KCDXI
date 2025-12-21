@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Force Refresh Aktivitas Wawan Dialog</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .step {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background: #f9f9f9;
+        }
+        .success { border-color: #4CAF50; background: #f0fff0; }
+        .error { border-color: #f44336; background: #fff0f0; }
+        .warning { border-color: #ff9800; background: #fff8e1; }
+        .info { border-color: #2196F3; background: #f0f8ff; }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background: #0056b3; }
+        .danger { background: #dc3545; }
+        .danger:hover { background: #c82333; }
+        pre {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+        }
+        .log {
+            max-height: 300px;
+            overflow-y: auto;
+            background: #000;
+            color: #0f0;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔄 Force Refresh Aktivitas Wawan Dialog</h1>
+        <p>Tool untuk memaksa refresh dan debug dialog aktivitas user Wawan</p>
+
+        <div class="step info">
+            <h3>📊 Status Saat Ini</h3>
+            <div id="currentStatus">Mengecek status...</div>
+        </div>
+
+        <div class="step">
+            <h3>🔧 Aksi Perbaikan</h3>
+            <button onclick="debugDialogData()">🔍 Debug Data Dialog</button>
+            <button onclick="forceRefreshDialog()">🔄 Force Refresh Dialog</button>
+            <button onclick="clearReactQueryCache()">🗑️ Clear React Query Cache</button>
+            <button onclick="simulateDialogOpen()">🎭 Simulasi Buka Dialog</button>
+        </div>
+
+        <div class="step">
+            <h3>📋 Log Aktivitas</h3>
+            <div id="logOutput" class="log"></div>
+            <button onclick="clearLog()">🗑️ Clear Log</button>
+        </div>
+
+        <div class="step">
+            <h3>📊 Data Analysis</h3>
+            <div id="dataAnalysis"></div>
+        </div>
+    </div>
+
+    <script>
+        let logElement = document.getElementById('logOutput');
+        
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const color = type === 'error' ? '#ff6b6b' : type === 'success' ? '#51cf66' : type === 'warning' ? '#ffd43b' : '#74c0fc';
+            logElement.innerHTML += `<div style="color: ${color}">[${timestamp}] ${message}</div>`;
+            logElement.scrollTop = logElement.scrollHeight;
+            console.log(message);
+        }
+
+        function clearLog() {
+            logElement.innerHTML = '';
+        }
+
+        // Check current status
+        function checkCurrentStatus() {
+            try {
+                const localDb = JSON.parse(localStorage.getItem('local-database') || '{}');
+                const tasks = localDb.tasks || [];
+                const supervisions = localDb.supervisions || [];
+                const events = localDb.events || [];
+                const additionalTasks = localDb.additionalTasks || [];
+
+                // Count Wawan's data
+                const wawanTasks = tasks.filter(t => 
+                    t.userId === 'wawan' || 
+                    (t.username && t.username.toLowerCase() === 'wawan') ||
+                    (t.title && t.title.toLowerCase().includes('wawan'))
+                );
+                
+                const wawanSupervisions = supervisions.filter(s => 
+                    s.userId === 'wawan' || 
+                    (s.username && s.username.toLowerCase() === 'wawan') ||
+                    (s.schoolName && s.schoolName.toLowerCase().includes('wawan'))
+                );
+                
+                const wawanEvents = events.filter(e => 
+                    e.userId === 'wawan' || 
+                    (e.username && e.username.toLowerCase() === 'wawan') ||
+                    (e.title && e.title.toLowerCase().includes('wawan'))
+                );
+                
+                const wawanAdditionalTasks = additionalTasks.filter(at => 
+                    at.userId === 'wawan' || 
+                    (at.username && at.username.toLowerCase() === 'wawan') ||
+                    (at.name && at.name.toLowerCase().includes('wawan'))
+                );
+
+                document.getElementById('currentStatus').innerHTML = `
+                    <strong>Data Wawan di localStorage:</strong><br>
+                    • Tugas Pokok: ${wawanTasks.length}<br>
+                    • Supervisi: ${wawanSupervisions.length}<br>
+                    • Kegiatan: ${wawanEvents.length}<br>
+                    • Tugas Tambahan: ${wawanAdditionalTasks.length}<br>
+                    <br>
+                    <strong>Total Data:</strong><br>
+                    • Semua Tugas: ${tasks.length}<br>
+                    • Semua Supervisi: ${supervisions.length}<br>
+                    • Semua Kegiatan: ${events.length}<br>
+                    • Semua Tugas Tambahan: ${additionalTasks.length}
+                `;
+
+                log(`✅ Status checked - Wawan data: ${wawanTasks.length + wawanSupervisions.length + wawanEvents.length + wawanAdditionalTasks.length} items`, 'success');
+            } catch (error) {
+                log(`❌ Error checking status: ${error.message}`, 'error');
+            }
+        }
+
+        function debugDialogData() {
+            log('🔍 Starting dialog data debug...', 'info');
+            
+            try {
+                // Simulate the exact logic from UserActivitiesDialog
+                const userId = 'wawan';
+                const userName = 'wawan';
+                
+                log(`🎯 Debugging for user: ${userId} (${userName})`, 'info');
+                
+                // Get localStorage data
+                const getLocalStorageData = (key) => {
+                    try {
+                        const data = localStorage.getItem(key);
+                        return data ? JSON.parse(data) : [];
+                    } catch {
+                        return [];
+                    }
+                };
+
+                // Filter function (exact copy from component)
+                const filterByUser = (data, userField = 'userId') => {
+                    if (!data || !Array.isArray(data)) {
+                        log(`❌ No data or not array for field: ${userField}`, 'error');
+                        return [];
+                    }
+                    
+                    log(`🔍 Filtering ${data.length} items by ${userField} for user: ${userId}`, 'info');
+                    
+                    const filtered = data.filter(item => {
+                        // Match by userId (exact match)
+                        if (item[userField] === userId) {
+                            log(`✅ Found match by ${userField}: ${item.title || item.name || item.id}`, 'success');
+                            return true;
+                        }
+                        
+                        // Match by username (case insensitive)
+                        const usernameFields = ['username', 'user', 'createdBy', 'assignedTo'];
+                        for (const field of usernameFields) {
+                            if (item[field] && userName && 
+                                item[field].toLowerCase() === userName.toLowerCase()) {
+                                log(`✅ Found match by ${field}: ${item.title || item.name || item.id}`, 'success');
+                                return true;
+                            }
+                        }
+                        
+                        // Special case for Wawan
+                        if (userName && userName.toLowerCase() === 'wawan') {
+                            const textFields = ['title', 'name', 'description', 'notes', 'findings'];
+                            for (const field of textFields) {
+                                if (item[field] && typeof item[field] === 'string' && 
+                                    item[field].toLowerCase().includes('wawan')) {
+                                    log(`✅ Found Wawan match in ${field}: ${item[field]}`, 'success');
+                                    return true;
+                                }
+                            }
+                        }
+                        
+                        return false;
+                    });
+                    
+                    log(`📊 Filtered ${filtered.length} items from ${data.length} total`, 'info');
+                    return filtered;
+                };
+
+                // Get data exactly like the component does
+                const localData = getLocalStorageData('local-database') || {};
+                log(`📦 Local database keys: ${Object.keys(localData).join(', ')}`, 'info');
+                
+                const tasks = filterByUser(localData.tasks || getLocalStorageData('tasks'));
+                const supervisions = filterByUser(localData.supervisions || getLocalStorageData('supervisions'));
+                const events = filterByUser(localData.events || getLocalStorageData('calendar_events') || getLocalStorageData('events'));
+                const additionalTasks = filterByUser(localData.additionalTasks || getLocalStorageData('additional_tasks') || getLocalStorageData('additionalTasks'));
+
+                // Show results
+                const results = {
+                    tasks: tasks.length,
+                    supervisions: supervisions.length,
+                    events: events.length,
+                    additionalTasks: additionalTasks.length
+                };
+
+                document.getElementById('dataAnalysis').innerHTML = `
+                    <h4>🎯 Dialog Filter Results:</h4>
+                    <pre>${JSON.stringify(results, null, 2)}</pre>
+                    <h4>📋 Sample Data Found:</h4>
+                    <pre>${JSON.stringify({
+                        sampleTask: tasks[0] || 'No tasks found',
+                        sampleSupervision: supervisions[0] || 'No supervisions found',
+                        sampleEvent: events[0] || 'No events found',
+                        sampleAdditionalTask: additionalTasks[0] || 'No additional tasks found'
+                    }, null, 2)}</pre>
+                `;
+
+                log(`✅ Debug complete - Found: ${results.tasks + results.supervisions + results.events + results.additionalTasks} total items`, 'success');
+                
+            } catch (error) {
+                log(`❌ Debug error: ${error.message}`, 'error');
+            }
+        }
+
+        function forceRefreshDialog() {
+            log('🔄 Force refreshing dialog...', 'info');
+            
+            try {
+                // Clear any cached data that might interfere
+                const keysToCheck = [
+                    'user-activities-cache',
+                    'activities-cache',
+                    'wawan-activities',
+                    'dialog-cache'
+                ];
+                
+                keysToCheck.forEach(key => {
+                    if (localStorage.getItem(key)) {
+                        localStorage.removeItem(key);
+                        log(`🗑️ Cleared cache: ${key}`, 'warning');
+                    }
+                });
+
+                // Force browser to refresh any cached components
+                if (window.location.href.includes('localhost:5000/users')) {
+                    log('🔄 Refreshing users page...', 'info');
+                    window.location.reload();
+                } else {
+                    log('ℹ️ Navigate to localhost:5000/users and try opening Wawan dialog again', 'info');
+                }
+                
+            } catch (error) {
+                log(`❌ Refresh error: ${error.message}`, 'error');
+            }
+        }
+
+        function clearReactQueryCache() {
+            log('🗑️ Clearing React Query cache...', 'info');
+            
+            try {
+                // Clear any React Query related cache
+                const reactQueryKeys = Object.keys(localStorage).filter(key => 
+                    key.includes('react-query') || 
+                    key.includes('query-cache') ||
+                    key.includes('tanstack')
+                );
+                
+                reactQueryKeys.forEach(key => {
+                    localStorage.removeItem(key);
+                    log(`🗑️ Cleared React Query cache: ${key}`, 'warning');
+                });
+
+                // Also clear sessionStorage
+                const sessionKeys = Object.keys(sessionStorage).filter(key => 
+                    key.includes('react-query') || 
+                    key.includes('query-cache') ||
+                    key.includes('tanstack')
+                );
+                
+                sessionKeys.forEach(key => {
+                    sessionStorage.removeItem(key);
+                    log(`🗑️ Cleared session cache: ${key}`, 'warning');
+                });
+
+                log('✅ React Query cache cleared', 'success');
+                
+            } catch (error) {
+                log(`❌ Cache clear error: ${error.message}`, 'error');
+            }
+        }
+
+        function simulateDialogOpen() {
+            log('🎭 Simulating dialog open...', 'info');
+            
+            try {
+                // Simulate the exact sequence that happens when dialog opens
+                const userId = 'wawan';
+                const userName = 'wawan';
+                
+                log(`🎯 Simulating dialog for: ${userId} (${userName})`, 'info');
+                
+                // Check if we can access the React app's state
+                if (window.React || window.__REACT_DEVTOOLS_GLOBAL_HOOK__) {
+                    log('⚛️ React detected - dialog should work', 'success');
+                } else {
+                    log('⚠️ React not detected - make sure you are on the React app page', 'warning');
+                }
+
+                // Simulate API calls that would fail
+                log('🌐 Simulating API calls (these should fail and trigger localStorage fallback)...', 'info');
+                
+                const apiEndpoints = [
+                    `/api/users/${userId}/tasks`,
+                    `/api/users/${userId}/supervisions`,
+                    `/api/users/${userId}/events`,
+                    `/api/users/${userId}/additional-tasks`
+                ];
+
+                apiEndpoints.forEach(endpoint => {
+                    log(`📡 Would call: ${endpoint}`, 'info');
+                });
+
+                log('🔄 After API fails, localStorage fallback should trigger', 'info');
+                debugDialogData(); // Run the debug to show what localStorage would return
+                
+            } catch (error) {
+                log(`❌ Simulation error: ${error.message}`, 'error');
+            }
+        }
+
+        // Initialize
+        checkCurrentStatus();
+        log('🚀 Force Refresh Dialog tool loaded', 'success');
+    </script>
+</body>
+</html>

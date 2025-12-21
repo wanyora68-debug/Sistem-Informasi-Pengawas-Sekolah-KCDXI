@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Fix Aktivitas Wawan Tidak Muncul - Final</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
+        .container { max-width: 1000px; margin: 0 auto; }
+        .section { margin: 20px 0; padding: 20px; background: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .success { color: #22c55e; font-weight: bold; }
+        .error { color: #ef4444; font-weight: bold; }
+        .info { color: #3b82f6; }
+        .warning { color: #f59e0b; font-weight: bold; }
+        button { padding: 12px 20px; margin: 8px; background: #3b82f6; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; }
+        button:hover { background: #2563eb; }
+        button.success { background: #22c55e; }
+        button.warning { background: #f59e0b; }
+        button.danger { background: #ef4444; }
+        pre { background: #f8fafc; padding: 15px; border-radius: 6px; overflow-x: auto; font-size: 13px; border: 1px solid #e2e8f0; }
+        .result { margin: 15px 0; padding: 15px; border-left: 4px solid #3b82f6; background: #f8fafc; border-radius: 0 6px 6px 0; }
+        .header { text-align: center; margin-bottom: 30px; }
+        .header h1 { color: #1f2937; margin-bottom: 10px; }
+        .header p { color: #6b7280; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔧 Fix Aktivitas Wawan Tidak Muncul - Final</h1>
+            <p>Tool untuk memperbaiki masalah aktivitas user Wawan yang tidak muncul di dialog</p>
+        </div>
+        
+        <div class="section">
+            <h2>🔍 Diagnosa Masalah</h2>
+            <button onclick="diagnosaMasalah()">🔍 Diagnosa Lengkap</button>
+            <div id="diagnosaResult"></div>
+        </div>
+        
+        <div class="grid">
+            <div class="section">
+                <h3>1. Cek Data Wawan</h3>
+                <button onclick="cekDataWawan()">👤 Cek Data Wawan</button>
+                <div id="dataWawanResult"></div>
+            </div>
+            
+            <div class="section">
+                <h3>2. Cek Aktivitas Database</h3>
+                <button onclick="cekAktivitasDatabase()">📊 Cek Aktivitas</button>
+                <div id="aktivitasDatabaseResult"></div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>🛠️ Perbaikan</h2>
+            <div class="grid">
+                <div>
+                    <h4>Fix User Session</h4>
+                    <button class="success" onclick="fixUserSession()">👤 Fix Session Wawan</button>
+                    <button onclick="loginAsWawan()">🔐 Login sebagai Wawan</button>
+                </div>
+                <div>
+                    <h4>Fix Data Aktivitas</h4>
+                    <button class="warning" onclick="fixAktivitasData()">📋 Fix Data Aktivitas</button>
+                    <button onclick="forceRefreshDialog()">🔄 Force Refresh Dialog</button>
+                </div>
+            </div>
+            <div id="fixResult"></div>
+        </div>
+        
+        <div class="section">
+            <h2>🧪 Test Dialog</h2>
+            <button onclick="testDialog()">🧪 Test Dialog Aktivitas</button>
+            <button onclick="simulateDialogOpen()">📱 Simulasi Buka Dialog</button>
+            <div id="testResult"></div>
+        </div>
+        
+        <div class="section">
+            <h2>📋 Manual Instructions</h2>
+            <div class="result">
+                <h3>🔧 Langkah Manual untuk Test:</h3>
+                <ol>
+                    <li><strong>Login sebagai Wawan:</strong> Username: wawan, Password: (sesuai database)</li>
+                    <li><strong>Buka halaman Users:</strong> Menu sidebar → Users</li>
+                    <li><strong>Klik "Lihat Aktivitas" pada user Wawan</strong></li>
+                    <li><strong>Dialog harus menampilkan:</strong>
+                        <ul>
+                            <li>Tasks: 1 item (Input Data Sekolah Binaan)</li>
+                            <li>Supervisions: 1 item (Supervisi Akademik)</li>
+                            <li>Additional Tasks: 3 items (Apel Pagi, Silaturahmi, Pisah sambut)</li>
+                        </ul>
+                    </li>
+                </ol>
+                
+                <h3>🚨 Jika Masih Kosong:</h3>
+                <ol>
+                    <li><strong>Cek Console Browser (F12)</strong> - lihat error atau log</li>
+                    <li><strong>Hard Refresh:</strong> Ctrl+F5</li>
+                    <li><strong>Clear Browser Cache</strong></li>
+                    <li><strong>Restart Server</strong></li>
+                </ol>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function log(message, type = 'info') {
+            console.log(message);
+            const className = type === 'success' ? 'success' : type === 'error' ? 'error' : type === 'warning' ? 'warning' : 'info';
+            return `<div class="${className}">${message}</div>`;
+        }
+
+        function diagnosaMasalah() {
+            const result = document.getElementById('diagnosaResult');
+            let html = '';
+            
+            try {
+                html += log('🔍 Mendiagnosa masalah aktivitas Wawan...', 'info');
+                
+                // Check current user
+                const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+                html += log(`👤 Current User: ${currentUser.fullName || 'Unknown'} (${currentUser.role || 'Unknown'})`, 'info');
+                
+                // Check database
+                const localData = JSON.parse(localStorage.getItem('local-database') || '{}');
+                const wawanUserId = "1762696525337";
+                
+                // Count Wawan's activities
+                const tasks = localData.tasks?.filter(t => t.userId === wawanUserId) || [];
+                const supervisions = localData.supervisions?.filter(s => s.userId === wawanUserId) || [];
+                const events = localData.events?.filter(e => e.userId === wawanUserId) || [];
+                const additionalTasks = localData.additionalTasks?.filter(at => at.userId === wawanUserId) || [];
+                
+                html += log(`📊 Aktivitas Wawan di database:`, 'info');
+                html += log(`  - Tasks: ${tasks.length}`, tasks.length > 0 ? 'success' : 'error');
+                html += log(`  - Supervisions: ${supervisions.length}`, supervisions.length > 0 ? 'success' : 'error');
+                html += log(`  - Events: ${events.length}`, events.length > 0 ? 'success' : 'error');
+                html += log(`  - Additional Tasks: ${additionalTasks.length}`, additionalTasks.length > 0 ? 'success' : 'error');
+                
+                const totalActivities = tasks.length + supervisions.length + events.length + additionalTasks.length;
+                html += log(`📊 Total aktivitas: ${totalActivities}`, totalActivities > 0 ? 'success' : 'error');
+                
+                if (totalActivities === 0) {
+                    html += log('❌ MASALAH: Tidak ada aktivitas untuk Wawan di database', 'error');
+                    html += log('💡 Kemungkinan penyebab: Data belum diinput atau userId tidak match', 'warning');
+                } else {
+                    html += log('✅ Data aktivitas tersedia di database', 'success');
+                    html += log('💡 Masalah mungkin di component dialog atau filtering', 'warning');
+                }
+                
+                // Check if admin
+                if (currentUser.role === 'admin') {
+                    html += log('🔑 User adalah admin - seharusnya bisa melihat semua aktivitas', 'info');
+                } else {
+                    html += log('👤 User bukan admin - hanya bisa melihat aktivitas sendiri', 'warning');
+                }
+                
+            } catch (error) {
+                html += log(`❌ Error: ${error.message}`, 'error');
+            }
+            
+            result.innerHTML = `<div class="result">${html}</div>`;
+        }
+
+        function cekDataWawan() {
+            const result = document.getElementById('dataWawanResult');
+            let html = '';
+            
+            try {
+                const localData = JSON.parse(localStorage.getItem('local-database') || '{}');
+                const wawanUser = localData.users?.find(u => u.username === 'wawan');
+                
+                if (wawanUser) {
+                    html += log('✅ User Wawan ditemukan', 'success');
+                    html += log(`ID: ${wawanUser.id}`, 'info');
+                    html += log(`Username: ${wawanUser.username}`, 'info');
+                    html += log(`Full Name: ${wawanUser.fullName}`, 'info');
+                    html += log(`Role: ${wawanUser.role}`, 'info');
+                } else {
+                    html += log('❌ User Wawan tidak ditemukan', 'error');
+                }
+                
+            } catch (error) {
+                html += log(`❌ Error: ${error.message}`, 'error');
+            }
+            
+            result.innerHTML = `<div class="result">${html}</div>`;
+        }
+
+        function cekAktivitasDatabase() {
+            const result = document.getElementById('aktivitasDatabaseResult');
+            let html = '';
+            
+            try {
+                const localData = JSON.parse(localStorage.getItem('local-database') || '{}');
+                const wawanUserId = "1762696525337";
+                
+                html += log('📊 Mengecek aktivitas di database...', 'info');
+                
+                // Check each type
+                const tasks = localData.tasks || [];
+                const wawanTasks = tasks.filter(t => t.userId === wawanUserId);
+                html += log(`📋 Tasks: ${wawanTasks.length} dari ${tasks.length} total`, wawanTasks.length > 0 ? 'success' : 'warning');
+                wawanTasks.forEach(task => {
+                    html += log(`  - ${task.title} (${task.date})`, 'info');
+                });
+                
+                const supervisions = localData.supervisions || [];
+                const wawanSupervisions = supervisions.filter(s => s.userId === wawanUserId);
+                html += log(`👁️ Supervisions: ${wawanSupervisions.length} dari ${supervisions.length} total`, wawanSupervisions.length > 0 ? 'success' : 'warning');
+                wawanSupervisions.forEach(supervision => {
+                    html += log(`  - ${supervision.type} (${supervision.date})`, 'info');
+                });
+                
+                const additionalTasks = localData.additionalTasks || [];
+                const wawanAdditionalTasks = additionalTasks.filter(at => at.userId === wawanUserId);
+                html += log(`➕ Additional Tasks: ${wawanAdditionalTasks.length} dari ${additionalTasks.length} total`, wawanAdditionalTasks.length > 0 ? 'success' : 'warning');
+                wawanAdditionalTasks.forEach(task => {
+                    html += log(`  - ${task.name} (${task.date})`, 'info');
+                });
+                
+            } catch (error) {
+                html += log(`❌ Error: ${error.message}`, 'error');
+            }
+            
+            result.innerHTML = `<div class="result">${html}</div>`;
+        }
+
+        function fixUserSession() {
+            const result = document.getElementById('fixResult');
+            let html = '';
+            
+            try {
+                const localData = JSON.parse(localStorage.getItem('local-database') || '{}');
+                const wawanUser = localData.users?.find(u => u.username === 'wawan');
+                
+                if (!wawanUser) {
+                    html += log('❌ User Wawan tidak ditemukan', 'error');
+                    result.innerHTML = `<div class="result">${html}</div>`;
+                    return;
+                }
+                
+                // Set current user to Wawan
+                const currentUser = {
+                    id: wawanUser.id,
+                    username: wawanUser.username,
+                    fullName: wawanUser.fullName,
+                    role: wawanUser.role,
+                    nip: wawanUser.nip || '',
+                    photoUrl: wawanUser.photoUrl || null
+                };
+                
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                localStorage.setItem('token', 'wawan-session-token');
+                
+                html += log('✅ User session berhasil di-set ke Wawan', 'success');
+                html += log(`👤 ${wawanUser.fullName}`, 'info');
+                html += log(`🆔 ID: ${wawanUser.id}`, 'info');
+                html += log('🔄 Refresh halaman untuk melihat perubahan', 'warning');
+                
+            } catch (error) {
+                html += log(`❌ Error: ${error.message}`, 'error');
+            }
+            
+            result.innerHTML = `<div class="result">${html}</div>`;
+        }
+
+        function loginAsWawan() {
+            const result = document.getElementById('fixResult');
+            let html = '';
+            
+            try {
+                const localData = JSON.parse(localStorage.getItem('local-database') || '{}');
+                const wawanUser = localData.users?.find(u => u.username === 'wawan');
+                
+                if (wawanUser) {
+                    const currentUser = {
+                        id: wawanUser.id,
+                        username: wawanUser.username,
+                        fullName: wawanUser.fullName,
+                        role: wawanUser.role,
+                        nip: wawanUser.nip || '',
+                        photoUrl: wawanUser.photoUrl || null
+                    };
+                    
+                    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                    localStorage.setItem('token', 'wawan-login-token');
+                    
+                    html += log('✅ Berhasil login sebagai Wawan', 'success');
+                    html += log('🔄 Refresh halaman dan test dialog aktivitas', 'warning');
+                } else {
+                    html += log('❌ User Wawan tidak ditemukan', 'error');
+                }
+                
+            } catch (error) {
+                html += log(`❌ Error: ${error.message}`, 'error');
+            }
+            
+            result.innerHTML = `<div class="result">${html}</div>`;
+        }
+
+        function fixAktivitasData() {
+            const result = document.getElementById('fixResult');
+            let html = '';
+            
+            try {
+                html += log('🔧 Memperbaiki data aktivitas...', 'info');
+                
+                // Clear any conflicting cache
+                const keysToRemove = [];
+                for (let i = 0; i < localStorage.length; i++) {
+                    const key = localStorage.key(i);
+                    if (key && (key.includes('react-query') || key.includes('cache') || key.includes('query'))) {
+                        keysToRemove.push(key);
+                    }
+                }
+                
+                keysToRemove.forEach(key => localStorage.removeItem(key));
+                html += log(`🧹 Cleared ${keysToRemove.length} cache entries`, 'success');
+                
+                // Ensure data consistency
+                const localData = JSON.parse(localStorage.getItem('local-database') || '{}');
+                localStorage.setItem('local-database', JSON.stringify(localData));
+                
+                html += log('✅ Data aktivitas berhasil diperbaiki', 'success');
+                html += log('🔄 Refresh halaman untuk melihat perubahan', 'warning');
+                
+            } catch (error) {
+                html += log(`❌ Error: ${error.message}`, 'error');
+            }
+            
+            result.innerHTML = `<div class="result">${html}</div>`;
+        }
+
+        function forceRefreshDialog() {
+            const result = document.getElementById('fixResult');
+            let html = '';
+            
+            html += log('🔄 Force refresh dialog...', 'info');
+            html += log('📋 Langkah manual:', 'info');
+            html += log('1. Refresh halaman (F5)', 'info');
+            html += log('2. Buka menu Users', 'info');
+            html += log('3. Klik "Lihat Aktivitas" pada user Wawan', 'info');
+            html += log('4. Dialog harus menampilkan aktivitas', 'info');
+            
+            result.innerHTML = `<div class="result">${html}</div>`;
+        }
+
+        function testDialog() {
+            const result = document.getElementById('testResult');
+            let html = '';
+            
+            try {
+                const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+                const localData = JSON.parse(localStorage.getItem('local-database') || '{}');
+                const wawanUserId = "1762696525337";
+                
+                html += log('🧪 Testing dialog logic...', 'info');
+                html += log(`👤 Current user: ${currentUser.fullName} (${currentUser.role})`, 'info');
+                
+                // Simulate dialog filtering logic
+                const isAdmin = currentUser.role === 'admin';
+                const userId = wawanUserId; // Simulate opening Wawan's dialog
+                const userName = 'wawan';
+                
+                html += log(`🔑 Admin access: ${isAdmin}`, 'info');
+                html += log(`🎯 Target user: ${userName} (${userId})`, 'info');
+                
+                // Filter activities
+                const filterByUser = (data, userField = 'userId') => {
+                    if (!data || !Array.isArray(data)) return [];
+                    
+                    return data.filter(item => {
+                        if (isAdmin) {
+                            // Admin can see all data
+                            if (item[userField] === userId) return true;
+                            if (item.username && userName && 
+                                item.username.toLowerCase() === userName.toLowerCase()) return true;
+                        } else {
+                            // Non-admin users
+                            if (item[userField] === userId) return true;
+                            if (item.username && userName && 
+                                item.username.toLowerCase() === userName.toLowerCase()) return true;
+                        }
+                        return false;
+                    });
+                };
+                
+                const tasks = filterByUser(localData.tasks || []);
+                const supervisions = filterByUser(localData.supervisions || []);
+                const events = filterByUser(localData.events || []);
+                const additionalTasks = filterByUser(localData.additionalTasks || []);
+                
+                html += log(`📊 Hasil filtering:`, 'info');
+                html += log(`  - Tasks: ${tasks.length}`, tasks.length > 0 ? 'success' : 'error');
+                html += log(`  - Supervisions: ${supervisions.length}`, supervisions.length > 0 ? 'success' : 'error');
+                html += log(`  - Events: ${events.length}`, events.length > 0 ? 'success' : 'error');
+                html += log(`  - Additional Tasks: ${additionalTasks.length}`, additionalTasks.length > 0 ? 'success' : 'error');
+                
+                const total = tasks.length + supervisions.length + events.length + additionalTasks.length;
+                html += log(`📊 Total aktivitas yang akan muncul: ${total}`, total > 0 ? 'success' : 'error');
+                
+                if (total === 0) {
+                    html += log('❌ Dialog akan kosong!', 'error');
+                    html += log('💡 Coba login sebagai admin atau perbaiki data', 'warning');
+                } else {
+                    html += log('✅ Dialog seharusnya menampilkan aktivitas', 'success');
+                }
+                
+            } catch (error) {
+                html += log(`❌ Error: ${error.message}`, 'error');
+            }
+            
+            result.innerHTML = `<div class="result">${html}</div>`;
+        }
+
+        function simulateDialogOpen() {
+            const result = document.getElementById('testResult');
+            let html = '';
+            
+            html += log('📱 Simulasi membuka dialog aktivitas Wawan...', 'info');
+            html += log('', 'info');
+            html += log('📋 Langkah simulasi:', 'info');
+            html += log('1. Buka aplikasi: http://localhost:5000', 'info');
+            html += log('2. Login sebagai admin atau Wawan', 'info');
+            html += log('3. Klik menu "Users" di sidebar', 'info');
+            html += log('4. Cari user "H. Wawan Yogaswara, S.Pd, M.Pd"', 'info');
+            html += log('5. Klik tombol "Lihat Aktivitas"', 'info');
+            html += log('6. Dialog harus menampilkan aktivitas Wawan', 'info');
+            html += log('', 'info');
+            html += log('🎯 Yang harus muncul:', 'info');
+            html += log('- Tab Tasks: 1 item', 'info');
+            html += log('- Tab Supervisions: 1 item', 'info');
+            html += log('- Tab Additional Tasks: 3 items', 'info');
+            
+            result.innerHTML = `<div class="result">${html}</div>`;
+        }
+
+        // Auto-run diagnosis on load
+        window.onload = function() {
+            setTimeout(diagnosaMasalah, 1000);
+        };
+    </script>
+</body>
+</html>

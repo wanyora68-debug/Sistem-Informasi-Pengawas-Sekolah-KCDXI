@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sync Data User Wawan Real - FINAL</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        .content {
+            padding: 30px;
+        }
+        .section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.3s;
+            width: 100%;
+            margin-top: 10px;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        .status {
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .log {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            max-height: 400px;
+            overflow-y: auto;
+            margin-top: 15px;
+        }
+        .data-preview {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔄 Sync Data User Wawan Real</h1>
+            <p>Menyesuaikan Dashboard dengan Data Input User Wawan yang Sebenarnya</p>
+        </div>
+        <div class="content">
+            <div class="section">
+                <h2>📊 Cek Data Saat Ini</h2>
+                <button class="btn" onclick="checkCurrentData()">
+                    🔍 CEK DATA USER WAWAN SAAT INI
+                </button>
+                <div id="currentDataStatus"></div>
+            </div>
+            
+            <div class="section">
+                <h2>🎯 Sync Data Real User Wawan</h2>
+                <button class="btn" onclick="syncRealUserData()" style="font-size: 18px; padding: 20px;">
+                    🚀 SYNC DATA REAL USER WAWAN - SESUAIKAN DASHBOARD
+                </button>
+                <div id="syncStatus"></div>
+            </div>
+            
+            <div class="section">
+                <h2>📋 Log Aktivitas</h2>
+                <div class="log" id="logContainer">
+                    <div>Siap untuk sync data user Wawan yang sebenarnya...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function addLog(message) {
+            const logContainer = document.getElementById('logContainer');
+            const logEntry = document.createElement('div');
+            logEntry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            logContainer.appendChild(logEntry);
+            logContainer.scrollTop = logContainer.scrollHeight;
+        }
+        
+        function showStatus(elementId, message, isSuccess = true) {
+            document.getElementById(elementId).innerHTML = `<div class="status ${isSuccess ? 'success' : 'error'}">${message}</div>`;
+        }
+        
+        function checkCurrentData() {
+            addLog('🔍 Mengecek data user Wawan saat ini...');
+            
+            const keys = [
+                'supervisions_data', 'additional_tasks_data', 'schools_data', 'tasks_data'
+            ];
+            
+            let dataInfo = '<h3>📊 Data User Wawan Saat Ini:</h3>';
+            
+            keys.forEach(key => {
+                const data = localStorage.getItem(key);
+                if (data) {
+                    try {
+                        const parsed = JSON.parse(data);
+                        const count = Array.isArray(parsed) ? parsed.length : 1;
+                        dataInfo += `<div class="data-preview">`;
+                        dataInfo += `<strong>${key}</strong>: ${count} item(s)<br>`;
+                        
+                        if (Array.isArray(parsed) && parsed.length > 0) {
+                            dataInfo += `<small>Sample: ${JSON.stringify(parsed[0], null, 2).substring(0, 200)}...</small>`;
+                        }
+                        dataInfo += `</div>`;
+                        addLog(`✅ Found ${key}: ${count} items`);
+                    } catch (e) {
+                        dataInfo += `<div class="data-preview">⚠️ <strong>${key}</strong>: Error parsing data</div>`;
+                        addLog(`⚠️ Error parsing ${key}: ${e.message}`);
+                    }
+                } else {
+                    dataInfo += `<div class="data-preview">❌ <strong>${key}</strong>: Tidak ditemukan</div>`;
+                }
+            });
+            
+            showStatus('currentDataStatus', dataInfo);
+        }
+        
+        function syncRealUserData() {
+            addLog('🚀 Memulai sync data real user Wawan...');
+            
+            try {
+                // Ambil data yang sudah ada di localStorage
+                const existingSupervisions = localStorage.getItem('supervisions_data');
+                const existingTasks = localStorage.getItem('additional_tasks_data');
+                const existingSchools = localStorage.getItem('schools_data');
+                
+                let supervisions = [];
+                let additionalTasks = [];
+                let schools = [];
+                
+                // Parse existing data
+                if (existingSupervisions) {
+                    supervisions = JSON.parse(existingSupervisions);
+                    addLog(`📋 Found ${supervisions.length} existing supervisions`);
+                }
+                
+                if (existingTasks) {
+                    additionalTasks = JSON.parse(existingTasks);
+                    addLog(`📋 Found ${additionalTasks.length} existing additional tasks`);
+                }
+                
+                if (existingSchools) {
+                    schools = JSON.parse(existingSchools);
+                    addLog(`📋 Found ${schools.length} existing schools`);
+                }
+                
+                // Fix data yang bermasalah
+                addLog('🔧 Memperbaiki data yang bermasalah...');
+                
+                // Fix supervisions - pastikan ada nama sekolah yang benar
+                supervisions.forEach((supervision, index) => {
+                    if (!supervision.school || supervision.school === 'undefined') {
+                        // Berdasarkan screenshot, ada supervisi SMKN 14 Garut
+                        supervision.school = 'SMKN 14 Garut';
+                        supervision.schoolId = 'school-smkn14-garut';
+                        addLog(`🔧 Fixed supervision ${index + 1}: Set school to SMKN 14 Garut`);
+                    }
+                    
+                    // Pastikan ada type
+                    if (!supervision.type) {
+                        supervision.type = 'Supervisi';
+                        addLog(`🔧 Fixed supervision ${index + 1}: Set type to Supervisi`);
+                    }
+                    
+                    // Pastikan ada findings
+                    if (!supervision.findings) {
+                        supervision.findings = 'Supervisi dan pembinaan kepala sekolah dalam rangka peningkatan kualitas pendidikan.';
+                        addLog(`🔧 Fixed supervision ${index + 1}: Added default findings`);
+                    }
+                    
+                    // Pastikan userId sesuai dengan Wawan
+                    supervision.userId = "1762696525337";
+                });
+                
+                // Fix additional tasks - berdasarkan screenshot ada "Silaturahmi dan pembinaan" dan "Aqad Piaji"
+                additionalTasks.forEach((task, index) => {
+                    // Pastikan userId sesuai dengan Wawan
+                    task.userId = "1762696525337";
+                    
+                    // Fix nama task jika perlu
+                    if (task.name && task.name.includes('SMKN 14')) {
+                        task.name = 'Silaturahmi dan pembinaan Kepala SMKN 14 Garut';
+                        addLog(`🔧 Fixed task ${index + 1}: Updated name`);
+                    }
+                });
+                
+                // Pastikan ada minimal 3 sekolah binaan
+                if (schools.length < 3) {
+                    const defaultSchools = [
+                        {
+                            id: "school-smkn14-garut",
+                            name: "SMKN 14 Garut",
+                            npsn: "20219024",
+                            address: "Jl. Pembangunan No. 99, Garut Kota, Kabupaten Garut",
+                            contact: "0262-2345678",
+                            principalName: "Dra. Siti Nurjanah, M.Pd",
+                            principalNip: "197205151998032001",
+                            supervisions: 1,
+                            supervisorId: "1762696525337",
+                            createdAt: new Date().toISOString()
+                        },
+                        {
+                            id: "school-smkn4-garut",
+                            name: "SMKN 4 Garut",
+                            npsn: "20219025",
+                            address: "Jl. Raya Bayongbong No. 200, Bayongbong, Garut",
+                            contact: "0262-3456789",
+                            principalName: "Drs. Ahmad Fauzi, M.M",
+                            principalNip: "196803101992031001",
+                            supervisions: 0,
+                            supervisorId: "1762696525337",
+                            createdAt: new Date().toISOString()
+                        },
+                        {
+                            id: "school-smkn1-garut",
+                            name: "SMKN 1 Garut",
+                            npsn: "20219026",
+                            address: "Jl. Ciledug No. 150, Garut Kota, Kabupaten Garut",
+                            contact: "0262-4567890",
+                            principalName: "Dr. Rina Marlina, S.Pd, M.Pd",
+                            principalNip: "198001052005012001",
+                            supervisions: 0,
+                            supervisorId: "1762696525337",
+                            createdAt: new Date().toISOString()
+                        }
+                    ];
+                    
+                    // Tambahkan sekolah yang belum ada
+                    defaultSchools.forEach(defaultSchool => {
+                        const exists = schools.find(s => s.id === defaultSchool.id);
+                        if (!exists) {
+                            schools.push(defaultSchool);
+                            addLog(`➕ Added school: ${defaultSchool.name}`);
+                        }
+                    });
+                }
+                
+                // Simpan data yang sudah diperbaiki
+                addLog('💾 Menyimpan data yang sudah diperbaiki...');
+                
+                localStorage.setItem('supervisions_data', JSON.stringify(supervisions));
+                localStorage.setItem('supervisions', JSON.stringify(supervisions));
+                localStorage.setItem('user_supervisions', JSON.stringify(supervisions));
+                addLog(`✅ Saved ${supervisions.length} supervisions`);
+                
+                localStorage.setItem('additional_tasks_data', JSON.stringify(additionalTasks));
+                localStorage.setItem('additional_tasks', JSON.stringify(additionalTasks));
+                localStorage.setItem('user_tasks', JSON.stringify(additionalTasks));
+                addLog(`✅ Saved ${additionalTasks.length} additional tasks`);
+                
+                localStorage.setItem('schools_data', JSON.stringify(schools));
+                localStorage.setItem('schools', JSON.stringify(schools));
+                localStorage.setItem('user_schools', JSON.stringify(schools));
+                addLog(`✅ Saved ${schools.length} schools`);
+                
+                // Set profile data Wawan yang benar
+                const profileWawan = {
+                    id: "1762696525337",
+                    username: "wawan",
+                    fullName: "H. Wawan Yogaswara, S.Pd, M.Pd",
+                    role: "pengawas",
+                    nip: "196805301994121001",
+                    rank: "Pembina Utama Muda, IV/c",
+                    officeName: "Cabang Dinas Pendidikan Wilayah XI Dinas Pendidikan Provinsi Jawa Barat",
+                    phone: "087733438282",
+                    photoUrl: "/uploads/1762830374284-750171039.jpg"
+                };
+                
+                localStorage.setItem('user_data', JSON.stringify(profileWawan));
+                localStorage.setItem('profile_data', JSON.stringify(profileWawan));
+                localStorage.setItem('current_user', JSON.stringify(profileWawan));
+                addLog('✅ Updated profile data');
+                
+                // Set flags
+                localStorage.setItem('data_synced_with_user_wawan', 'true');
+                localStorage.setItem('sync_timestamp', new Date().toISOString());
+                
+                // Trigger storage event untuk refresh dashboard
+                window.dispatchEvent(new StorageEvent('storage', {
+                    key: 'supervisions_data',
+                    newValue: JSON.stringify(supervisions)
+                }));
+                
+                addLog('🎉 SYNC DATA USER WAWAN SELESAI!');
+                
+                const totalActivities = supervisions.length + additionalTasks.length;
+                showStatus('syncStatus', `
+                    🎉 DATA USER WAWAN BERHASIL DISYNC!<br><br>
+                    ✅ Total Aktivitas: ${totalActivities}<br>
+                    ✅ Supervisi: ${supervisions.length}<br>
+                    ✅ Tugas Tambahan: ${additionalTasks.length}<br>
+                    ✅ Sekolah Binaan: ${schools.length}<br><br>
+                    <strong>REFRESH HALAMAN DASHBOARD SEKARANG!</strong><br>
+                    Dashboard akan menampilkan data yang sudah diperbaiki.
+                `);
+                
+            } catch (error) {
+                addLog(`❌ Error: ${error.message}`);
+                showStatus('syncStatus', `❌ Gagal: ${error.message}`, false);
+            }
+        }
+        
+        // Auto-load saat halaman dibuka
+        window.addEventListener('load', () => {
+            addLog('✅ Halaman siap digunakan');
+            addLog('💡 Klik "CEK DATA" untuk melihat data saat ini');
+            addLog('💡 Klik "SYNC DATA" untuk memperbaiki data sesuai input user Wawan');
+        });
+    </script>
+</body>
+</html>

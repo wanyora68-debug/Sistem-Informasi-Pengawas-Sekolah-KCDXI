@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test React Query Simple</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        .section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background: #f9f9f9;
+        }
+        button {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .result {
+            margin: 10px 0;
+            padding: 10px;
+            background: white;
+            border-radius: 5px;
+            border-left: 4px solid #2563eb;
+            font-family: monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+        }
+        .success { border-left-color: #16a34a; background: #f0fdf4; }
+        .error { border-left-color: #dc2626; background: #fef2f2; }
+        .warning { border-left-color: #f59e0b; background: #fffbeb; }
+    </style>
+</head>
+<body>
+    <h1>🧪 Test React Query Simple</h1>
+    <p>Test untuk memastikan React Query bekerja dengan localStorage</p>
+
+    <div class="section">
+        <h3>1. Setup Test Data</h3>
+        <button onclick="setupData()">Setup Data</button>
+        <button onclick="clearData()">Clear Data</button>
+        <div id="setupResult" class="result"></div>
+    </div>
+
+    <div class="section">
+        <h3>2. Simulasi React Query</h3>
+        <button onclick="simulateQuery()">Simulasi Query Function</button>
+        <button onclick="simulateInvalidation()">Simulasi Invalidation</button>
+        <div id="queryResult" class="result"></div>
+    </div>
+
+    <div class="section">
+        <h3>3. Instruksi Manual Test</h3>
+        <div class="result warning">
+LANGKAH MANUAL TEST:
+
+1. Klik "Setup Data" untuk menambah data test
+2. Buka aplikasi utama di tab baru
+3. Login dan buka halaman "Sekolah Binaan"
+4. BUKA DEVELOPER TOOLS (F12) - TAB CONSOLE
+5. Refresh halaman dan lihat console log
+6. Cari log dengan emoji 🏫 dan 📋
+7. Bandingkan dengan hasil "Simulasi Query Function" di sini
+
+YANG HARUS SAMA:
+- Raw data dari localStorage
+- Parsed data array
+- Length data
+
+JIKA BERBEDA:
+- Ada masalah dengan React Query setup
+- Atau ada masalah dengan component lifecycle
+        </div>
+    </div>
+
+    <div class="section">
+        <h3>4. Comparison Test</h3>
+        <button onclick="compareWithTasks()">Compare dengan Daftar Tugas</button>
+        <div id="compareResult" class="result"></div>
+    </div>
+
+    <script>
+        function setupData() {
+            try {
+                // Setup schools data
+                const schools = [
+                    {
+                        id: "test-school-1",
+                        name: "SDN Test React Query 01",
+                        address: "Jl. React Query No. 1",
+                        contact: "081234567890",
+                        principalName: "Kepala Test RQ 1",
+                        principalNip: "123456789",
+                        supervisions: 0,
+                        createdAt: new Date().toISOString()
+                    },
+                    {
+                        id: "test-school-2",
+                        name: "SDN Test React Query 02", 
+                        address: "Jl. React Query No. 2",
+                        contact: "081234567891",
+                        principalName: "Kepala Test RQ 2",
+                        principalNip: "123456790",
+                        supervisions: 0,
+                        createdAt: new Date().toISOString()
+                    }
+                ];
+
+                // Setup additional tasks data
+                const tasks = [
+                    {
+                        id: "test-task-1",
+                        name: "Kegiatan Test React Query 1",
+                        date: new Date().toISOString().split('T')[0],
+                        location: "Lokasi Test RQ 1",
+                        organizer: "Penyelenggara Test RQ 1",
+                        description: "Deskripsi kegiatan test React Query 1",
+                        createdAt: new Date().toISOString()
+                    },
+                    {
+                        id: "test-task-2",
+                        name: "Kegiatan Test React Query 2",
+                        date: new Date().toISOString().split('T')[0],
+                        location: "Lokasi Test RQ 2", 
+                        organizer: "Penyelenggara Test RQ 2",
+                        description: "Deskripsi kegiatan test React Query 2",
+                        createdAt: new Date().toISOString()
+                    }
+                ];
+
+                localStorage.setItem('schools_data', JSON.stringify(schools));
+                localStorage.setItem('additional_tasks_data', JSON.stringify(tasks));
+
+                document.getElementById('setupResult').className = 'result success';
+                document.getElementById('setupResult').textContent = 
+                    `✅ DATA TEST BERHASIL DIBUAT\n\n` +
+                    `Schools: ${schools.length} items\n` +
+                    `Additional Tasks: ${tasks.length} items\n\n` +
+                    `Data tersimpan di localStorage dengan key:\n` +
+                    `- schools_data\n` +
+                    `- additional_tasks_data\n\n` +
+                    `Sekarang buka aplikasi utama untuk test!`;
+
+            } catch (error) {
+                document.getElementById('setupResult').className = 'result error';
+                document.getElementById('setupResult').textContent = `❌ Error: ${error.message}`;
+            }
+        }
+
+        function clearData() {
+            localStorage.removeItem('schools_data');
+            localStorage.removeItem('additional_tasks_data');
+            localStorage.removeItem('tasks_data');
+            
+            document.getElementById('setupResult').className = 'result warning';
+            document.getElementById('setupResult').textContent = '🗑️ Semua data test dihapus dari localStorage';
+        }
+
+        function simulateQuery() {
+            try {
+                // Simulasi exact query function dari schools.tsx
+                const schoolsQueryFn = () => {
+                    try {
+                        console.log('🏫 Schools Query Function Called (SIMULATION)');
+                        if (typeof window !== 'undefined' && window.localStorage) {
+                            const schoolsData = localStorage.getItem('schools_data');
+                            console.log('🏫 Raw schools data (SIMULATION):', schoolsData);
+                            if (schoolsData) {
+                                const parsed = JSON.parse(schoolsData);
+                                console.log('🏫 Parsed schools (SIMULATION):', parsed);
+                                return Array.isArray(parsed) ? parsed : [];
+                            }
+                        }
+                        console.log('🏫 Returning empty array (SIMULATION)');
+                        return [];
+                    } catch (error) {
+                        console.warn('Error reading schools from localStorage (SIMULATION):', error);
+                        return [];
+                    }
+                };
+
+                // Simulasi exact query function dari additional-tasks.tsx
+                const tasksQueryFn = () => {
+                    try {
+                        console.log('📋 Additional Tasks Query Function Called (SIMULATION)');
+                        if (typeof window !== 'undefined' && window.localStorage) {
+                            const tasksData = localStorage.getItem('additional_tasks_data');
+                            console.log('📋 Raw additional tasks data (SIMULATION):', tasksData);
+                            if (tasksData) {
+                                const parsed = JSON.parse(tasksData);
+                                console.log('📋 Parsed additional tasks (SIMULATION):', parsed);
+                                return Array.isArray(parsed) ? parsed : [];
+                            }
+                        }
+                        console.log('📋 Returning empty array (SIMULATION)');
+                        return [];
+                    } catch (error) {
+                        console.warn('Error reading additional tasks from localStorage (SIMULATION):', error);
+                        return [];
+                    }
+                };
+
+                const schoolsResult = schoolsQueryFn();
+                const tasksResult = tasksQueryFn();
+
+                document.getElementById('queryResult').className = 'result success';
+                document.getElementById('queryResult').textContent = 
+                    `🧪 SIMULASI QUERY FUNCTIONS\n\n` +
+                    `Schools Query Result:\n` +
+                    `- Type: ${Array.isArray(schoolsResult) ? 'Array' : typeof schoolsResult}\n` +
+                    `- Length: ${schoolsResult.length}\n` +
+                    `- Data: ${JSON.stringify(schoolsResult, null, 2)}\n\n` +
+                    `Additional Tasks Query Result:\n` +
+                    `- Type: ${Array.isArray(tasksResult) ? 'Array' : typeof tasksResult}\n` +
+                    `- Length: ${tasksResult.length}\n` +
+                    `- Data: ${JSON.stringify(tasksResult, null, 2)}\n\n` +
+                    `✅ Cek console untuk log detail\n` +
+                    `📝 Bandingkan dengan log di aplikasi utama`;
+
+            } catch (error) {
+                document.getElementById('queryResult').className = 'result error';
+                document.getElementById('queryResult').textContent = `❌ Error: ${error.message}`;
+            }
+        }
+
+        function simulateInvalidation() {
+            document.getElementById('queryResult').className = 'result warning';
+            document.getElementById('queryResult').textContent = 
+                `🔄 SIMULASI INVALIDATION\n\n` +
+                `Dalam aplikasi React, setelah save data:\n` +
+                `1. localStorage.setItem() dipanggil\n` +
+                `2. queryClient.invalidateQueries() dipanggil\n` +
+                `3. Query function dipanggil lagi\n` +
+                `4. Component re-render dengan data baru\n\n` +
+                `JIKA TIDAK BEKERJA:\n` +
+                `- queryClient tidak ter-setup dengan benar\n` +
+                `- invalidateQueries tidak dipanggil\n` +
+                `- Query key tidak match\n` +
+                `- Component tidak re-render`;
+        }
+
+        function compareWithTasks() {
+            try {
+                // Cek data tasks yang berfungsi
+                const tasksData = localStorage.getItem('tasks_data');
+                const schoolsData = localStorage.getItem('schools_data');
+                const additionalTasksData = localStorage.getItem('additional_tasks_data');
+
+                const tasks = tasksData ? JSON.parse(tasksData) : [];
+                const schools = schoolsData ? JSON.parse(schoolsData) : [];
+                const additionalTasks = additionalTasksData ? JSON.parse(additionalTasksData) : [];
+
+                document.getElementById('compareResult').className = 'result';
+                document.getElementById('compareResult').textContent = 
+                    `📊 COMPARISON DATA\n\n` +
+                    `Daftar Tugas (BERFUNGSI):\n` +
+                    `- Key: tasks_data\n` +
+                    `- Count: ${tasks.length}\n` +
+                    `- Has Data: ${tasks.length > 0 ? 'YES' : 'NO'}\n\n` +
+                    `Sekolah Binaan (BERMASALAH):\n` +
+                    `- Key: schools_data\n` +
+                    `- Count: ${schools.length}\n` +
+                    `- Has Data: ${schools.length > 0 ? 'YES' : 'NO'}\n\n` +
+                    `Tugas Tambahan (BERMASALAH):\n` +
+                    `- Key: additional_tasks_data\n` +
+                    `- Count: ${additionalTasks.length}\n` +
+                    `- Has Data: ${additionalTasks.length > 0 ? 'YES' : 'NO'}\n\n` +
+                    `ANALISIS:\n` +
+                    `${schools.length > 0 && additionalTasks.length > 0 ? 
+                        '✅ Data ada di localStorage - masalah di React Query' : 
+                        '❌ Data tidak ada di localStorage - masalah di save function'}`;
+
+            } catch (error) {
+                document.getElementById('compareResult').className = 'result error';
+                document.getElementById('compareResult').textContent = `❌ Error: ${error.message}`;
+            }
+        }
+
+        // Auto-run on load
+        window.onload = function() {
+            compareWithTasks();
+        };
+    </script>
+</body>
+</html>

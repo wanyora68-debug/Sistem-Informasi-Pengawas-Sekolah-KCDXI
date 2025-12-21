@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Data Sekolah</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2563eb;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .debug-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            background: #f9fafb;
+        }
+        .debug-section h3 {
+            color: #1f2937;
+            margin-top: 0;
+        }
+        button {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #1d4ed8;
+        }
+        .result {
+            margin: 10px 0;
+            padding: 15px;
+            border-radius: 5px;
+            background: #f0f9ff;
+            border-left: 4px solid #2563eb;
+        }
+        .success {
+            background: #f0fdf4;
+            border-left-color: #16a34a;
+            color: #15803d;
+        }
+        .error {
+            background: #fef2f2;
+            border-left-color: #dc2626;
+            color: #dc2626;
+        }
+        .warning {
+            background: #fffbeb;
+            border-left-color: #f59e0b;
+            color: #d97706;
+        }
+        .data-display {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 10px 0;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        pre {
+            margin: 0;
+            white-space: pre-wrap;
+            font-size: 12px;
+        }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .stat-card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+        }
+        .stat-number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2563eb;
+        }
+        .stat-label {
+            font-size: 14px;
+            color: #6b7280;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Debug Data Sekolah Binaan</h1>
+        <p style="text-align: center; color: #666; margin-bottom: 30px;">
+            Analisis mendalam untuk mengetahui mengapa data tidak muncul
+        </p>
+
+        <!-- Stats Overview -->
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-number" id="totalSchools">0</div>
+                <div class="stat-label">Total Sekolah</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="localStorageSize">0 KB</div>
+                <div class="stat-label">Ukuran Data</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="lastUpdate">-</div>
+                <div class="stat-label">Update Terakhir</div>
+            </div>
+        </div>
+
+        <!-- Debug Actions -->
+        <div class="debug-section">
+            <h3>🔧 Debug Actions</h3>
+            <button onclick="checkLocalStorage()">Cek localStorage</button>
+            <button onclick="addTestSchool()">Tambah Sekolah Test</button>
+            <button onclick="simulateReactQuery()">Simulasi React Query</button>
+            <button onclick="clearAllData()">Hapus Semua Data</button>
+            <button onclick="exportData()">Export Data</button>
+            <div id="debugResult" class="result" style="display: none;"></div>
+        </div>
+
+        <!-- Data Analysis -->
+        <div class="debug-section">
+            <h3>📊 Analisis Data</h3>
+            <button onclick="analyzeData()">Analisis Lengkap</button>
+            <button onclick="checkDataStructure()">Cek Struktur Data</button>
+            <button onclick="validateData()">Validasi Data</button>
+            <div id="analysisResult" class="result" style="display: none;"></div>
+            <div id="dataDisplay" class="data-display" style="display: none;"></div>
+        </div>
+
+        <!-- React Query Simulation -->
+        <div class="debug-section">
+            <h3>⚛️ React Query Simulation</h3>
+            <button onclick="testQueryFunction()">Test Query Function</button>
+            <button onclick="testMutationFunction()">Test Mutation Function</button>
+            <button onclick="simulateInvalidation()">Simulasi Invalidation</button>
+            <div id="reactQueryResult" class="result" style="display: none;"></div>
+        </div>
+
+        <!-- Real-time Monitor -->
+        <div class="debug-section">
+            <h3>📡 Real-time Monitor</h3>
+            <button onclick="startMonitoring()">Mulai Monitor</button>
+            <button onclick="stopMonitoring()">Stop Monitor</button>
+            <div id="monitorResult" class="result" style="display: none;"></div>
+        </div>
+    </div>
+
+    <script>
+        let monitorInterval = null;
+
+        // Update stats on load
+        window.onload = function() {
+            updateStats();
+            checkLocalStorage();
+        };
+
+        function updateStats() {
+            try {
+                const schoolsData = localStorage.getItem('schools_data');
+                const schools = schoolsData ? JSON.parse(schoolsData) : [];
+                
+                document.getElementById('totalSchools').textContent = schools.length;
+                
+                const dataSize = schoolsData ? (new Blob([schoolsData]).size / 1024).toFixed(2) : '0';
+                document.getElementById('localStorageSize').textContent = dataSize + ' KB';
+                
+                if (schools.length > 0 && schools[0].createdAt) {
+                    const lastUpdate = new Date(schools[schools.length - 1].createdAt || schools[0].createdAt);
+                    document.getElementById('lastUpdate').textContent = lastUpdate.toLocaleTimeString();
+                } else {
+                    document.getElementById('lastUpdate').textContent = '-';
+                }
+            } catch (error) {
+                console.error('Error updating stats:', error);
+            }
+        }
+
+        function checkLocalStorage() {
+            try {
+                const schoolsData = localStorage.getItem('schools_data');
+                
+                if (!schoolsData) {
+                    showResult('debugResult', '⚠️ localStorage "schools_data" KOSONG atau TIDAK ADA', 'warning');
+                    return;
+                }
+
+                const schools = JSON.parse(schoolsData);
+                
+                if (!Array.isArray(schools)) {
+                    showResult('debugResult', '❌ Data bukan array: ' + typeof schools, 'error');
+                    return;
+                }
+
+                if (schools.length === 0) {
+                    showResult('debugResult', '⚠️ Array kosong - tidak ada sekolah tersimpan', 'warning');
+                    return;
+                }
+
+                showResult('debugResult', `✅ localStorage OK - ${schools.length} sekolah ditemukan`, 'success');
+                updateStats();
+                
+            } catch (error) {
+                showResult('debugResult', `❌ Error parsing localStorage: ${error.message}`, 'error');
+            }
+        }
+
+        function addTestSchool() {
+            try {
+                const schoolsData = localStorage.getItem('schools_data');
+                const currentSchools = schoolsData ? JSON.parse(schoolsData) : [];
+                
+                const newSchool = {
+                    id: Date.now().toString(),
+                    name: `SDN Debug ${Math.floor(Math.random() * 1000)}`,
+                    address: `Jl. Debug No. ${Math.floor(Math.random() * 100)}`,
+                    contact: `08${Math.floor(Math.random() * 1000000000)}`,
+                    principalName: `Kepala Debug ${Math.floor(Math.random() * 100)}`,
+                    principalNip: `19${Math.floor(Math.random() * 100000000)}`,
+                    supervisions: 0,
+                    createdAt: new Date().toISOString()
+                };
+                
+                const updatedSchools = [...currentSchools, newSchool];
+                localStorage.setItem('schools_data', JSON.stringify(updatedSchools));
+                
+                showResult('debugResult', `✅ Sekolah "${newSchool.name}" berhasil ditambahkan!`, 'success');
+                updateStats();
+                
+                // Trigger storage event untuk simulasi React Query
+                window.dispatchEvent(new StorageEvent('storage', {
+                    key: 'schools_data',
+                    newValue: JSON.stringify(updatedSchools),
+                    oldValue: schoolsData
+                }));
+                
+            } catch (error) {
+                showResult('debugResult', `❌ Error: ${error.message}`, 'error');
+            }
+        }
+
+        function simulateReactQuery() {
+            try {
+                // Simulasi query function dari React Query
+                const queryFn = () => {
+                    try {
+                        if (typeof window !== 'undefined' && window.localStorage) {
+                            const schoolsData = localStorage.getItem('schools_data');
+                            if (schoolsData) {
+                                const parsed = JSON.parse(schoolsData);
+                                return Array.isArray(parsed) ? parsed : [];
+                            }
+                        }
+                        return [];
+                    } catch (error) {
+                        console.warn('Error reading schools from localStorage:', error);
+                        return [];
+                    }
+                };
+
+                const result = queryFn();
+                
+                showResult('debugResult', 
+                    `🔄 React Query Simulation:\n` +
+                    `- Query function executed\n` +
+                    `- Result: ${result.length} sekolah\n` +
+                    `- Type: ${Array.isArray(result) ? 'Array' : typeof result}\n` +
+                    `- Status: ${result.length > 0 ? 'SUCCESS' : 'EMPTY'}`, 
+                    result.length > 0 ? 'success' : 'warning'
+                );
+                
+            } catch (error) {
+                showResult('debugResult', `❌ React Query Simulation Error: ${error.message}`, 'error');
+            }
+        }
+
+        function analyzeData() {
+            try {
+                const schoolsData = localStorage.getItem('schools_data');
+                
+                if (!schoolsData) {
+                    showResult('analysisResult', '❌ Tidak ada data untuk dianalisis', 'error');
+                    return;
+                }
+
+                const schools = JSON.parse(schoolsData);
+                
+                const analysis = {
+                    totalSchools: schools.length,
+                    dataType: Array.isArray(schools) ? 'Array' : typeof schools,
+                    hasValidStructure: schools.every(school => 
+                        school.id && school.name && school.address && school.contact
+                    ),
+                    missingFields: [],
+                    duplicateIds: [],
+                    createdDates: schools.map(s => s.createdAt).filter(Boolean),
+                    averageNameLength: schools.reduce((sum, s) => sum + (s.name?.length || 0), 0) / schools.length
+                };
+
+                // Check for missing fields
+                schools.forEach((school, index) => {
+                    const required = ['id', 'name', 'address', 'contact'];
+                    const missing = required.filter(field => !school[field]);
+                    if (missing.length > 0) {
+                        analysis.missingFields.push(`Sekolah ${index}: ${missing.join(', ')}`);
+                    }
+                });
+
+                // Check for duplicate IDs
+                const ids = schools.map(s => s.id);
+                const duplicates = ids.filter((id, index) => ids.indexOf(id) !== index);
+                analysis.duplicateIds = [...new Set(duplicates)];
+
+                document.getElementById('dataDisplay').style.display = 'block';
+                document.getElementById('dataDisplay').innerHTML = 
+                    `<strong>📊 ANALISIS LENGKAP:</strong><br><pre>${JSON.stringify(analysis, null, 2)}</pre>`;
+
+                const status = analysis.hasValidStructure && analysis.duplicateIds.length === 0 ? 'success' : 'warning';
+                showResult('analysisResult', 
+                    `📊 Analisis selesai - ${analysis.totalSchools} sekolah dianalisis\n` +
+                    `${analysis.hasValidStructure ? '✅' : '❌'} Struktur data valid\n` +
+                    `${analysis.duplicateIds.length === 0 ? '✅' : '❌'} Tidak ada ID duplikat`, 
+                    status
+                );
+                
+            } catch (error) {
+                showResult('analysisResult', `❌ Error analisis: ${error.message}`, 'error');
+            }
+        }
+
+        function testQueryFunction() {
+            try {
+                // Exact copy dari schools.tsx
+                const queryFn = () => {
+                    try {
+                        if (typeof window !== 'undefined' && window.localStorage) {
+                            const schoolsData = localStorage.getItem('schools_data');
+                            console.log('🔍 Raw localStorage data:', schoolsData);
+                            
+                            if (schoolsData) {
+                                const parsed = JSON.parse(schoolsData);
+                                console.log('🔍 Parsed data:', parsed);
+                                console.log('🔍 Is array?', Array.isArray(parsed));
+                                
+                                return Array.isArray(parsed) ? parsed : [];
+                            }
+                        }
+                        return [];
+                    } catch (error) {
+                        console.warn('Error reading schools from localStorage:', error);
+                        return [];
+                    }
+                };
+
+                const result = queryFn();
+                console.log('🔍 Query result:', result);
+                
+                showResult('reactQueryResult', 
+                    `🧪 Query Function Test:\n` +
+                    `- Executed successfully\n` +
+                    `- Returned: ${result.length} items\n` +
+                    `- Type: ${Array.isArray(result) ? 'Array' : typeof result}\n` +
+                    `- First item: ${result[0] ? result[0].name : 'N/A'}\n` +
+                    `- Check console for detailed logs`, 
+                    'success'
+                );
+                
+            } catch (error) {
+                showResult('reactQueryResult', `❌ Query Function Error: ${error.message}`, 'error');
+            }
+        }
+
+        function startMonitoring() {
+            if (monitorInterval) {
+                clearInterval(monitorInterval);
+            }
+
+            let lastData = localStorage.getItem('schools_data');
+            
+            monitorInterval = setInterval(() => {
+                const currentData = localStorage.getItem('schools_data');
+                
+                if (currentData !== lastData) {
+                    const timestamp = new Date().toLocaleTimeString();
+                    showResult('monitorResult', 
+                        `🔄 ${timestamp}: localStorage berubah!\n` +
+                        `- Data lama: ${lastData ? JSON.parse(lastData).length : 0} sekolah\n` +
+                        `- Data baru: ${currentData ? JSON.parse(currentData).length : 0} sekolah`, 
+                        'success'
+                    );
+                    lastData = currentData;
+                    updateStats();
+                }
+            }, 1000);
+
+            showResult('monitorResult', '📡 Monitoring dimulai - akan mendeteksi perubahan localStorage', 'success');
+        }
+
+        function stopMonitoring() {
+            if (monitorInterval) {
+                clearInterval(monitorInterval);
+                monitorInterval = null;
+                showResult('monitorResult', '⏹️ Monitoring dihentikan', 'warning');
+            }
+        }
+
+        function clearAllData() {
+            localStorage.removeItem('schools_data');
+            updateStats();
+            showResult('debugResult', '🗑️ Semua data sekolah berhasil dihapus', 'success');
+        }
+
+        function exportData() {
+            try {
+                const schoolsData = localStorage.getItem('schools_data');
+                if (!schoolsData) {
+                    showResult('debugResult', '❌ Tidak ada data untuk diekspor', 'error');
+                    return;
+                }
+
+                const blob = new Blob([schoolsData], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `schools_data_${new Date().toISOString().split('T')[0]}.json`;
+                a.click();
+                URL.revokeObjectURL(url);
+
+                showResult('debugResult', '📥 Data berhasil diekspor', 'success');
+                
+            } catch (error) {
+                showResult('debugResult', `❌ Error export: ${error.message}`, 'error');
+            }
+        }
+
+        function checkDataStructure() {
+            try {
+                const schoolsData = localStorage.getItem('schools_data');
+                if (!schoolsData) {
+                    showResult('analysisResult', '❌ Tidak ada data', 'error');
+                    return;
+                }
+
+                const schools = JSON.parse(schoolsData);
+                
+                if (!Array.isArray(schools)) {
+                    showResult('analysisResult', `❌ Data bukan array: ${typeof schools}`, 'error');
+                    return;
+                }
+
+                const sampleSchool = schools[0];
+                const expectedFields = ['id', 'name', 'address', 'contact'];
+                const actualFields = sampleSchool ? Object.keys(sampleSchool) : [];
+                
+                const missingFields = expectedFields.filter(field => !actualFields.includes(field));
+                const extraFields = actualFields.filter(field => !expectedFields.includes(field));
+
+                document.getElementById('dataDisplay').style.display = 'block';
+                document.getElementById('dataDisplay').innerHTML = 
+                    `<strong>🏗️ STRUKTUR DATA:</strong><br>` +
+                    `<pre>Expected: ${JSON.stringify(expectedFields, null, 2)}\n` +
+                    `Actual: ${JSON.stringify(actualFields, null, 2)}\n` +
+                    `Missing: ${JSON.stringify(missingFields, null, 2)}\n` +
+                    `Extra: ${JSON.stringify(extraFields, null, 2)}\n\n` +
+                    `Sample Data:\n${JSON.stringify(sampleSchool, null, 2)}</pre>`;
+
+                const status = missingFields.length === 0 ? 'success' : 'warning';
+                showResult('analysisResult', 
+                    `🏗️ Struktur data ${missingFields.length === 0 ? 'VALID' : 'BERMASALAH'}\n` +
+                    `Missing fields: ${missingFields.length}\n` +
+                    `Extra fields: ${extraFields.length}`, 
+                    status
+                );
+                
+            } catch (error) {
+                showResult('analysisResult', `❌ Error checking structure: ${error.message}`, 'error');
+            }
+        }
+
+        function validateData() {
+            try {
+                const schoolsData = localStorage.getItem('schools_data');
+                if (!schoolsData) {
+                    showResult('analysisResult', '❌ Tidak ada data untuk divalidasi', 'error');
+                    return;
+                }
+
+                const schools = JSON.parse(schoolsData);
+                const errors = [];
+                const warnings = [];
+
+                schools.forEach((school, index) => {
+                    if (!school.id) errors.push(`Sekolah ${index}: Missing ID`);
+                    if (!school.name) errors.push(`Sekolah ${index}: Missing name`);
+                    if (!school.address) warnings.push(`Sekolah ${index}: Missing address`);
+                    if (!school.contact) warnings.push(`Sekolah ${index}: Missing contact`);
+                    
+                    if (school.supervisions && typeof school.supervisions !== 'number') {
+                        warnings.push(`Sekolah ${index}: supervisions bukan number`);
+                    }
+                });
+
+                const result = {
+                    totalSchools: schools.length,
+                    errors: errors,
+                    warnings: warnings,
+                    isValid: errors.length === 0
+                };
+
+                document.getElementById('dataDisplay').style.display = 'block';
+                document.getElementById('dataDisplay').innerHTML = 
+                    `<strong>✅ VALIDASI DATA:</strong><br><pre>${JSON.stringify(result, null, 2)}</pre>`;
+
+                const status = errors.length === 0 ? (warnings.length === 0 ? 'success' : 'warning') : 'error';
+                showResult('analysisResult', 
+                    `✅ Validasi selesai\n` +
+                    `${errors.length === 0 ? '✅' : '❌'} ${errors.length} errors\n` +
+                    `${warnings.length === 0 ? '✅' : '⚠️'} ${warnings.length} warnings`, 
+                    status
+                );
+                
+            } catch (error) {
+                showResult('analysisResult', `❌ Error validasi: ${error.message}`, 'error');
+            }
+        }
+
+        function testMutationFunction() {
+            try {
+                // Simulasi mutation function
+                const mutationFn = async (school) => {
+                    const schoolsData = localStorage.getItem('schools_data');
+                    const currentSchools = schoolsData ? JSON.parse(schoolsData) : [];
+                    
+                    const newSchoolData = {
+                        id: Date.now().toString(),
+                        ...school,
+                        supervisions: 0,
+                        createdAt: new Date().toISOString()
+                    };
+                    
+                    const updatedSchools = [...currentSchools, newSchoolData];
+                    localStorage.setItem('schools_data', JSON.stringify(updatedSchools));
+                    
+                    return newSchoolData;
+                };
+
+                const testSchool = {
+                    name: "SDN Mutation Test",
+                    address: "Jl. Test Mutation",
+                    contact: "081234567890",
+                    principalName: "Kepala Test",
+                    principalNip: "123456789"
+                };
+
+                mutationFn(testSchool).then(result => {
+                    showResult('reactQueryResult', 
+                        `🧪 Mutation Function Test:\n` +
+                        `- Executed successfully\n` +
+                        `- Created school: ${result.name}\n` +
+                        `- ID: ${result.id}\n` +
+                        `- Check localStorage for changes`, 
+                        'success'
+                    );
+                    updateStats();
+                });
+                
+            } catch (error) {
+                showResult('reactQueryResult', `❌ Mutation Function Error: ${error.message}`, 'error');
+            }
+        }
+
+        function simulateInvalidation() {
+            // Simulasi React Query invalidation
+            showResult('reactQueryResult', 
+                `🔄 Simulasi Query Invalidation:\n` +
+                `- Query cache akan di-refresh\n` +
+                `- Component akan re-render\n` +
+                `- Data terbaru akan dimuat\n` +
+                `- Ini yang seharusnya terjadi setelah mutation`, 
+                'success'
+            );
+        }
+
+        // Helper function
+        function showResult(elementId, message, type) {
+            const element = document.getElementById(elementId);
+            element.style.display = 'block';
+            element.className = `result ${type}`;
+            element.innerHTML = message.replace(/\n/g, '<br>');
+        }
+    </script>
+</body>
+</html>

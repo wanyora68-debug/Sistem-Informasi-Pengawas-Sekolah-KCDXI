@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Basic - No UI Library</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #000;
+            color: #00ff00;
+        }
+        
+        .container {
+            background: #111;
+            padding: 30px;
+            border-radius: 10px;
+            border: 2px solid #00ff00;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .success {
+            background: #004400;
+            color: #00ff00;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border: 1px solid #00ff00;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 25px 0;
+        }
+        
+        .stat-card {
+            background: #222;
+            padding: 25px;
+            border-radius: 10px;
+            text-align: center;
+            border: 2px solid #00ff00;
+        }
+        
+        .stat-number {
+            font-size: 60px;
+            font-weight: bold;
+            color: #00ff00;
+            text-shadow: 0 0 10px #00ff00;
+            margin-bottom: 10px;
+        }
+        
+        .stat-label {
+            font-size: 16px;
+            color: #88ff88;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        
+        .button {
+            background: #00ff00;
+            color: #000;
+            padding: 20px 40px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: bold;
+            margin: 15px 10px;
+            text-decoration: none;
+            display: inline-block;
+            text-transform: uppercase;
+        }
+        
+        .button:hover {
+            background: #00cc00;
+            box-shadow: 0 0 20px #00ff00;
+        }
+        
+        .warning {
+            background: #440000;
+            color: #ff4444;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border: 1px solid #ff4444;
+        }
+        
+        .info {
+            background: #004444;
+            color: #44ffff;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border: 1px solid #44ffff;
+        }
+        
+        h1 {
+            text-align: center;
+            font-size: 3em;
+            margin-bottom: 20px;
+            text-shadow: 0 0 20px #00ff00;
+        }
+        
+        .step {
+            background: #333;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            border-left: 4px solid #00ff00;
+        }
+        
+        pre {
+            background: #222;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            border: 1px solid #00ff00;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 DASHBOARD BASIC VERSION</h1>
+        
+        <div class="success">
+            <h3>✅ VERSI TERAKHIR - NO UI LIBRARY</h3>
+            <p>Dashboard sekarang menggunakan INLINE STYLES dan tidak bergantung pada UI library apapun!</p>
+        </div>
+        
+        <div class="info">
+            <h3>🎯 YANG DIPERBAIKI:</h3>
+            <ul>
+                <li><strong>Hapus UI Library:</strong> Tidak ada Card, Button, Badge, Avatar</li>
+                <li><strong>Inline Styles:</strong> Semua styling langsung di JSX</li>
+                <li><strong>Basic HTML:</strong> Hanya div, h1, p dengan style inline</li>
+                <li><strong>No Dependencies:</strong> Tidak ada import yang bisa gagal</li>
+            </ul>
+        </div>
+        
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-number">3</div>
+                <div class="stat-label">Total Tugas</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">1</div>
+                <div class="stat-label">Tugas Selesai</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">3</div>
+                <div class="stat-label">Sekolah Binaan</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">3</div>
+                <div class="stat-label">Supervisi Bulan Ini</div>
+            </div>
+        </div>
+        
+        <div class="step">
+            <h3>🔍 DEBUG CHECKLIST:</h3>
+            <p>1. Buka aplikasi di <strong>http://localhost:5000</strong></p>
+            <p>2. Tekan <strong>F12</strong> → Console</p>
+            <p>3. Klik <strong>Dashboard</strong> di sidebar</p>
+            <p>4. Lihat console log: <strong>"Dashboard component rendering - SUPER BASIC VERSION"</strong></p>
+            <p>5. Scroll ke bawah - harus ada <strong>DEBUG INFO</strong> dengan timestamp</p>
+        </div>
+        
+        <div class="warning">
+            <h3>⚠️ JIKA MASIH TIDAK MUNCUL:</h3>
+            <p>Berarti ada masalah dengan React routing atau component tidak ter-load sama sekali!</p>
+        </div>
+        
+        <div class="info">
+            <h3>📋 EXPECTED OUTPUT:</h3>
+            <pre>
+Console Log:
+🚀 Dashboard component rendering - SUPER BASIC VERSION
+
+Dashboard Page:
+- Header: "Dashboard" dengan gradient background
+- Stats: 4 kotak dengan angka 3, 1, 3, 3
+- Activities: List aktivitas hardcoded
+- Debug Info: Timestamp dan info hardcoded values
+            </pre>
+        </div>
+        
+        <div style="text-align: center; margin: 30px 0;">
+            <a href="http://localhost:5000" class="button" target="_blank">
+                🌐 TEST DASHBOARD BASIC
+            </a>
+        </div>
+        
+        <div class="step">
+            <h3>📝 CATATAN FINAL:</h3>
+            <p>Ini adalah versi paling basic yang mungkin dibuat:</p>
+            <ul>
+                <li>Tidak ada UI library dependencies</li>
+                <li>Tidak ada external imports</li>
+                <li>Hanya HTML + inline styles</li>
+                <li>Angka hardcoded langsung di JSX</li>
+            </ul>
+            <p>Jika ini masih tidak bekerja, masalahnya ada di level React/build system.</p>
+        </div>
+    </div>
+
+    <script>
+        console.log('🔧 Dashboard Basic - No UI Library test page loaded');
+        console.log('📊 Expected: 3, 1, 3, 3 dengan inline styles');
+        console.log('🔍 Jika masih 0, masalah di React component level');
+        
+        // Auto redirect
+        setTimeout(() => {
+            if (confirm('Test dashboard basic version sekarang?')) {
+                window.open('http://localhost:5000', '_blank');
+            }
+        }, 3000);
+    </script>
+</body>
+</html>

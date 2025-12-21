@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📄 Menu PDF Export</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            text-align: center;
+        }
+        
+        .header {
+            margin-bottom: 40px;
+        }
+        
+        .header h1 {
+            color: #10b981;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            color: #666;
+            font-size: 1.2rem;
+        }
+        
+        .menu-item {
+            background: #f8fafc;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 25px;
+            margin: 20px 0;
+            transition: all 0.3s;
+        }
+        
+        .menu-item:hover {
+            border-color: #10b981;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .menu-item h3 {
+            color: #374151;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+        
+        .menu-item p {
+            color: #6b7280;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 15px 30px;
+            background: #10b981;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            transition: all 0.2s;
+        }
+        
+        .btn:hover {
+            background: #059669;
+            transform: scale(1.05);
+        }
+        
+        .btn-secondary {
+            background: #3b82f6;
+        }
+        
+        .btn-secondary:hover {
+            background: #2563eb;
+        }
+        
+        .quick-links {
+            background: #fffbeb;
+            border: 2px solid #f59e0b;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 30px;
+        }
+        
+        .quick-links h3 {
+            color: #92400e;
+            margin-bottom: 15px;
+        }
+        
+        .quick-links a {
+            display: inline-block;
+            margin: 5px 10px;
+            padding: 8px 15px;
+            background: #f59e0b;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 0.9rem;
+        }
+        
+        .quick-links a:hover {
+            background: #d97706;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📄 Menu PDF Export</h1>
+            <p>Pilih cara untuk export PDF laporan</p>
+        </div>
+
+        <div class="menu-item">
+            <h3>🎯 PDF Export Solution (Recommended)</h3>
+            <p>
+                Halaman khusus untuk generate dan download PDF laporan dengan format profesional.
+                Sudah terintegrasi dengan data laporan terbaru.
+            </p>
+            <a href="/PDF_EXPORT_WORKING_SOLUTION.html" target="_blank" class="btn">
+                🚀 Buka PDF Export Solution
+            </a>
+        </div>
+
+        <div class="menu-item">
+            <h3>📊 Halaman Laporan Utama</h3>
+            <p>
+                Kembali ke halaman laporan untuk melihat data statistik dan ringkasan kegiatan.
+                Dari sini Anda bisa akses berbagai fitur laporan.
+            </p>
+            <a href="/reports" class="btn btn-secondary">
+                📈 Buka Halaman Laporan
+            </a>
+        </div>
+
+        <div class="menu-item">
+            <h3>🏠 Dashboard Utama</h3>
+            <p>
+                Kembali ke dashboard untuk akses semua fitur aplikasi pengawas sekolah.
+                Dashboard menyediakan overview lengkap aktivitas Anda.
+            </p>
+            <a href="/dashboard" class="btn btn-secondary">
+                🏠 Buka Dashboard
+            </a>
+        </div>
+
+        <div class="quick-links">
+            <h3>🔗 Quick Links</h3>
+            <a href="/schools">Sekolah Binaan</a>
+            <a href="/supervisions">Supervisi</a>
+            <a href="/tasks">Tugas Pokok</a>
+            <a href="/additional-tasks">Tugas Tambahan</a>
+            <a href="/profile">Profil</a>
+        </div>
+
+        <div style="margin-top: 30px; padding: 20px; background: #f3f4f6; border-radius: 8px;">
+            <h4 style="color: #374151; margin-bottom: 10px;">💡 Tips Penggunaan:</h4>
+            <ul style="text-align: left; color: #6b7280; line-height: 1.8;">
+                <li>Bookmark halaman PDF Export untuk akses cepat</li>
+                <li>Gunakan Ctrl+P untuk print langsung dari browser</li>
+                <li>Refresh halaman jika data tidak update</li>
+                <li>Pastikan server aplikasi sedang berjalan</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // Auto-redirect jika ada parameter
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('auto') === 'pdf') {
+            setTimeout(() => {
+                window.open('/PDF_EXPORT_WORKING_SOLUTION.html', '_blank');
+            }, 1000);
+        }
+    </script>
+</body>
+</html>

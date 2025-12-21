@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Aktivitas User Wawan</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .header {
+            background: #2563eb;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .debug-info {
+            background: #f3f4f6;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #3b82f6;
+        }
+        .tabs {
+            display: flex;
+            border-bottom: 2px solid #e5e7eb;
+            margin-bottom: 20px;
+        }
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border: none;
+            background: none;
+            font-size: 16px;
+            color: #6b7280;
+            border-bottom: 2px solid transparent;
+        }
+        .tab.active {
+            color: #2563eb;
+            border-bottom-color: #2563eb;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .activity-card {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        .activity-title {
+            font-weight: bold;
+            color: #1f2937;
+            margin-bottom: 8px;
+        }
+        .activity-meta {
+            color: #6b7280;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+        .activity-description {
+            color: #374151;
+            line-height: 1.5;
+        }
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-right: 8px;
+        }
+        .badge-success {
+            background: #dcfce7;
+            color: #166534;
+        }
+        .badge-warning {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        .badge-info {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+        .no-data {
+            text-align: center;
+            color: #6b7280;
+            padding: 40px;
+            font-style: italic;
+        }
+        .count {
+            background: #2563eb;
+            color: white;
+            border-radius: 50%;
+            padding: 2px 6px;
+            font-size: 12px;
+            margin-left: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Test Aktivitas User Wawan</h1>
+            <p>Pengujian langsung data aktivitas user dari localStorage</p>
+        </div>
+
+        <div class="debug-info">
+            <h3>Debug Information</h3>
+            <div id="debugInfo">Loading...</div>
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('tasks')">
+                Tugas Pokok <span id="tasksCount" class="count">0</span>
+            </button>
+            <button class="tab" onclick="showTab('supervisions')">
+                Supervisi <span id="supervisionsCount" class="count">0</span>
+            </button>
+            <button class="tab" onclick="showTab('events')">
+                Kegiatan <span id="eventsCount" class="count">0</span>
+            </button>
+            <button class="tab" onclick="showTab('additional')">
+                Tugas Tambahan <span id="additionalCount" class="count">0</span>
+            </button>
+        </div>
+
+        <div id="tasks" class="tab-content active">
+            <h3>Tugas Pokok</h3>
+            <div id="tasksContent">Loading...</div>
+        </div>
+
+        <div id="supervisions" class="tab-content">
+            <h3>Supervisi</h3>
+            <div id="supervisionsContent">Loading...</div>
+        </div>
+
+        <div id="events" class="tab-content">
+            <h3>Kegiatan</h3>
+            <div id="eventsContent">Loading...</div>
+        </div>
+
+        <div id="additional" class="tab-content">
+            <h3>Tugas Tambahan</h3>
+            <div id="additionalContent">Loading...</div>
+        </div>
+    </div>
+
+    <script>
+        // User Wawan data
+        const userId = "1762696525337";
+        const userName = "wawan";
+
+        function showTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // Show selected tab
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        function getLocalStorageData(key) {
+            try {
+                const data = localStorage.getItem(key);
+                return data ? JSON.parse(data) : [];
+            } catch (error) {
+                console.error('Error parsing localStorage data:', error);
+                return [];
+            }
+        }
+
+        function filterByUser(data, userField = 'userId') {
+            if (!data || !Array.isArray(data)) return [];
+            
+            return data.filter(item => {
+                // Match by userId (exact match)
+                if (item[userField] === userId) return true;
+                
+                // Match by username (case insensitive)
+                if (item.username && userName && 
+                    item.username.toLowerCase() === userName.toLowerCase()) return true;
+                
+                // Match if userId field contains username
+                if (item[userField] && userName && 
+                    item[userField].toString().toLowerCase() === userName.toLowerCase()) return true;
+                
+                return false;
+            });
+        }
+
+        function formatDate(dateString) {
+            if (!dateString) return 'Tanggal tidak tersedia';
+            try {
+                return new Date(dateString).toLocaleDateString('id-ID', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                });
+            } catch {
+                return 'Tanggal tidak valid';
+            }
+        }
+
+        function renderTasks(tasks) {
+            const container = document.getElementById('tasksContent');
+            
+            if (tasks.length === 0) {
+                container.innerHTML = '<div class="no-data">Belum ada tugas pokok</div>';
+                return;
+            }
+
+            container.innerHTML = tasks.map(task => `
+                <div class="activity-card">
+                    <div class="activity-title">${task.title || task.name || 'Tugas Tanpa Judul'}</div>
+                    <div class="activity-meta">
+                        <span class="badge ${task.completed ? 'badge-success' : 'badge-warning'}">
+                            ${task.completed ? '✓ Selesai' : '⏳ Belum Selesai'}
+                        </span>
+                        <span class="badge badge-info">${task.category || 'Tugas'}</span>
+                        <span>📅 ${formatDate(task.date)}</span>
+                    </div>
+                    <div class="activity-description">${task.description || 'Tidak ada deskripsi'}</div>
+                </div>
+            `).join('');
+        }
+
+        function renderSupervisions(supervisions) {
+            const container = document.getElementById('supervisionsContent');
+            
+            if (supervisions.length === 0) {
+                container.innerHTML = '<div class="no-data">Belum ada supervisi</div>';
+                return;
+            }
+
+            container.innerHTML = supervisions.map(supervision => `
+                <div class="activity-card">
+                    <div class="activity-title">🏫 ${supervision.schoolName || supervision.school || 'Sekolah'}</div>
+                    <div class="activity-meta">
+                        <span class="badge badge-info">${supervision.type || 'Supervisi'}</span>
+                        <span>📅 ${formatDate(supervision.date)}</span>
+                        ${supervision.teacherName ? `<span>👨‍🏫 ${supervision.teacherName}</span>` : ''}
+                    </div>
+                    <div class="activity-description">
+                        <strong>Temuan:</strong> ${supervision.findings || supervision.notes || 'Tidak ada temuan'}<br>
+                        ${supervision.recommendations ? `<strong>Rekomendasi:</strong> ${supervision.recommendations}` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderEvents(events) {
+            const container = document.getElementById('eventsContent');
+            
+            if (events.length === 0) {
+                container.innerHTML = '<div class="no-data">Belum ada kegiatan</div>';
+                return;
+            }
+
+            container.innerHTML = events.map(event => `
+                <div class="activity-card">
+                    <div class="activity-title">${event.title || event.name || 'Kegiatan'}</div>
+                    <div class="activity-meta">
+                        <span>📅 ${formatDate(event.date)}</span>
+                        ${event.time ? `<span>🕐 ${event.time}</span>` : ''}
+                    </div>
+                    <div class="activity-description">${event.description || 'Tidak ada deskripsi'}</div>
+                </div>
+            `).join('');
+        }
+
+        function renderAdditionalTasks(tasks) {
+            const container = document.getElementById('additionalContent');
+            
+            if (tasks.length === 0) {
+                container.innerHTML = '<div class="no-data">Belum ada tugas tambahan</div>';
+                return;
+            }
+
+            container.innerHTML = tasks.map(task => `
+                <div class="activity-card">
+                    <div class="activity-title">${task.name || task.title || 'Tugas Tambahan'}</div>
+                    <div class="activity-meta">
+                        <span>👥 ${task.organizer || 'Penyelenggara'}</span>
+                        <span>📍 ${task.location || 'Lokasi'}</span>
+                        <span>📅 ${formatDate(task.date)}</span>
+                    </div>
+                    <div class="activity-description">${task.description || 'Tidak ada deskripsi'}</div>
+                </div>
+            `).join('');
+        }
+
+        function loadUserActivities() {
+            console.log('Loading activities for user:', { userId, userName });
+
+            // Get data from localStorage
+            const localData = getLocalStorageData('local-database') || {};
+            
+            // Check if we have the main database
+            const hasLocalDatabase = localStorage.getItem('local-database') !== null;
+            
+            // Get activities
+            const tasks = filterByUser(localData.tasks || getLocalStorageData('tasks'));
+            const supervisions = filterByUser(localData.supervisions || getLocalStorageData('supervisions'));
+            const events = filterByUser(localData.events || getLocalStorageData('calendar_events') || getLocalStorageData('events'));
+            const additionalTasks = filterByUser(localData.additionalTasks || getLocalStorageData('additional_tasks') || getLocalStorageData('additionalTasks'));
+
+            // Update debug info
+            document.getElementById('debugInfo').innerHTML = `
+                <p><strong>User ID:</strong> ${userId}</p>
+                <p><strong>Username:</strong> ${userName}</p>
+                <p><strong>Local Database:</strong> ${hasLocalDatabase ? '✅ Tersedia' : '❌ Tidak tersedia'}</p>
+                <p><strong>Data ditemukan:</strong></p>
+                <ul>
+                    <li>Tugas Pokok: ${tasks.length} item</li>
+                    <li>Supervisi: ${supervisions.length} item</li>
+                    <li>Kegiatan: ${events.length} item</li>
+                    <li>Tugas Tambahan: ${additionalTasks.length} item</li>
+                </ul>
+                <p><strong>Raw Data Check:</strong></p>
+                <ul>
+                    <li>localData.tasks: ${localData.tasks ? localData.tasks.length : 0} items</li>
+                    <li>localData.supervisions: ${localData.supervisions ? localData.supervisions.length : 0} items</li>
+                    <li>localData.events: ${localData.events ? localData.events.length : 0} items</li>
+                    <li>localData.additionalTasks: ${localData.additionalTasks ? localData.additionalTasks.length : 0} items</li>
+                </ul>
+            `;
+
+            // Update counts
+            document.getElementById('tasksCount').textContent = tasks.length;
+            document.getElementById('supervisionsCount').textContent = supervisions.length;
+            document.getElementById('eventsCount').textContent = events.length;
+            document.getElementById('additionalCount').textContent = additionalTasks.length;
+
+            // Render activities
+            renderTasks(tasks);
+            renderSupervisions(supervisions);
+            renderEvents(events);
+            renderAdditionalTasks(additionalTasks);
+
+            console.log('Activities loaded:', {
+                tasks: tasks.length,
+                supervisions: supervisions.length,
+                events: events.length,
+                additionalTasks: additionalTasks.length
+            });
+        }
+
+        // Load data when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            // First, try to load from local-database.json if not in localStorage
+            if (!localStorage.getItem('local-database')) {
+                fetch('./local-database.json')
+                    .then(response => response.json())
+                    .then(data => {
+                        localStorage.setItem('local-database', JSON.stringify(data));
+                        loadUserActivities();
+                    })
+                    .catch(error => {
+                        console.error('Error loading local-database.json:', error);
+                        loadUserActivities();
+                    });
+            } else {
+                loadUserActivities();
+            }
+        });
+    </script>
+</body>
+</html>

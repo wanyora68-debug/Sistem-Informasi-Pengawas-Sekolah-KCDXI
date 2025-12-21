@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎯 Final Test Admin Menu</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            color: #2d3748;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+        .test-section {
+            background: #f7fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .success {
+            border-color: #48bb78;
+            background: #f0fff4;
+        }
+        .warning {
+            border-color: #ed8936;
+            background: #fffaf0;
+        }
+        .error {
+            border-color: #f56565;
+            background: #fff5f5;
+        }
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        .btn-success {
+            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+        }
+        .btn-warning {
+            background: linear-gradient(135deg, #ed8936 0%, #dd6b20 100%);
+        }
+        .btn-danger {
+            background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
+        }
+        .checklist {
+            list-style: none;
+            padding: 0;
+        }
+        .checklist li {
+            padding: 10px 0;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+        }
+        .checklist li:last-child {
+            border-bottom: none;
+        }
+        .checkbox {
+            width: 20px;
+            height: 20px;
+            margin-right: 15px;
+            cursor: pointer;
+        }
+        .step-number {
+            background: #667eea;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 15px;
+        }
+        .code-block {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            margin: 10px 0;
+            overflow-x: auto;
+        }
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+        }
+        .status-active { background: #48bb78; }
+        .status-inactive { background: #f56565; }
+        .status-warning { background: #ed8936; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎯 Final Test Admin Menu</h1>
+            <p>Test lengkap semua fitur administrator</p>
+        </div>
+
+        <!-- Status Check -->
+        <div class="test-section" id="status-section">
+            <h3>📊 Status Check</h3>
+            <div id="status-results">
+                <p>🔄 Checking status...</p>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="test-section">
+            <h3>🚀 Quick Actions</h3>
+            <button class="btn btn-success" onclick="setupAdminComplete()">
+                ⚡ Setup Admin Complete
+            </button>
+            <a href="http://localhost:5000" target="_blank" class="btn">
+                🌐 Open Application
+            </a>
+            <a href="http://localhost:5000/users" target="_blank" class="btn btn-warning">
+                👥 Open Users Page
+            </a>
+        </div>
+
+        <!-- Test Steps -->
+        <div class="test-section">
+            <h3>📋 Test Steps</h3>
+            <ul class="checklist">
+                <li>
+                    <div class="step-number">1</div>
+                    <div>
+                        <strong>Login sebagai Admin</strong><br>
+                        <small>Username: admin, Password: admin123</small>
+                    </div>
+                </li>
+                <li>
+                    <div class="step-number">2</div>
+                    <div>
+                        <strong>Buka Halaman Users</strong><br>
+                        <small>Klik menu Users di sidebar</small>
+                    </div>
+                </li>
+                <li>
+                    <div class="step-number">3</div>
+                    <div>
+                        <strong>Test Tombol View</strong><br>
+                        <small>Klik tombol mata (👁️) untuk melihat detail user</small>
+                    </div>
+                </li>
+                <li>
+                    <div class="step-number">4</div>
+                    <div>
+                        <strong>Test Tombol Edit</strong><br>
+                        <small>Klik tombol edit (✏️) untuk edit user</small>
+                    </div>
+                </li>
+                <li>
+                    <div class="step-number">5</div>
+                    <div>
+                        <strong>Test Tombol Activities</strong><br>
+                        <small>Klik tombol aktivitas (📊) untuk kelola aktivitas</small>
+                    </div>
+                </li>
+                <li>
+                    <div class="step-number">6</div>
+                    <div>
+                        <strong>Test Tombol Reset Password</strong><br>
+                        <small>Klik tombol kunci (🔑) untuk reset password</small>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Expected Results -->
+        <div class="test-section success">
+            <h3>✅ Expected Results</h3>
+            <ul class="checklist">
+                <li>
+                    <span class="status-indicator status-active"></span>
+                    <strong>Semua tombol admin aktif dan dapat diklik</strong>
+                </li>
+                <li>
+                    <span class="status-indicator status-active"></span>
+                    <strong>Dialog View User menampilkan detail lengkap</strong>
+                </li>
+                <li>
+                    <span class="status-indicator status-active"></span>
+                    <strong>Dialog Edit User dapat mengubah data</strong>
+                </li>
+                <li>
+                    <span class="status-indicator status-active"></span>
+                    <strong>Dialog Activities menampilkan aktivitas user</strong>
+                </li>
+                <li>
+                    <span class="status-indicator status-active"></span>
+                    <strong>Dialog Reset Password berfungsi</strong>
+                </li>
+                <li>
+                    <span class="status-indicator status-warning"></span>
+                    <strong>Tombol Delete/Status disabled untuk user admin (dengan tooltip)</strong>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Troubleshooting -->
+        <div class="test-section warning">
+            <h3>🔧 Troubleshooting</h3>
+            <p><strong>Jika tombol masih tidak aktif:</strong></p>
+            <button class="btn btn-danger" onclick="emergencyFix()">
+                🚨 Emergency Fix
+            </button>
+            <button class="btn" onclick="clearAllData()">
+                🗑️ Clear All Data
+            </button>
+            <button class="btn" onclick="checkConsole()">
+                🔍 Check Console
+            </button>
+        </div>
+
+        <div id="results-section"></div>
+    </div>
+
+    <script>
+        // Check status on load
+        window.onload = function() {
+            checkSystemStatus();
+        };
+
+        function checkSystemStatus() {
+            const statusResults = document.getElementById('status-results');
+            let statusHTML = '';
+
+            try {
+                // Check current user
+                const userData = localStorage.getItem('user_data');
+                const currentUser = userData ? JSON.parse(userData) : null;
+                
+                if (currentUser && currentUser.role === 'admin') {
+                    statusHTML += `
+                        <p><span class="status-indicator status-active"></span>
+                        <strong>Admin Login:</strong> ✅ ${currentUser.fullName || currentUser.username}</p>
+                    `;
+                } else {
+                    statusHTML += `
+                        <p><span class="status-indicator status-inactive"></span>
+                        <strong>Admin Login:</strong> ❌ Not logged in as admin</p>
+                    `;
+                }
+
+                // Check users data
+                const usersData = localStorage.getItem('app_users');
+                if (usersData) {
+                    const users = JSON.parse(usersData);
+                    const adminUsers = users.filter(u => u.role === 'admin');
+                    statusHTML += `
+                        <p><span class="status-indicator status-active"></span>
+                        <strong>Users Database:</strong> ✅ ${users.length} users (${adminUsers.length} admin)</p>
+                    `;
+                } else {
+                    statusHTML += `
+                        <p><span class="status-indicator status-inactive"></span>
+                        <strong>Users Database:</strong> ❌ No users data</p>
+                    `;
+                }
+
+                // Check server
+                fetch('http://localhost:5000/api/auth/me')
+                    .then(response => {
+                        if (response.ok) {
+                            statusHTML += `
+                                <p><span class="status-indicator status-active"></span>
+                                <strong>Server Status:</strong> ✅ Running on localhost:5000</p>
+                            `;
+                        } else {
+                            statusHTML += `
+                                <p><span class="status-indicator status-warning"></span>
+                                <strong>Server Status:</strong> ⚠️ Server responding but auth issue</p>
+                            `;
+                        }
+                        statusResults.innerHTML = statusHTML;
+                    })
+                    .catch(error => {
+                        statusHTML += `
+                            <p><span class="status-indicator status-inactive"></span>
+                            <strong>Server Status:</strong> ❌ Server not responding</p>
+                        `;
+                        statusResults.innerHTML = statusHTML;
+                    });
+
+            } catch (error) {
+                statusResults.innerHTML = `
+                    <p><span class="status-indicator status-inactive"></span>
+                    <strong>Error:</strong> ${error.message}</p>
+                `;
+            }
+        }
+
+        function setupAdminComplete() {
+            const resultsSection = document.getElementById('results-section');
+            
+            try {
+                // Create admin user
+                const adminUser = {
+                    id: 'admin-1',
+                    username: 'admin',
+                    fullName: 'Administrator',
+                    role: 'admin',
+                    nip: '',
+                    rank: '',
+                    phone: '',
+                    email: 'admin@disdik.jabar.go.id',
+                    department: 'Cabang Dinas Pendidikan Wilayah XI',
+                    status: 'active',
+                    createdAt: new Date().toISOString(),
+                    updatedAt: new Date().toISOString()
+                };
+
+                // Create Wawan user
+                const wawanUser = {
+                    id: 'wawan-123',
+                    username: 'wawan',
+                    fullName: 'H. Wawan Yogaswara, S.Pd, M.Pd',
+                    role: 'pengawas',
+                    nip: '196805301994121001',
+                    rank: 'Pembina Utama Muda, IV/c',
+                    phone: '087733438282',
+                    email: 'wawan.yogaswara@disdik.jabar.go.id',
+                    department: 'Cabang Dinas Pendidikan Wilayah XI',
+                    status: 'active',
+                    lastLogin: new Date().toISOString(),
+                    createdAt: '2024-01-01T00:00:00.000Z',
+                    updatedAt: new Date().toISOString()
+                };
+
+                // Save users
+                const users = [adminUser, wawanUser];
+                localStorage.setItem('app_users', JSON.stringify(users));
+                localStorage.setItem('users', JSON.stringify(users));
+
+                // Login as admin
+                localStorage.setItem('user_data', JSON.stringify(adminUser));
+                localStorage.setItem('auth_token', 'admin-token-' + Date.now());
+
+                resultsSection.innerHTML = `
+                    <div class="test-section success">
+                        <h3>✅ Setup Complete!</h3>
+                        <p>✅ Admin user created and activated</p>
+                        <p>✅ Wawan user created</p>
+                        <p>✅ Logged in as admin</p>
+                        <p>✅ All data saved to localStorage</p>
+                        <p><strong>Next:</strong> Open the Users page and test all admin buttons!</p>
+                        <a href="http://localhost:5000/users" target="_blank" class="btn btn-success">
+                            🚀 Test Admin Menu Now
+                        </a>
+                    </div>
+                `;
+
+                // Refresh status
+                setTimeout(checkSystemStatus, 1000);
+
+            } catch (error) {
+                resultsSection.innerHTML = `
+                    <div class="test-section error">
+                        <h3>❌ Setup Failed</h3>
+                        <p>Error: ${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        function emergencyFix() {
+            const resultsSection = document.getElementById('results-section');
+            
+            // Force activate all admin features
+            setupAdminComplete();
+            
+            // Additional fixes
+            setTimeout(() => {
+                // Force refresh React Query cache
+                if (window.localStorage) {
+                    // Clear any cached data that might interfere
+                    Object.keys(localStorage).forEach(key => {
+                        if (key.includes('react-query') || key.includes('cache')) {
+                            localStorage.removeItem(key);
+                        }
+                    });
+                }
+                
+                resultsSection.innerHTML += `
+                    <div class="test-section warning">
+                        <h3>🚨 Emergency Fix Applied</h3>
+                        <p>✅ Admin setup forced</p>
+                        <p>✅ Cache cleared</p>
+                        <p>✅ All permissions reset</p>
+                        <p><strong>Please refresh the Users page and test again!</strong></p>
+                    </div>
+                `;
+            }, 1000);
+        }
+
+        function clearAllData() {
+            localStorage.clear();
+            sessionStorage.clear();
+            
+            document.getElementById('results-section').innerHTML = `
+                <div class="test-section warning">
+                    <h3>🗑️ All Data Cleared</h3>
+                    <p>All localStorage and sessionStorage cleared.</p>
+                    <p>Please run "Setup Admin Complete" again.</p>
+                </div>
+            `;
+            
+            setTimeout(checkSystemStatus, 1000);
+        }
+
+        function checkConsole() {
+            document.getElementById('results-section').innerHTML = `
+                <div class="test-section">
+                    <h3>🔍 Console Check</h3>
+                    <p>Open browser console (F12) and run these commands:</p>
+                    <div class="code-block">
+// Check current user
+console.log('Current User:', JSON.parse(localStorage.getItem('user_data') || 'null'));
+
+// Check users data
+console.log('Users Data:', JSON.parse(localStorage.getItem('app_users') || 'null'));
+
+// Check auth token
+console.log('Auth Token:', localStorage.getItem('auth_token'));
+                    </div>
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>

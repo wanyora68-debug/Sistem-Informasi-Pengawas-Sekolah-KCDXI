@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fix User Session Mismatch Final</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        }
+        .step {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 10px;
+            background: rgba(255,255,255,0.05);
+        }
+        .success { border-color: #4CAF50; background: rgba(76, 175, 80, 0.1); }
+        .error { border-color: #f44336; background: rgba(244, 67, 54, 0.1); }
+        .warning { border-color: #ff9800; background: rgba(255, 152, 0, 0.1); }
+        .info { border-color: #2196F3; background: rgba(33, 150, 243, 0.1); }
+        button {
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 10px;
+            cursor: pointer;
+            margin: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+        }
+        button:hover { 
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+        .danger { background: linear-gradient(45deg, #f44336, #d32f2f); }
+        pre {
+            background: rgba(0,0,0,0.3);
+            padding: 15px;
+            border-radius: 10px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .status {
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            font-weight: bold;
+            background: rgba(255,255,255,0.1);
+        }
+        h1 { text-align: center; font-size: 2.5em; margin-bottom: 30px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Fix User Session Mismatch</h1>
+
+        <div class="step error">
+            <h3>🚨 Masalah Teridentifikasi</h3>
+            <p><strong>Root Cause:</strong> Admin menampilkan foto profil user Wawan karena ada mismatch antara:</p>
+            <ul>
+                <li>🔑 <strong>User Session</strong> - Diambil dari Supabase database</li>
+                <li>📊 <strong>Data Aktivitas</strong> - Disimpan di localStorage</li>
+                <li>📸 <strong>Foto Profil</strong> - Kemungkinan menggunakan data yang salah</li>
+            </ul>
+        </div>
+
+        <div class="step warning">
+            <h3>🎯 Solusi</h3>
+            <p>Kita akan memperbaiki mismatch ini dengan:</p>
+            <ol>
+                <li>Memastikan user session konsisten</li>
+                <li>Memperbaiki mapping foto profil</li>
+                <li>Memastikan data aktivitas terhubung dengan user yang benar</li>
+            </ol>
+        </div>
+
+        <div class="step">
+            <h3>🔧 Actions</h3>
+            <button onclick="diagnoseIssue()">🔍 Diagnose Issue</button>
+            <button onclick="fixUserSession()">🔧 Fix User Session</button>
+            <button onclick="fixPhotoMapping()">📸 Fix Photo Mapping</button>
+            <button onclick="syncUserData()">🔄 Sync User Data</button>
+            <button onclick="clearAllCache()" class="danger">🗑️ Clear All Cache</button>
+        </div>
+
+        <div class="step">
+            <h3>📊 Status</h3>
+            <div id="status">Ready to diagnose...</div>
+        </div>
+
+        <div class="step">
+            <h3>📋 Analysis Results</h3>
+            <div id="results"></div>
+        </div>
+    </div>
+
+    <script>
+        function updateStatus(message, type = 'info') {
+            const statusDiv = document.getElementById('status');
+            statusDiv.innerHTML = `<div class="status">${message}</div>`;
+        }
+
+        function updateResults(content) {
+            document.getElementById('results').innerHTML = content;
+        }
+
+        async function diagnoseIssue() {
+            updateStatus('🔍 Diagnosing user session issue...', 'info');
+            
+            try {
+                const diagnosis = {
+                    localStorage: {},
+                    sessionStorage: {},
+                    apiResponse: null,
+                    issues: []
+                };
+
+                // Check localStorage
+                const token = localStorage.getItem('token');
+                const currentUser = localStorage.getItem('currentUser');
+                const userProfile = localStorage.getItem('userProfile');
+                const localDb = JSON.parse(localStorage.getItem('local-database') || '{}');
+
+                diagnosis.localStorage = {
+                    hasToken: !!token,
+                    hasCurrentUser: !!currentUser,
+                    hasUserProfile: !!userProfile,
+                    currentUserData: currentUser ? JSON.parse(currentUser) : null,
+                    userCount: localDb.users ? localDb.users.length : 0
+                };
+
+                // Test API
+                if (token) {
+                    try {
+                        const response = await fetch('/api/auth/me', {
+                            headers: {
+                                'Authorization': `Bearer ${token}`,
+                                'Content-Type': 'application/json'
+                            }
+                        });
+                        
+                        if (response.ok) {
+                            diagnosis.apiResponse = await response.json();
+                        } else {
+                            diagnosis.issues.push('API auth failed: ' + response.status);
+                        }
+                    } catch (error) {
+                        diagnosis.issues.push('API error: ' + error.message);
+                    }
+                }
+
+                // Compare data
+                if (diagnosis.localStorage.currentUserData && diagnosis.apiResponse) {
+                    const localUser = diagnosis.localStorage.currentUserData;
+                    const apiUser = diagnosis.apiResponse;
+                    
+                    if (localUser.id !== apiUser.id) {
+                        diagnosis.issues.push(`User ID mismatch: localStorage(${localUser.id}) vs API(${apiUser.id})`);
+                    }
+                    
+                    if (localUser.username !== apiUser.username) {
+                        diagnosis.issues.push(`Username mismatch: localStorage(${localUser.username}) vs API(${apiUser.username})`);
+                    }
+                }
+
+                // Check photo sources
+                if (localDb.users) {
+                    const usersWithPhotos = localDb.users.filter(u => u.photo);
+                    diagnosis.photoAnalysis = {
+                        totalUsers: localDb.users.length,
+                        usersWithPhotos: usersWithPhotos.length,
+                        photoUsers: usersWithPhotos.map(u => ({ id: u.id, username: u.username, hasPhoto: !!u.photo }))
+                    };
+                }
+
+                updateResults(`
+                    <h4>🔍 Diagnosis Results:</h4>
+                    <pre>${JSON.stringify(diagnosis, null, 2)}</pre>
+                    ${diagnosis.issues.length > 0 ? `
+                    <h4>🚨 Issues Found:</h4>
+                    <ul>${diagnosis.issues.map(issue => `<li>${issue}</li>`).join('')}</ul>
+                    ` : '<h4>✅ No major issues detected</h4>'}
+                `);
+
+                if (diagnosis.issues.length > 0) {
+                    updateStatus(`🚨 Found ${diagnosis.issues.length} issues that need fixing`, 'error');
+                } else {
+                    updateStatus('✅ Diagnosis complete - ready for fixes', 'success');
+                }
+
+            } catch (error) {
+                updateStatus(`❌ Diagnosis error: ${error.message}`, 'error');
+            }
+        }
+
+        async function fixUserSession() {
+            updateStatus('🔧 Fixing user session...', 'info');
+            
+            try {
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    updateStatus('❌ No token found - please login again', 'error');
+                    return;
+                }
+
+                // Get fresh user data from API
+                const response = await fetch('/api/auth/me', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`API error: ${response.status}`);
+                }
+
+                const userData = await response.json();
+                
+                // Clear old session data
+                localStorage.removeItem('currentUser');
+                localStorage.removeItem('userProfile');
+                sessionStorage.clear();
+                
+                // Set clean session data
+                localStorage.setItem('currentUser', JSON.stringify(userData));
+                
+                updateStatus('✅ User session fixed with fresh API data', 'success');
+                updateResults(`
+                    <h4>✅ Session Fixed:</h4>
+                    <pre>${JSON.stringify(userData, null, 2)}</pre>
+                `);
+
+            } catch (error) {
+                updateStatus(`❌ Fix error: ${error.message}`, 'error');
+            }
+        }
+
+        function fixPhotoMapping() {
+            updateStatus('📸 Fixing photo mapping...', 'info');
+            
+            try {
+                const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+                const localDb = JSON.parse(localStorage.getItem('local-database') || '{}');
+                
+                if (!currentUser.id) {
+                    updateStatus('❌ No current user found', 'error');
+                    return;
+                }
+
+                // Find current user in local database
+                const users = localDb.users || [];
+                const userInDb = users.find(u => u.id === currentUser.id || u.username === currentUser.username);
+                
+                if (userInDb && userInDb.photo) {
+                    // Update current user with correct photo
+                    const updatedUser = {
+                        ...currentUser,
+                        photo: userInDb.photo
+                    };
+                    
+                    localStorage.setItem('currentUser', JSON.stringify(updatedUser));
+                    updateStatus('✅ Photo mapping fixed', 'success');
+                    
+                    updateResults(`
+                        <h4>📸 Photo Fixed:</h4>
+                        <p>User: ${updatedUser.username}</p>
+                        <p>Photo: ${updatedUser.photo ? 'Found and mapped' : 'No photo available'}</p>
+                    `);
+                } else {
+                    updateStatus('⚠️ No photo found for current user', 'warning');
+                }
+
+            } catch (error) {
+                updateStatus(`❌ Photo fix error: ${error.message}`, 'error');
+            }
+        }
+
+        function syncUserData() {
+            updateStatus('🔄 Syncing user data...', 'info');
+            
+            try {
+                const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+                const localDb = JSON.parse(localStorage.getItem('local-database') || '{}');
+                
+                if (!currentUser.id) {
+                    updateStatus('❌ No current user to sync', 'error');
+                    return;
+                }
+
+                // Ensure all user data is consistent
+                const users = localDb.users || [];
+                const userIndex = users.findIndex(u => u.id === currentUser.id);
+                
+                if (userIndex >= 0) {
+                    // Update user in database with current session data
+                    users[userIndex] = {
+                        ...users[userIndex],
+                        ...currentUser,
+                        // Keep existing photo if available
+                        photo: users[userIndex].photo || currentUser.photo
+                    };
+                    
+                    localDb.users = users;
+                    localStorage.setItem('local-database', JSON.stringify(localDb));
+                    
+                    updateStatus('✅ User data synced successfully', 'success');
+                } else {
+                    updateStatus('⚠️ Current user not found in local database', 'warning');
+                }
+
+                // Ensure activity data has correct user identifiers
+                const fixActivityData = (items, type) => {
+                    if (!items || !Array.isArray(items)) return [];
+                    
+                    return items.map(item => {
+                        // If this item belongs to current user, ensure proper identifiers
+                        if (item.userId === currentUser.id || 
+                            item.username === currentUser.username ||
+                            (currentUser.username === 'admin' && item.userId === 'admin')) {
+                            return {
+                                ...item,
+                                userId: currentUser.id,
+                                username: currentUser.username
+                            };
+                        }
+                        return item;
+                    });
+                };
+
+                // Fix all activity types
+                localDb.tasks = fixActivityData(localDb.tasks || [], 'tasks');
+                localDb.supervisions = fixActivityData(localDb.supervisions || [], 'supervisions');
+                localDb.events = fixActivityData(localDb.events || [], 'events');
+                localDb.additionalTasks = fixActivityData(localDb.additionalTasks || [], 'additionalTasks');
+                
+                localStorage.setItem('local-database', JSON.stringify(localDb));
+                
+                updateResults(`
+                    <h4>🔄 Sync Complete:</h4>
+                    <p>Current User: ${currentUser.username} (${currentUser.id})</p>
+                    <p>Activities synced for proper user mapping</p>
+                `);
+
+            } catch (error) {
+                updateStatus(`❌ Sync error: ${error.message}`, 'error');
+            }
+        }
+
+        function clearAllCache() {
+            if (!confirm('This will clear all cache and you may need to login again. Continue?')) {
+                return;
+            }
+            
+            updateStatus('🗑️ Clearing all cache...', 'warning');
+            
+            try {
+                // Clear specific cache keys but keep essential data
+                const keysToKeep = ['local-database', 'token'];
+                const allKeys = Object.keys(localStorage);
+                
+                allKeys.forEach(key => {
+                    if (!keysToKeep.includes(key)) {
+                        localStorage.removeItem(key);
+                    }
+                });
+                
+                sessionStorage.clear();
+                
+                updateStatus('✅ Cache cleared - please refresh page', 'success');
+                
+                setTimeout(() => {
+                    if (confirm('Refresh page now?')) {
+                        window.location.reload();
+                    }
+                }, 2000);
+
+            } catch (error) {
+                updateStatus(`❌ Clear error: ${error.message}`, 'error');
+            }
+        }
+
+        // Initialize
+        updateStatus('🚀 User Session Fix tool loaded', 'success');
+    </script>
+</body>
+</html>

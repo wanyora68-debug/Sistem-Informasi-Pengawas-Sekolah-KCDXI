@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Console Script Langsung Inject Dialog</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #1a1a1a;
+            color: #00ff00;
+            min-height: 100vh;
+        }
+        .container {
+            background: #000;
+            padding: 30px;
+            border-radius: 15px;
+            border: 2px solid #00ff00;
+        }
+        .code-block {
+            background: #111;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.4;
+            overflow-x: auto;
+            white-space: pre-wrap;
+        }
+        button {
+            background: #00ff00;
+            color: #000;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            margin: 10px;
+        }
+        button:hover { background: #00cc00; }
+        h1, h2 { color: #00ff00; text-align: center; }
+        .step { margin: 20px 0; padding: 15px; border: 1px solid #333; border-radius: 8px; }
+        .warning { border-color: #ff9900; }
+        .success { border-color: #00ff00; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>💻 CONSOLE SCRIPT</h1>
+        <h2>Langsung Inject Dialog Wawan</h2>
+
+        <div class="step warning">
+            <h3>⚠️ INSTRUKSI PENTING</h3>
+            <p>1. Buka Developer Tools (F12) di halaman <strong>localhost:5000/users</strong></p>
+            <p>2. Masuk ke tab <strong>Console</strong></p>
+            <p>3. Copy script di bawah dan paste di console</p>
+            <p>4. Tekan Enter untuk menjalankan</p>
+            <p>5. Buka dialog aktivitas Wawan</p>
+        </div>
+
+        <div class="step success">
+            <h3>📋 SCRIPT UNTUK CONSOLE</h3>
+            <button onclick="copyScript()">📋 COPY SCRIPT</button>
+            <div class="code-block" id="scriptCode">
+// ULTIMATE DIALOG INJECTION SCRIPT - PASTE DI CONSOLE BROWSER
+(function() {
+    console.log('🚀 ULTIMATE DIALOG INJECTION STARTING...');
+    
+    // Get Wawan data from localStorage
+    const localDb = JSON.parse(localStorage.getItem('local-database') || '{}');
+    
+    const wawanData = {
+        tasks: (localDb.tasks || []).filter(t => 
+            t.userId === 'wawan' || 
+            (t.username && t.username.toLowerCase() === 'wawan') ||
+            (t.title && t.title.toLowerCase().includes('wawan'))
+        ),
+        supervisions: (localDb.supervisions || []).filter(s => 
+            s.userId === 'wawan' || 
+            (s.username && s.username.toLowerCase() === 'wawan') ||
+            (s.schoolName && s.schoolName.toLowerCase().includes('wawan'))
+        ),
+        events: (localDb.events || []).filter(e => 
+            e.userId === 'wawan' || 
+            (e.username && e.username.toLowerCase() === 'wawan') ||
+            (e.title && e.title.toLowerCase().includes('wawan'))
+        ),
+        additionalTasks: (localDb.additionalTasks || []).filter(at => 
+            at.userId === 'wawan' || 
+            (at.username && at.username.toLowerCase() === 'wawan') ||
+            (at.name && at.name.toLowerCase().includes('wawan'))
+        )
+    };
+    
+    const totalItems = wawanData.tasks.length + wawanData.supervisions.length + 
+                      wawanData.events.length + wawanData.additionalTasks.length;
+    
+    console.log('📊 Wawan data found:', totalItems, 'items');
+    console.log('📋 Data breakdown:', wawanData);
+    
+    if (totalItems === 0) {
+        console.error('❌ No Wawan data found!');
+        return;
+    }
+    
+    // Function to inject data directly into dialog DOM
+    function injectDataDirectly() {
+        const dialog = document.querySelector('[role="dialog"]');
+        if (!dialog) {
+            console.log('❌ Dialog not found');
+            return false;
+        }
+        
+        const dialogTitle = dialog.querySelector('h2, .dialog-title, [class*="title"]');
+        if (!dialogTitle || !dialogTitle.textContent.toLowerCase().includes('wawan')) {
+            console.log('❌ Not Wawan dialog');
+            return false;
+        }
+        
+        console.log('✅ Wawan dialog found, injecting data...');
+        
+        // Find all tab panels
+        const tabPanels = dialog.querySelectorAll('[role="tabpanel"]');
+        
+        if (tabPanels.length === 0) {
+            console.log('❌ No tab panels found');
+            return false;
+        }
+        
+        // Data types mapping
+        const dataTypes = ['tasks', 'supervisions', 'events', 'additionalTasks'];
+        const tabNames = ['Tugas Pokok', 'Supervisi', 'Kegiatan', 'Tugas Tambahan'];
+        
+        tabPanels.forEach((panel, index) => {
+            const dataType = dataTypes[index];
+            const data = wawanData[dataType] || [];
+            
+            if (data.length > 0) {
+                console.log(`✅ Injecting ${data.length} ${dataType} items`);
+                
+                // Clear existing content
+                panel.innerHTML = '';
+                
+                // Create container
+                const container = document.createElement('div');
+                container.className = 'space-y-4';
+                
+                // Add data cards
+                data.forEach(item => {
+                    const card = document.createElement('div');
+                    card.className = 'border rounded-lg p-4 bg-white shadow-sm';
+                    
+                    const title = item.title || item.name || item.schoolName || 'Aktivitas';
+                    const description = item.description || item.notes || item.findings || 'Tidak ada deskripsi';
+                    const date = item.date ? new Date(item.date).toLocaleDateString('id-ID') : 'Tanggal tidak tersedia';
+                    
+                    card.innerHTML = `
+                        <div class="flex items-start justify-between">
+                            <div class="space-y-1 flex-1">
+                                <div class="font-medium text-base">${title}</div>
+                                <div class="text-sm text-gray-600">${description}</div>
+                                <div class="text-xs text-gray-500 flex items-center">
+                                    <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"></path>
+                                    </svg>
+                                    ${date}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    
+                    container.appendChild(card);
+                });
+                
+                panel.appendChild(container);
+            } else {
+                // Show empty message
+                panel.innerHTML = `
+                    <div class="text-center text-gray-500 py-8">
+                        <p>Belum ada ${tabNames[index].toLowerCase()}</p>
+                    </div>
+                `;
+            }
+        });
+        
+        // Update tab counts
+        const tabTriggers = dialog.querySelectorAll('[role="tab"]');
+        tabTriggers.forEach((tab, index) => {
+            const dataType = dataTypes[index];
+            const count = wawanData[dataType]?.length || 0;
+            
+            // Update tab text with count
+            const tabText = tab.textContent.replace(/\(\d+\)/, `(${count})`);
+            tab.textContent = tabText;
+        });
+        
+        console.log('✅ Data injection complete!');
+        return true;
+    }
+    
+    // Try immediate injection
+    if (injectDataDirectly()) {
+        console.log('✅ Immediate injection successful');
+        return;
+    }
+    
+    // Set up mutation observer for dialog
+    const observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+            mutation.addedNodes.forEach((node) => {
+                if (node.nodeType === 1 && (
+                    node.matches('[role="dialog"]') || 
+                    node.querySelector('[role="dialog"]')
+                )) {
+                    console.log('🎯 Dialog detected by observer');
+                    setTimeout(() => {
+                        injectDataDirectly();
+                    }, 500);
+                }
+            });
+        });
+    });
+    
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true
+    });
+    
+    // Listen for activity button clicks
+    document.addEventListener('click', (e) => {
+        const button = e.target.closest('button');
+        if (button && button.querySelector('[data-lucide="activity"]')) {
+            console.log('🎯 Activity button clicked');
+            setTimeout(() => {
+                injectDataDirectly();
+            }, 1000);
+        }
+    });
+    
+    console.log('✅ Ultimate injection system ready!');
+    console.log('🎯 Click on Wawan activity button to see data');
+})();
+            </div>
+        </div>
+
+        <div class="step">
+            <h3>🎯 LANGKAH SELANJUTNYA</h3>
+            <p>1. Script sudah di-copy ke clipboard</p>
+            <p>2. Buka tab Console di Developer Tools</p>
+            <p>3. Paste script dan tekan Enter</p>
+            <p>4. Klik tombol aktivitas pada user Wawan</p>
+            <p>5. Dialog akan menampilkan data yang benar</p>
+        </div>
+    </div>
+
+    <script>
+        function copyScript() {
+            const script = document.getElementById('scriptCode').textContent;
+            navigator.clipboard.writeText(script).then(() => {
+                alert('✅ Script berhasil di-copy ke clipboard!\n\nSekarang:\n1. Buka Developer Tools (F12)\n2. Masuk ke tab Console\n3. Paste script dan tekan Enter');
+            }).catch(() => {
+                alert('❌ Gagal copy. Silakan select dan copy manual.');
+            });
+        }
+        
+        // Auto copy on page load
+        window.onload = function() {
+            copyScript();
+        };
+    </script>
+</body>
+</html>

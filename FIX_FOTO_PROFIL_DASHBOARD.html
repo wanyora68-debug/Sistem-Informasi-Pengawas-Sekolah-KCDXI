@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Fix Foto Profil Dashboard</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
+        .container { max-width: 800px; margin: 0 auto; }
+        .section { margin: 20px 0; padding: 20px; background: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .success { color: #22c55e; font-weight: bold; }
+        .error { color: #ef4444; font-weight: bold; }
+        .info { color: #3b82f6; }
+        .warning { color: #f59e0b; font-weight: bold; }
+        button { padding: 12px 20px; margin: 8px; background: #3b82f6; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; }
+        button:hover { background: #2563eb; }
+        button.success { background: #22c55e; }
+        button.warning { background: #f59e0b; }
+        pre { background: #f8fafc; padding: 15px; border-radius: 6px; overflow-x: auto; font-size: 13px; border: 1px solid #e2e8f0; }
+        .result { margin: 15px 0; padding: 15px; border-left: 4px solid #3b82f6; background: #f8fafc; border-radius: 0 6px 6px 0; }
+        .photo-preview { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 3px solid #3b82f6; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📸 Fix Foto Profil Dashboard</h1>
+        
+        <div class="section">
+            <h2>1. Cek Current User dan Foto</h2>
+            <button onclick="cekCurrentUser()">👤 Cek Current User</button>
+            <div id="currentUserResult"></div>
+        </div>
+        
+        <div class="section">
+            <h2>2. Cek Database User</h2>
+            <button onclick="cekDatabaseUser()">🗄️ Cek Database</button>
+            <div id="databaseResult"></div>
+        </div>
+        
+        <div class="section">
+            <h2>3. Fix Foto Profil</h2>
+            <button class="success" onclick="fixFotoProfil()">🔧 Fix Foto Profil</button>
+            <button onclick="syncProfileData()">🔄 Sync Profile Data</button>
+            <div id="fixResult"></div>
+        </div>
+        
+        <div class="section">
+            <h2>4. Test Login User Berbeda</h2>
+            <button onclick="loginAsAdmin()">👑 Login sebagai Admin</button>
+            <button onclick="loginAsWawan()">👨‍🏫 Login sebagai Wawan</button>
+            <div id="loginResult"></div>
+        </div>
+        
+        <div class="section">
+            <h2>5. Preview Foto</h2>
+            <div id="photoPreview"></div>
+        </div>
+    </div>
+
+    <script>
+        function log(message, type = 'info') {
+            console.log(message);
+            const className = type === 'success' ? 'success' : type === 'error' ? 'error' : type === 'warning' ? 'warning' : 'info';
+            return `<div class="${className}">${message}</div>`;
+        }
+
+        function cekCurrentUser() {
+            const result = document.getElementById('currentUserResult');
+            let html = '';
+            
+            try {
+                const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+                
+                html += log('👤 Current User Data:', 'info');
+                html += `<pre>${JSON.stringify(currentUser, null, 2)}</pre>`;
+                
+                if (currentUser.id) {
+                    html += log(`✅ User ID: ${currentUser.id}`, 'success');
+                    html += log(`✅ Username: ${currentUser.username}`, 'success');
+                    html += log(`✅ Full Name: ${currentUser.fullName}`, 'success');
+                    html += log(`✅ Role: ${currentUser.role}`, 'success');
+                    
+                    if (currentUser.photoUrl) {
+                        html += log(`📸 Photo URL: ${currentUser.photoUrl}`, 'success');
+                        // Test if photo URL is accessible
+                        const img = new Image();
+                        img.onload = () => {
+                            html += log('✅ Photo URL is accessible', 'success');
+                            document.getElementById('currentUserResult').innerHTML = `<div class="result">${html}</div>`;
+                        };
+                        img.onerror = () => {
+                            html += log('❌ Photo URL is not accessible', 'error');
+                            document.getElementById('currentUserResult').innerHTML = `<div class="result">${html}</div>`;
+                        };
+                        img.src = currentUser.photoUrl;
+                    } else {
+                        html += log('❌ No photo URL in current user', 'error');
+                    }
+                } else {
+                    html += log('❌ No current user found', 'error');
+                }
+                
+            } catch (error) {
+                html += log(`❌ Error: ${error.message}`, 'error');
+            }
+            
+            result.innerHTML = `<div class="result">${html}</div>`;
+        }
+
+        function cekDatabaseUser() {
+            const result = document.getElementById('databaseResult');
+            let html = '';
+            
+            try {
+                const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+                const localData = JSON.parse(localStorage.getItem('local-database') || '{}');
+                const users = localData.users || [];
+                
+                html += log(`🗄️ Database contains ${users.length} users`, 'info');
+                
+                if (currentUser.id) {
+                    const dbUser = users.find(u => u.id === currentUser.id);
+                    if (dbUser) {
+                        html += log('✅ User found in database:', 'success');
+                        html += `<pre>${JSON.stringify(dbUser, null, 2)}</pre>`;
+                        
+                        if (dbUser.photoUrl) {
+                            html += log(`📸 Database Photo URL: ${dbUser.photoUrl}`, 'success');
+                        } else {
+                            html += log('❌ No photo URL in database user', 'error');
+                        }
+                    } else {
+                        html += log('❌ User not found in database', 'error');
+                    }
+                } else {
+                    html += log('❌ No current user to check', 'error');
+                }
+                
+                // Show all users with photos
+                const usersWithPhotos = users.filter(u => u.photoUrl);
+                html += log(`📸 Users with photos: ${usersWithPhotos.length}`, 'info');
+                usersWithPhotos.forEach(user => {
+                    html += log(`  - ${user.fullName}: ${user.photoUrl}`, 'info');
+                });
+                
+            } catch (error) {
+                html += log(`❌ Error: ${error.message}`, 'error');
+            }
+            
+            result.innerHTML = `<div class="result">${html}</div>`;
+        }
+
+        function fixFotoProfil() {
+            const result = document.getElementById('fixResult');
+            let html = '';
+            
+            try {
+                const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+                const localData = JSON.parse(localStorage.getItem('local-database') || '{}');
+                const users = localData.users || [];
+                
+                if (!currentUser.id) {
+                    html += log('❌ No current user found', 'error');
+                    result.innerHTML = `<div class="result">${html}</div>`;
+                    return;
+                }
+                
+                const dbUser = users.find(u => u.id === currentUser.id);
+                if (!dbUser) {
+                    html += log('❌ User not found in database', 'error');
+                    result.innerHTML = `<div class="result">${html}</div>`;
+                    return;
+                }
+                
+                // Update current user with database data
+                const updatedUser = {
+                    ...currentUser,
+                    fullName: dbUser.fullName,
+                    nip: dbUser.nip || '',
+                    photoUrl: dbUser.photoUrl || null,
+                    role: dbUser.role,
+                    rank: dbUser.rank || '',
+                    officeName: dbUser.officeName || '',
+                    officeAddress: dbUser.officeAddress || '',
+                    homeAddress: dbUser.homeAddress || '',
+                    phone: dbUser.phone || ''
+                };
+                
+                localStorage.setItem('currentUser', JSON.stringify(updatedUser));
+                
+                html += log('✅ Current user berhasil diupdate dengan data database', 'success');
+                html += log(`👤 Name: ${updatedUser.fullName}`, 'info');
+                html += log(`📸 Photo: ${updatedUser.photoUrl || 'No photo'}`, updatedUser.photoUrl ? 'success' : 'warning');
+                html += log(`🔑 Role: ${updatedUser.role}`, 'info');
+                
+                // Clear any conflicting cache
+                localStorage.removeItem('ultimate_fix_applied');
+                localStorage.removeItem('wawan_fullname');
+                localStorage.removeItem('wawan_nip');
+                localStorage.removeItem('wawan_photo_url');
+                
+                html += log('🧹 Cleared conflicting cache', 'success');
+                html += log('🔄 Refresh dashboard untuk melihat perubahan', 'warning');
+                
+            } catch (error) {
+                html += log(`❌ Error: ${error.message}`, 'error');
+            }
+            
+            result.innerHTML = `<div class="result">${html}</div>`;
+        }
+
+        function syncProfileData() {
+            const result = document.getElementById('fixResult');
+            let html = '';
+            
+            try {
+                const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+                const localData = JSON.parse(localStorage.getItem('local-database') || '{}');
+                
+                html += log('🔄 Syncing profile data...', 'info');
+                
+                // Force refresh localStorage data
+                localStorage.setItem('local-database', JSON.stringify(localData));
+                
+                // Trigger storage event to refresh components
+                window.dispatchEvent(new StorageEvent('storage', {
+                    key: 'currentUser',
+                    newValue: JSON.stringify(currentUser)
+                }));
+                
+                html += log('✅ Profile data synced', 'success');
+                html += log('🔄 Components should refresh automatically', 'info');
+                
+            } catch (error) {
+                html += log(`❌ Error: ${error.message}`, 'error');
+            }
+            
+            result.innerHTML = `<div class="result">${html}</div>`;
+        }
+
+        function loginAsAdmin() {
+            const result = document.getElementById('loginResult');
+            let html = '';
+            
+            try {
+                const localData = JSON.parse(localStorage.getItem('local-database') || '{}');
+                const adminUser = localData.users?.find(u => u.role === 'admin');
+                
+                if (adminUser) {
+                    const currentUser = {
+                        id: adminUser.id,
+                        username: adminUser.username,
+                        fullName: adminUser.fullName,
+                        role: adminUser.role,
+                        nip: adminUser.nip || '',
+                        photoUrl: adminUser.photoUrl || null
+                    };
+                    
+                    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                    localStorage.setItem('token', 'admin-token');
+                    
+                    html += log('✅ Berhasil login sebagai Admin', 'success');
+                    html += log(`👤 ${adminUser.fullName}`, 'info');
+                    html += log(`📸 Photo: ${adminUser.photoUrl || 'No photo'}`, 'info');
+                    html += log('🔄 Refresh halaman untuk melihat perubahan', 'warning');
+                    
+                    // Show photo preview
+                    if (adminUser.photoUrl) {
+                        document.getElementById('photoPreview').innerHTML = 
+                            `<img src="${adminUser.photoUrl}" class="photo-preview" alt="Admin Photo">`;
+                    }
+                } else {
+                    html += log('❌ Admin user tidak ditemukan', 'error');
+                }
+                
+            } catch (error) {
+                html += log(`❌ Error: ${error.message}`, 'error');
+            }
+            
+            result.innerHTML = `<div class="result">${html}</div>`;
+        }
+
+        function loginAsWawan() {
+            const result = document.getElementById('loginResult');
+            let html = '';
+            
+            try {
+                const localData = JSON.parse(localStorage.getItem('local-database') || '{}');
+                const wawanUser = localData.users?.find(u => u.username === 'wawan');
+                
+                if (wawanUser) {
+                    const currentUser = {
+                        id: wawanUser.id,
+                        username: wawanUser.username,
+                        fullName: wawanUser.fullName,
+                        role: wawanUser.role,
+                        nip: wawanUser.nip || '',
+                        photoUrl: wawanUser.photoUrl || null
+                    };
+                    
+                    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                    localStorage.setItem('token', 'wawan-token');
+                    
+                    html += log('✅ Berhasil login sebagai Wawan', 'success');
+                    html += log(`👤 ${wawanUser.fullName}`, 'info');
+                    html += log(`📸 Photo: ${wawanUser.photoUrl || 'No photo'}`, 'info');
+                    html += log('🔄 Refresh halaman untuk melihat perubahan', 'warning');
+                    
+                    // Show photo preview
+                    if (wawanUser.photoUrl) {
+                        document.getElementById('photoPreview').innerHTML = 
+                            `<img src="${wawanUser.photoUrl}" class="photo-preview" alt="Wawan Photo">`;
+                    }
+                } else {
+                    html += log('❌ Wawan user tidak ditemukan', 'error');
+                }
+                
+            } catch (error) {
+                html += log(`❌ Error: ${error.message}`, 'error');
+            }
+            
+            result.innerHTML = `<div class="result">${html}</div>`;
+        }
+
+        // Auto-check on load
+        window.onload = function() {
+            cekCurrentUser();
+            setTimeout(cekDatabaseUser, 1000);
+        };
+    </script>
+</body>
+</html>

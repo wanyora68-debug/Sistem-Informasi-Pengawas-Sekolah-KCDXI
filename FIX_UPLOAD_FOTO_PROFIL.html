@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔧 FIX UPLOAD FOTO PROFIL</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #f0f9ff;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border: 3px solid #2563eb;
+        }
+        h1 {
+            color: #2563eb;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .problem {
+            background: #fef2f2;
+            border-left: 4px solid #dc2626;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        .fix {
+            background: #f0fdf4;
+            border-left: 4px solid #16a34a;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        .info {
+            background: #f0f9ff;
+            border-left: 4px solid #2563eb;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        button {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px 5px;
+            font-size: 16px;
+            font-weight: bold;
+            width: 100%;
+        }
+        button:hover {
+            background: #1d4ed8;
+        }
+        .success {
+            background: #16a34a;
+        }
+        .success:hover {
+            background: #15803d;
+        }
+        .result {
+            margin: 15px 0;
+            padding: 15px;
+            border-radius: 5px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            font-family: monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+        }
+        .test-upload {
+            border: 2px dashed #2563eb;
+            padding: 30px;
+            text-align: center;
+            border-radius: 10px;
+            margin: 20px 0;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .test-upload:hover {
+            background: #f0f9ff;
+            border-color: #1d4ed8;
+        }
+        .preview {
+            max-width: 200px;
+            max-height: 200px;
+            border-radius: 10px;
+            margin: 10px auto;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 FIX UPLOAD FOTO PROFIL</h1>
+        
+        <div class="problem">
+            <h3>🚨 MASALAH</h3>
+            <p><strong>Upload foto profil tidak berfungsi</strong></p>
+            <p>Kemungkinan penyebab:</p>
+            <ul>
+                <li>File terlalu besar (>5MB)</li>
+                <li>Format file tidak didukung</li>
+                <li>Error dalam konversi base64</li>
+                <li>LocalStorage penuh</li>
+            </ul>
+        </div>
+
+        <div class="info">
+            <h3>🔍 TEST UPLOAD FOTO</h3>
+            <div class="test-upload" onclick="document.getElementById('testFile').click()">
+                <p>📷 Klik untuk test upload foto</p>
+                <p style="font-size: 12px; color: #666;">Format: JPG, PNG (Max 5MB)</p>
+                <img id="preview" class="preview" style="display: none;" />
+            </div>
+            <input type="file" id="testFile" accept="image/jpeg,image/jpg,image/png" style="display: none;" onchange="testUpload(this)">
+            <div id="uploadResult" class="result" style="display: none;"></div>
+        </div>
+
+        <div class="fix">
+            <h3>🔧 DEBUG LOCALSTORAGE</h3>
+            <button onclick="debugLocalStorage()">📊 CEK PROFILE DATA</button>
+            <div id="debugResult" class="result" style="display: none;"></div>
+        </div>
+
+        <div class="fix">
+            <h3>🧹 CLEAR PROFILE DATA</h3>
+            <button onclick="clearProfileData()" class="success">🗑️ CLEAR & RESET</button>
+            <div id="clearResult" class="result" style="display: none;"></div>
+        </div>
+
+        <div class="info">
+            <h3>🎯 TEST MANUAL UPLOAD</h3>
+            <button onclick="testManualUpload()" class="success">📷 TEST MANUAL UPLOAD</button>
+            <div id="manualResult" class="result" style="display: none;"></div>
+        </div>
+
+        <div class="fix">
+            <h3>🚀 BUKA HALAMAN PROFIL</h3>
+            <button onclick="openProfile()" class="success">👤 BUKA PROFIL</button>
+        </div>
+    </div>
+
+    <script>
+        function testUpload(input) {
+            const file = input.files[0];
+            if (!file) return;
+            
+            const result = document.getElementById('uploadResult');
+            const preview = document.getElementById('preview');
+            result.style.display = 'block';
+            
+            let log = [];
+            log.push('🧪 TESTING FILE UPLOAD:');
+            log.push('');
+            log.push(`File name: ${file.name}`);
+            log.push(`File size: ${(file.size / 1024 / 1024).toFixed(2)} MB`);
+            log.push(`File type: ${file.type}`);
+            log.push('');
+            
+            // Validate file type
+            if (!file.type.startsWith('image/')) {
+                log.push('❌ VALIDATION FAILED: File bukan gambar');
+                result.textContent = log.join('\\n');
+                return;
+            }
+            
+            // Validate file size (max 5MB)
+            if (file.size > 5 * 1024 * 1024) {
+                log.push('❌ VALIDATION FAILED: File terlalu besar (>5MB)');
+                result.textContent = log.join('\\n');
+                return;
+            }
+            
+            log.push('✅ VALIDATION PASSED');
+            log.push('');
+            log.push('🔄 Converting to base64...');
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const base64 = e.target.result;
+                log.push('✅ Base64 conversion successful');
+                log.push(`Base64 length: ${base64.length} characters`);
+                log.push('');
+                
+                // Test localStorage save
+                try {
+                    const testProfile = {
+                        photoUrl: base64,
+                        updatedAt: new Date().toISOString(),
+                        testUpload: true
+                    };
+                    
+                    localStorage.setItem('test_profile_photo', JSON.stringify(testProfile));
+                    log.push('✅ LocalStorage save successful');
+                    
+                    // Show preview
+                    preview.src = base64;
+                    preview.style.display = 'block';
+                    log.push('✅ Preview displayed');
+                    
+                    log.push('');
+                    log.push('🎉 UPLOAD TEST BERHASIL!');
+                    log.push('File siap untuk diupload ke profil.');
+                    
+                } catch (error) {
+                    log.push(`❌ LocalStorage error: ${error.message}`);
+                }
+                
+                result.textContent = log.join('\\n');
+            };
+            
+            reader.onerror = function() {
+                log.push('❌ Base64 conversion failed');
+                result.textContent = log.join('\\n');
+            };
+            
+            reader.readAsDataURL(file);
+        }
+
+        function debugLocalStorage() {
+            try {
+                const result = [];
+                result.push('🔍 DEBUG PROFILE DATA:');
+                result.push('');
+                
+                // Check profile data
+                const profileData = localStorage.getItem('profile_data');
+                result.push(`profile_data exists: ${!!profileData}`);
+                
+                if (profileData) {
+                    try {
+                        const parsed = JSON.parse(profileData);
+                        result.push(`profile_data type: ${typeof parsed}`);
+                        result.push(`photoUrl exists: ${!!parsed.photoUrl}`);
+                        if (parsed.photoUrl) {
+                            result.push(`photoUrl length: ${parsed.photoUrl.length}`);
+                            result.push(`photoUrl starts with: ${parsed.photoUrl.substring(0, 50)}...`);
+                        }
+                        result.push(`updatedAt: ${parsed.updatedAt || 'not set'}`);
+                    } catch (e) {
+                        result.push(`❌ Parse error: ${e.message}`);
+                    }
+                } else {
+                    result.push('❌ No profile data found');
+                }
+                
+                result.push('');
+                
+                // Check user data
+                const userData = localStorage.getItem('user_data');
+                result.push(`user_data exists: ${!!userData}`);
+                
+                if (userData) {
+                    try {
+                        const parsed = JSON.parse(userData);
+                        result.push(`username: ${parsed.username || 'not set'}`);
+                        result.push(`fullName: ${parsed.fullName || 'not set'}`);
+                    } catch (e) {
+                        result.push(`❌ Parse error: ${e.message}`);
+                    }
+                }
+                
+                result.push('');
+                
+                // Check localStorage usage
+                let totalSize = 0;
+                for (let key in localStorage) {
+                    if (localStorage.hasOwnProperty(key)) {
+                        totalSize += localStorage[key].length;
+                    }
+                }
+                result.push(`LocalStorage usage: ${(totalSize / 1024).toFixed(2)} KB`);
+                result.push(`LocalStorage limit: ~5-10 MB`);
+                
+                document.getElementById('debugResult').style.display = 'block';
+                document.getElementById('debugResult').textContent = result.join('\\n');
+
+            } catch (error) {
+                document.getElementById('debugResult').style.display = 'block';
+                document.getElementById('debugResult').className = 'result problem';
+                document.getElementById('debugResult').textContent = `❌ Debug Error: ${error.message}`;
+            }
+        }
+
+        function clearProfileData() {
+            try {
+                // Clear profile-related data
+                localStorage.removeItem('profile_data');
+                localStorage.removeItem('test_profile_photo');
+                
+                // Reset to basic profile
+                const basicProfile = {
+                    fullName: 'Admin User',
+                    role: 'admin',
+                    updatedAt: new Date().toISOString()
+                };
+                
+                localStorage.setItem('profile_data', JSON.stringify(basicProfile));
+                
+                document.getElementById('clearResult').style.display = 'block';
+                document.getElementById('clearResult').textContent = 
+                    `🧹 PROFILE DATA CLEARED!\\n\\n` +
+                    `✅ Old profile data: REMOVED\\n` +
+                    `✅ Test data: REMOVED\\n` +
+                    `✅ Basic profile: CREATED\\n\\n` +
+                    `🚀 Sekarang coba upload foto lagi!`;
+
+            } catch (error) {
+                document.getElementById('clearResult').style.display = 'block';
+                document.getElementById('clearResult').className = 'result problem';
+                document.getElementById('clearResult').textContent = `❌ Clear Error: ${error.message}`;
+            }
+        }
+
+        function testManualUpload() {
+            try {
+                // Create a test base64 image (1x1 pixel PNG)
+                const testBase64 = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==';
+                
+                // Save to profile
+                const currentProfileData = localStorage.getItem('profile_data');
+                const currentProfile = currentProfileData ? JSON.parse(currentProfileData) : {};
+                
+                const updatedProfile = {
+                    ...currentProfile,
+                    photoUrl: testBase64,
+                    updatedAt: new Date().toISOString(),
+                    manualTest: true
+                };
+                
+                localStorage.setItem('profile_data', JSON.stringify(updatedProfile));
+                
+                document.getElementById('manualResult').style.display = 'block';
+                document.getElementById('manualResult').textContent = 
+                    `📷 MANUAL UPLOAD TEST BERHASIL!\\n\\n` +
+                    `✅ Test image: CREATED\\n` +
+                    `✅ Profile updated: DONE\\n` +
+                    `✅ PhotoUrl set: DONE\\n\\n` +
+                    `🎯 Buka halaman profil untuk melihat hasilnya!`;
+
+            } catch (error) {
+                document.getElementById('manualResult').style.display = 'block';
+                document.getElementById('manualResult').className = 'result problem';
+                document.getElementById('manualResult').textContent = `❌ Manual Test Error: ${error.message}`;
+            }
+        }
+
+        function openProfile() {
+            window.open('http://localhost:5000/profile', '_blank');
+        }
+
+        // Auto-run debug on load
+        window.onload = function() {
+            setTimeout(debugLocalStorage, 1000);
+        };
+    </script>
+</body>
+</html>

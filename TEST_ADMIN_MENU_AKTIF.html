@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔧 Test Admin Menu Aktif</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            color: #2d3748;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+        .status-card {
+            background: #f7fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+        .success {
+            border-color: #48bb78;
+            background: #f0fff4;
+        }
+        .warning {
+            border-color: #ed8936;
+            background: #fffaf0;
+        }
+        .error {
+            border-color: #f56565;
+            background: #fff5f5;
+        }
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+            transition: all 0.3s ease;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        .btn-success {
+            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+        }
+        .btn-warning {
+            background: linear-gradient(135deg, #ed8936 0%, #dd6b20 100%);
+        }
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+        .feature-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .feature-list li:last-child {
+            border-bottom: none;
+        }
+        .icon {
+            margin-right: 10px;
+        }
+        .code-block {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            margin: 10px 0;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔧 Test Admin Menu Aktif</h1>
+            <p>Verifikasi dan aktifkan semua fitur administrator</p>
+        </div>
+
+        <div id="status-container">
+            <div class="status-card warning">
+                <h3>🔄 Sedang memeriksa status admin...</h3>
+                <p>Mohon tunggu sebentar...</p>
+            </div>
+        </div>
+
+        <div class="status-card">
+            <h3>🎯 Fitur Admin yang Harus Aktif:</h3>
+            <ul class="feature-list">
+                <li><span class="icon">👁️</span> <strong>View User</strong> - Lihat detail user</li>
+                <li><span class="icon">✏️</span> <strong>Edit User</strong> - Edit informasi user</li>
+                <li><span class="icon">📊</span> <strong>Activities</strong> - Kelola aktivitas user</li>
+                <li><span class="icon">🔑</span> <strong>Reset Password</strong> - Reset password user</li>
+                <li><span class="icon">🔄</span> <strong>Toggle Status</strong> - Aktifkan/nonaktifkan user</li>
+                <li><span class="icon">🗑️</span> <strong>Delete User</strong> - Hapus user (kecuali admin)</li>
+            </ul>
+        </div>
+
+        <div class="status-card">
+            <h3>🚀 Aksi Cepat:</h3>
+            <button class="btn btn-success" onclick="testAdminLogin()">
+                🔐 Test Login Admin
+            </button>
+            <button class="btn" onclick="openUsersPage()">
+                👥 Buka Halaman Users
+            </button>
+            <button class="btn btn-warning" onclick="forceActivateAdmin()">
+                ⚡ Force Activate Admin
+            </button>
+        </div>
+
+        <div class="status-card">
+            <h3>📋 Cara Manual Test:</h3>
+            <ol>
+                <li>Buka <a href="http://localhost:5000" target="_blank">http://localhost:5000</a></li>
+                <li>Login dengan:
+                    <div class="code-block">
+Username: admin<br>
+Password: admin123
+                    </div>
+                </li>
+                <li>Masuk ke halaman <strong>Users</strong></li>
+                <li>Cek semua tombol admin aktif untuk setiap user</li>
+            </ol>
+        </div>
+
+        <div id="result-container"></div>
+    </div>
+
+    <script>
+        // Check admin status on page load
+        window.onload = function() {
+            checkAdminStatus();
+        };
+
+        function checkAdminStatus() {
+            const statusContainer = document.getElementById('status-container');
+            
+            try {
+                // Check if user is logged in as admin
+                const userData = localStorage.getItem('user_data');
+                const currentUser = userData ? JSON.parse(userData) : null;
+                
+                if (currentUser && currentUser.role === 'admin') {
+                    statusContainer.innerHTML = `
+                        <div class="status-card success">
+                            <h3>✅ Admin Sudah Login!</h3>
+                            <p><strong>User:</strong> ${currentUser.fullName || currentUser.username}</p>
+                            <p><strong>Role:</strong> ${currentUser.role}</p>
+                            <p>Semua fitur admin seharusnya sudah aktif.</p>
+                        </div>
+                    `;
+                } else if (currentUser) {
+                    statusContainer.innerHTML = `
+                        <div class="status-card warning">
+                            <h3>⚠️ Login Sebagai Non-Admin</h3>
+                            <p><strong>User:</strong> ${currentUser.fullName || currentUser.username}</p>
+                            <p><strong>Role:</strong> ${currentUser.role}</p>
+                            <p>Untuk mengakses fitur admin, login sebagai administrator.</p>
+                        </div>
+                    `;
+                } else {
+                    statusContainer.innerHTML = `
+                        <div class="status-card error">
+                            <h3>❌ Belum Login</h3>
+                            <p>Silakan login terlebih dahulu untuk mengakses fitur admin.</p>
+                        </div>
+                    `;
+                }
+                
+                // Check users data
+                const usersData = localStorage.getItem('app_users');
+                if (usersData) {
+                    const users = JSON.parse(usersData);
+                    const adminUsers = users.filter(u => u.role === 'admin');
+                    
+                    statusContainer.innerHTML += `
+                        <div class="status-card">
+                            <h3>📊 Status Database:</h3>
+                            <p><strong>Total Users:</strong> ${users.length}</p>
+                            <p><strong>Admin Users:</strong> ${adminUsers.length}</p>
+                            <p><strong>Data Status:</strong> ✅ Tersedia</p>
+                        </div>
+                    `;
+                }
+                
+            } catch (error) {
+                statusContainer.innerHTML = `
+                    <div class="status-card error">
+                        <h3>❌ Error Checking Status</h3>
+                        <p>Error: ${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        function testAdminLogin() {
+            const resultContainer = document.getElementById('result-container');
+            
+            // Simulate admin login
+            const adminUser = {
+                id: 'admin-1',
+                username: 'admin',
+                fullName: 'Administrator',
+                role: 'admin',
+                email: 'admin@disdik.jabar.go.id',
+                department: 'Cabang Dinas Pendidikan Wilayah XI',
+                status: 'active',
+                lastLogin: new Date().toISOString()
+            };
+            
+            localStorage.setItem('user_data', JSON.stringify(adminUser));
+            localStorage.setItem('auth_token', 'admin-token-' + Date.now());
+            
+            resultContainer.innerHTML = `
+                <div class="status-card success">
+                    <h3>✅ Login Admin Berhasil!</h3>
+                    <p>User admin telah login. Silakan refresh halaman atau buka halaman Users.</p>
+                    <button class="btn" onclick="location.reload()">🔄 Refresh Halaman</button>
+                </div>
+            `;
+            
+            // Auto refresh status
+            setTimeout(() => {
+                checkAdminStatus();
+            }, 1000);
+        }
+
+        function openUsersPage() {
+            window.open('http://localhost:5000/users', '_blank');
+        }
+
+        function forceActivateAdmin() {
+            const resultContainer = document.getElementById('result-container');
+            
+            try {
+                // Ensure admin user exists
+                let users = [];
+                const usersData = localStorage.getItem('app_users');
+                if (usersData) {
+                    users = JSON.parse(usersData);
+                }
+                
+                // Check if admin exists
+                let adminUser = users.find(u => u.username === 'admin');
+                if (!adminUser) {
+                    adminUser = {
+                        id: 'admin-1',
+                        username: 'admin',
+                        fullName: 'Administrator',
+                        role: 'admin',
+                        nip: '',
+                        rank: '',
+                        phone: '',
+                        email: 'admin@disdik.jabar.go.id',
+                        department: 'Cabang Dinas Pendidikan Wilayah XI',
+                        status: 'active',
+                        createdAt: new Date().toISOString(),
+                        updatedAt: new Date().toISOString()
+                    };
+                    users.push(adminUser);
+                }
+                
+                // Ensure admin is active
+                adminUser.status = 'active';
+                adminUser.role = 'admin';
+                adminUser.updatedAt = new Date().toISOString();
+                
+                // Update users array
+                users = users.map(u => u.username === 'admin' ? adminUser : u);
+                
+                // Save to localStorage
+                localStorage.setItem('app_users', JSON.stringify(users));
+                localStorage.setItem('users', JSON.stringify(users));
+                
+                // Set admin as current user
+                localStorage.setItem('user_data', JSON.stringify(adminUser));
+                localStorage.setItem('auth_token', 'admin-token-' + Date.now());
+                
+                resultContainer.innerHTML = `
+                    <div class="status-card success">
+                        <h3>⚡ Admin Features Activated!</h3>
+                        <p>✅ Admin user dibuat/diperbarui</p>
+                        <p>✅ Status admin diaktifkan</p>
+                        <p>✅ Login sebagai admin</p>
+                        <p>✅ Data tersimpan di localStorage</p>
+                        <button class="btn btn-success" onclick="location.reload()">🔄 Refresh & Test</button>
+                    </div>
+                `;
+                
+                // Auto refresh status
+                setTimeout(() => {
+                    checkAdminStatus();
+                }, 1000);
+                
+            } catch (error) {
+                resultContainer.innerHTML = `
+                    <div class="status-card error">
+                        <h3>❌ Error Activating Admin</h3>
+                        <p>Error: ${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>

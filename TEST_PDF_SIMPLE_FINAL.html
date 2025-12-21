@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test PDF Export Final</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .button {
+            background: #007bff;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 18px;
+            margin: 10px;
+            display: block;
+            width: 100%;
+        }
+        
+        .button:hover {
+            background: #0056b3;
+        }
+        
+        .result {
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 5px;
+        }
+        
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 Test PDF Export Final</h1>
+    
+    <p>Klik tombol di bawah untuk test export PDF:</p>
+    
+    <button class="button" onclick="testPDFExport()">📄 Test Export PDF</button>
+    <button class="button" onclick="testSimplePrint()">🖨️ Test Simple Print</button>
+    
+    <div id="result"></div>
+
+    <script>
+        function showResult(message, isSuccess = true) {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = `<div class="result ${isSuccess ? 'success' : 'error'}">${message}</div>`;
+        }
+
+        function testPDFExport() {
+            console.log('🔄 Starting PDF export test...');
+            showResult('⏳ Memulai test export PDF...', true);
+            
+            try {
+                // Create iframe for printing
+                const iframe = document.createElement('iframe');
+                iframe.style.position = 'fixed';
+                iframe.style.right = '0';
+                iframe.style.bottom = '0';
+                iframe.style.width = '0';
+                iframe.style.height = '0';
+                iframe.style.border = '0';
+                document.body.appendChild(iframe);
+                
+                const iframeDoc = iframe.contentWindow?.document;
+                if (!iframeDoc) {
+                    throw new Error('Tidak dapat membuat dokumen print');
+                }
+
+                const html = `
+                    <!DOCTYPE html>
+                    <html>
+                      <head>
+                        <meta charset="UTF-8">
+                        <title>Laporan Test PDF</title>
+                        <style>
+                          @page { size: A4; margin: 20mm; }
+                          body { font-family: 'Times New Roman', serif; padding: 20px; }
+                          .header { text-align: center; margin-bottom: 30px; border-bottom: 2px solid #000; padding-bottom: 20px; }
+                          .header h1 { font-size: 18px; font-weight: bold; margin-bottom: 10px; }
+                          .stats { margin: 30px 0; }
+                          .stat-item { border: 1px solid #333; padding: 15px; margin: 10px 0; text-align: center; }
+                          .stat-number { font-size: 24px; font-weight: bold; }
+                          .stat-label { font-size: 12px; }
+                        </style>
+                      </head>
+                      <body>
+                        <div class="header">
+                          <h1>LAPORAN TEST PDF EXPORT</h1>
+                          <h2>Test Berhasil - ${new Date().toLocaleDateString('id-ID')}</h2>
+                        </div>
+                        
+                        <div class="stats">
+                          <div class="stat-item">
+                            <div class="stat-number">✅</div>
+                            <div class="stat-label">PDF Export Berhasil</div>
+                          </div>
+                          <div class="stat-item">
+                            <div class="stat-number">3</div>
+                            <div class="stat-label">Total Tugas</div>
+                          </div>
+                          <div class="stat-item">
+                            <div class="stat-number">2</div>
+                            <div class="stat-label">Tugas Selesai</div>
+                          </div>
+                        </div>
+                        
+                        <p>Jika Anda melihat halaman ini di dialog print, berarti fungsi PDF export bekerja dengan baik!</p>
+                      </body>
+                    </html>
+                `;
+
+                iframeDoc.open();
+                iframeDoc.write(html);
+                iframeDoc.close();
+                
+                // Wait for content to load, then print
+                setTimeout(() => {
+                    try {
+                        iframe.contentWindow?.focus();
+                        iframe.contentWindow?.print();
+                        
+                        showResult('✅ PDF export berhasil! Dialog print akan muncul. Pilih "Save as PDF" untuk menyimpan.', true);
+                        
+                        // Clean up after printing
+                        setTimeout(() => {
+                            document.body.removeChild(iframe);
+                        }, 1000);
+                        
+                        console.log('✅ PDF export initiated successfully');
+                    } catch (printError) {
+                        console.error('❌ Print error:', printError);
+                        document.body.removeChild(iframe);
+                        showResult('⚠️ Gagal membuka dialog print: ' + printError.message, false);
+                    }
+                }, 500);
+                
+            } catch (error) {
+                console.error('❌ PDF export error:', error);
+                showResult('❌ Error: ' + (error instanceof Error ? error.message : 'Terjadi kesalahan saat export PDF'), false);
+            }
+        }
+
+        function testSimplePrint() {
+            console.log('🔄 Starting simple print test...');
+            showResult('⏳ Memulai test simple print...', true);
+            
+            try {
+                window.print();
+                showResult('✅ Simple print berhasil! Dialog print akan muncul.', true);
+            } catch (error) {
+                console.error('❌ Simple print error:', error);
+                showResult('❌ Simple print error: ' + error.message, false);
+            }
+        }
+
+        // Auto-test on page load
+        window.onload = function() {
+            console.log('📄 Test PDF Export page loaded');
+            showResult('📄 Halaman test siap. Klik tombol untuk test export PDF.', true);
+        };
+    </script>
+</body>
+</html>

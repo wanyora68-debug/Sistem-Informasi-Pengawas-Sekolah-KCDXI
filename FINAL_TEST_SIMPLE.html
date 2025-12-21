@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>✅ Test Final - Sekolah & Tugas Tambahan</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2563eb;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            background: #f9fafb;
+        }
+        .test-section h3 {
+            color: #1f2937;
+            margin-top: 0;
+        }
+        button {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 14px;
+        }
+        button:hover {
+            background: #1d4ed8;
+        }
+        .success {
+            background: #f0fdf4;
+            border-left: 4px solid #16a34a;
+            color: #15803d;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .instructions {
+            background: #fffbeb;
+            border-left: 4px solid #f59e0b;
+            color: #d97706;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        .step {
+            margin: 10px 0;
+            padding: 10px;
+            background: white;
+            border-radius: 5px;
+            border: 1px solid #e5e7eb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>✅ TEST FINAL - SEKOLAH & TUGAS TAMBAHAN</h1>
+        <p style="text-align: center; color: #666; margin-bottom: 30px;">
+            Test sederhana untuk memastikan kedua halaman berfungsi seperti halaman Daftar Tugas
+        </p>
+
+        <!-- Setup Data -->
+        <div class="test-section">
+            <h3>🔧 Setup Data Test</h3>
+            <button onclick="setupTestData()">Setup Data Test</button>
+            <button onclick="clearAllData()">Hapus Semua Data</button>
+            <div id="setupResult" class="success" style="display: none;"></div>
+        </div>
+
+        <!-- Instructions -->
+        <div class="instructions">
+            <h3>📋 INSTRUKSI TEST</h3>
+            <div class="step">
+                <strong>1. Setup Data:</strong> Klik "Setup Data Test" untuk menambah data sample
+            </div>
+            <div class="step">
+                <strong>2. Buka Aplikasi:</strong> Login dan buka halaman "Sekolah Binaan" dan "Tugas Tambahan"
+            </div>
+            <div class="step">
+                <strong>3. Verifikasi:</strong> Data harus muncul langsung tanpa refresh
+            </div>
+            <div class="step">
+                <strong>4. Test Tambah:</strong> Coba tambah data baru melalui form
+            </div>
+            <div class="step">
+                <strong>5. Test Hapus:</strong> Coba hapus data yang ada
+            </div>
+        </div>
+
+        <!-- Expected Results -->
+        <div class="test-section">
+            <h3>✅ HASIL YANG DIHARAPKAN</h3>
+            <div style="color: #15803d;">
+                <p><strong>Halaman Sekolah Binaan:</strong></p>
+                <ul>
+                    <li>Data muncul langsung setelah login</li>
+                    <li>Form tambah sekolah berfungsi</li>
+                    <li>Data baru muncul tanpa refresh</li>
+                    <li>Toast "Berhasil" muncul setelah save</li>
+                    <li>Hapus sekolah berfungsi</li>
+                </ul>
+                
+                <p><strong>Halaman Tugas Tambahan:</strong></p>
+                <ul>
+                    <li>Data muncul langsung setelah login</li>
+                    <li>Form tambah tugas berfungsi (dengan foto)</li>
+                    <li>Data baru muncul tanpa refresh</li>
+                    <li>Toast "Berhasil" muncul setelah save</li>
+                    <li>Edit dan hapus tugas berfungsi</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Troubleshooting -->
+        <div class="test-section">
+            <h3>🚨 JIKA ADA MASALAH</h3>
+            <div style="color: #dc2626;">
+                <p><strong>Data tidak muncul:</strong></p>
+                <ul>
+                    <li>Refresh halaman browser (F5)</li>
+                    <li>Cek console browser (F12) untuk error</li>
+                    <li>Pastikan localStorage tidak diblokir</li>
+                </ul>
+                
+                <p><strong>Error saat save:</strong></p>
+                <ul>
+                    <li>Cek console untuk error message</li>
+                    <li>Pastikan semua field required diisi</li>
+                    <li>Coba clear localStorage dan mulai fresh</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function setupTestData() {
+            try {
+                // Setup Schools Data
+                const schoolsData = [
+                    {
+                        id: "school-1",
+                        name: "SDN Test 01",
+                        address: "Jl. Test No. 1",
+                        contact: "081234567890",
+                        principalName: "Kepala Sekolah Test 1",
+                        principalNip: "123456789",
+                        supervisions: 0,
+                        createdAt: new Date().toISOString()
+                    },
+                    {
+                        id: "school-2", 
+                        name: "SDN Test 02",
+                        address: "Jl. Test No. 2",
+                        contact: "081234567891",
+                        principalName: "Kepala Sekolah Test 2",
+                        principalNip: "123456790",
+                        supervisions: 0,
+                        createdAt: new Date().toISOString()
+                    }
+                ];
+                
+                // Setup Additional Tasks Data
+                const additionalTasksData = [
+                    {
+                        id: "task-1",
+                        name: "Rapat Koordinasi Test",
+                        date: new Date().toISOString().split('T')[0],
+                        location: "Kantor Dinas Test",
+                        organizer: "Dinas Pendidikan Test",
+                        description: "Rapat koordinasi bulanan untuk membahas program supervisi",
+                        createdAt: new Date().toISOString()
+                    },
+                    {
+                        id: "task-2",
+                        name: "Workshop Kurikulum Test", 
+                        date: new Date().toISOString().split('T')[0],
+                        location: "Aula Sekolah Test",
+                        organizer: "Tim Kurikulum Test",
+                        description: "Workshop pengembangan kurikulum untuk guru-guru",
+                        createdAt: new Date().toISOString()
+                    }
+                ];
+                
+                // Save to localStorage
+                localStorage.setItem('schools_data', JSON.stringify(schoolsData));
+                localStorage.setItem('additional_tasks_data', JSON.stringify(additionalTasksData));
+                
+                // Show success message
+                const result = `✅ DATA TEST BERHASIL DIBUAT!
+                
+📚 Sekolah Binaan: ${schoolsData.length} sekolah
+📋 Tugas Tambahan: ${additionalTasksData.length} tugas
+
+Data tersimpan di localStorage:
+- schools_data: ${schoolsData.length} items
+- additional_tasks_data: ${additionalTasksData.length} items
+
+Sekarang buka aplikasi utama dan login untuk melihat data.`;
+                
+                document.getElementById('setupResult').style.display = 'block';
+                document.getElementById('setupResult').textContent = result;
+                
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        }
+
+        function clearAllData() {
+            try {
+                localStorage.removeItem('schools_data');
+                localStorage.removeItem('additional_tasks_data');
+                
+                document.getElementById('setupResult').style.display = 'block';
+                document.getElementById('setupResult').textContent = '🗑️ Semua data test berhasil dihapus. localStorage sudah bersih.';
+                document.getElementById('setupResult').className = 'instructions';
+                
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        }
+
+        // Auto-check existing data on load
+        window.onload = function() {
+            const schoolsData = localStorage.getItem('schools_data');
+            const tasksData = localStorage.getItem('additional_tasks_data');
+            
+            const schools = schoolsData ? JSON.parse(schoolsData) : [];
+            const tasks = tasksData ? JSON.parse(tasksData) : [];
+            
+            if (schools.length > 0 || tasks.length > 0) {
+                document.getElementById('setupResult').style.display = 'block';
+                document.getElementById('setupResult').textContent = 
+                    `📊 Data existing ditemukan:\n` +
+                    `- Sekolah: ${schools.length} items\n` +
+                    `- Tugas Tambahan: ${tasks.length} items\n\n` +
+                    `Buka aplikasi untuk melihat data, atau klik "Setup Data Test" untuk reset dengan data baru.`;
+            }
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inject Data ke Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .success {
+            background: #28a745;
+            padding: 15px;
+            border-radius: 5px;
+            color: white;
+            margin: 20px 0;
+            display: none;
+        }
+        .info {
+            background: #17a2b8;
+            padding: 15px;
+            border-radius: 5px;
+            color: white;
+            margin: 20px 0;
+        }
+        pre {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 Inject Data ke Dashboard</h1>
+        
+        <div class="info">
+            <strong>📋 Instruksi:</strong>
+            <ol>
+                <li>Buka halaman ini di tab yang sama dengan dashboard (localhost:5000)</li>
+                <li>Klik tombol "Inject Data" di bawah</li>
+                <li>Refresh dashboard untuk melihat data</li>
+            </ol>
+        </div>
+
+        <button onclick="injectData()">💉 Inject Data ke localStorage</button>
+        <button onclick="checkData()">🔍 Cek Data Saat Ini</button>
+        <button onclick="clearData()">🗑️ Hapus Semua Data</button>
+
+        <div id="success" class="success"></div>
+        <div id="output"></div>
+    </div>
+
+    <script>
+        function injectData() {
+            console.log('🚀 Injecting data...');
+            
+            // Get current user or create one
+            let currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+            
+            if (!currentUser.username) {
+                currentUser = {
+                    id: '1762696525337',
+                    username: 'wawan',
+                    fullName: 'H. Wawan Yogaswara, S.Pd, M.Pd',
+                    role: 'pengawas',
+                    nip: '196805301994121001',
+                    photoUrl: '/uploads/1762830374284-750171039.jpg'
+                };
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                console.log('✅ Current user set:', currentUser);
+            }
+
+            // Sample data
+            const sampleData = {
+                users: [
+                    {
+                        id: '1762696424712',
+                        username: 'admin',
+                        fullName: 'Administrator',
+                        role: 'admin',
+                        nip: '',
+                        photoUrl: '/uploads/1762984516465-513200650.jpg'
+                    },
+                    {
+                        id: '1762696525337',
+                        username: 'wawan',
+                        fullName: 'H. Wawan Yogaswara, S.Pd, M.Pd',
+                        role: 'pengawas',
+                        nip: '196805301994121001',
+                        photoUrl: '/uploads/1762830374284-750171039.jpg'
+                    }
+                ],
+                tasks: [
+                    {
+                        id: 'task1',
+                        title: 'Supervisi Pembelajaran Matematika',
+                        username: currentUser.username,
+                        userId: currentUser.id,
+                        status: 'completed',
+                        completed: true,
+                        createdAt: new Date().toISOString(),
+                        description: 'Melakukan supervisi pembelajaran matematika di kelas 5'
+                    },
+                    {
+                        id: 'task2',
+                        title: 'Evaluasi Kurikulum Merdeka',
+                        username: currentUser.username,
+                        userId: currentUser.id,
+                        status: 'in-progress',
+                        completed: false,
+                        createdAt: new Date(Date.now() - 86400000).toISOString(),
+                        description: 'Evaluasi implementasi kurikulum merdeka'
+                    },
+                    {
+                        id: 'task3',
+                        title: 'Workshop Guru',
+                        username: currentUser.username,
+                        userId: currentUser.id,
+                        status: 'completed',
+                        completed: true,
+                        createdAt: new Date(Date.now() - 172800000).toISOString(),
+                        description: 'Mengadakan workshop untuk guru-guru'
+                    },
+                    {
+                        id: 'task4',
+                        title: 'Penyusunan RPP',
+                        username: currentUser.username,
+                        userId: currentUser.id,
+                        status: 'pending',
+                        completed: false,
+                        createdAt: new Date(Date.now() - 259200000).toISOString(),
+                        description: 'Membantu guru menyusun RPP'
+                    },
+                    {
+                        id: 'task5',
+                        title: 'Monitoring Pembelajaran',
+                        username: currentUser.username,
+                        userId: currentUser.id,
+                        status: 'completed',
+                        completed: true,
+                        createdAt: new Date(Date.now() - 345600000).toISOString(),
+                        description: 'Monitoring proses pembelajaran'
+                    }
+                ],
+                supervisions: [
+                    {
+                        id: 'sup1',
+                        title: 'Supervisi SDN 1 Garut',
+                        schoolName: 'SDN 1 Garut',
+                        username: currentUser.username,
+                        userId: currentUser.id,
+                        date: new Date().toISOString(),
+                        createdAt: new Date().toISOString(),
+                        status: 'completed',
+                        notes: 'Pembelajaran berjalan baik'
+                    },
+                    {
+                        id: 'sup2',
+                        title: 'Supervisi SDN 2 Garut',
+                        schoolName: 'SDN 2 Garut',
+                        username: currentUser.username,
+                        userId: currentUser.id,
+                        date: new Date(Date.now() - 86400000).toISOString(),
+                        createdAt: new Date(Date.now() - 86400000).toISOString(),
+                        status: 'completed',
+                        notes: 'Perlu perbaikan di beberapa aspek'
+                    },
+                    {
+                        id: 'sup3',
+                        title: 'Supervisi SMP 1 Garut',
+                        schoolName: 'SMP 1 Garut',
+                        username: currentUser.username,
+                        userId: currentUser.id,
+                        date: new Date(Date.now() - 172800000).toISOString(),
+                        createdAt: new Date(Date.now() - 172800000).toISOString(),
+                        status: 'completed',
+                        notes: 'Sangat baik'
+                    },
+                    {
+                        id: 'sup4',
+                        title: 'Supervisi SDN 3 Garut',
+                        schoolName: 'SDN 3 Garut',
+                        username: currentUser.username,
+                        userId: currentUser.id,
+                        date: new Date(Date.now() - 259200000).toISOString(),
+                        createdAt: new Date(Date.now() - 259200000).toISOString(),
+                        status: 'completed',
+                        notes: 'Pembelajaran efektif'
+                    }
+                ],
+                schools: [
+                    { id: 'school1', name: 'SDN 1 Garut', type: 'SD', address: 'Jl. Raya Garut No. 1' },
+                    { id: 'school2', name: 'SDN 2 Garut', type: 'SD', address: 'Jl. Raya Garut No. 2' },
+                    { id: 'school3', name: 'SDN 3 Garut', type: 'SD', address: 'Jl. Raya Garut No. 3' },
+                    { id: 'school4', name: 'SMP 1 Garut', type: 'SMP', address: 'Jl. Pendidikan No. 1' },
+                    { id: 'school5', name: 'SMP 2 Garut', type: 'SMP', address: 'Jl. Pendidikan No. 2' },
+                    { id: 'school6', name: 'SMA 1 Garut', type: 'SMA', address: 'Jl. Sekolah No. 1' },
+                    { id: 'school7', name: 'SMA 2 Garut', type: 'SMA', address: 'Jl. Sekolah No. 2' },
+                    { id: 'school8', name: 'SMK 1 Garut', type: 'SMK', address: 'Jl. Kejuruan No. 1' }
+                ],
+                additionalTasks: [
+                    {
+                        id: 'add1',
+                        title: 'Rapat Koordinasi Pengawas',
+                        username: currentUser.username,
+                        userId: currentUser.id,
+                        status: 'completed',
+                        completed: true,
+                        createdAt: new Date().toISOString(),
+                        description: 'Rapat koordinasi dengan kepala sekolah'
+                    },
+                    {
+                        id: 'add2',
+                        title: 'Penyusunan Laporan Bulanan',
+                        username: currentUser.username,
+                        userId: currentUser.id,
+                        status: 'in-progress',
+                        completed: false,
+                        createdAt: new Date(Date.now() - 86400000).toISOString(),
+                        description: 'Menyusun laporan supervisi bulanan'
+                    }
+                ]
+            };
+
+            // Save to localStorage
+            localStorage.setItem('local-database', JSON.stringify(sampleData));
+            
+            // Also save to individual keys as backup
+            localStorage.setItem('tasks', JSON.stringify(sampleData.tasks));
+            localStorage.setItem('supervisions', JSON.stringify(sampleData.supervisions));
+            localStorage.setItem('schools', JSON.stringify(sampleData.schools));
+            localStorage.setItem('additionalTasks', JSON.stringify(sampleData.additionalTasks));
+            localStorage.setItem('users', JSON.stringify(sampleData.users));
+
+            console.log('✅ Data injected successfully!');
+            
+            // Show success message
+            const successDiv = document.getElementById('success');
+            successDiv.style.display = 'block';
+            successDiv.innerHTML = `
+                <strong>✅ Data Berhasil Di-inject!</strong><br><br>
+                <strong>Summary:</strong><br>
+                - ${sampleData.tasks.length} Tugas (${sampleData.tasks.filter(t => t.completed).length} selesai)<br>
+                - ${sampleData.supervisions.length} Supervisi<br>
+                - ${sampleData.schools.length} Sekolah<br>
+                - ${sampleData.additionalTasks.length} Tugas Tambahan<br><br>
+                <strong>🔄 Sekarang refresh dashboard Anda!</strong>
+            `;
+
+            // Show data summary
+            checkData();
+        }
+
+        function checkData() {
+            console.log('🔍 Checking current data...');
+            
+            const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+            const localData = JSON.parse(localStorage.getItem('local-database') || '{}');
+            
+            const output = document.getElementById('output');
+            output.innerHTML = `
+                <h3>📊 Data Saat Ini:</h3>
+                <pre>${JSON.stringify({
+                    currentUser: {
+                        username: currentUser.username,
+                        fullName: currentUser.fullName,
+                        role: currentUser.role
+                    },
+                    dataCounts: {
+                        tasks: (localData.tasks || []).length,
+                        supervisions: (localData.supervisions || []).length,
+                        schools: (localData.schools || []).length,
+                        additionalTasks: (localData.additionalTasks || []).length
+                    }
+                }, null, 2)}</pre>
+            `;
+        }
+
+        function clearData() {
+            if (confirm('⚠️ Yakin ingin menghapus semua data?')) {
+                localStorage.removeItem('local-database');
+                localStorage.removeItem('tasks');
+                localStorage.removeItem('supervisions');
+                localStorage.removeItem('schools');
+                localStorage.removeItem('additionalTasks');
+                localStorage.removeItem('users');
+                
+                console.log('🗑️ All data cleared!');
+                
+                const successDiv = document.getElementById('success');
+                successDiv.style.display = 'block';
+                successDiv.style.background = '#dc3545';
+                successDiv.innerHTML = '🗑️ Semua data telah dihapus!';
+                
+                document.getElementById('output').innerHTML = '';
+            }
+        }
+
+        // Auto-check data on load
+        window.onload = function() {
+            checkData();
+        };
+    </script>
+</body>
+</html>

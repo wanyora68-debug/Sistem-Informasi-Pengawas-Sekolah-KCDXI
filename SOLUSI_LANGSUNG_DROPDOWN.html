@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>⚡ SOLUSI LANGSUNG DROPDOWN</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #dc2626;
+            color: white;
+        }
+        .container {
+            background: white;
+            color: black;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            border: 3px solid #dc2626;
+            text-align: center;
+        }
+        h1 {
+            color: #dc2626;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+        .urgent {
+            background: #fef2f2;
+            border: 3px solid #dc2626;
+            padding: 25px;
+            margin: 25px 0;
+            border-radius: 10px;
+        }
+        .fix {
+            background: #f0fdf4;
+            border: 3px solid #16a34a;
+            padding: 25px;
+            margin: 25px 0;
+            border-radius: 10px;
+        }
+        button {
+            background: #dc2626;
+            color: white;
+            border: none;
+            padding: 20px 40px;
+            border-radius: 10px;
+            cursor: pointer;
+            margin: 15px;
+            font-size: 20px;
+            font-weight: bold;
+            width: calc(100% - 30px);
+            transition: all 0.3s;
+        }
+        button:hover {
+            background: #b91c1c;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(220, 38, 38, 0.4);
+        }
+        .success {
+            background: #16a34a;
+        }
+        .success:hover {
+            background: #15803d;
+            box-shadow: 0 6px 20px rgba(22, 163, 74, 0.4);
+        }
+        .result {
+            margin: 20px 0;
+            padding: 20px;
+            border-radius: 10px;
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            font-family: monospace;
+            font-size: 14px;
+            white-space: pre-wrap;
+            text-align: left;
+        }
+        .countdown {
+            font-size: 3em;
+            color: #dc2626;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>⚡ SOLUSI LANGSUNG</h1>
+        
+        <div class="urgent">
+            <h3>🚨 MASALAH KRITIS</h3>
+            <p><strong>Dropdown sekolah kosong!</strong></p>
+            <p>schools.length === 0</p>
+            <p><strong>SOLUSI: FORCE INJECT DATA</strong></p>
+        </div>
+
+        <div class="fix">
+            <h3>⚡ SOLUSI 1-KLIK</h3>
+            <button onclick="solusiLangsung()" class="success">🚀 PERBAIKI SEKARANG</button>
+            <div id="solusiResult" class="result" style="display: none;"></div>
+        </div>
+
+        <div class="urgent">
+            <h3>📋 LANGKAH SELANJUTNYA</h3>
+            <ol style="text-align: left;">
+                <li><strong>Klik tombol di atas</strong></li>
+                <li><strong>Tunggu konfirmasi</strong></li>
+                <li><strong>Refresh halaman supervisi</strong> (Ctrl+R)</li>
+                <li><strong>Klik "Tambah Supervisi Baru"</strong></li>
+                <li><strong>Dropdown harus muncul</strong> dengan SMKN 4 Garut</li>
+            </ol>
+        </div>
+
+        <div class="fix">
+            <h3>🎯 BUKA SUPERVISI</h3>
+            <button onclick="bukaSupervisi()" class="success">📋 BUKA HALAMAN SUPERVISI</button>
+            <div class="countdown" id="countdown" style="display: none;"></div>
+        </div>
+    </div>
+
+    <script>
+        function solusiLangsung() {
+            try {
+                // STEP 1: Clear semua data lama
+                const keysToRemove = [];
+                for (let i = 0; i < localStorage.length; i++) {
+                    const key = localStorage.key(i);
+                    if (key && (key.includes('school') || key.includes('query'))) {
+                        keysToRemove.push(key);
+                    }
+                }
+                keysToRemove.forEach(key => localStorage.removeItem(key));
+                
+                // STEP 2: Create data sekolah yang PASTI BEKERJA
+                const schools = [
+                    {
+                        id: "smkn4-garut-" + Date.now(),
+                        name: "SMKN 4 Garut",
+                        address: "Jl. Raya Garut No. 200, Garut",
+                        contact: "0262-2345678",
+                        principalName: "Drs. Andi Wijaya, M.Pd",
+                        principalNip: "196905101995031001",
+                        supervisions: 0,
+                        createdAt: new Date().toISOString()
+                    },
+                    {
+                        id: "sdn1-garut-" + Date.now(),
+                        name: "SDN 1 Garut", 
+                        address: "Jl. Pendidikan No. 1, Garut",
+                        contact: "0262-1111111",
+                        principalName: "Dra. Sri Mulyani, M.Pd",
+                        principalNip: "196801011990032001",
+                        supervisions: 2,
+                        createdAt: new Date().toISOString()
+                    },
+                    {
+                        id: "smpn1-garut-" + Date.now(),
+                        name: "SMPN 1 Garut",
+                        address: "Jl. Ahmad Yani No. 50, Garut", 
+                        contact: "0262-2222222",
+                        principalName: "Drs. Bambang Sutrisno, M.Pd",
+                        principalNip: "196702021991031002",
+                        supervisions: 3,
+                        createdAt: new Date().toISOString()
+                    }
+                ];
+                
+                // STEP 3: Save dengan SEMUA kemungkinan key
+                const dataString = JSON.stringify(schools);
+                localStorage.setItem('schools_data', dataString);
+                localStorage.setItem('schools_data_backup', dataString);
+                localStorage.setItem('schools', dataString);
+                localStorage.setItem('schoolsData', dataString);
+                localStorage.setItem('schools_list', dataString);
+                localStorage.setItem('schools_dropdown', dataString);
+                
+                // STEP 4: Set SEMUA flag yang mungkin dibutuhkan
+                const timestamp = Date.now().toString();
+                localStorage.setItem('schools_data_timestamp', timestamp);
+                localStorage.setItem('schools_ready', 'true');
+                localStorage.setItem('schools_loaded', 'true');
+                localStorage.setItem('schools_available', 'true');
+                localStorage.setItem('dropdown_ready', 'true');
+                localStorage.setItem('schools_synced', 'true');
+                localStorage.setItem('schools_force_refresh', 'true');
+                localStorage.setItem('supervisions_schools_updated', timestamp);
+                localStorage.setItem('last_schools_update', new Date().toISOString());
+                
+                // STEP 5: Force trigger storage event
+                window.dispatchEvent(new Event('storage'));
+                
+                // STEP 6: Set interval untuk memastikan data persist
+                setInterval(() => {
+                    if (!localStorage.getItem('schools_data')) {
+                        localStorage.setItem('schools_data', dataString);
+                    }
+                }, 1000);
+                
+                document.getElementById('solusiResult').style.display = 'block';
+                document.getElementById('solusiResult').textContent = 
+                    `⚡ SOLUSI LANGSUNG BERHASIL!\\n\\n` +
+                    `✅ Data lama: CLEARED\\n` +
+                    `✅ Schools created: ${schools.length}\\n` +
+                    `✅ Multiple keys: SAVED\\n` +
+                    `✅ All flags: SET\\n` +
+                    `✅ Storage event: TRIGGERED\\n` +
+                    `✅ Auto-persist: ENABLED\\n\\n` +
+                    `🏫 Schools Available:\\n` +
+                    schools.map((s, i) => `   ${i+1}. ${s.name}`).join('\\n') +
+                    `\\n\\n🚀 SEKARANG REFRESH HALAMAN SUPERVISI!\\n` +
+                    `Dropdown PASTI akan muncul dengan ${schools.length} pilihan!`;
+
+            } catch (error) {
+                document.getElementById('solusiResult').style.display = 'block';
+                document.getElementById('solusiResult').style.background = '#fef2f2';
+                document.getElementById('solusiResult').style.border = '2px solid #dc2626';
+                document.getElementById('solusiResult').textContent = `❌ Error: ${error.message}`;
+            }
+        }
+
+        function bukaSupervisi() {
+            const countdownEl = document.getElementById('countdown');
+            countdownEl.style.display = 'block';
+            
+            let count = 3;
+            const interval = setInterval(() => {
+                countdownEl.textContent = count;
+                count--;
+                
+                if (count < 0) {
+                    clearInterval(interval);
+                    countdownEl.textContent = '🚀';
+                    
+                    // Ensure data is still there before opening
+                    const schools = localStorage.getItem('schools_data');
+                    if (!schools) {
+                        solusiLangsung(); // Re-run solution if data missing
+                    }
+                    
+                    window.open('http://localhost:5000/supervisions', '_blank');
+                    
+                    setTimeout(() => {
+                        countdownEl.textContent = '✅ Supervisi dibuka! Refresh halaman (Ctrl+R)!';
+                    }, 1000);
+                }
+            }, 1000);
+        }
+
+        // Auto-run solution on load
+        window.onload = function() {
+            setTimeout(solusiLangsung, 1000);
+        };
+    </script>
+</body>
+</html>

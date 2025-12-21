@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Fix Foto Admin dan Aktivitas Wawan</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .success { color: green; font-weight: bold; }
+        .error { color: red; font-weight: bold; }
+        .info { color: blue; }
+        .warning { color: orange; }
+        button { padding: 10px 15px; margin: 5px; background: #007cba; color: white; border: none; border-radius: 3px; cursor: pointer; }
+        button:hover { background: #005a87; }
+        pre { background: #f5f5f5; padding: 10px; overflow-x: auto; font-size: 12px; }
+        .result { margin: 10px 0; padding: 10px; border-left: 4px solid #007cba; background: #f9f9f9; }
+    </style>
+</head>
+<body>
+    <h1>🔧 Fix Foto Admin dan Aktivitas Wawan</h1>
+    
+    <div class="section">
+        <h2>🎯 Masalah yang Akan Diperbaiki:</h2>
+        <ul>
+            <li>Foto admin di dashboard menggunakan foto user Wawan</li>
+            <li>Halaman aktivitas user Wawan masih kosong</li>
+        </ul>
+    </div>
+    
+    <div class="section">
+        <h2>1. Cek Status Current User</h2>
+        <button onclick="checkCurrentUser()">🔍 Cek Current User</button>
+        <div id="currentUserResult"></div>
+    </div>
+    
+    <div class="section">
+        <h2>2. Fix Foto Admin</h2>
+        <button onclick="fixAdminPhoto()">📸 Fix Foto Admin</button>
+        <div id="adminPhotoResult"></div>
+    </div>
+    
+    <div class="section">
+        <h2>3. Fix Aktivitas Wawan</h2>
+        <button onclick="fixWawanActivities()">📋 Fix Aktivitas Wawan</button>
+        <div id="wawanActivitiesResult"></div>
+    </div>
+    
+    <div class="section">
+        <h2>4. Test Login Sebagai User Berbeda</h2>
+        <button onclick="loginAsAdmin()">👤 Login sebagai Admin</button>
+        <button onclick="loginAsWawan()">👤 Login sebagai Wawan</button>
+        <div id="loginResult"></div>
+    </div>
+    
+    <div class="section">
+        <h2>5. Verifikasi Final</h2>
+        <button onclick="verifyFix()">✅ Verifikasi Perbaikan</button>
+        <div id="verifyResult"></div>
+    </div>
+
+    <script>
+        function log(message, type = 'info') {
+            console.log(message);
+            const className = type === 'success' ? 'success' : type === 'error' ? 'error' : type === 'warning' ? 'warning' : 'info';
+            return `<div class="${className}">${message}</div>`;
+        }
+
+        function checkCurrentUser() {
+            const result = document.getElementById('currentUserResult');
+            let html = '';
+            
+            try {
+                const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+                const localData = JSON.parse(localStorage.getItem('local-database') || '{}');
+                
+                html += log('📋 Current User Data:', 'info');
+                html += `<pre>${JSON.stringify(currentUser, null, 2)}</pre>`;
+                
+                if (currentUser.id) {
+                    // Find user in database
+                    const dbUser = localData.users?.find(u => u.id === currentUser.id);
+                    if (dbUser) {
+                        html += log(`✅ User found in database: ${dbUser.fullName}`, 'success');
+                        html += log(`📸 Photo URL: ${dbUser.photoUrl || 'No photo'}`, 'info');
+                        html += log(`🔑 Role: ${dbUser.role}`, 'info');
+                    } else {
+                        html += log('❌ User not found in database', 'error');
+                    }
+                } else {
+                    html += log('❌ No current user set', 'error');
+                }
+                
+            } catch (error) {
+                html += log(`❌ Error: ${error.message}`, 'error');
+            }
+            
+            result.innerHTML = `<div class="result">${html}</div>`;
+        }
+
+        function fixAdminPhoto() {
+            const result = document.getElementById('adminPhotoResult');
+            let html = '';
+            
+            try {
+                const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+                const localData = JSON.parse(localStorage.getItem('local-database') || '{}');
+                
+                if (currentUser.role === 'admin') {
+                    // Find admin user in database
+                    const adminUser = localData.users?.find(u => u.role === 'admin');
+                    if (adminUser) {
+                        // Update current user with correct admin data
+                        const updatedUser = {
+                            ...currentUser,
+                            fullName: adminUser.fullName,
+                            photoUrl: adminUser.photoUrl,
+                            nip: adminUser.nip || '',
+                            rank: adminUser.rank || '',
+                            officeName: adminUser.officeName || '',
+                            officeAddress: adminUser.officeAddress || '',
+                            homeAddress: adminUser.homeAddress || '',
+                            phone: adminUser.phone || ''
+                        };
+                        
+                        localStorage.setItem('currentUser', JSON.stringify(updatedUser));
+                        html += log('✅ Admin photo dan data berhasil diperbaiki', 'success');
+                        html += log(`📸 Photo URL: ${adminUser.photoUrl}`, 'info');
+                        html += log(`👤 Full Name: ${adminUser.fullName}`, 'info');
+                        
+                        // Clear any conflicting data
+                        localStorage.removeItem('ultimate_fix_applied');
+                        localStorage.removeItem('wawan_fullname');
+                        localStorage.removeItem('wawan_nip');
+                        localStorage.removeItem('wawan_photo_url');
+                        
+                        html += log('🧹 Cleared conflicting data', 'success');
+                        html += log('🔄 Silakan refresh halaman dashboard', 'warning');
+                    } else {
+                        html += log('❌ Admin user tidak ditemukan di database', 'error');
+                    }
+                } else {
+                    html += log('⚠️ Current user bukan admin', 'warning');
+                }
+                
+            } catch (error) {
+                html += log(`❌ Error: ${error.message}`, 'error');
+            }
+            
+            result.innerHTML = `<div class="result">${html}</div>`;
+        }
+
+        function fixWawanActivities() {
+            const result = document.getElementById('wawanActivitiesResult');
+            let html = '';
+            
+            try {
+                const localData = JSON.parse(localStorage.getItem('local-database') || '{}');
+                const wawanUserId = "1762696525337"; // Wawan's ID
+                
+                // Count Wawan's activities
+                const tasks = localData.tasks?.filter(t => t.userId === wawanUserId) || [];
+                const supervisions = localData.supervisions?.filter(s => s.userId === wawanUserId) || [];
+                const events = localData.events?.filter(e => e.userId === wawanUserId) || [];
+                const additionalTasks = localData.additionalTasks?.filter(at => at.userId === wawanUserId) || [];
+                
+                const totalActivities = tasks.length + supervisions.length + events.length + additionalTasks.length;
+                
+                html += log(`📊 Aktivitas Wawan ditemukan:`, 'info');
+                html += log(`📋 Tasks: ${tasks.length}`, 'info');
+                html += log(`👁️ Supervisions: ${supervisions.length}`, 'info');
+                html += log(`📅 Events: ${events.length}`, 'info');
+                html += log(`➕ Additional Tasks: ${additionalTasks.length}`, 'info');
+                html += log(`📊 Total: ${totalActivities}`, totalActivities > 0 ? 'success' : 'error');
+                
+                if (totalActivities > 0) {
+                    html += log('✅ Data aktivitas Wawan tersedia', 'success');
+                    html += log('💡 Masalah mungkin di component dialog', 'warning');
+                    
+                    // Check if user-activities-dialog component is working
+                    html += log('🔧 Memastikan dialog component berfungsi...', 'info');
+                    
+                    // Clear any cache that might interfere
+                    const keysToRemove = [];
+                    for (let i = 0; i < localStorage.length; i++) {
+                        const key = localStorage.key(i);
+                        if (key && (key.includes('react-query') || key.includes('cache'))) {
+                            keysToRemove.push(key);
+                        }
+                    }
+                    
+                    keysToRemove.forEach(key => localStorage.removeItem(key));
+                    html += log(`🧹 Cleared ${keysToRemove.length} cache entries`, 'success');
+                    
+                } else {
+                    html += log('❌ Tidak ada aktivitas untuk Wawan', 'error');
+                    html += log('💡 Periksa apakah data sudah diinput dengan benar', 'warning');
+                }
+                
+            } catch (error) {
+                html += log(`❌ Error: ${error.message}`, 'error');
+            }
+            
+            result.innerHTML = `<div class="result">${html}</div>`;
+        }
+
+        function loginAsAdmin() {
+            const result = document.getElementById('loginResult');
+            let html = '';
+            
+            try {
+                const localData = JSON.parse(localStorage.getItem('local-database') || '{}');
+                const adminUser = localData.users?.find(u => u.role === 'admin');
+                
+                if (adminUser) {
+                    const currentUser = {
+                        id: adminUser.id,
+                        username: adminUser.username,
+                        fullName: adminUser.fullName,
+                        role: adminUser.role,
+                        nip: adminUser.nip || '',
+                        photoUrl: adminUser.photoUrl || null
+                    };
+                    
+                    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                    localStorage.setItem('token', 'admin-token');
+                    
+                    html += log('✅ Berhasil login sebagai Admin', 'success');
+                    html += log(`👤 ${adminUser.fullName}`, 'info');
+                    html += log('🔄 Silakan refresh halaman', 'warning');
+                } else {
+                    html += log('❌ Admin user tidak ditemukan', 'error');
+                }
+                
+            } catch (error) {
+                html += log(`❌ Error: ${error.message}`, 'error');
+            }
+            
+            result.innerHTML = `<div class="result">${html}</div>`;
+        }
+
+        function loginAsWawan() {
+            const result = document.getElementById('loginResult');
+            let html = '';
+            
+            try {
+                const localData = JSON.parse(localStorage.getItem('local-database') || '{}');
+                const wawanUser = localData.users?.find(u => u.username === 'wawan');
+                
+                if (wawanUser) {
+                    const currentUser = {
+                        id: wawanUser.id,
+                        username: wawanUser.username,
+                        fullName: wawanUser.fullName,
+                        role: wawanUser.role,
+                        nip: wawanUser.nip || '',
+                        photoUrl: wawanUser.photoUrl || null
+                    };
+                    
+                    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                    localStorage.setItem('token', 'wawan-token');
+                    
+                    html += log('✅ Berhasil login sebagai Wawan', 'success');
+                    html += log(`👤 ${wawanUser.fullName}`, 'info');
+                    html += log('🔄 Silakan refresh halaman', 'warning');
+                } else {
+                    html += log('❌ Wawan user tidak ditemukan', 'error');
+                }
+                
+            } catch (error) {
+                html += log(`❌ Error: ${error.message}`, 'error');
+            }
+            
+            result.innerHTML = `<div class="result">${html}</div>`;
+        }
+
+        function verifyFix() {
+            const result = document.getElementById('verifyResult');
+            let html = '';
+            
+            try {
+                const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+                const localData = JSON.parse(localStorage.getItem('local-database') || '{}');
+                
+                html += log('🔍 Verifikasi Perbaikan:', 'info');
+                
+                // Check current user
+                if (currentUser.id) {
+                    const dbUser = localData.users?.find(u => u.id === currentUser.id);
+                    if (dbUser) {
+                        html += log(`✅ Current user: ${dbUser.fullName} (${dbUser.role})`, 'success');
+                        
+                        // Check photo
+                        if (dbUser.photoUrl && dbUser.photoUrl !== currentUser.photoUrl) {
+                            html += log('⚠️ Photo URL tidak sinkron, akan diperbaiki', 'warning');
+                            currentUser.photoUrl = dbUser.photoUrl;
+                            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                        } else if (dbUser.photoUrl) {
+                            html += log('✅ Photo URL sudah benar', 'success');
+                        } else {
+                            html += log('⚠️ User tidak memiliki foto', 'warning');
+                        }
+                        
+                        // Check activities if Wawan
+                        if (dbUser.username === 'wawan') {
+                            const wawanActivities = [
+                                ...(localData.tasks?.filter(t => t.userId === dbUser.id) || []),
+                                ...(localData.supervisions?.filter(s => s.userId === dbUser.id) || []),
+                                ...(localData.events?.filter(e => e.userId === dbUser.id) || []),
+                                ...(localData.additionalTasks?.filter(at => at.userId === dbUser.id) || [])
+                            ];
+                            
+                            html += log(`📊 Aktivitas Wawan: ${wawanActivities.length}`, wawanActivities.length > 0 ? 'success' : 'error');
+                        }
+                        
+                    } else {
+                        html += log('❌ User tidak ditemukan di database', 'error');
+                    }
+                } else {
+                    html += log('❌ Tidak ada current user', 'error');
+                }
+                
+                html += log('', 'info');
+                html += log('📋 Langkah selanjutnya:', 'info');
+                html += log('1. Refresh halaman dashboard untuk melihat foto yang benar', 'info');
+                html += log('2. Buka dialog aktivitas user untuk melihat data Wawan', 'info');
+                html += log('3. Jika masih bermasalah, coba login ulang', 'info');
+                
+            } catch (error) {
+                html += log(`❌ Error: ${error.message}`, 'error');
+            }
+            
+            result.innerHTML = `<div class="result">${html}</div>`;
+        }
+
+        // Auto-check on load
+        window.onload = function() {
+            checkCurrentUser();
+        };
+    </script>
+</body>
+</html>

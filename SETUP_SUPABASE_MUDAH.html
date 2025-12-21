@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🗄️ Setup Supabase - Mudah & Cepat</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            color: #2d3748;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+        .supabase-logo {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #3ecf8e 0%, #2dd4bf 100%);
+            border-radius: 12px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            margin-bottom: 20px;
+        }
+        .step {
+            background: #f7fafc;
+            border-left: 4px solid #3ecf8e;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .step h3 {
+            color: #2d3748;
+            margin-top: 0;
+        }
+        .btn {
+            background: linear-gradient(135deg, #3ecf8e 0%, #2dd4bf 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        .btn-secondary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .btn-warning {
+            background: linear-gradient(135deg, #ed8936 0%, #dd6b20 100%);
+        }
+        .code-block {
+            background: #1a202c;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Consolas', 'Courier New', monospace;
+            margin: 15px 0;
+            overflow-x: auto;
+            font-size: 14px;
+            border-left: 4px solid #3ecf8e;
+        }
+        .alert {
+            background: #e6fffa;
+            border: 2px solid #3ecf8e;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            color: #234e52;
+        }
+        .warning {
+            background: #fffaf0;
+            border-color: #ed8936;
+            color: #744210;
+        }
+        .info {
+            background: #ebf8ff;
+            border-color: #4299e1;
+            color: #2a4365;
+        }
+        .checklist {
+            list-style: none;
+            padding: 0;
+        }
+        .checklist li {
+            padding: 8px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .checklist li:last-child {
+            border-bottom: none;
+        }
+        .checklist li::before {
+            content: "☐ ";
+            color: #3ecf8e;
+            font-weight: bold;
+            margin-right: 8px;
+        }
+        .form-group {
+            margin: 15px 0;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #2d3748;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+        .form-group input:focus {
+            border-color: #3ecf8e;
+            outline: none;
+        }
+        .progress {
+            background: #e2e8f0;
+            border-radius: 10px;
+            height: 20px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+        .progress-bar {
+            background: linear-gradient(135deg, #3ecf8e 0%, #2dd4bf 100%);
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="supabase-logo">🗄️</div>
+            <h1>Setup Supabase Database</h1>
+            <p>Panduan mudah setup database production untuk SchoolGuardManager</p>
+        </div>
+
+        <div class="alert info">
+            <h3>🎯 Yang Akan Kita Lakukan:</h3>
+            <ul>
+                <li>✅ Buat project Supabase (gratis)</li>
+                <li>✅ Setup database schema</li>
+                <li>✅ Insert data default (admin & wawan)</li>
+                <li>✅ Get connection string untuk Vercel</li>
+                <li>✅ Test connection</li>
+            </ul>
+        </div>
+
+        <div class="progress">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+        <p id="progress-text">Siap untuk memulai...</p>
+
+        <div class="step">
+            <h3>🚀 Step 1: Buat Project Supabase</h3>
+            <p>Klik tombol di bawah untuk membuka Supabase dan buat project baru:</p>
+            <a href="https://supabase.com/dashboard/new" target="_blank" class="btn" onclick="updateProgress(1)">
+                🌐 Buka Supabase Dashboard
+            </a>
+            <div class="alert warning">
+                <h4>📋 Isi Form Project:</h4>
+                <ul>
+                    <li><strong>Project Name:</strong> schoolguard-manager</li>
+                    <li><strong>Database Password:</strong> yogaswara123 (simpan password ini!)</li>
+                    <li><strong>Region:</strong> Southeast Asia (Singapore)</li>
+                </ul>
+                <p>Tunggu ~2 menit hingga project siap, lalu lanjut ke step 2.</p>
+            </div>
+        </div>
+
+        <div class="step">
+            <h3>🗄️ Step 2: Setup Database Schema</h3>
+            <p>Setelah project Supabase siap:</p>
+            <ol>
+                <li>Klik <strong>"SQL Editor"</strong> di sidebar</li>
+                <li>Klik <strong>"New query"</strong></li>
+                <li>Copy paste script SQL di bawah:</li>
+            </ol>
+            
+            <div class="code-block" id="sql-script">
+-- 🗄️ SchoolGuardManager Database Schema
+-- Copy paste script ini ke Supabase SQL Editor
+
+-- Create users table
+CREATE TABLE users (
+  id TEXT PRIMARY KEY,
+  username TEXT UNIQUE NOT NULL,
+  password TEXT NOT NULL,
+  full_name TEXT NOT NULL,
+  role TEXT NOT NULL DEFAULT 'pengawas',
+  nip TEXT,
+  rank TEXT,
+  phone TEXT,
+  email TEXT,
+  department TEXT,
+  status TEXT NOT NULL DEFAULT 'active',
+  last_login TIMESTAMP WITH TIME ZONE,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Create schools table
+CREATE TABLE schools (
+  id TEXT PRIMARY KEY,
+  name TEXT NOT NULL,
+  address TEXT,
+  principal TEXT,
+  phone TEXT,
+  email TEXT,
+  type TEXT,
+  status TEXT DEFAULT 'active',
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Create supervisions table
+CREATE TABLE supervisions (
+  id TEXT PRIMARY KEY,
+  user_id TEXT REFERENCES users(id),
+  school_id TEXT REFERENCES schools(id),
+  date DATE NOT NULL,
+  type TEXT NOT NULL,
+  notes TEXT,
+  status TEXT DEFAULT 'completed',
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Create tasks table
+CREATE TABLE tasks (
+  id TEXT PRIMARY KEY,
+  user_id TEXT REFERENCES users(id),
+  school_id TEXT REFERENCES schools(id),
+  title TEXT NOT NULL,
+  description TEXT,
+  type TEXT NOT NULL,
+  status TEXT DEFAULT 'pending',
+  due_date DATE,
+  completed_at TIMESTAMP WITH TIME ZONE,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Create user_activities table
+CREATE TABLE user_activities (
+  id TEXT PRIMARY KEY,
+  user_id TEXT REFERENCES users(id),
+  activity_type TEXT NOT NULL,
+  description TEXT,
+  metadata JSONB,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Insert default admin user
+INSERT INTO users (
+  id, username, password, full_name, role, email, department, status
+) VALUES (
+  'admin-1',
+  'admin',
+  '$2b$10$rQZ9QmZ9QmZ9QmZ9QmZ9Qu',
+  'Administrator',
+  'admin',
+  'admin@disdik.jabar.go.id',
+  'Cabang Dinas Pendidikan Wilayah XI',
+  'active'
+);
+
+-- Insert sample pengawas user
+INSERT INTO users (
+  id, username, password, full_name, role, nip, rank, phone, email, department, status
+) VALUES (
+  'wawan-123',
+  'wawan',
+  '$2b$10$rQZ9QmZ9QmZ9QmZ9QmZ9Qu',
+  'H. Wawan Yogaswara, S.Pd, M.Pd',
+  'pengawas',
+  '196805301994121001',
+  'Pembina Utama Muda, IV/c',
+  '087733438282',
+  'wawan.yogaswara@disdik.jabar.go.id',
+  'Cabang Dinas Pendidikan Wilayah XI',
+  'active'
+);
+
+-- Enable Row Level Security
+ALTER TABLE users ENABLE ROW LEVEL SECURITY;
+ALTER TABLE schools ENABLE ROW LEVEL SECURITY;
+ALTER TABLE supervisions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE tasks ENABLE ROW LEVEL SECURITY;
+ALTER TABLE user_activities ENABLE ROW LEVEL SECURITY;
+
+-- Create policies (allow all for now)
+CREATE POLICY "Allow all operations" ON users FOR ALL USING (true);
+CREATE POLICY "Allow all operations" ON schools FOR ALL USING (true);
+CREATE POLICY "Allow all operations" ON supervisions FOR ALL USING (true);
+CREATE POLICY "Allow all operations" ON tasks FOR ALL USING (true);
+CREATE POLICY "Allow all operations" ON user_activities FOR ALL USING (true);
+            </div>
+            
+            <button class="btn btn-secondary" onclick="copyToClipboard('sql-script')">
+                📋 Copy Script SQL
+            </button>
+            <button class="btn" onclick="updateProgress(2)">
+                ✅ Script Sudah Dijalankan
+            </button>
+        </div>
+
+        <div class="step">
+            <h3>🔗 Step 3: Get Database Connection String</h3>
+            <p>Setelah script SQL berhasil dijalankan:</p>
+            <ol>
+                <li>Klik <strong>"Settings"</strong> → <strong>"Database"</strong></li>
+                <li>Scroll ke bagian <strong>"Connection string"</strong></li>
+                <li>Copy connection string (format PostgreSQL)</li>
+                <li>Paste di form di bawah untuk verifikasi:</li>
+            </ol>
+            
+            <div class="form-group">
+                <label for="db-url">Database URL:</label>
+                <input type="text" id="db-url" placeholder="postgresql://postgres:[password]@[host]:5432/postgres">
+            </div>
+            
+            <button class="btn" onclick="validateDbUrl()">
+                🔍 Validate Connection String
+            </button>
+            <button class="btn btn-secondary" onclick="copyDbUrl()">
+                📋 Copy untuk Vercel
+            </button>
+        </div>
+
+        <div class="step">
+            <h3>✅ Step 4: Verifikasi Setup</h3>
+            <p>Pastikan semua sudah benar:</p>
+            <ul class="checklist">
+                <li>Project Supabase sudah dibuat</li>
+                <li>Script SQL sudah dijalankan tanpa error</li>
+                <li>Table users, schools, supervisions, tasks, user_activities sudah ada</li>
+                <li>Data admin dan wawan sudah ter-insert</li>
+                <li>Connection string sudah dicopy</li>
+            </ul>
+            
+            <button class="btn" onclick="updateProgress(4)">
+                🎉 Setup Selesai!
+            </button>
+        </div>
+
+        <div class="step">
+            <h3>🚀 Step 5: Next - Deploy ke Vercel</h3>
+            <p>Setelah Supabase siap, kita lanjut deploy ke Vercel:</p>
+            <a href="https://vercel.com/new" target="_blank" class="btn">
+                🌐 Deploy ke Vercel
+            </a>
+            <button class="btn btn-secondary" onclick="showVercelGuide()">
+                📖 Panduan Vercel
+            </button>
+        </div>
+
+        <div id="result-container"></div>
+
+        <div class="alert">
+            <h3>💡 Tips Penting:</h3>
+            <ul>
+                <li><strong>Simpan password database</strong> - Anda akan membutuhkannya</li>
+                <li><strong>Bookmark project Supabase</strong> untuk akses mudah</li>
+                <li><strong>Connection string</strong> akan digunakan di environment variables Vercel</li>
+                <li><strong>Free tier Supabase</strong> sudah cukup untuk aplikasi ini</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        let currentStep = 0;
+        const totalSteps = 4;
+
+        function updateProgress(step) {
+            currentStep = step;
+            const percentage = (step / totalSteps) * 100;
+            document.getElementById('progress-bar').style.width = percentage + '%';
+            
+            const messages = [
+                'Siap untuk memulai...',
+                'Project Supabase dibuat ✅',
+                'Database schema setup ✅',
+                'Connection string ready ✅',
+                'Setup Supabase selesai! 🎉'
+            ];
+            
+            document.getElementById('progress-text').textContent = messages[step];
+            
+            if (step === totalSteps) {
+                showCompletionMessage();
+            }
+        }
+
+        function copyToClipboard(elementId) {
+            const element = document.getElementById(elementId);
+            const text = element.textContent;
+            
+            navigator.clipboard.writeText(text).then(() => {
+                showMessage('✅ Script SQL berhasil dicopy! Paste di Supabase SQL Editor.', 'success');
+            }).catch(() => {
+                showMessage('⚠️ Gagal copy. Silakan copy manual.', 'warning');
+            });
+        }
+
+        function validateDbUrl() {
+            const dbUrl = document.getElementById('db-url').value;
+            
+            if (!dbUrl) {
+                showMessage('❌ Silakan masukkan Database URL terlebih dahulu.', 'error');
+                return;
+            }
+            
+            if (dbUrl.startsWith('postgresql://') && dbUrl.includes('supabase.co')) {
+                showMessage('✅ Connection string valid! Siap untuk digunakan di Vercel.', 'success');
+                updateProgress(3);
+            } else {
+                showMessage('⚠️ Format connection string tidak sesuai. Pastikan dimulai dengan postgresql:// dan mengandung supabase.co', 'warning');
+            }
+        }
+
+        function copyDbUrl() {
+            const dbUrl = document.getElementById('db-url').value;
+            
+            if (!dbUrl) {
+                showMessage('❌ Silakan masukkan Database URL terlebih dahulu.', 'error');
+                return;
+            }
+            
+            navigator.clipboard.writeText(dbUrl).then(() => {
+                showMessage('✅ Database URL berhasil dicopy! Paste di Vercel Environment Variables.', 'success');
+            }).catch(() => {
+                showMessage('⚠️ Gagal copy. Silakan copy manual.', 'warning');
+            });
+        }
+
+        function showVercelGuide() {
+            const resultContainer = document.getElementById('result-container');
+            resultContainer.innerHTML = `
+                <div class="alert info">
+                    <h3>🚀 Panduan Deploy ke Vercel:</h3>
+                    <ol>
+                        <li><strong>Buka:</strong> <a href="https://vercel.com/new" target="_blank">vercel.com/new</a></li>
+                        <li><strong>Import</strong> repository GitHub Anda</li>
+                        <li><strong>Configure Project:</strong>
+                            <ul>
+                                <li>Framework: Other</li>
+                                <li>Build Command: npm run build</li>
+                                <li>Output Directory: dist/public</li>
+                            </ul>
+                        </li>
+                        <li><strong>Environment Variables:</strong>
+                            <ul>
+                                <li>DATABASE_URL = [paste connection string]</li>
+                                <li>JWT_SECRET = schoolguard-secret-key-2024</li>
+                                <li>SESSION_SECRET = schoolguard-secret-key-2024</li>
+                                <li>NODE_ENV = production</li>
+                                <li>USE_LOCAL_STORAGE = false</li>
+                            </ul>
+                        </li>
+                        <li><strong>Deploy!</strong></li>
+                    </ol>
+                </div>
+            `;
+        }
+
+        function showCompletionMessage() {
+            const resultContainer = document.getElementById('result-container');
+            resultContainer.innerHTML = `
+                <div class="alert">
+                    <h3>🎉 Supabase Setup Selesai!</h3>
+                    <p><strong>Yang sudah berhasil:</strong></p>
+                    <ul>
+                        <li>✅ Project Supabase dibuat</li>
+                        <li>✅ Database schema setup</li>
+                        <li>✅ Data admin & wawan ter-insert</li>
+                        <li>✅ Connection string ready</li>
+                    </ul>
+                    <p><strong>Next Steps:</strong></p>
+                    <ol>
+                        <li>Deploy aplikasi ke Vercel</li>
+                        <li>Set environment variables di Vercel</li>
+                        <li>Test aplikasi production</li>
+                        <li>Migrate data local ke Supabase (opsional)</li>
+                    </ol>
+                </div>
+            `;
+        }
+
+        function showMessage(message, type) {
+            const resultContainer = document.getElementById('result-container');
+            const alertClass = type === 'success' ? 'alert' : type === 'warning' ? 'alert warning' : 'alert warning';
+            
+            resultContainer.innerHTML = `
+                <div class="${alertClass}">
+                    <p>${message}</p>
+                </div>
+            `;
+            
+            // Auto hide after 5 seconds
+            setTimeout(() => {
+                resultContainer.innerHTML = '';
+            }, 5000);
+        }
+    </script>
+</body>
+</html>

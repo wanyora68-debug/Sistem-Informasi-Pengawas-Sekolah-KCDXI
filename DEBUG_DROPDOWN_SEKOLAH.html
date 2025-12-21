@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔍 DEBUG DROPDOWN SEKOLAH</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #fef2f2;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border: 3px solid #dc2626;
+        }
+        h1 {
+            color: #dc2626;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .debug {
+            background: #f8fafc;
+            border-left: 4px solid #2563eb;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        .fix {
+            background: #f0fdf4;
+            border-left: 4px solid #16a34a;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        .error {
+            background: #fef2f2;
+            border-left: 4px solid #dc2626;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        button {
+            background: #dc2626;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px 5px;
+            font-size: 16px;
+            font-weight: bold;
+            width: 100%;
+        }
+        button:hover {
+            background: #b91c1c;
+        }
+        .success {
+            background: #16a34a;
+        }
+        .success:hover {
+            background: #15803d;
+        }
+        .result {
+            margin: 15px 0;
+            padding: 15px;
+            border-radius: 5px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            font-family: monospace;
+            font-size: 11px;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 DEBUG DROPDOWN SEKOLAH</h1>
+        
+        <div class="error">
+            <h3>🚨 MASALAH TERDETEKSI</h3>
+            <p><strong>Dropdown sekolah kosong di halaman supervisi</strong></p>
+            <p>Dari screenshot: Field "Sekolah" menunjukkan "Pilih sekolah" tanpa pilihan</p>
+        </div>
+
+        <div class="debug">
+            <h3>🔍 STEP 1: DEBUG LOCALSTORAGE</h3>
+            <button onclick="debugLocalStorage()">📊 DEBUG LOCALSTORAGE</button>
+            <div id="debugResult" class="result" style="display: none;"></div>
+        </div>
+
+        <div class="fix">
+            <h3>🔧 STEP 2: FORCE CREATE DATA</h3>
+            <button onclick="forceCreateSchools()" class="success">🏫 FORCE CREATE SCHOOLS</button>
+            <div id="createResult" class="result" style="display: none;"></div>
+        </div>
+
+        <div class="debug">
+            <h3>🧪 STEP 3: TEST QUERY</h3>
+            <button onclick="testQuery()">🔍 TEST REACT QUERY</button>
+            <div id="queryResult" class="result" style="display: none;"></div>
+        </div>
+
+        <div class="fix">
+            <h3>⚡ STEP 4: EMERGENCY FIX</h3>
+            <button onclick="emergencyFix()" class="success">🚨 EMERGENCY FIX</button>
+            <div id="emergencyResult" class="result" style="display: none;"></div>
+        </div>
+
+        <div class="debug">
+            <h3>🎯 STEP 5: FINAL TEST</h3>
+            <button onclick="finalTest()">✅ FINAL TEST</button>
+            <div id="finalResult" class="result" style="display: none;"></div>
+        </div>
+    </div>
+
+    <script>
+        function debugLocalStorage() {
+            try {
+                const result = [];
+                result.push('🔍 DEBUGGING LOCALSTORAGE:');
+                result.push('');
+                
+                // Check all school-related keys
+                const keys = [
+                    'schools_data',
+                    'schools_data_backup', 
+                    'schools_data_timestamp',
+                    'schools_synced',
+                    'schools_dropdown_ready'
+                ];
+                
+                keys.forEach(key => {
+                    const value = localStorage.getItem(key);
+                    result.push(`${key}:`);
+                    if (value) {
+                        if (key.includes('_data')) {
+                            try {
+                                const parsed = JSON.parse(value);
+                                result.push(`   Type: ${Array.isArray(parsed) ? 'Array' : typeof parsed}`);
+                                result.push(`   Length: ${Array.isArray(parsed) ? parsed.length : 'N/A'}`);
+                                if (Array.isArray(parsed) && parsed.length > 0) {
+                                    result.push(`   Sample: ${JSON.stringify(parsed[0], null, 2)}`);
+                                }
+                            } catch (e) {
+                                result.push(`   ERROR parsing: ${e.message}`);
+                            }
+                        } else {
+                            result.push(`   Value: ${value}`);
+                        }
+                    } else {
+                        result.push(`   Value: NULL/UNDEFINED`);
+                    }
+                    result.push('');
+                });
+                
+                // Check all localStorage keys
+                result.push('ALL LOCALSTORAGE KEYS:');
+                for (let i = 0; i < localStorage.length; i++) {
+                    const key = localStorage.key(i);
+                    if (key && key.includes('school')) {
+                        result.push(`   - ${key}`);
+                    }
+                }
+                
+                document.getElementById('debugResult').style.display = 'block';
+                document.getElementById('debugResult').textContent = result.join('\\n');
+
+            } catch (error) {
+                document.getElementById('debugResult').style.display = 'block';
+                document.getElementById('debugResult').className = 'result error';
+                document.getElementById('debugResult').textContent = `❌ Debug Error: ${error.message}`;
+            }
+        }
+
+        function forceCreateSchools() {
+            try {
+                // Clear existing data first
+                localStorage.removeItem('schools_data');
+                localStorage.removeItem('schools_data_backup');
+                
+                // Create fresh school data
+                const schools = [
+                    {
+                        id: "school-1-" + Date.now(),
+                        name: "SMKN 4 Garut",
+                        address: "Jl. Raya Garut No. 200, Garut",
+                        contact: "0262-2345678",
+                        principalName: "Drs. Andi Wijaya, M.Pd",
+                        principalNip: "196905101995031001",
+                        supervisions: 0,
+                        createdAt: new Date().toISOString()
+                    },
+                    {
+                        id: "school-2-" + Date.now(),
+                        name: "SDN 1 Garut",
+                        address: "Jl. Pendidikan No. 1, Garut",
+                        contact: "0262-1111111",
+                        principalName: "Dra. Sri Mulyani, M.Pd",
+                        principalNip: "196801011990032001",
+                        supervisions: 2,
+                        createdAt: new Date().toISOString()
+                    },
+                    {
+                        id: "school-3-" + Date.now(),
+                        name: "SMPN 1 Garut",
+                        address: "Jl. Ahmad Yani No. 50, Garut",
+                        contact: "0262-2222222",
+                        principalName: "Drs. Bambang Sutrisno, M.Pd",
+                        principalNip: "196702021991031002",
+                        supervisions: 3,
+                        createdAt: new Date().toISOString()
+                    }
+                ];
+                
+                // Save with multiple keys for redundancy
+                localStorage.setItem('schools_data', JSON.stringify(schools));
+                localStorage.setItem('schools_data_backup', JSON.stringify(schools));
+                localStorage.setItem('schools_list', JSON.stringify(schools));
+                localStorage.setItem('schools_dropdown_data', JSON.stringify(schools));
+                
+                // Set metadata
+                localStorage.setItem('schools_data_timestamp', Date.now().toString());
+                localStorage.setItem('schools_created', new Date().toISOString());
+                localStorage.setItem('schools_count', schools.length.toString());
+                localStorage.setItem('schools_ready', 'true');
+                
+                document.getElementById('createResult').style.display = 'block';
+                document.getElementById('createResult').textContent = 
+                    `🏫 SCHOOLS FORCE CREATED!\\n\\n` +
+                    `✅ Schools created: ${schools.length}\\n` +
+                    `✅ Main data: SAVED\\n` +
+                    `✅ Backup data: SAVED\\n` +
+                    `✅ Dropdown data: SAVED\\n` +
+                    `✅ Metadata: SET\\n\\n` +
+                    `Schools List:\\n` +
+                    schools.map((s, i) => `   ${i+1}. ${s.name} (ID: ${s.id})`).join('\\n') +
+                    `\\n\\n🚀 Data siap untuk dropdown!`;
+
+            } catch (error) {
+                document.getElementById('createResult').style.display = 'block';
+                document.getElementById('createResult').className = 'result error';
+                document.getElementById('createResult').textContent = `❌ Create Error: ${error.message}`;
+            }
+        }
+
+        function testQuery() {
+            try {
+                // Simulate the exact query from supervisions.tsx
+                const result = [];
+                result.push('🧪 TESTING REACT QUERY LOGIC:');
+                result.push('');
+                
+                // Test window and localStorage availability
+                result.push(`window !== 'undefined': ${typeof window !== 'undefined'}`);
+                result.push(`window.localStorage: ${typeof window.localStorage}`);
+                result.push('');
+                
+                // Test main data retrieval
+                let schoolsData = localStorage.getItem('schools_data');
+                result.push(`schools_data exists: ${!!schoolsData}`);
+                
+                if (!schoolsData) {
+                    result.push('🔄 Trying backup...');
+                    const backup = localStorage.getItem('schools_data_backup');
+                    result.push(`schools_data_backup exists: ${!!backup}`);
+                    
+                    if (backup) {
+                        localStorage.setItem('schools_data', backup);
+                        schoolsData = backup;
+                        result.push('✅ Auto-recovered from backup');
+                    }
+                }
+                
+                if (schoolsData) {
+                    try {
+                        const parsed = JSON.parse(schoolsData);
+                        result.push(`Parsed successfully: ${typeof parsed}`);
+                        result.push(`Is Array: ${Array.isArray(parsed)}`);
+                        result.push(`Length: ${Array.isArray(parsed) ? parsed.length : 'N/A'}`);
+                        
+                        if (Array.isArray(parsed)) {
+                            result.push('');
+                            result.push('Schools in array:');
+                            parsed.forEach((school, i) => {
+                                result.push(`   ${i+1}. ${school.name || 'NO NAME'} (ID: ${school.id || 'NO ID'})`);
+                            });
+                            
+                            // Create backup
+                            localStorage.setItem('schools_data_backup', schoolsData);
+                            localStorage.setItem('schools_data_timestamp', Date.now().toString());
+                            result.push('');
+                            result.push('✅ Backup created');
+                            
+                            // Return value simulation
+                            result.push('');
+                            result.push(`QUERY WOULD RETURN: Array with ${parsed.length} schools`);
+                        } else {
+                            result.push('❌ Not an array, would return []');
+                        }
+                    } catch (parseError) {
+                        result.push(`❌ Parse error: ${parseError.message}`);
+                        result.push('QUERY WOULD RETURN: []');
+                    }
+                } else {
+                    result.push('❌ No data found, QUERY WOULD RETURN: []');
+                }
+                
+                document.getElementById('queryResult').style.display = 'block';
+                document.getElementById('queryResult').textContent = result.join('\\n');
+
+            } catch (error) {
+                document.getElementById('queryResult').style.display = 'block';
+                document.getElementById('queryResult').className = 'result error';
+                document.getElementById('queryResult').textContent = `❌ Query Test Error: ${error.message}`;
+            }
+        }
+
+        function emergencyFix() {
+            try {
+                // NUCLEAR OPTION: Clear everything and rebuild
+                const result = [];
+                result.push('🚨 EMERGENCY FIX ACTIVATED!');
+                result.push('');
+                
+                // Clear all school-related data
+                const keysToRemove = [];
+                for (let i = 0; i < localStorage.length; i++) {
+                    const key = localStorage.key(i);
+                    if (key && key.includes('school')) {
+                        keysToRemove.push(key);
+                    }
+                }
+                
+                keysToRemove.forEach(key => {
+                    localStorage.removeItem(key);
+                    result.push(`🗑️ Removed: ${key}`);
+                });
+                
+                result.push('');
+                result.push('🏗️ Rebuilding schools data...');
+                
+                // Create the most basic school data possible
+                const emergencySchools = [
+                    {
+                        id: "emergency-1",
+                        name: "SMKN 4 Garut"
+                    },
+                    {
+                        id: "emergency-2", 
+                        name: "SDN 1 Garut"
+                    },
+                    {
+                        id: "emergency-3",
+                        name: "SMPN 1 Garut"
+                    }
+                ];
+                
+                // Save with every possible key
+                const dataString = JSON.stringify(emergencySchools);
+                localStorage.setItem('schools_data', dataString);
+                localStorage.setItem('schools_data_backup', dataString);
+                localStorage.setItem('schools', dataString);
+                localStorage.setItem('schoolsData', dataString);
+                localStorage.setItem('schools_list', dataString);
+                
+                // Set all possible flags
+                localStorage.setItem('schools_ready', 'true');
+                localStorage.setItem('schools_loaded', 'true');
+                localStorage.setItem('schools_available', 'true');
+                localStorage.setItem('dropdown_ready', 'true');
+                localStorage.setItem('emergency_fix_applied', Date.now().toString());
+                
+                result.push('');
+                result.push('✅ Emergency schools created');
+                result.push('✅ Multiple storage keys set');
+                result.push('✅ All flags enabled');
+                result.push('');
+                result.push('Emergency Schools:');
+                emergencySchools.forEach((s, i) => {
+                    result.push(`   ${i+1}. ${s.name} (ID: ${s.id})`);
+                });
+                
+                result.push('');
+                result.push('🚀 EMERGENCY FIX COMPLETE!');
+                result.push('Refresh halaman supervisi sekarang!');
+                
+                document.getElementById('emergencyResult').style.display = 'block';
+                document.getElementById('emergencyResult').textContent = result.join('\\n');
+
+            } catch (error) {
+                document.getElementById('emergencyResult').style.display = 'block';
+                document.getElementById('emergencyResult').className = 'result error';
+                document.getElementById('emergencyResult').textContent = `❌ Emergency Fix Error: ${error.message}`;
+            }
+        }
+
+        function finalTest() {
+            try {
+                const schools = JSON.parse(localStorage.getItem('schools_data') || '[]');
+                const ready = localStorage.getItem('schools_ready') === 'true';
+                const emergencyApplied = localStorage.getItem('emergency_fix_applied');
+                
+                document.getElementById('finalResult').style.display = 'block';
+                document.getElementById('finalResult').textContent = 
+                    `✅ FINAL TEST RESULTS:\\n\\n` +
+                    `📊 Data Status:\\n` +
+                    `   - Schools count: ${schools.length}\\n` +
+                    `   - Ready flag: ${ready}\\n` +
+                    `   - Emergency fix: ${emergencyApplied ? 'APPLIED' : 'NOT APPLIED'}\\n\\n` +
+                    `🏫 Available Schools:\\n` +
+                    schools.map((s, i) => `   ${i+1}. ${s.name || 'NO NAME'}`).join('\\n') +
+                    `\\n\\n🎯 Next Steps:\\n` +
+                    `   1. Refresh halaman supervisi (Ctrl+R)\\n` +
+                    `   2. Klik "Tambah Supervisi Baru"\\n` +
+                    `   3. Dropdown harus menampilkan ${schools.length} pilihan\\n` +
+                    `   4. SMKN 4 Garut harus ada dalam list\\n\\n` +
+                    `${schools.length > 0 ? '✅ DATA READY!' : '❌ NO DATA - RUN EMERGENCY FIX!'}`;
+
+            } catch (error) {
+                document.getElementById('finalResult').style.display = 'block';
+                document.getElementById('finalResult').className = 'result error';
+                document.getElementById('finalResult').textContent = `❌ Final Test Error: ${error.message}`;
+            }
+        }
+
+        // Auto-run debug on load
+        window.onload = function() {
+            setTimeout(() => {
+                debugLocalStorage();
+                setTimeout(() => {
+                    forceCreateSchools();
+                    setTimeout(() => {
+                        testQuery();
+                        setTimeout(() => {
+                            emergencyFix();
+                        }, 1000);
+                    }, 1000);
+                }, 1000);
+            }, 500);
+        };
+    </script>
+</body>
+</html>

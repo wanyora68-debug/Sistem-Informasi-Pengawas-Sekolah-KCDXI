@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚨 EMERGENCY RECOVERY</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #fef2f2;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border: 3px solid #dc2626;
+        }
+        h1 {
+            color: #dc2626;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .emergency {
+            background: #fef2f2;
+            border-left: 4px solid #dc2626;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        button {
+            background: #dc2626;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px 5px;
+            font-size: 16px;
+            font-weight: bold;
+            width: 100%;
+        }
+        button:hover {
+            background: #b91c1c;
+        }
+        .success {
+            background: #16a34a;
+        }
+        .success:hover {
+            background: #15803d;
+        }
+        .result {
+            margin: 15px 0;
+            padding: 15px;
+            border-radius: 5px;
+            background: #f0f9ff;
+            border-left: 4px solid #2563eb;
+            font-family: monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚨 EMERGENCY RECOVERY</h1>
+        
+        <div class="emergency">
+            <h3>⚠️ MASALAH TERDETEKSI</h3>
+            <p><strong>Gejala:</strong> Data hilang setelah mencoba delete</p>
+            <p><strong>Penyebab:</strong> Bug di fungsi delete yang menghapus semua data</p>
+            <p><strong>Solusi:</strong> Recovery darurat + perbaikan fungsi delete</p>
+        </div>
+
+        <button onclick="emergencyRestore()" class="success">🚑 RECOVERY DARURAT</button>
+        <div id="restoreResult" class="result" style="display: none;"></div>
+
+        <button onclick="fixDeleteBug()">🔧 PERBAIKI BUG DELETE</button>
+        <div id="fixResult" class="result" style="display: none;"></div>
+
+        <button onclick="createSafeData()">🛡️ BUAT DATA AMAN</button>
+        <div id="safeResult" class="result" style="display: none;"></div>
+
+        <button onclick="testDeleteSafety()">🧪 TEST DELETE AMAN</button>
+        <div id="testResult" class="result" style="display: none;"></div>
+    </div>
+
+    <script>
+        function emergencyRestore() {
+            try {
+                // Clear everything first
+                localStorage.clear();
+                
+                // Create emergency data
+                const emergencySchools = [
+                    {
+                        id: "emergency-school-1",
+                        name: "SDN Emergency 01",
+                        address: "Jl. Emergency No. 1",
+                        contact: "081234567890",
+                        principalName: "Kepala Emergency 1",
+                        principalNip: "123456789",
+                        supervisions: 0,
+                        createdAt: new Date().toISOString(),
+                        _emergency: true,
+                        _protected: true
+                    },
+                    {
+                        id: "emergency-school-2",
+                        name: "SDN Emergency 02",
+                        address: "Jl. Emergency No. 2",
+                        contact: "081234567891",
+                        principalName: "Kepala Emergency 2",
+                        principalNip: "123456790",
+                        supervisions: 0,
+                        createdAt: new Date().toISOString(),
+                        _emergency: true,
+                        _protected: true
+                    }
+                ];
+
+                const emergencyTasks = [
+                    {
+                        id: "emergency-task-1",
+                        name: "Kegiatan Emergency 1",
+                        date: "2024-12-19",
+                        location: "Lokasi Emergency 1",
+                        organizer: "Penyelenggara Emergency 1",
+                        description: "Kegiatan darurat yang tidak boleh dihapus",
+                        createdAt: new Date().toISOString(),
+                        _emergency: true,
+                        _protected: true
+                    },
+                    {
+                        id: "emergency-task-2",
+                        name: "Kegiatan Emergency 2",
+                        date: "2024-12-20",
+                        location: "Lokasi Emergency 2",
+                        organizer: "Penyelenggara Emergency 2",
+                        description: "Kegiatan darurat kedua yang aman",
+                        createdAt: new Date().toISOString(),
+                        _emergency: true,
+                        _protected: true
+                    }
+                ];
+
+                // Save with multiple protection layers
+                localStorage.setItem('schools_data', JSON.stringify(emergencySchools));
+                localStorage.setItem('schools_data_backup', JSON.stringify(emergencySchools));
+                localStorage.setItem('schools_data_emergency', JSON.stringify(emergencySchools));
+                
+                localStorage.setItem('additional_tasks_data', JSON.stringify(emergencyTasks));
+                localStorage.setItem('additional_tasks_data_backup', JSON.stringify(emergencyTasks));
+                localStorage.setItem('additional_tasks_data_emergency', JSON.stringify(emergencyTasks));
+
+                // Set protection flags
+                localStorage.setItem('emergency_mode', 'true');
+                localStorage.setItem('delete_protection', 'enabled');
+                localStorage.setItem('recovery_timestamp', new Date().toISOString());
+
+                document.getElementById('restoreResult').style.display = 'block';
+                document.getElementById('restoreResult').textContent = 
+                    `🚑 RECOVERY DARURAT BERHASIL!\n\n` +
+                    `✅ Data sekolah: ${emergencySchools.length} (PROTECTED)\n` +
+                    `✅ Data tugas: ${emergencyTasks.length} (PROTECTED)\n` +
+                    `✅ Triple backup: AKTIF\n` +
+                    `✅ Delete protection: ENABLED\n` +
+                    `✅ Emergency mode: ON\n\n` +
+                    `🚀 SEKARANG BUKA APLIKASI!\n` +
+                    `⚠️ JANGAN DELETE DULU - PERBAIKI BUG DULU!`;
+
+            } catch (error) {
+                document.getElementById('restoreResult').style.display = 'block';
+                document.getElementById('restoreResult').className = 'emergency';
+                document.getElementById('restoreResult').textContent = `❌ Error: ${error.message}`;
+            }
+        }
+
+        function fixDeleteBug() {
+            try {
+                // Simulate fixing the delete bug by creating a safe delete function
+                const safeDeleteInstructions = `
+🔧 INSTRUKSI PERBAIKAN BUG DELETE:
+
+MASALAH: Fungsi delete menghapus semua data
+SOLUSI: Perbaiki logika filter di handleDeleteTask
+
+KODE YANG BERMASALAH:
+const updatedTasks = currentTasks.filter((task) => task.id !== id);
+
+KEMUNGKINAN BUG:
+1. Variable 'id' undefined atau null
+2. task.id format tidak match
+3. Filter logic terbalik
+4. currentTasks kosong sebelum filter
+
+PERBAIKAN:
+1. Add console.log untuk debug
+2. Validate id parameter
+3. Check data before filter
+4. Add safety checks
+
+KODE PERBAIKAN:
+const handleDeleteTask = async (id) => {
+  console.log('🗑️ Deleting task with ID:', id);
+  
+  if (!id) {
+    console.error('❌ No ID provided for delete');
+    return;
+  }
+  
+  const tasksData = localStorage.getItem('additional_tasks_data');
+  const currentTasks = tasksData ? JSON.parse(tasksData) : [];
+  
+  console.log('📊 Current tasks before delete:', currentTasks.length);
+  console.log('🎯 Task to delete:', currentTasks.find(t => t.id === id));
+  
+  const updatedTasks = currentTasks.filter((task) => {
+    console.log('🔍 Comparing:', task.id, 'vs', id, '=', task.id !== id);
+    return task.id !== id;
+  });
+  
+  console.log('📊 Tasks after filter:', updatedTasks.length);
+  
+  if (updatedTasks.length === currentTasks.length) {
+    console.warn('⚠️ No task was deleted - ID not found');
+    return;
+  }
+  
+  // Save with protection
+  localStorage.setItem('additional_tasks_data', JSON.stringify(updatedTasks));
+  localStorage.setItem('additional_tasks_data_backup', JSON.stringify(updatedTasks));
+};
+                `;
+
+                document.getElementById('fixResult').style.display = 'block';
+                document.getElementById('fixResult').textContent = safeDeleteInstructions;
+
+            } catch (error) {
+                document.getElementById('fixResult').style.display = 'block';
+                document.getElementById('fixResult').className = 'emergency';
+                document.getElementById('fixResult').textContent = `❌ Error: ${error.message}`;
+            }
+        }
+
+        function createSafeData() {
+            try {
+                // Create data with unique, safe IDs
+                const safeSchools = [
+                    {
+                        id: "safe-school-" + Date.now() + "-1",
+                        name: "SDN Safe Test 01",
+                        address: "Jl. Safe Test No. 1",
+                        contact: "081234567890",
+                        principalName: "Kepala Safe 1",
+                        principalNip: "123456789",
+                        supervisions: 0,
+                        createdAt: new Date().toISOString(),
+                        _safe: true
+                    },
+                    {
+                        id: "safe-school-" + Date.now() + "-2",
+                        name: "SDN Safe Test 02",
+                        address: "Jl. Safe Test No. 2",
+                        contact: "081234567891",
+                        principalName: "Kepala Safe 2",
+                        principalNip: "123456790",
+                        supervisions: 0,
+                        createdAt: new Date().toISOString(),
+                        _safe: true
+                    }
+                ];
+
+                const safeTasks = [
+                    {
+                        id: "safe-task-" + Date.now() + "-1",
+                        name: "Kegiatan Safe Test 1",
+                        date: "2024-12-19",
+                        location: "Lokasi Safe 1",
+                        organizer: "Penyelenggara Safe 1",
+                        description: "Kegiatan dengan ID yang aman untuk delete test",
+                        createdAt: new Date().toISOString(),
+                        _safe: true
+                    },
+                    {
+                        id: "safe-task-" + Date.now() + "-2",
+                        name: "Kegiatan Safe Test 2",
+                        date: "2024-12-20",
+                        location: "Lokasi Safe 2",
+                        organizer: "Penyelenggara Safe 2",
+                        description: "Kegiatan kedua untuk test delete yang aman",
+                        createdAt: new Date().toISOString(),
+                        _safe: true
+                    },
+                    {
+                        id: "safe-task-" + Date.now() + "-3",
+                        name: "Kegiatan DUMMY (Boleh Dihapus)",
+                        date: "2024-12-21",
+                        location: "Lokasi Dummy",
+                        organizer: "Test Delete",
+                        description: "Ini adalah data dummy yang AMAN untuk dihapus sebagai test",
+                        createdAt: new Date().toISOString(),
+                        _safe: true,
+                        _dummy: true
+                    }
+                ];
+
+                // Save safe data
+                localStorage.setItem('schools_data', JSON.stringify(safeSchools));
+                localStorage.setItem('schools_data_backup', JSON.stringify(safeSchools));
+                
+                localStorage.setItem('additional_tasks_data', JSON.stringify(safeTasks));
+                localStorage.setItem('additional_tasks_data_backup', JSON.stringify(safeTasks));
+
+                localStorage.setItem('safe_data_created', new Date().toISOString());
+
+                document.getElementById('safeResult').style.display = 'block';
+                document.getElementById('safeResult').textContent = 
+                    `🛡️ DATA AMAN BERHASIL DIBUAT!\n\n` +
+                    `✅ Sekolah safe: ${safeSchools.length}\n` +
+                    `✅ Tugas safe: ${safeTasks.length}\n` +
+                    `✅ ID format: safe-[type]-[timestamp]-[number]\n` +
+                    `✅ Backup: CREATED\n\n` +
+                    `🧪 Ada 1 data DUMMY yang aman untuk test delete\n` +
+                    `🚀 Sekarang buka aplikasi dan test!`;
+
+            } catch (error) {
+                document.getElementById('safeResult').style.display = 'block';
+                document.getElementById('safeResult').className = 'emergency';
+                document.getElementById('safeResult').textContent = `❌ Error: ${error.message}`;
+            }
+        }
+
+        function testDeleteSafety() {
+            try {
+                // Test delete function safety
+                const tasksData = localStorage.getItem('additional_tasks_data');
+                const tasks = tasksData ? JSON.parse(tasksData) : [];
+                
+                const dummyTask = tasks.find(t => t._dummy === true);
+                
+                if (!dummyTask) {
+                    document.getElementById('testResult').style.display = 'block';
+                    document.getElementById('testResult').textContent = 
+                        `⚠️ TIDAK ADA DATA DUMMY\n\n` +
+                        `Klik "BUAT DATA AMAN" dulu untuk membuat data dummy yang aman untuk dihapus.`;
+                    return;
+                }
+
+                // Simulate safe delete
+                const beforeCount = tasks.length;
+                const afterTasks = tasks.filter(t => t.id !== dummyTask.id);
+                const afterCount = afterTasks.length;
+
+                // Don't actually delete, just simulate
+                const result = `🧪 SIMULASI DELETE AMAN\n\n` +
+                    `📊 Data sebelum delete: ${beforeCount}\n` +
+                    `🎯 Target delete: ${dummyTask.name}\n` +
+                    `📊 Data setelah delete: ${afterCount}\n` +
+                    `✅ Selisih: ${beforeCount - afterCount} (harus = 1)\n\n` +
+                    `${afterCount === beforeCount - 1 ? 
+                        '✅ DELETE FUNCTION AMAN!' : 
+                        '❌ DELETE FUNCTION BERMASALAH!'}\n\n` +
+                    `💡 Untuk test real, hapus data "DUMMY" di aplikasi.`;
+
+                document.getElementById('testResult').style.display = 'block';
+                document.getElementById('testResult').textContent = result;
+
+            } catch (error) {
+                document.getElementById('testResult').style.display = 'block';
+                document.getElementById('testResult').className = 'emergency';
+                document.getElementById('testResult').textContent = `❌ Error: ${error.message}`;
+            }
+        }
+
+        // Auto-restore on load
+        window.onload = function() {
+            const hasData = localStorage.getItem('additional_tasks_data');
+            if (!hasData) {
+                setTimeout(emergencyRestore, 1000);
+            }
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔧 Repair Data Aktivitas Wawan</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh; padding: 20px;
+        }
+        .container {
+            max-width: 1200px; margin: 0 auto; background: white;
+            border-radius: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            color: white; padding: 30px; text-align: center;
+        }
+        .header h1 {
+            font-size: 2.5em; margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        .content { padding: 40px; }
+        .section {
+            margin-bottom: 30px; padding: 25px; border-radius: 15px;
+            border-left: 5px solid #667eea; background: #f8f9ff;
+        }
+        .section h2 { color: #2c3e50; margin-bottom: 15px; font-size: 1.5em; }
+        .button-group {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px; margin: 20px 0;
+        }
+        .btn {
+            padding: 15px 25px; border: none; border-radius: 10px;
+            font-size: 16px; font-weight: bold; cursor: pointer;
+            transition: all 0.3s ease; text-align: center;
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+        }
+        .btn-primary { background: linear-gradient(135deg, #667eea, #764ba2); color: white; }
+        .btn-success { background: linear-gradient(135deg, #56ab2f, #a8e6cf); color: white; }
+        .btn-warning { background: linear-gradient(135deg, #f093fb, #f5576c); color: white; }
+        .btn-danger { background: linear-gradient(135deg, #ff6b6b, #ee5a24); color: white; }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
+        .log {
+            background: #2c3e50; color: #ecf0f1; padding: 20px; border-radius: 10px;
+            font-family: 'Courier New', monospace; font-size: 14px;
+            max-height: 400px; overflow-y: auto; margin: 20px 0; white-space: pre-wrap;
+        }
+        .status {
+            padding: 15px; border-radius: 10px; margin: 15px 0;
+            font-weight: bold; text-align: center;
+        }
+        .status.success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .status.error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .status.info { background: #cce7ff; color: #004085; border: 1px solid #b3d7ff; }
+        .progress {
+            width: 100%; height: 20px; background: #ecf0f1;
+            border-radius: 10px; overflow: hidden; margin: 15px 0;
+        }
+        .progress-bar {
+            height: 100%; background: linear-gradient(90deg, #667eea, #764ba2);
+            width: 0%; transition: width 0.3s ease;
+        }
+        .data-preview {
+            background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 10px;
+            padding: 15px; margin: 15px 0; max-height: 300px; overflow-y: auto;
+        }
+        .data-item {
+            background: white; border-radius: 8px; padding: 10px;
+            margin: 5px 0; border-left: 4px solid #667eea;
+        }
+        .emoji { font-size: 1.2em; margin-right: 8px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔧 Repair Data Aktivitas Wawan</h1>
+            <p>Tool untuk memperbaiki data aktivitas user Wawan yang tidak sesuai</p>
+        </div>
+        
+        <div class="content">
+            <div class="section">
+                <h2>📊 Status Sistem</h2>
+                <div id="systemStatus" class="status info">
+                    <span class="emoji">⏳</span> Memuat status sistem...
+                </div>
+                <div class="progress">
+                    <div id="progressBar" class="progress-bar"></div>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2>⚡ Aksi Perbaikan</h2>
+                <div class="button-group">
+                    <button class="btn btn-primary" onclick="diagnoseIssue()">
+                        <span class="emoji">🔍</span> Diagnosa Masalah
+                    </button>
+                    <button class="btn btn-success" onclick="repairWawanData()">
+                        <span class="emoji">🔧</span> Perbaiki Data Wawan
+                    </button>
+                    <button class="btn btn-warning" onclick="syncData()">
+                        <span class="emoji">🔄</span> Sinkronisasi Data
+                    </button>
+                    <button class="btn btn-danger" onclick="forceRefresh()">
+                        <span class="emoji">💥</span> Force Refresh
+                    </button>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2>👁️ Preview Data</h2>
+                <div class="button-group">
+                    <button class="btn btn-primary" onclick="showCurrentData()">
+                        <span class="emoji">📋</span> Data Saat Ini
+                    </button>
+                    <button class="btn btn-success" onclick="showCorrectData()">
+                        <span class="emoji">✅</span> Data yang Benar
+                    </button>
+                </div>
+                <div id="dataPreview" class="data-preview" style="display: none;"></div>
+            </div>
+            
+            <div class="section">
+                <h2>📝 Log Aktivitas</h2>
+                <div id="logOutput" class="log">🔄 Sistem siap untuk memperbaiki data aktivitas Wawan...
+📊 Menunggu instruksi pengguna...</div>
+                <button class="btn btn-primary" onclick="clearLog()">
+                    <span class="emoji">🗑️</span> Clear Log
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let logElement = document.getElementById('logOutput');
+        let statusElement = document.getElementById('systemStatus');
+        let progressBar = document.getElementById('progressBar');
+        let dataPreview = document.getElementById('dataPreview');
+        
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const emoji = type === 'success' ? '✅' : type === 'error' ? '❌' : type === 'warning' ? '⚠️' : 'ℹ️';
+            logElement.textContent += `\n[${timestamp}] ${emoji} ${message}`;
+            logElement.scrollTop = logElement.scrollHeight;
+        }
+        
+        function updateStatus(message, type = 'info') {
+            statusElement.className = `status ${type}`;
+            statusElement.innerHTML = `<span class="emoji">${type === 'success' ? '✅' : type === 'error' ? '❌' : 'ℹ️'}</span> ${message}`;
+        }
+        
+        function updateProgress(percent) {
+            progressBar.style.width = percent + '%';
+        }
+        
+        function clearLog() {
+            logElement.textContent = '🔄 Log dibersihkan...\n📊 Siap untuk operasi baru...';
+        }
+        
+        async function diagnoseIssue() {
+            log('🔍 Memulai diagnosa masalah data aktivitas Wawan...');
+            updateStatus('Mendiagnosa masalah data...', 'info');
+            updateProgress(10);
+            
+            try {
+                log('📊 Memeriksa data di localStorage...');
+                updateProgress(25);
+                
+                const localDatabase = localStorage.getItem('local-database');
+                const tasksData = localStorage.getItem('tasks');
+                const supervisionsData = localStorage.getItem('supervisions');
+                const eventsData = localStorage.getItem('events');
+                const additionalTasksData = localStorage.getItem('additional_tasks');
+                
+                log(`📋 local-database: ${localDatabase ? 'Ada' : 'Tidak ada'}`);
+                log(`📋 tasks: ${tasksData ? 'Ada' : 'Tidak ada'}`);
+                log(`📋 supervisions: ${supervisionsData ? 'Ada' : 'Tidak ada'}`);
+                log(`📋 events: ${eventsData ? 'Ada' : 'Tidak ada'}`);
+                log(`📋 additional_tasks: ${additionalTasksData ? 'Ada' : 'Tidak ada'}`);
+                
+                updateProgress(50);
+                
+                let wawanDataFound = false;
+                if (localDatabase) {
+                    const db = JSON.parse(localDatabase);
+                    const wawanTasks = db.tasks?.filter(t => 
+                        t.userId === 'wawan-123' || 
+                        t.username === 'wawan' || 
+                        (t.createdBy && t.createdBy.toLowerCase() === 'wawan')
+                    ) || [];
+                    
+                    const wawanSupervisions = db.supervisions?.filter(s => 
+                        s.userId === 'wawan-123' || 
+                        s.username === 'wawan' || 
+                        (s.createdBy && s.createdBy.toLowerCase() === 'wawan')
+                    ) || [];
+                    
+                    log(`📊 Ditemukan ${wawanTasks.length} tugas Wawan`);
+                    log(`📊 Ditemukan ${wawanSupervisions.length} supervisi Wawan`);
+                    
+                    if (wawanTasks.length > 0 || wawanSupervisions.length > 0) {
+                        wawanDataFound = true;
+                    }
+                }
+                
+                updateProgress(75);
+                
+                log('🌐 Memeriksa API endpoints...');
+                try {
+                    const response = await fetch('/api/users/wawan-123/activities');
+                    if (response.ok) {
+                        const apiData = await response.json();
+                        log(`🌐 API Response: ${JSON.stringify(apiData).substring(0, 100)}...`);
+                    } else {
+                        log(`❌ API Error: ${response.status} ${response.statusText}`);
+                    }
+                } catch (error) {
+                    log(`❌ API Request Failed: ${error.message}`);
+                }
+                
+                updateProgress(100);
+                
+                if (wawanDataFound) {
+                    updateStatus('Data Wawan ditemukan di localStorage', 'success');
+                    log('✅ Diagnosa selesai: Data Wawan ada di localStorage');
+                } else {
+                    updateStatus('Data Wawan tidak ditemukan atau tidak sesuai', 'error');
+                    log('❌ Diagnosa selesai: Data Wawan tidak ditemukan atau bermasalah');
+                }
+                
+            } catch (error) {
+                log(`❌ Error saat diagnosa: ${error.message}`);
+                updateStatus('Error saat diagnosa', 'error');
+            }
+        }
+        
+        async function repairWawanData() {
+            log('🔧 Memulai perbaikan data aktivitas Wawan...');
+            updateStatus('Memperbaiki data aktivitas...', 'info');
+            updateProgress(0);
+            
+            try {
+                log('💾 Membuat backup data existing...');
+                const existingData = localStorage.getItem('local-database');
+                if (existingData) {
+                    localStorage.setItem('local-database-backup', existingData);
+                    log('✅ Backup data berhasil dibuat');
+                }
+                updateProgress(20);
+                
+                log('📝 Menyiapkan data aktivitas Wawan yang benar...');
+                const correctWawanData = {
+                    tasks: [
+                        {
+                            id: 'task-wawan-real-1',
+                            title: 'Supervisi Akademik SMKN 14 Garut',
+                            name: 'Supervisi Akademik SMKN 14 Garut',
+                            description: 'Melakukan supervisi akademik dan pembinaan kepala sekolah SMKN 14 Garut sesuai program kerja tahunan',
+                            category: 'Supervisi Akademik',
+                            completed: true,
+                            date: '2025-01-15T00:00:00.000Z',
+                            userId: 'wawan-123',
+                            username: 'wawan',
+                            createdBy: 'wawan'
+                        },
+                        {
+                            id: 'task-wawan-real-2',
+                            title: 'Evaluasi Program Sekolah Penggerak',
+                            name: 'Evaluasi Program Sekolah Penggerak',
+                            description: 'Evaluasi implementasi program sekolah penggerak di wilayah binaan',
+                            category: 'Evaluasi Program',
+                            completed: false,
+                            date: '2025-01-20T00:00:00.000Z',
+                            userId: 'wawan-123',
+                            username: 'wawan',
+                            createdBy: 'wawan'
+                        }
+                    ],
+                    supervisions: [
+                        {
+                            id: 'sup-wawan-real-1',
+                            schoolName: 'SMKN 14 Garut',
+                            school: 'SMKN 14 Garut',
+                            type: 'Supervisi Akademik',
+                            findings: 'Pembelajaran sudah sesuai kurikulum merdeka, namun perlu peningkatan dalam penggunaan teknologi pembelajaran digital',
+                            recommendations: 'Tingkatkan penggunaan media pembelajaran digital dan platform e-learning untuk meningkatkan kualitas pembelajaran',
+                            notes: 'Supervisi berjalan lancar, kepala sekolah sangat kooperatif dalam implementasi program',
+                            date: '2025-01-15T00:00:00.000Z',
+                            userId: 'wawan-123',
+                            username: 'wawan',
+                            createdBy: 'wawan'
+                        },
+                        {
+                            id: 'sup-wawan-real-2',
+                            schoolName: 'SMKN 4 Garut',
+                            school: 'SMKN 4 Garut',
+                            type: 'Supervisi Manajerial',
+                            findings: 'Manajemen sekolah sudah baik, namun sistem dokumentasi dan arsip masih perlu diperbaiki',
+                            recommendations: 'Perbaiki sistem dokumentasi dan arsip sekolah, implementasikan sistem digital untuk efisiensi',
+                            notes: 'Perlu follow up dalam 2 minggu untuk memastikan perbaikan sistem dokumentasi',
+                            date: '2025-01-18T00:00:00.000Z',
+                            userId: 'wawan-123',
+                            username: 'wawan',
+                            createdBy: 'wawan'
+                        }
+                    ],
+                    events: [
+                        {
+                            id: 'event-wawan-real-1',
+                            title: 'Rapat Koordinasi Pengawas Sekolah',
+                            name: 'Rapat Koordinasi Pengawas Sekolah',
+                            description: 'Rapat koordinasi bulanan pengawas sekolah se-Kabupaten Garut membahas program kerja dan evaluasi',
+                            date: '2025-01-15T00:00:00.000Z',
+                            time: '09:00',
+                            userId: 'wawan-123',
+                            username: 'wawan',
+                            createdBy: 'wawan'
+                        },
+                        {
+                            id: 'event-wawan-real-2',
+                            title: 'Workshop Implementasi Kurikulum Merdeka',
+                            name: 'Workshop Implementasi Kurikulum Merdeka',
+                            description: 'Workshop peningkatan kapasitas pengawas dalam implementasi kurikulum merdeka di sekolah binaan',
+                            date: '2025-01-25T00:00:00.000Z',
+                            time: '08:00',
+                            userId: 'wawan-123',
+                            username: 'wawan',
+                            createdBy: 'wawan'
+                        }
+                    ],
+                    additionalTasks: [
+                        {
+                            id: 'add-wawan-real-1',
+                            name: 'Rapat Koordinasi Pengawas Sekolah',
+                            title: 'Rapat Koordinasi Pengawas Sekolah',
+                            description: 'Mengikuti rapat koordinasi pengawas sekolah tingkat kabupaten membahas program strategis',
+                            organizer: 'Dinas Pendidikan Kabupaten Garut',
+                            location: 'Aula Dinas Pendidikan Garut',
+                            date: '2025-01-15T00:00:00.000Z',
+                            userId: 'wawan-123',
+                            username: 'wawan',
+                            createdBy: 'wawan'
+                        },
+                        {
+                            id: 'add-wawan-real-2',
+                            name: 'Workshop Kurikulum Merdeka',
+                            title: 'Workshop Kurikulum Merdeka',
+                            description: 'Mengikuti workshop implementasi kurikulum merdeka untuk pengawas sekolah tingkat provinsi',
+                            organizer: 'Dinas Pendidikan Provinsi Jawa Barat',
+                            location: 'Hotel Santika Garut',
+                            date: '2025-01-30T00:00:00.000Z',
+                            userId: 'wawan-123',
+                            username: 'wawan',
+                            createdBy: 'wawan'
+                        }
+                    ]
+                };
+                
+                updateProgress(40);
+                
+                log('💾 Mengupdate data di localStorage...');
+                let currentData = {};
+                try {
+                    currentData = JSON.parse(localStorage.getItem('local-database') || '{}');
+                } catch (e) {
+                    log('⚠️ localStorage corrupt, membuat data baru...');
+                    currentData = {};
+                }
+                
+                // Remove old Wawan data
+                if (currentData.tasks) {
+                    currentData.tasks = currentData.tasks.filter(t => 
+                        t.userId !== 'wawan-123' && 
+                        t.username !== 'wawan' && 
+                        (!t.createdBy || t.createdBy.toLowerCase() !== 'wawan')
+                    );
+                }
+                if (currentData.supervisions) {
+                    currentData.supervisions = currentData.supervisions.filter(s => 
+                        s.userId !== 'wawan-123' && 
+                        s.username !== 'wawan' && 
+                        (!s.createdBy || s.createdBy.toLowerCase() !== 'wawan')
+                    );
+                }
+                if (currentData.events) {
+                    currentData.events = currentData.events.filter(e => 
+                        e.userId !== 'wawan-123' && 
+                        e.username !== 'wawan' && 
+                        (!e.createdBy || e.createdBy.toLowerCase() !== 'wawan')
+                    );
+                }
+                if (currentData.additionalTasks) {
+                    currentData.additionalTasks = currentData.additionalTasks.filter(a => 
+                        a.userId !== 'wawan-123' && 
+                        a.username !== 'wawan' && 
+                        (!a.createdBy || a.createdBy.toLowerCase() !== 'wawan')
+                    );
+                }
+                
+                updateProgress(60);
+                
+                // Add correct Wawan data
+                currentData.tasks = (currentData.tasks || []).concat(correctWawanData.tasks);
+                currentData.supervisions = (currentData.supervisions || []).concat(correctWawanData.supervisions);
+                currentData.events = (currentData.events || []).concat(correctWawanData.events);
+                currentData.additionalTasks = (currentData.additionalTasks || []).concat(correctWawanData.additionalTasks);
+                
+                localStorage.setItem('local-database', JSON.stringify(currentData));
+                log('✅ Data berhasil diupdate di localStorage');
+                
+                updateProgress(80);
+                
+                log('🗑️ Membersihkan cache...');
+                const cacheKeys = ['tasks', 'supervisions', 'events', 'additional_tasks'];
+                cacheKeys.forEach(key => {
+                    if (localStorage.getItem(key)) {
+                        localStorage.removeItem(key);
+                        log(`🗑️ Cache ${key} dibersihkan`);
+                    }
+                });
+                
+                if (window.queryClient) {
+                    window.queryClient.clear();
+                    log('🗑️ React Query cache dibersihkan');
+                }
+                
+                updateProgress(100);
+                
+                log('✅ Perbaikan data aktivitas Wawan selesai!');
+                updateStatus('Data aktivitas Wawan berhasil diperbaiki', 'success');
+                
+                setTimeout(() => {
+                    alert('✅ Data aktivitas Wawan berhasil diperbaiki!\n\nSilakan refresh halaman admin dan cek kembali aktivitas user Wawan.');
+                }, 1000);
+                
+            } catch (error) {
+                log(`❌ Error saat perbaikan: ${error.message}`);
+                updateStatus('Error saat perbaikan data', 'error');
+            }
+        }
+        
+        function syncData() {
+            log('🔄 Memulai sinkronisasi data dari localStorage...');
+            updateStatus('Sinkronisasi data...', 'info');
+            
+            try {
+                const localData = localStorage.getItem('local-database');
+                if (localData) {
+                    const data = JSON.parse(localData);
+                    
+                    if (data.tasks) localStorage.setItem('tasks', JSON.stringify(data.tasks));
+                    if (data.supervisions) localStorage.setItem('supervisions', JSON.stringify(data.supervisions));
+                    if (data.events) localStorage.setItem('events', JSON.stringify(data.events));
+                    if (data.additionalTasks) localStorage.setItem('additional_tasks', JSON.stringify(data.additionalTasks));
+                    
+                    log('✅ Sinkronisasi data selesai');
+                    updateStatus('Data berhasil disinkronisasi', 'success');
+                } else {
+                    log('❌ Tidak ada data di localStorage untuk disinkronisasi');
+                    updateStatus('Tidak ada data untuk disinkronisasi', 'error');
+                }
+            } catch (error) {
+                log(`❌ Error saat sinkronisasi: ${error.message}`);
+                updateStatus('Error saat sinkronisasi', 'error');
+            }
+        }
+        
+        function forceRefresh() {
+            log('💥 Memulai force refresh data...');
+            updateStatus('Force refresh data...', 'info');
+            
+            try {
+                const keysToRemove = ['tasks', 'supervisions', 'events', 'additional_tasks'];
+                keysToRemove.forEach(key => {
+                    localStorage.removeItem(key);
+                    log(`🗑️ Removed cache: ${key}`);
+                });
+                
+                if (window.queryClient) {
+                    window.queryClient.clear();
+                    log('🗑️ React Query cache cleared');
+                }
+                
+                log('🔄 Force reload halaman...');
+                updateStatus('Data di-refresh, reload halaman...', 'success');
+                
+                setTimeout(() => {
+                    window.location.reload();
+                }, 2000);
+                
+            } catch (error) {
+                log(`❌ Error saat force refresh: ${error.message}`);
+                updateStatus('Error saat force refresh', 'error');
+            }
+        }
+        
+        function showCurrentData() {
+            log('👁️ Menampilkan data aktivitas Wawan saat ini...');
+            
+            try {
+                const localData = localStorage.getItem('local-database');
+                if (!localData) {
+                    dataPreview.innerHTML = '<div class="data-item">❌ Tidak ada data di localStorage</div>';
+                    dataPreview.style.display = 'block';
+                    return;
+                }
+                
+                const data = JSON.parse(localData);
+                let html = '<h3>📊 Data Aktivitas Wawan Saat Ini:</h3>';
+                
+                const wawanTasks = data.tasks?.filter(t => 
+                    t.userId === 'wawan-123' || 
+                    t.username === 'wawan' || 
+                    (t.createdBy && t.createdBy.toLowerCase() === 'wawan')
+                ) || [];
+                
+                html += `<div class="data-item"><strong>📋 Tugas (${wawanTasks.length}):</strong>`;
+                wawanTasks.forEach(task => {
+                    html += `<br>• ${task.title || task.name || 'Untitled'}`;
+                });
+                html += '</div>';
+                
+                const wawanSupervisions = data.supervisions?.filter(s => 
+                    s.userId === 'wawan-123' || 
+                    s.username === 'wawan' || 
+                    (s.createdBy && s.createdBy.toLowerCase() === 'wawan')
+                ) || [];
+                
+                html += `<div class="data-item"><strong>🏫 Supervisi (${wawanSupervisions.length}):</strong>`;
+                wawanSupervisions.forEach(sup => {
+                    html += `<br>• ${sup.schoolName || sup.school || 'Unknown School'} - ${sup.type || 'Unknown Type'}`;
+                });
+                html += '</div>';
+                
+                const wawanEvents = data.events?.filter(e => 
+                    e.userId === 'wawan-123' || 
+                    e.username === 'wawan' || 
+                    (e.createdBy && e.createdBy.toLowerCase() === 'wawan')
+                ) || [];
+                
+                html += `<div class="data-item"><strong>📅 Kegiatan (${wawanEvents.length}):</strong>`;
+                wawanEvents.forEach(event => {
+                    html += `<br>• ${event.title || event.name || 'Untitled'}`;
+                });
+                html += '</div>';
+                
+                const wawanAdditional = data.additionalTasks?.filter(a => 
+                    a.userId === 'wawan-123' || 
+                    a.username === 'wawan' || 
+                    (a.createdBy && a.createdBy.toLowerCase() === 'wawan')
+                ) || [];
+                
+                html += `<div class="data-item"><strong>➕ Tugas Tambahan (${wawanAdditional.length}):</strong>`;
+                wawanAdditional.forEach(task => {
+                    html += `<br>• ${task.name || task.title || 'Untitled'}`;
+                });
+                html += '</div>';
+                
+                dataPreview.innerHTML = html;
+                dataPreview.style.display = 'block';
+                
+                log('✅ Data saat ini berhasil ditampilkan');
+                
+            } catch (error) {
+                log(`❌ Error menampilkan data: ${error.message}`);
+                dataPreview.innerHTML = '<div class="data-item">❌ Error menampilkan data</div>';
+                dataPreview.style.display = 'block';
+            }
+        }
+        
+        function showCorrectData() {
+            log('✅ Menampilkan data aktivitas Wawan yang benar...');
+            
+            const html = `
+                <h3>✅ Data Aktivitas Wawan yang Benar:</h3>
+                <div class="data-item">
+                    <strong>📋 Tugas (2):</strong>
+                    <br>• Supervisi Akademik SMKN 14 Garut
+                    <br>• Evaluasi Program Sekolah Penggerak
+                </div>
+                <div class="data-item">
+                    <strong>🏫 Supervisi (2):</strong>
+                    <br>• SMKN 14 Garut - Supervisi Akademik
+                    <br>• SMKN 4 Garut - Supervisi Manajerial
+                </div>
+                <div class="data-item">
+                    <strong>📅 Kegiatan (2):</strong>
+                    <br>• Rapat Koordinasi Pengawas Sekolah
+                    <br>• Workshop Implementasi Kurikulum Merdeka
+                </div>
+                <div class="data-item">
+                    <strong>➕ Tugas Tambahan (2):</strong>
+                    <br>• Rapat Koordinasi Pengawas Sekolah
+                    <br>• Workshop Kurikulum Merdeka
+                </div>
+            `;
+            
+            dataPreview.innerHTML = html;
+            dataPreview.style.display = 'block';
+            
+            log('✅ Data yang benar berhasil ditampilkan');
+        }
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            log('🚀 Repair Data Aktivitas Wawan siap digunakan');
+            updateStatus('Sistem siap untuk memperbaiki data aktivitas', 'info');
+            
+            setTimeout(() => {
+                diagnoseIssue();
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

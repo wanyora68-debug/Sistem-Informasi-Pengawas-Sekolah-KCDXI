@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inject Wawan Data to Dialog</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .step {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background: #f9f9f9;
+        }
+        .success { border-color: #4CAF50; background: #f0fff0; }
+        .error { border-color: #f44336; background: #fff0f0; }
+        .warning { border-color: #ff9800; background: #fff8e1; }
+        .info { border-color: #2196F3; background: #f0f8ff; }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background: #0056b3; }
+        .success-btn { background: #28a745; }
+        .success-btn:hover { background: #218838; }
+        pre {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+        }
+        .log {
+            max-height: 300px;
+            overflow-y: auto;
+            background: #000;
+            color: #0f0;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>💉 Inject Wawan Data to Dialog</h1>
+        <p>Tool untuk langsung inject data Wawan ke dialog aktivitas user</p>
+
+        <div class="step warning">
+            <h3>⚠️ Instruksi Penggunaan</h3>
+            <ol>
+                <li>Buka halaman <strong>localhost:5000/users</strong> di tab lain</li>
+                <li>Klik tombol "Inject Data" di bawah</li>
+                <li>Kembali ke halaman users dan buka dialog aktivitas Wawan</li>
+                <li>Data seharusnya muncul dengan benar</li>
+            </ol>
+        </div>
+
+        <div class="step">
+            <h3>💉 Inject Actions</h3>
+            <button onclick="injectWawanData()" class="success-btn">💉 Inject Wawan Data</button>
+            <button onclick="createMockAPI()">🎭 Create Mock API Response</button>
+            <button onclick="forceDialogRefresh()">🔄 Force Dialog Refresh</button>
+        </div>
+
+        <div class="step">
+            <h3>📊 Data Preview</h3>
+            <div id="dataPreview"></div>
+        </div>
+
+        <div class="step">
+            <h3>📋 Log</h3>
+            <div id="logOutput" class="log"></div>
+            <button onclick="clearLog()">🗑️ Clear Log</button>
+        </div>
+    </div>
+
+    <script>
+        let logElement = document.getElementById('logOutput');
+        
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const color = type === 'error' ? '#ff6b6b' : type === 'success' ? '#51cf66' : type === 'warning' ? '#ffd43b' : '#74c0fc';
+            logElement.innerHTML += `<div style="color: ${color}">[${timestamp}] ${message}</div>`;
+            logElement.scrollTop = logElement.scrollHeight;
+            console.log(message);
+        }
+
+        function clearLog() {
+            logElement.innerHTML = '';
+        }
+
+        function injectWawanData() {
+            log('💉 Starting Wawan data injection...', 'info');
+            
+            try {
+                // Get current localStorage data
+                const localDb = JSON.parse(localStorage.getItem('local-database') || '{}');
+                
+                // Ensure all Wawan data has proper userId and username
+                const ensureWawanIdentifiers = (items, type) => {
+                    if (!items || !Array.isArray(items)) return [];
+                    
+                    return items.map(item => {
+                        // Check if this item belongs to Wawan
+                        const isWawanItem = 
+                            item.userId === 'wawan' ||
+                            (item.username && item.username.toLowerCase() === 'wawan') ||
+                            (item.title && item.title.toLowerCase().includes('wawan')) ||
+                            (item.name && item.name.toLowerCase().includes('wawan')) ||
+                            (item.schoolName && item.schoolName.toLowerCase().includes('wawan')) ||
+                            (item.description && item.description.toLowerCase().includes('wawan')) ||
+                            (item.notes && item.notes.toLowerCase().includes('wawan')) ||
+                            (item.findings && item.findings.toLowerCase().includes('wawan'));
+                        
+                        if (isWawanItem) {
+                            // Ensure proper identifiers
+                            const updatedItem = {
+                                ...item,
+                                userId: 'wawan',
+                                username: 'wawan',
+                                createdBy: 'wawan',
+                                assignedTo: 'wawan'
+                            };
+                            
+                            log(`✅ Updated ${type}: ${item.title || item.name || item.id}`, 'success');
+                            return updatedItem;
+                        }
+                        
+                        return item;
+                    });
+                };
+
+                // Update all data types
+                const updatedData = {
+                    ...localDb,
+                    tasks: ensureWawanIdentifiers(localDb.tasks || [], 'task'),
+                    supervisions: ensureWawanIdentifiers(localDb.supervisions || [], 'supervision'),
+                    events: ensureWawanIdentifiers(localDb.events || [], 'event'),
+                    additionalTasks: ensureWawanIdentifiers(localDb.additionalTasks || [], 'additional task')
+                };
+
+                // Save back to localStorage
+                localStorage.setItem('local-database', JSON.stringify(updatedData));
+                
+                // Also create specific cache for user activities dialog
+                const wawanActivities = {
+                    tasks: updatedData.tasks.filter(t => t.userId === 'wawan'),
+                    supervisions: updatedData.supervisions.filter(s => s.userId === 'wawan'),
+                    events: updatedData.events.filter(e => e.userId === 'wawan'),
+                    additionalTasks: updatedData.additionalTasks.filter(at => at.userId === 'wawan')
+                };
+
+                // Store in multiple cache keys that the dialog might check
+                localStorage.setItem('wawan-activities', JSON.stringify(wawanActivities));
+                localStorage.setItem('user-wawan-activities', JSON.stringify(wawanActivities));
+                localStorage.setItem('activities-wawan', JSON.stringify(wawanActivities));
+
+                // Show preview
+                document.getElementById('dataPreview').innerHTML = `
+                    <h4>💉 Injected Wawan Data:</h4>
+                    <pre>${JSON.stringify({
+                        tasks: wawanActivities.tasks.length,
+                        supervisions: wawanActivities.supervisions.length,
+                        events: wawanActivities.events.length,
+                        additionalTasks: wawanActivities.additionalTasks.length,
+                        sampleTask: wawanActivities.tasks[0]?.title || 'No tasks',
+                        sampleSupervision: wawanActivities.supervisions[0]?.schoolName || 'No supervisions',
+                        sampleEvent: wawanActivities.events[0]?.title || 'No events',
+                        sampleAdditionalTask: wawanActivities.additionalTasks[0]?.name || 'No additional tasks'
+                    }, null, 2)}</pre>
+                `;
+
+                log(`✅ Data injection complete! Found ${wawanActivities.tasks.length + wawanActivities.supervisions.length + wawanActivities.events.length + wawanActivities.additionalTasks.length} Wawan items`, 'success');
+                log('🎯 Now go to localhost:5000/users and open Wawan dialog', 'info');
+                
+            } catch (error) {
+                log(`❌ Injection error: ${error.message}`, 'error');
+            }
+        }
+
+        function createMockAPI() {
+            log('🎭 Creating mock API responses...', 'info');
+            
+            try {
+                // Get Wawan data
+                const localDb = JSON.parse(localStorage.getItem('local-database') || '{}');
+                
+                const wawanTasks = (localDb.tasks || []).filter(t => 
+                    t.userId === 'wawan' || 
+                    (t.username && t.username.toLowerCase() === 'wawan') ||
+                    (t.title && t.title.toLowerCase().includes('wawan'))
+                );
+                
+                const wawanSupervisions = (localDb.supervisions || []).filter(s => 
+                    s.userId === 'wawan' || 
+                    (s.username && s.username.toLowerCase() === 'wawan') ||
+                    (s.schoolName && s.schoolName.toLowerCase().includes('wawan'))
+                );
+                
+                const wawanEvents = (localDb.events || []).filter(e => 
+                    e.userId === 'wawan' || 
+                    (e.username && e.username.toLowerCase() === 'wawan') ||
+                    (e.title && e.title.toLowerCase().includes('wawan'))
+                );
+                
+                const wawanAdditionalTasks = (localDb.additionalTasks || []).filter(at => 
+                    at.userId === 'wawan' || 
+                    (at.username && at.username.toLowerCase() === 'wawan') ||
+                    (at.name && at.name.toLowerCase().includes('wawan'))
+                );
+
+                // Store mock API responses
+                localStorage.setItem('mock-api-users-wawan-tasks', JSON.stringify(wawanTasks));
+                localStorage.setItem('mock-api-users-wawan-supervisions', JSON.stringify(wawanSupervisions));
+                localStorage.setItem('mock-api-users-wawan-events', JSON.stringify(wawanEvents));
+                localStorage.setItem('mock-api-users-wawan-additional-tasks', JSON.stringify(wawanAdditionalTasks));
+
+                log(`✅ Mock API created with ${wawanTasks.length + wawanSupervisions.length + wawanEvents.length + wawanAdditionalTasks.length} items`, 'success');
+                
+            } catch (error) {
+                log(`❌ Mock API error: ${error.message}`, 'error');
+            }
+        }
+
+        function forceDialogRefresh() {
+            log('🔄 Forcing dialog refresh...', 'info');
+            
+            try {
+                // Clear any existing cache that might interfere
+                const cacheKeys = [
+                    'user-activities-cache',
+                    'activities-cache',
+                    'dialog-cache',
+                    'react-query-cache'
+                ];
+                
+                cacheKeys.forEach(key => {
+                    if (localStorage.getItem(key)) {
+                        localStorage.removeItem(key);
+                        log(`🗑️ Cleared cache: ${key}`, 'warning');
+                    }
+                });
+
+                // Try to trigger a refresh if we're on the users page
+                if (window.opener && window.opener.location.href.includes('/users')) {
+                    log('🔄 Attempting to refresh parent window...', 'info');
+                    window.opener.location.reload();
+                } else {
+                    log('ℹ️ Please manually refresh the users page', 'info');
+                }
+                
+            } catch (error) {
+                log(`❌ Refresh error: ${error.message}`, 'error');
+            }
+        }
+
+        // Initialize
+        log('🚀 Inject Wawan Data tool loaded', 'success');
+        log('💡 Click "Inject Wawan Data" then check the users page', 'info');
+    </script>
+</body>
+</html>

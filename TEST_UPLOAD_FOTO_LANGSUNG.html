@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧪 TEST UPLOAD FOTO LANGSUNG</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #f0fdf4;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border: 3px solid #16a34a;
+        }
+        h1 {
+            color: #16a34a;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .upload-area {
+            border: 3px dashed #16a34a;
+            padding: 40px;
+            text-align: center;
+            border-radius: 15px;
+            margin: 20px 0;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: #f0fdf4;
+        }
+        .upload-area:hover {
+            background: #dcfce7;
+            border-color: #15803d;
+        }
+        .upload-area.dragover {
+            background: #bbf7d0;
+            border-color: #15803d;
+        }
+        button {
+            background: #16a34a;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            cursor: pointer;
+            margin: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            width: calc(100% - 20px);
+        }
+        button:hover {
+            background: #15803d;
+        }
+        .result {
+            margin: 20px 0;
+            padding: 20px;
+            border-radius: 10px;
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            font-family: monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .preview {
+            max-width: 200px;
+            max-height: 200px;
+            border-radius: 10px;
+            margin: 20px auto;
+            display: block;
+            border: 3px solid #16a34a;
+        }
+        .success {
+            background: #f0fdf4;
+            border-color: #16a34a;
+            color: #15803d;
+        }
+        .error {
+            background: #fef2f2;
+            border-color: #dc2626;
+            color: #dc2626;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 TEST UPLOAD FOTO</h1>
+        
+        <div class="upload-area" id="uploadArea" onclick="document.getElementById('fileInput').click()">
+            <div id="uploadContent">
+                <h3>📷 DRAG & DROP FOTO DISINI</h3>
+                <p>atau klik untuk pilih file</p>
+                <p style="font-size: 12px; color: #666;">Format: JPG, PNG (Max 5MB)</p>
+            </div>
+            <img id="preview" class="preview" style="display: none;" />
+        </div>
+        
+        <input type="file" id="fileInput" accept="image/jpeg,image/jpg,image/png" style="display: none;">
+        
+        <button onclick="testCurrentProfile()">📊 CEK PROFIL SAAT INI</button>
+        <button onclick="simulateUpload()">🧪 SIMULASI UPLOAD</button>
+        <button onclick="openProfile()">👤 BUKA HALAMAN PROFIL</button>
+        
+        <div id="result" class="result" style="display: none;"></div>
+    </div>
+
+    <script>
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const preview = document.getElementById('preview');
+        const result = document.getElementById('result');
+        const uploadContent = document.getElementById('uploadContent');
+
+        // Drag and drop handlers
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleFile(files[0]);
+            }
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                handleFile(file);
+            }
+        });
+
+        function handleFile(file) {
+            showResult('🔄 PROCESSING FILE...', 'info');
+            
+            const log = [];
+            log.push('📷 FILE UPLOAD TEST:');
+            log.push('');
+            log.push(`📁 File: ${file.name}`);
+            log.push(`📏 Size: ${(file.size / 1024 / 1024).toFixed(2)} MB`);
+            log.push(`🎨 Type: ${file.type}`);
+            log.push('');
+
+            // Validation
+            if (!file.type.startsWith('image/')) {
+                log.push('❌ VALIDATION FAILED: Bukan file gambar');
+                showResult(log.join('\\n'), 'error');
+                return;
+            }
+
+            if (file.size > 5 * 1024 * 1024) {
+                log.push('❌ VALIDATION FAILED: File terlalu besar (>5MB)');
+                showResult(log.join('\\n'), 'error');
+                return;
+            }
+
+            log.push('✅ VALIDATION PASSED');
+            log.push('');
+            log.push('🔄 Converting to base64...');
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const base64 = e.target.result;
+                log.push('✅ Base64 conversion successful');
+                log.push(`📊 Base64 length: ${base64.length} characters`);
+                log.push('');
+
+                // Show preview
+                preview.src = base64;
+                preview.style.display = 'block';
+                uploadContent.style.display = 'none';
+
+                // Test localStorage save
+                try {
+                    const profileData = localStorage.getItem('profile_data');
+                    const currentProfile = profileData ? JSON.parse(profileData) : {};
+                    
+                    const updatedProfile = {
+                        ...currentProfile,
+                        photoUrl: base64,
+                        updatedAt: new Date().toISOString(),
+                        uploadTest: true
+                    };
+
+                    localStorage.setItem('profile_data', JSON.stringify(updatedProfile));
+                    log.push('✅ Saved to localStorage');
+                    log.push('');
+                    log.push('🎉 UPLOAD TEST BERHASIL!');
+                    log.push('');
+                    log.push('📋 Next steps:');
+                    log.push('1. Buka halaman profil');
+                    log.push('2. Foto harus muncul di avatar');
+                    log.push('3. Jika tidak muncul, ada masalah di React Query');
+
+                    showResult(log.join('\\n'), 'success');
+
+                } catch (error) {
+                    log.push(`❌ LocalStorage error: ${error.message}`);
+                    showResult(log.join('\\n'), 'error');
+                }
+            };
+
+            reader.onerror = function() {
+                log.push('❌ Base64 conversion failed');
+                showResult(log.join('\\n'), 'error');
+            };
+
+            reader.readAsDataURL(file);
+        }
+
+        function testCurrentProfile() {
+            try {
+                const log = [];
+                log.push('📊 CURRENT PROFILE STATUS:');
+                log.push('');
+
+                const profileData = localStorage.getItem('profile_data');
+                if (profileData) {
+                    const profile = JSON.parse(profileData);
+                    log.push('✅ Profile data exists');
+                    log.push(`👤 Full Name: ${profile.fullName || 'Not set'}`);
+                    log.push(`📷 Photo URL: ${profile.photoUrl ? 'EXISTS' : 'NOT SET'}`);
+                    if (profile.photoUrl) {
+                        log.push(`📏 Photo size: ${profile.photoUrl.length} characters`);
+                        log.push(`🎨 Photo type: ${profile.photoUrl.substring(0, 30)}...`);
+                    }
+                    log.push(`🕒 Updated: ${profile.updatedAt || 'Not set'}`);
+                } else {
+                    log.push('❌ No profile data found');
+                }
+
+                log.push('');
+
+                const userData = localStorage.getItem('user_data');
+                if (userData) {
+                    const user = JSON.parse(userData);
+                    log.push('✅ User data exists');
+                    log.push(`👤 Username: ${user.username || 'Not set'}`);
+                    log.push(`🏷️ Role: ${user.role || 'Not set'}`);
+                } else {
+                    log.push('❌ No user data found');
+                }
+
+                showResult(log.join('\\n'), 'info');
+
+            } catch (error) {
+                showResult(`❌ Error checking profile: ${error.message}`, 'error');
+            }
+        }
+
+        function simulateUpload() {
+            // Create a small test image (green dot)
+            const canvas = document.createElement('canvas');
+            canvas.width = 100;
+            canvas.height = 100;
+            const ctx = canvas.getContext('2d');
+            
+            // Draw green circle
+            ctx.fillStyle = '#16a34a';
+            ctx.beginPath();
+            ctx.arc(50, 50, 40, 0, 2 * Math.PI);
+            ctx.fill();
+            
+            // Add text
+            ctx.fillStyle = 'white';
+            ctx.font = '12px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('TEST', 50, 55);
+
+            canvas.toBlob((blob) => {
+                const file = new File([blob], 'test-photo.png', { type: 'image/png' });
+                handleFile(file);
+            }, 'image/png');
+        }
+
+        function openProfile() {
+            window.open('http://localhost:5000/profile', '_blank');
+        }
+
+        function showResult(text, type = 'info') {
+            result.style.display = 'block';
+            result.textContent = text;
+            result.className = `result ${type}`;
+        }
+
+        // Auto-check profile on load
+        window.onload = function() {
+            setTimeout(testCurrentProfile, 1000);
+        };
+    </script>
+</body>
+</html>

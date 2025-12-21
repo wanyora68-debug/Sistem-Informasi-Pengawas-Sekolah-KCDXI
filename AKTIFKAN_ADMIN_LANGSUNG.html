@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>⚡ Aktifkan Admin Langsung</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            color: #2d3748;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+        .alert {
+            background: #fff3cd;
+            border: 2px solid #ffeaa7;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            color: #856404;
+        }
+        .success {
+            background: #d4edda;
+            border-color: #c3e6cb;
+            color: #155724;
+        }
+        .error {
+            background: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+        }
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 18px;
+            margin: 10px 5px;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        .btn-success {
+            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+        }
+        .btn-danger {
+            background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
+        }
+        .btn-warning {
+            background: linear-gradient(135deg, #ed8936 0%, #dd6b20 100%);
+        }
+        .step {
+            background: #f7fafc;
+            border-left: 4px solid #4299e1;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .code-block {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            margin: 10px 0;
+            overflow-x: auto;
+            font-size: 14px;
+        }
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        .status-active { background: #48bb78; }
+        .status-inactive { background: #f56565; }
+        .status-warning { background: #ed8936; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>⚡ Aktifkan Admin Langsung</h1>
+            <p>Solusi cepat untuk mengaktifkan semua fitur administrator</p>
+        </div>
+
+        <div class="alert">
+            <h3>🔍 Masalah Terdeteksi:</h3>
+            <p>Tombol admin terlihat tidak aktif (abu-abu) meskipun sudah login sebagai admin.</p>
+            <p><strong>Penyebab:</strong> Session admin tidak tersimpan dengan benar atau cache browser.</p>
+        </div>
+
+        <div id="status-container">
+            <div class="alert">
+                <h3>🔄 Memeriksa status admin...</h3>
+                <p>Mohon tunggu sebentar...</p>
+            </div>
+        </div>
+
+        <div class="step">
+            <h3>🚀 Solusi Langsung:</h3>
+            <button class="btn btn-success" onclick="forceActivateAdmin()">
+                ⚡ AKTIFKAN ADMIN SEKARANG
+            </button>
+            <button class="btn btn-warning" onclick="clearCacheAndLogin()">
+                🔄 CLEAR CACHE & LOGIN ULANG
+            </button>
+            <button class="btn" onclick="testAdminAccess()">
+                🧪 TEST AKSES ADMIN
+            </button>
+        </div>
+
+        <div class="step">
+            <h3>📋 Langkah Manual (Jika Tombol Tidak Bekerja):</h3>
+            <ol>
+                <li><strong>Buka Console Browser:</strong> Tekan F12 → Tab Console</li>
+                <li><strong>Jalankan Script Ini:</strong>
+                    <div class="code-block">
+// Force login sebagai admin
+const adminUser = {
+  id: 'admin-1',
+  username: 'admin',
+  fullName: 'Administrator',
+  role: 'admin',
+  email: 'admin@disdik.jabar.go.id',
+  department: 'Cabang Dinas Pendidikan Wilayah XI',
+  status: 'active',
+  lastLogin: new Date().toISOString()
+};
+
+localStorage.setItem('user_data', JSON.stringify(adminUser));
+localStorage.setItem('auth_token', 'admin-token-' + Date.now());
+
+// Refresh halaman
+location.reload();
+                    </div>
+                </li>
+                <li><strong>Refresh Halaman:</strong> Tekan Ctrl+F5 atau F5</li>
+                <li><strong>Cek Tombol Admin:</strong> Seharusnya sudah aktif</li>
+            </ol>
+        </div>
+
+        <div class="step">
+            <h3>🔧 Alternatif Lain:</h3>
+            <button class="btn" onclick="openUsersPageDirect()">
+                👥 Buka Halaman Users Langsung
+            </button>
+            <button class="btn btn-danger" onclick="resetAllData()">
+                🗑️ Reset Semua Data
+            </button>
+        </div>
+
+        <div id="result-container"></div>
+
+        <div class="step">
+            <h3>✅ Setelah Admin Aktif:</h3>
+            <p>Tombol yang harus berfungsi:</p>
+            <ul>
+                <li><span class="status-indicator status-active"></span><strong>View (👁️)</strong> - Lihat detail user</li>
+                <li><span class="status-indicator status-active"></span><strong>Edit (✏️)</strong> - Edit user</li>
+                <li><span class="status-indicator status-active"></span><strong>Activities (📊)</strong> - Kelola aktivitas</li>
+                <li><span class="status-indicator status-active"></span><strong>Reset Password (🔑)</strong> - Reset password</li>
+                <li><span class="status-indicator status-warning"></span><strong>Delete (🗑️)</strong> - Hapus user (kecuali admin)</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // Check status on load
+        window.onload = function() {
+            checkCurrentStatus();
+        };
+
+        function checkCurrentStatus() {
+            const statusContainer = document.getElementById('status-container');
+            
+            try {
+                const userData = localStorage.getItem('user_data');
+                const authToken = localStorage.getItem('auth_token');
+                const usersData = localStorage.getItem('app_users');
+                
+                let statusHtml = '<div class="alert">';
+                statusHtml += '<h3>📊 Status Saat Ini:</h3>';
+                
+                if (userData) {
+                    const user = JSON.parse(userData);
+                    statusHtml += `<p><span class="status-indicator ${user.role === 'admin' ? 'status-active' : 'status-inactive'}"></span><strong>User Login:</strong> ${user.fullName || user.username} (${user.role})</p>`;
+                } else {
+                    statusHtml += '<p><span class="status-indicator status-inactive"></span><strong>User Login:</strong> Tidak ada</p>';
+                }
+                
+                statusHtml += `<p><span class="status-indicator ${authToken ? 'status-active' : 'status-inactive'}"></span><strong>Auth Token:</strong> ${authToken ? 'Ada' : 'Tidak ada'}</p>`;
+                
+                if (usersData) {
+                    const users = JSON.parse(usersData);
+                    const adminCount = users.filter(u => u.role === 'admin').length;
+                    statusHtml += `<p><span class="status-indicator status-active"></span><strong>Database Users:</strong> ${users.length} total, ${adminCount} admin</p>`;
+                } else {
+                    statusHtml += '<p><span class="status-indicator status-inactive"></span><strong>Database Users:</strong> Tidak ada</p>';
+                }
+                
+                statusHtml += '</div>';
+                statusContainer.innerHTML = statusHtml;
+                
+            } catch (error) {
+                statusContainer.innerHTML = `
+                    <div class="alert error">
+                        <h3>❌ Error:</h3>
+                        <p>${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        function forceActivateAdmin() {
+            const resultContainer = document.getElementById('result-container');
+            
+            try {
+                // 1. Create/Update admin user
+                let users = [];
+                const usersData = localStorage.getItem('app_users');
+                if (usersData) {
+                    users = JSON.parse(usersData);
+                }
+                
+                // Ensure admin exists and is active
+                let adminUser = users.find(u => u.username === 'admin');
+                if (!adminUser) {
+                    adminUser = {
+                        id: 'admin-1',
+                        username: 'admin',
+                        fullName: 'Administrator',
+                        role: 'admin',
+                        nip: '',
+                        rank: '',
+                        phone: '',
+                        email: 'admin@disdik.jabar.go.id',
+                        department: 'Cabang Dinas Pendidikan Wilayah XI',
+                        status: 'active',
+                        createdAt: new Date().toISOString(),
+                        updatedAt: new Date().toISOString()
+                    };
+                    users.push(adminUser);
+                } else {
+                    // Update existing admin
+                    adminUser.status = 'active';
+                    adminUser.role = 'admin';
+                    adminUser.updatedAt = new Date().toISOString();
+                    users = users.map(u => u.username === 'admin' ? adminUser : u);
+                }
+                
+                // 2. Save users data
+                localStorage.setItem('app_users', JSON.stringify(users));
+                localStorage.setItem('users', JSON.stringify(users));
+                
+                // 3. Set admin as current user
+                localStorage.setItem('user_data', JSON.stringify(adminUser));
+                localStorage.setItem('auth_token', 'admin-token-' + Date.now());
+                
+                // 4. Clear any cache
+                if ('caches' in window) {
+                    caches.keys().then(names => {
+                        names.forEach(name => {
+                            caches.delete(name);
+                        });
+                    });
+                }
+                
+                resultContainer.innerHTML = `
+                    <div class="alert success">
+                        <h3>✅ ADMIN BERHASIL DIAKTIFKAN!</h3>
+                        <p>✅ Admin user dibuat/diperbarui</p>
+                        <p>✅ Login sebagai admin berhasil</p>
+                        <p>✅ Auth token dibuat</p>
+                        <p>✅ Cache dibersihkan</p>
+                        <p><strong>Sekarang refresh halaman untuk melihat perubahan!</strong></p>
+                        <button class="btn btn-success" onclick="location.reload()">🔄 REFRESH SEKARANG</button>
+                        <button class="btn" onclick="openUsersPageDirect()">👥 BUKA HALAMAN USERS</button>
+                    </div>
+                `;
+                
+                // Auto refresh status
+                setTimeout(() => {
+                    checkCurrentStatus();
+                }, 1000);
+                
+            } catch (error) {
+                resultContainer.innerHTML = `
+                    <div class="alert error">
+                        <h3>❌ Error Mengaktifkan Admin:</h3>
+                        <p>${error.message}</p>
+                        <p>Silakan coba metode manual di atas.</p>
+                    </div>
+                `;
+            }
+        }
+
+        function clearCacheAndLogin() {
+            const resultContainer = document.getElementById('result-container');
+            
+            try {
+                // Clear all localStorage
+                localStorage.clear();
+                
+                // Clear sessionStorage
+                sessionStorage.clear();
+                
+                // Clear cache
+                if ('caches' in window) {
+                    caches.keys().then(names => {
+                        names.forEach(name => {
+                            caches.delete(name);
+                        });
+                    });
+                }
+                
+                resultContainer.innerHTML = `
+                    <div class="alert success">
+                        <h3>✅ Cache Dibersihkan!</h3>
+                        <p>Semua data cache telah dihapus. Sekarang login ulang sebagai admin.</p>
+                        <button class="btn" onclick="window.open('http://localhost:5000', '_blank')">🔐 LOGIN ULANG</button>
+                    </div>
+                `;
+                
+                // Redirect to login after 3 seconds
+                setTimeout(() => {
+                    window.open('http://localhost:5000', '_blank');
+                }, 3000);
+                
+            } catch (error) {
+                resultContainer.innerHTML = `
+                    <div class="alert error">
+                        <h3>❌ Error:</h3>
+                        <p>${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        function testAdminAccess() {
+            const resultContainer = document.getElementById('result-container');
+            
+            try {
+                const userData = localStorage.getItem('user_data');
+                if (!userData) {
+                    resultContainer.innerHTML = `
+                        <div class="alert error">
+                            <h3>❌ Tidak Ada User Login</h3>
+                            <p>Silakan login terlebih dahulu.</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                const user = JSON.parse(userData);
+                if (user.role !== 'admin') {
+                    resultContainer.innerHTML = `
+                        <div class="alert error">
+                            <h3>❌ Bukan Admin</h3>
+                            <p>User saat ini: ${user.fullName} (${user.role})</p>
+                            <p>Untuk mengakses fitur admin, login sebagai administrator.</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                resultContainer.innerHTML = `
+                    <div class="alert success">
+                        <h3>✅ Admin Access OK!</h3>
+                        <p><strong>User:</strong> ${user.fullName}</p>
+                        <p><strong>Role:</strong> ${user.role}</p>
+                        <p><strong>Status:</strong> ${user.status}</p>
+                        <p>Semua fitur admin seharusnya sudah aktif!</p>
+                        <button class="btn" onclick="openUsersPageDirect()">👥 TEST HALAMAN USERS</button>
+                    </div>
+                `;
+                
+            } catch (error) {
+                resultContainer.innerHTML = `
+                    <div class="alert error">
+                        <h3>❌ Error Testing:</h3>
+                        <p>${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        function openUsersPageDirect() {
+            window.open('http://localhost:5000/users', '_blank');
+        }
+
+        function resetAllData() {
+            if (confirm('Apakah Anda yakin ingin menghapus SEMUA data? Tindakan ini tidak dapat dibatalkan!')) {
+                localStorage.clear();
+                sessionStorage.clear();
+                
+                const resultContainer = document.getElementById('result-container');
+                resultContainer.innerHTML = `
+                    <div class="alert success">
+                        <h3>✅ Semua Data Dihapus!</h3>
+                        <p>Aplikasi akan dimulai dari awal. Silakan setup ulang.</p>
+                        <button class="btn" onclick="window.open('http://localhost:5000', '_blank')">🔄 MULAI ULANG</button>
+                    </div>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>

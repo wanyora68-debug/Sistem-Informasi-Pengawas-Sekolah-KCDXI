@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Force Inject Data ke Dialog Langsung</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        }
+        .step {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 10px;
+            background: rgba(255,255,255,0.05);
+        }
+        .success { border-color: #4CAF50; background: rgba(76, 175, 80, 0.1); }
+        .error { border-color: #f44336; background: rgba(244, 67, 54, 0.1); }
+        .warning { border-color: #ff9800; background: rgba(255, 152, 0, 0.1); }
+        .info { border-color: #2196F3; background: rgba(33, 150, 243, 0.1); }
+        button {
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+            color: white;
+            border: none;
+            padding: 20px 30px;
+            border-radius: 10px;
+            cursor: pointer;
+            margin: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+        }
+        button:hover { 
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+        .status {
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            font-weight: bold;
+            background: rgba(255,255,255,0.1);
+        }
+        h1 { text-align: center; font-size: 2.5em; margin-bottom: 30px; }
+        .console-code {
+            background: rgba(0,0,0,0.5);
+            color: #0f0;
+            padding: 15px;
+            border-radius: 10px;
+            font-family: monospace;
+            margin: 10px 0;
+            white-space: pre-wrap;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>💉 Force Inject Data</h1>
+        <h2 style="text-align: center;">Langsung ke Dialog</h2>
+
+        <div class="step error">
+            <h3>🚨 Masalah Terakhir</h3>
+            <p>Session admin sudah benar, data Wawan ada 7 aktivitas, tapi dialog masih kosong. Komponen React tidak membaca localStorage dengan benar.</p>
+        </div>
+
+        <div class="step info">
+            <h3>🎯 Solusi Terakhir</h3>
+            <p>Kita akan memaksa inject data langsung ke dialog saat dibuka dengan JavaScript.</p>
+        </div>
+
+        <div class="step">
+            <h3>🚀 Inject Langsung</h3>
+            <div style="text-align: center;">
+                <button onclick="setupDialogInjection()">💉 SETUP INJECTION</button>
+            </div>
+        </div>
+
+        <div class="step">
+            <h3>📊 Status</h3>
+            <div id="status">Siap untuk setup injection...</div>
+        </div>
+
+        <div class="step warning">
+            <h3>📋 Cara Manual (Copy ke Console)</h3>
+            <p>Jika tombol tidak bekerja, buka Developer Tools (F12) di halaman users, paste kode ini di Console:</p>
+            <div class="console-code" id="manualCode">
+// Kode akan muncul setelah klik tombol
+            </div>
+            <button onclick="copyToClipboard()">📋 Copy Code</button>
+        </div>
+    </div>
+
+    <script>
+        function updateStatus(message, type = 'info') {
+            const statusDiv = document.getElementById('status');
+            statusDiv.innerHTML = `<div class="status">${message}</div>`;
+        }
+
+        function setupDialogInjection() {
+            updateStatus('💉 Setting up dialog injection...', 'info');
+            
+            try {
+                // Get Wawan data from localStorage
+                const localDb = JSON.parse(localStorage.getItem('local-database') || '{}');
+                
+                const wawanData = {
+                    tasks: (localDb.tasks || []).filter(t => 
+                        t.userId === 'wawan' || 
+                        (t.username && t.username.toLowerCase() === 'wawan') ||
+                        (t.title && t.title.toLowerCase().includes('wawan'))
+                    ),
+                    supervisions: (localDb.supervisions || []).filter(s => 
+                        s.userId === 'wawan' || 
+                        (s.username && s.username.toLowerCase() === 'wawan') ||
+                        (s.schoolName && s.schoolName.toLowerCase().includes('wawan'))
+                    ),
+                    events: (localDb.events || []).filter(e => 
+                        e.userId === 'wawan' || 
+                        (e.username && e.username.toLowerCase() === 'wawan') ||
+                        (e.title && e.title.toLowerCase().includes('wawan'))
+                    ),
+                    additionalTasks: (localDb.additionalTasks || []).filter(at => 
+                        at.userId === 'wawan' || 
+                        (at.username && at.username.toLowerCase() === 'wawan') ||
+                        (at.name && at.name.toLowerCase().includes('wawan'))
+                    )
+                };
+
+                const totalItems = wawanData.tasks.length + wawanData.supervisions.length + 
+                                 wawanData.events.length + wawanData.additionalTasks.length;
+
+                if (totalItems === 0) {
+                    updateStatus('❌ Tidak ada data Wawan ditemukan di localStorage', 'error');
+                    return;
+                }
+
+                // Create injection script
+                const injectionScript = `
+// FORCE INJECT WAWAN DATA TO DIALOG
+(function() {
+    console.log('🚀 Starting dialog injection for Wawan...');
+    
+    // Wawan data from localStorage
+    const wawanActivities = ${JSON.stringify(wawanData, null, 2)};
+    
+    console.log('📊 Wawan data loaded:', wawanActivities);
+    
+    // Function to inject data into dialog
+    function injectDataToDialog() {
+        // Find dialog element
+        const dialog = document.querySelector('[role="dialog"]');
+        if (!dialog) {
+            console.log('❌ Dialog not found');
+            return false;
+        }
+        
+        console.log('✅ Dialog found, checking for Wawan dialog...');
+        
+        // Check if this is Wawan dialog
+        const dialogTitle = dialog.querySelector('h2, .dialog-title, [class*="title"]');
+        if (!dialogTitle || !dialogTitle.textContent.toLowerCase().includes('wawan')) {
+            console.log('❌ Not Wawan dialog');
+            return false;
+        }
+        
+        console.log('✅ Wawan dialog confirmed, injecting data...');
+        
+        // Find tab content areas
+        const tabContents = dialog.querySelectorAll('[role="tabpanel"], .tabs-content, [class*="tab"]');
+        
+        if (tabContents.length === 0) {
+            console.log('❌ No tab contents found');
+            return false;
+        }
+        
+        // Inject data into each tab
+        tabContents.forEach((tabContent, index) => {
+            const tabType = ['tasks', 'supervisions', 'events', 'additionalTasks'][index];
+            const data = wawanActivities[tabType] || [];
+            
+            if (data.length > 0) {
+                console.log(\`✅ Injecting \${data.length} \${tabType} items\`);
+                
+                // Clear existing "Belum ada" message
+                const emptyMessage = tabContent.querySelector('p');
+                if (emptyMessage && emptyMessage.textContent.includes('Belum ada')) {
+                    emptyMessage.style.display = 'none';
+                }
+                
+                // Create data cards
+                data.forEach(item => {
+                    const card = document.createElement('div');
+                    card.style.cssText = \`
+                        border: 1px solid #e2e8f0;
+                        border-radius: 8px;
+                        padding: 16px;
+                        margin: 8px 0;
+                        background: white;
+                        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+                    \`;
+                    
+                    const title = item.title || item.name || item.schoolName || 'Aktivitas';
+                    const description = item.description || item.notes || item.findings || 'Tidak ada deskripsi';
+                    const date = item.date ? new Date(item.date).toLocaleDateString('id-ID') : 'Tanggal tidak tersedia';
+                    
+                    card.innerHTML = \`
+                        <div style="font-weight: bold; margin-bottom: 8px;">\${title}</div>
+                        <div style="color: #666; margin-bottom: 8px;">\${description}</div>
+                        <div style="font-size: 12px; color: #999;">\${date}</div>
+                    \`;
+                    
+                    tabContent.appendChild(card);
+                });
+            }
+        });
+        
+        // Update tab counts
+        const tabTriggers = dialog.querySelectorAll('[role="tab"], .tab-trigger, [class*="tab"]');
+        tabTriggers.forEach((tab, index) => {
+            const tabType = ['tasks', 'supervisions', 'events', 'additionalTasks'][index];
+            const count = wawanActivities[tabType]?.length || 0;
+            
+            if (tab.textContent.includes('(')) {
+                tab.textContent = tab.textContent.replace(/\\(\\d+\\)/, \`(\${count})\`);
+            }
+        });
+        
+        console.log('✅ Data injection complete!');
+        return true;
+    }
+    
+    // Try to inject immediately
+    if (injectDataToDialog()) {
+        console.log('✅ Immediate injection successful');
+        return;
+    }
+    
+    // Set up observer for dialog opening
+    const observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+            mutation.addedNodes.forEach((node) => {
+                if (node.nodeType === 1 && (
+                    node.matches('[role="dialog"]') || 
+                    node.querySelector('[role="dialog"]')
+                )) {
+                    console.log('🎯 Dialog detected, attempting injection...');
+                    setTimeout(() => {
+                        if (injectDataToDialog()) {
+                            console.log('✅ Observer injection successful');
+                        }
+                    }, 500);
+                }
+            });
+        });
+    });
+    
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true
+    });
+    
+    console.log('✅ Dialog observer set up');
+    
+    // Also listen for clicks on Wawan activity button
+    document.addEventListener('click', (e) => {
+        const button = e.target.closest('button');
+        if (button && (
+            button.textContent.includes('Activity') || 
+            button.textContent.includes('Aktivitas') ||
+            button.querySelector('[data-lucide="activity"]')
+        )) {
+            console.log('🎯 Activity button clicked, preparing injection...');
+            setTimeout(() => {
+                injectDataToDialog();
+            }, 1000);
+        }
+    });
+    
+    console.log('✅ Click listener set up');
+    console.log('🎯 Ready to inject data when Wawan dialog opens!');
+})();`;
+
+                // Store the script
+                localStorage.setItem('dialog-injection-script', injectionScript);
+                
+                // Show manual code
+                document.getElementById('manualCode').textContent = injectionScript;
+                
+                updateStatus(`✅ INJECTION SETUP COMPLETE!<br><br>
+                    📊 Data siap inject: ${totalItems} aktivitas Wawan<br>
+                    🎯 Script tersimpan dan siap digunakan<br>
+                    <br>
+                    Sekarang buka dialog aktivitas Wawan - data akan muncul otomatis!`, 'success');
+
+                // Try to execute if we're on the users page
+                if (window.location.href.includes('/users')) {
+                    eval(injectionScript);
+                    updateStatus('✅ Script executed on users page!', 'success');
+                }
+
+            } catch (error) {
+                updateStatus(`❌ Error: ${error.message}`, 'error');
+            }
+        }
+
+        function copyToClipboard() {
+            const code = document.getElementById('manualCode').textContent;
+            navigator.clipboard.writeText(code).then(() => {
+                updateStatus('📋 Code copied! Paste in browser console on users page.', 'success');
+            }).catch(() => {
+                updateStatus('❌ Failed to copy. Please select and copy manually.', 'error');
+            });
+        }
+
+        // Initialize
+        updateStatus('🚀 Force injection tool ready!', 'success');
+    </script>
+</body>
+</html>

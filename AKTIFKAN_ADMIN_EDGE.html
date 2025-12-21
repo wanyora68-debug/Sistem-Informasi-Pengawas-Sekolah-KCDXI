@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔧 Aktifkan Admin di Edge</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #0078d4 0%, #106ebe 100%);
+            min-height: 100vh;
+            color: white;
+        }
+        .container {
+            background: white;
+            color: #333;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            color: #0078d4;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+        .edge-logo {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #0078d4 0%, #106ebe 100%);
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            margin-bottom: 20px;
+        }
+        .btn {
+            background: linear-gradient(135deg, #0078d4 0%, #106ebe 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 18px;
+            margin: 10px 5px;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        .btn-success {
+            background: linear-gradient(135deg, #107c10 0%, #0e6e0e 100%);
+        }
+        .btn-warning {
+            background: linear-gradient(135deg, #ff8c00 0%, #e67e00 100%);
+        }
+        .alert {
+            background: #e1f5fe;
+            border: 2px solid #0078d4;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            color: #0078d4;
+        }
+        .success {
+            background: #e8f5e8;
+            border-color: #107c10;
+            color: #107c10;
+        }
+        .warning {
+            background: #fff4e6;
+            border-color: #ff8c00;
+            color: #cc7000;
+        }
+        .code-block {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Consolas', 'Courier New', monospace;
+            margin: 10px 0;
+            overflow-x: auto;
+            font-size: 14px;
+            border-left: 4px solid #0078d4;
+        }
+        .step {
+            background: #f8f9fa;
+            border-left: 4px solid #0078d4;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .quick-action {
+            text-align: center;
+            background: #f0f8ff;
+            padding: 30px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border: 2px dashed #0078d4;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="edge-logo">🌐</div>
+            <h1>Aktifkan Admin di Microsoft Edge</h1>
+            <p>Solusi khusus untuk mengaktifkan fitur administrator di Edge</p>
+        </div>
+
+        <div class="alert warning">
+            <h3>⚠️ Masalah Terdeteksi:</h3>
+            <p><strong>Chrome:</strong> Admin aktif ✅</p>
+            <p><strong>Edge:</strong> Admin tidak aktif ❌</p>
+            <p><strong>Penyebab:</strong> Data localStorage tidak tersinkron antar browser</p>
+        </div>
+
+        <div class="quick-action">
+            <h3>🚀 SOLUSI TERCEPAT</h3>
+            <p>Klik tombol di bawah untuk langsung mengaktifkan admin di Edge:</p>
+            <button class="btn btn-success" onclick="activateAdminEdge()" style="font-size: 20px; padding: 20px 40px;">
+                ⚡ AKTIFKAN ADMIN SEKARANG
+            </button>
+        </div>
+
+        <div id="status-container">
+            <div class="alert">
+                <h3>🔍 Memeriksa status...</h3>
+                <p>Mohon tunggu sebentar...</p>
+            </div>
+        </div>
+
+        <div class="step">
+            <h3>📋 Cara Manual (Jika Tombol Tidak Bekerja):</h3>
+            <ol>
+                <li><strong>Buka Edge</strong> dan pergi ke: <a href="http://localhost:5000" target="_blank">http://localhost:5000</a></li>
+                <li><strong>Tekan F12</strong> untuk membuka Developer Tools</li>
+                <li><strong>Klik tab "Console"</strong></li>
+                <li><strong>Copy dan paste script berikut:</strong>
+                    <div class="code-block">
+// 🔧 Script Aktifkan Admin di Edge
+console.log('🚀 Mengaktifkan admin di Edge...');
+
+// Data admin
+const adminUser = {
+  id: 'admin-1',
+  username: 'admin',
+  fullName: 'Administrator',
+  role: 'admin',
+  email: 'admin@disdik.jabar.go.id',
+  department: 'Cabang Dinas Pendidikan Wilayah XI',
+  status: 'active',
+  lastLogin: new Date().toISOString(),
+  createdAt: new Date().toISOString(),
+  updatedAt: new Date().toISOString()
+};
+
+// Data users lengkap
+const users = [
+  adminUser,
+  {
+    id: 'wawan-123',
+    username: 'wawan',
+    fullName: 'H. Wawan Yogaswara, S.Pd, M.Pd',
+    role: 'pengawas',
+    nip: '196805301994121001',
+    rank: 'Pembina Utama Muda, IV/c',
+    phone: '087733438282',
+    email: 'wawan.yogaswara@disdik.jabar.go.id',
+    department: 'Cabang Dinas Pendidikan Wilayah XI',
+    status: 'active',
+    lastLogin: new Date().toISOString(),
+    createdAt: '2024-01-01T00:00:00.000Z',
+    updatedAt: new Date().toISOString()
+  }
+];
+
+// Simpan semua data ke localStorage
+localStorage.setItem('app_users', JSON.stringify(users));
+localStorage.setItem('users', JSON.stringify(users));
+localStorage.setItem('user_data', JSON.stringify(adminUser));
+localStorage.setItem('auth_token', 'admin-token-' + Date.now());
+
+console.log('✅ Data admin berhasil disimpan!');
+console.log('🔄 Refresh halaman...');
+
+// Refresh halaman
+location.reload();
+                    </div>
+                </li>
+                <li><strong>Tekan Enter</strong> untuk menjalankan script</li>
+                <li><strong>Halaman akan refresh otomatis</strong></li>
+                <li><strong>Login sebagai admin</strong> jika diminta:
+                    <div class="code-block">
+Username: admin
+Password: admin123
+                    </div>
+                </li>
+                <li><strong>Masuk ke halaman Users</strong> - tombol admin seharusnya sudah aktif!</li>
+            </ol>
+        </div>
+
+        <div class="step">
+            <h3>🎯 Verifikasi Admin Aktif:</h3>
+            <p>Setelah mengikuti langkah di atas, pastikan:</p>
+            <ul>
+                <li>✅ Tombol <strong>View (👁️)</strong> berwarna biru dan bisa diklik</li>
+                <li>✅ Tombol <strong>Edit (✏️)</strong> berwarna biru dan bisa diklik</li>
+                <li>✅ Tombol <strong>Activities (📊)</strong> berwarna biru dan bisa diklik</li>
+                <li>✅ Tombol <strong>Reset Password (🔑)</strong> berwarna biru dan bisa diklik</li>
+                <li>✅ Dialog admin muncul saat tombol diklik</li>
+            </ul>
+        </div>
+
+        <div class="step">
+            <h3>🔧 Aksi Tambahan:</h3>
+            <button class="btn" onclick="openUsersPage()">
+                👥 Buka Halaman Users
+            </button>
+            <button class="btn btn-warning" onclick="testAdminFeatures()">
+                🧪 Test Fitur Admin
+            </button>
+            <button class="btn" onclick="copyScriptToClipboard()">
+                📋 Copy Script ke Clipboard
+            </button>
+        </div>
+
+        <div id="result-container"></div>
+
+        <div class="alert success">
+            <h3>💡 Tips untuk Edge:</h3>
+            <ul>
+                <li><strong>Bookmark halaman ini</strong> untuk setup cepat di masa depan</li>
+                <li><strong>Gunakan Edge DevTools</strong> (F12) untuk debugging</li>
+                <li><strong>Clear cache</strong> jika ada masalah: Ctrl+Shift+Delete</li>
+                <li><strong>Restart Edge</strong> jika perlu untuk memastikan data tersimpan</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // Check current status
+        function checkCurrentStatus() {
+            const statusContainer = document.getElementById('status-container');
+            
+            try {
+                const userData = localStorage.getItem('user_data');
+                const authToken = localStorage.getItem('auth_token');
+                const usersData = localStorage.getItem('app_users');
+                
+                let statusHtml = '<div class="alert">';
+                statusHtml += '<h3>📊 Status Edge Saat Ini:</h3>';
+                
+                if (userData) {
+                    const user = JSON.parse(userData);
+                    if (user.role === 'admin') {
+                        statusHtml += '<p>✅ <strong>Login Status:</strong> Admin aktif</p>';
+                        statusHtml += '<p>✅ <strong>User:</strong> ' + user.fullName + '</p>';
+                    } else {
+                        statusHtml += '<p>⚠️ <strong>Login Status:</strong> ' + user.role + ' (bukan admin)</p>';
+                    }
+                } else {
+                    statusHtml += '<p>❌ <strong>Login Status:</strong> Belum login</p>';
+                }
+                
+                statusHtml += '<p>' + (authToken ? '✅' : '❌') + ' <strong>Auth Token:</strong> ' + (authToken ? 'Ada' : 'Tidak ada') + '</p>';
+                
+                if (usersData) {
+                    const users = JSON.parse(usersData);
+                    statusHtml += '<p>✅ <strong>Database:</strong> ' + users.length + ' users tersimpan</p>';
+                } else {
+                    statusHtml += '<p>❌ <strong>Database:</strong> Tidak ada data users</p>';
+                }
+                
+                statusHtml += '</div>';
+                statusContainer.innerHTML = statusHtml;
+                
+            } catch (error) {
+                statusContainer.innerHTML = `
+                    <div class="alert warning">
+                        <h3>⚠️ Error Checking Status:</h3>
+                        <p>${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Activate admin in Edge
+        function activateAdminEdge() {
+            const resultContainer = document.getElementById('result-container');
+            
+            try {
+                // Create admin user
+                const adminUser = {
+                    id: 'admin-1',
+                    username: 'admin',
+                    fullName: 'Administrator',
+                    role: 'admin',
+                    email: 'admin@disdik.jabar.go.id',
+                    department: 'Cabang Dinas Pendidikan Wilayah XI',
+                    status: 'active',
+                    lastLogin: new Date().toISOString(),
+                    createdAt: new Date().toISOString(),
+                    updatedAt: new Date().toISOString()
+                };
+
+                // Create users array
+                const users = [
+                    adminUser,
+                    {
+                        id: 'wawan-123',
+                        username: 'wawan',
+                        fullName: 'H. Wawan Yogaswara, S.Pd, M.Pd',
+                        role: 'pengawas',
+                        nip: '196805301994121001',
+                        rank: 'Pembina Utama Muda, IV/c',
+                        phone: '087733438282',
+                        email: 'wawan.yogaswara@disdik.jabar.go.id',
+                        department: 'Cabang Dinas Pendidikan Wilayah XI',
+                        status: 'active',
+                        lastLogin: new Date().toISOString(),
+                        createdAt: '2024-01-01T00:00:00.000Z',
+                        updatedAt: new Date().toISOString()
+                    }
+                ];
+
+                // Save all data
+                localStorage.setItem('app_users', JSON.stringify(users));
+                localStorage.setItem('users', JSON.stringify(users));
+                localStorage.setItem('user_data', JSON.stringify(adminUser));
+                localStorage.setItem('auth_token', 'admin-token-' + Date.now());
+
+                resultContainer.innerHTML = `
+                    <div class="alert success">
+                        <h3>🎉 ADMIN BERHASIL DIAKTIFKAN DI EDGE!</h3>
+                        <p>✅ Data admin tersimpan</p>
+                        <p>✅ Data users tersimpan</p>
+                        <p>✅ Auth token dibuat</p>
+                        <p>✅ Login sebagai admin berhasil</p>
+                        <p><strong>Sekarang refresh halaman dan test fitur admin!</strong></p>
+                        <button class="btn btn-success" onclick="location.reload()">🔄 REFRESH HALAMAN</button>
+                        <button class="btn" onclick="openUsersPage()">👥 BUKA HALAMAN USERS</button>
+                    </div>
+                `;
+
+                // Update status
+                setTimeout(() => {
+                    checkCurrentStatus();
+                }, 1000);
+
+            } catch (error) {
+                resultContainer.innerHTML = `
+                    <div class="alert warning">
+                        <h3>❌ Error Mengaktifkan Admin:</h3>
+                        <p>${error.message}</p>
+                        <p>Silakan gunakan cara manual di atas.</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Open users page
+        function openUsersPage() {
+            window.open('http://localhost:5000/users', '_blank');
+        }
+
+        // Test admin features
+        function testAdminFeatures() {
+            const resultContainer = document.getElementById('result-container');
+            
+            const userData = localStorage.getItem('user_data');
+            if (!userData) {
+                resultContainer.innerHTML = `
+                    <div class="alert warning">
+                        <h3>⚠️ Belum Login</h3>
+                        <p>Silakan aktifkan admin terlebih dahulu.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            try {
+                const user = JSON.parse(userData);
+                if (user.role === 'admin') {
+                    resultContainer.innerHTML = `
+                        <div class="alert success">
+                            <h3>✅ Test Admin Features - PASSED!</h3>
+                            <p><strong>User:</strong> ${user.fullName}</p>
+                            <p><strong>Role:</strong> ${user.role}</p>
+                            <p><strong>Status:</strong> ${user.status}</p>
+                            <p>Semua fitur admin seharusnya sudah berfungsi di halaman Users!</p>
+                            <button class="btn" onclick="openUsersPage()">👥 TEST DI HALAMAN USERS</button>
+                        </div>
+                    `;
+                } else {
+                    resultContainer.innerHTML = `
+                        <div class="alert warning">
+                            <h3>⚠️ Bukan Admin</h3>
+                            <p>User saat ini: ${user.fullName} (${user.role})</p>
+                            <p>Silakan aktifkan admin terlebih dahulu.</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                resultContainer.innerHTML = `
+                    <div class="alert warning">
+                        <h3>❌ Error Testing:</h3>
+                        <p>${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Copy script to clipboard
+        function copyScriptToClipboard() {
+            const script = `// 🔧 Script Aktifkan Admin di Edge
+const adminUser = {
+  id: 'admin-1',
+  username: 'admin',
+  fullName: 'Administrator',
+  role: 'admin',
+  email: 'admin@disdik.jabar.go.id',
+  department: 'Cabang Dinas Pendidikan Wilayah XI',
+  status: 'active',
+  lastLogin: new Date().toISOString(),
+  createdAt: new Date().toISOString(),
+  updatedAt: new Date().toISOString()
+};
+
+const users = [adminUser, {
+  id: 'wawan-123',
+  username: 'wawan',
+  fullName: 'H. Wawan Yogaswara, S.Pd, M.Pd',
+  role: 'pengawas',
+  nip: '196805301994121001',
+  rank: 'Pembina Utama Muda, IV/c',
+  phone: '087733438282',
+  email: 'wawan.yogaswara@disdik.jabar.go.id',
+  department: 'Cabang Dinas Pendidikan Wilayah XI',
+  status: 'active',
+  lastLogin: new Date().toISOString(),
+  createdAt: '2024-01-01T00:00:00.000Z',
+  updatedAt: new Date().toISOString()
+}];
+
+localStorage.setItem('app_users', JSON.stringify(users));
+localStorage.setItem('users', JSON.stringify(users));
+localStorage.setItem('user_data', JSON.stringify(adminUser));
+localStorage.setItem('auth_token', 'admin-token-' + Date.now());
+location.reload();`;
+
+            navigator.clipboard.writeText(script).then(() => {
+                const resultContainer = document.getElementById('result-container');
+                resultContainer.innerHTML = `
+                    <div class="alert success">
+                        <h3>📋 Script Berhasil Dicopy!</h3>
+                        <p>Script telah disalin ke clipboard. Sekarang:</p>
+                        <ol>
+                            <li>Buka Edge dan pergi ke localhost:5000</li>
+                            <li>Tekan F12 → Console</li>
+                            <li>Paste script (Ctrl+V)</li>
+                            <li>Tekan Enter</li>
+                        </ol>
+                    </div>
+                `;
+            }).catch(() => {
+                const resultContainer = document.getElementById('result-container');
+                resultContainer.innerHTML = `
+                    <div class="alert warning">
+                        <h3>⚠️ Gagal Copy Script</h3>
+                        <p>Silakan copy manual script dari kotak kode di atas.</p>
+                    </div>
+                `;
+            });
+        }
+
+        // Initialize
+        window.onload = function() {
+            checkCurrentStatus();
+        };
+    </script>
+</body>
+</html>

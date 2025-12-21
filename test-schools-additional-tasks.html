@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Sekolah Binaan & Tugas Tambahan</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2563eb;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            background: #f9fafb;
+        }
+        .test-section h3 {
+            color: #1f2937;
+            margin-top: 0;
+        }
+        button {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #1d4ed8;
+        }
+        .result {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+            background: #f0f9ff;
+            border-left: 4px solid #2563eb;
+        }
+        .success {
+            background: #f0fdf4;
+            border-left-color: #16a34a;
+            color: #15803d;
+        }
+        .error {
+            background: #fef2f2;
+            border-left-color: #dc2626;
+            color: #dc2626;
+        }
+        .data-display {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 10px 0;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        pre {
+            margin: 0;
+            white-space: pre-wrap;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏫 Test Sekolah Binaan & Tugas Tambahan</h1>
+        <p style="text-align: center; color: #666; margin-bottom: 30px;">
+            Verifikasi bahwa data tersimpan dan muncul dengan benar
+        </p>
+
+        <!-- Test Sekolah Binaan -->
+        <div class="test-section">
+            <h3>🏫 Test Sekolah Binaan</h3>
+            <button onclick="addTestSchool()">Tambah Sekolah Test</button>
+            <button onclick="viewSchoolsData()">Lihat Data Sekolah</button>
+            <button onclick="clearSchoolsData()">Hapus Semua Data</button>
+            <div id="schoolsResult" class="result" style="display: none;"></div>
+            <div id="schoolsData" class="data-display" style="display: none;"></div>
+        </div>
+
+        <!-- Test Tugas Tambahan -->
+        <div class="test-section">
+            <h3>📋 Test Tugas Tambahan</h3>
+            <button onclick="addTestTask()">Tambah Tugas Test</button>
+            <button onclick="viewTasksData()">Lihat Data Tugas</button>
+            <button onclick="clearTasksData()">Hapus Semua Data</button>
+            <div id="tasksResult" class="result" style="display: none;"></div>
+            <div id="tasksData" class="data-display" style="display: none;"></div>
+        </div>
+
+        <!-- Test Integrasi -->
+        <div class="test-section">
+            <h3>🔄 Test Integrasi</h3>
+            <button onclick="runFullTest()">Jalankan Test Lengkap</button>
+            <button onclick="checkAllData()">Cek Semua Data</button>
+            <div id="integrationResult" class="result" style="display: none;"></div>
+        </div>
+    </div>
+
+    <script>
+        // Test Functions untuk Sekolah Binaan
+        function addTestSchool() {
+            try {
+                const schoolsData = localStorage.getItem('schools_data');
+                const currentSchools = schoolsData ? JSON.parse(schoolsData) : [];
+                
+                const newSchool = {
+                    id: Date.now().toString(),
+                    name: `SDN Test ${Math.floor(Math.random() * 100)}`,
+                    address: `Jl. Test No. ${Math.floor(Math.random() * 100)}`,
+                    contact: `08${Math.floor(Math.random() * 1000000000)}`,
+                    principalName: `Kepala Sekolah Test ${Math.floor(Math.random() * 100)}`,
+                    principalNip: `19${Math.floor(Math.random() * 100000000)}`,
+                    supervisions: 0,
+                    createdAt: new Date().toISOString()
+                };
+                
+                const updatedSchools = [...currentSchools, newSchool];
+                localStorage.setItem('schools_data', JSON.stringify(updatedSchools));
+                
+                showResult('schoolsResult', `✅ Sekolah "${newSchool.name}" berhasil ditambahkan!`, 'success');
+                
+            } catch (error) {
+                showResult('schoolsResult', `❌ Error: ${error.message}`, 'error');
+            }
+        }
+
+        function viewSchoolsData() {
+            try {
+                const schoolsData = localStorage.getItem('schools_data');
+                const schools = schoolsData ? JSON.parse(schoolsData) : [];
+                
+                document.getElementById('schoolsData').style.display = 'block';
+                document.getElementById('schoolsData').innerHTML = 
+                    `<strong>Data Sekolah (${schools.length} sekolah):</strong><br><pre>${JSON.stringify(schools, null, 2)}</pre>`;
+                
+                showResult('schoolsResult', `📊 Menampilkan ${schools.length} sekolah`, 'success');
+                
+            } catch (error) {
+                showResult('schoolsResult', `❌ Error: ${error.message}`, 'error');
+            }
+        }
+
+        function clearSchoolsData() {
+            try {
+                localStorage.removeItem('schools_data');
+                document.getElementById('schoolsData').style.display = 'none';
+                showResult('schoolsResult', '🗑️ Data sekolah berhasil dihapus', 'success');
+            } catch (error) {
+                showResult('schoolsResult', `❌ Error: ${error.message}`, 'error');
+            }
+        }
+
+        // Test Functions untuk Tugas Tambahan
+        function addTestTask() {
+            try {
+                const tasksData = localStorage.getItem('additional_tasks_data');
+                const currentTasks = tasksData ? JSON.parse(tasksData) : [];
+                
+                const newTask = {
+                    id: Date.now().toString(),
+                    name: `Kegiatan Test ${Math.floor(Math.random() * 100)}`,
+                    date: new Date().toISOString().split('T')[0],
+                    location: `Lokasi Test ${Math.floor(Math.random() * 100)}`,
+                    organizer: `Penyelenggara Test ${Math.floor(Math.random() * 100)}`,
+                    description: `Deskripsi kegiatan test yang dibuat pada ${new Date().toLocaleString()}`,
+                    createdAt: new Date().toISOString()
+                };
+                
+                const updatedTasks = [...currentTasks, newTask];
+                localStorage.setItem('additional_tasks_data', JSON.stringify(updatedTasks));
+                
+                showResult('tasksResult', `✅ Tugas "${newTask.name}" berhasil ditambahkan!`, 'success');
+                
+            } catch (error) {
+                showResult('tasksResult', `❌ Error: ${error.message}`, 'error');
+            }
+        }
+
+        function viewTasksData() {
+            try {
+                const tasksData = localStorage.getItem('additional_tasks_data');
+                const tasks = tasksData ? JSON.parse(tasksData) : [];
+                
+                document.getElementById('tasksData').style.display = 'block';
+                document.getElementById('tasksData').innerHTML = 
+                    `<strong>Data Tugas Tambahan (${tasks.length} tugas):</strong><br><pre>${JSON.stringify(tasks, null, 2)}</pre>`;
+                
+                showResult('tasksResult', `📊 Menampilkan ${tasks.length} tugas tambahan`, 'success');
+                
+            } catch (error) {
+                showResult('tasksResult', `❌ Error: ${error.message}`, 'error');
+            }
+        }
+
+        function clearTasksData() {
+            try {
+                localStorage.removeItem('additional_tasks_data');
+                document.getElementById('tasksData').style.display = 'none';
+                showResult('tasksResult', '🗑️ Data tugas tambahan berhasil dihapus', 'success');
+            } catch (error) {
+                showResult('tasksResult', `❌ Error: ${error.message}`, 'error');
+            }
+        }
+
+        // Test Integrasi
+        function runFullTest() {
+            try {
+                // Clear existing data
+                localStorage.removeItem('schools_data');
+                localStorage.removeItem('additional_tasks_data');
+                
+                // Add test data
+                addTestSchool();
+                setTimeout(() => {
+                    addTestTask();
+                    setTimeout(() => {
+                        checkAllData();
+                    }, 100);
+                }, 100);
+                
+                showResult('integrationResult', '🔄 Menjalankan test lengkap...', 'success');
+                
+            } catch (error) {
+                showResult('integrationResult', `❌ Error: ${error.message}`, 'error');
+            }
+        }
+
+        function checkAllData() {
+            try {
+                const schoolsData = localStorage.getItem('schools_data');
+                const tasksData = localStorage.getItem('additional_tasks_data');
+                
+                const schools = schoolsData ? JSON.parse(schoolsData) : [];
+                const tasks = tasksData ? JSON.parse(tasksData) : [];
+                
+                const summary = `
+📊 RINGKASAN DATA:
+• Sekolah Binaan: ${schools.length} sekolah
+• Tugas Tambahan: ${tasks.length} tugas
+
+✅ Status: ${schools.length > 0 && tasks.length > 0 ? 'SEMUA DATA TERSEDIA' : 'ADA DATA YANG KOSONG'}
+
+🔍 Detail:
+- localStorage 'schools_data': ${schoolsData ? 'ADA' : 'KOSONG'}
+- localStorage 'additional_tasks_data': ${tasksData ? 'ADA' : 'KOSONG'}
+                `;
+                
+                showResult('integrationResult', summary, schools.length > 0 && tasks.length > 0 ? 'success' : 'error');
+                
+            } catch (error) {
+                showResult('integrationResult', `❌ Error: ${error.message}`, 'error');
+            }
+        }
+
+        // Helper function
+        function showResult(elementId, message, type) {
+            const element = document.getElementById(elementId);
+            element.style.display = 'block';
+            element.className = `result ${type}`;
+            element.innerHTML = message;
+        }
+
+        // Auto-check on load
+        window.onload = function() {
+            checkAllData();
+        };
+    </script>
+</body>
+</html>

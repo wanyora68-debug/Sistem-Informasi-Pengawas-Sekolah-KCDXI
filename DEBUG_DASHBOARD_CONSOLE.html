@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Dashboard Console</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #1a1a1a;
+            color: #00ff00;
+        }
+        
+        .container {
+            background: #000;
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px solid #00ff00;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .step {
+            background: #333;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            border-left: 4px solid #00ff00;
+        }
+        
+        .button {
+            background: #00ff00;
+            color: #000;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            margin: 10px 5px;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .button:hover {
+            background: #00cc00;
+        }
+        
+        .warning {
+            background: #ff4444;
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+        }
+        
+        .success {
+            background: #44ff44;
+            color: #000;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+        }
+        
+        pre {
+            background: #222;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+            border: 1px solid #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 DEBUG DASHBOARD CONSOLE</h1>
+        
+        <div class="warning">
+            <h3>⚠️ MASALAH TERDETEKSI</h3>
+            <p>Dashboard masih menampilkan 0 semua meskipun sudah ada data hardcoded.</p>
+        </div>
+        
+        <div class="step">
+            <h3>📋 LANGKAH DEBUG:</h3>
+            <p>1. Buka aplikasi di <strong>http://localhost:5000</strong></p>
+            <p>2. Tekan <strong>F12</strong> untuk buka Developer Tools</p>
+            <p>3. Masuk ke tab <strong>Console</strong></p>
+            <p>4. Klik menu <strong>Dashboard</strong> di sidebar</p>
+            <p>5. Lihat output console - harus ada log debug seperti ini:</p>
+        </div>
+        
+        <pre>
+🔍 Dashboard Debug:
+- Tasks: 3 [Array(3)]
+- Schools: 3 [Array(3)]  
+- Supervisions: 3 [Array(3)]
+- This Month Supervisions: 3
+- Stats will show: {totalTasks: 3, completedTasks: 1, totalSchools: 3, thisMonth: 3}
+        </pre>
+        
+        <div class="step">
+            <h3>🔧 JIKA TIDAK ADA LOG DEBUG:</h3>
+            <p>Berarti dashboard tidak ter-render atau ada error JavaScript.</p>
+            <p>Cek tab <strong>Console</strong> untuk error merah.</p>
+        </div>
+        
+        <div class="step">
+            <h3>🔧 JIKA ADA LOG TAPI MASIH 0:</h3>
+            <p>Berarti ada masalah dengan rendering React component.</p>
+            <p>Coba hard refresh: <strong>Ctrl + Shift + R</strong></p>
+        </div>
+        
+        <div class="step">
+            <h3>🔧 JIKA MASIH TIDAK BERHASIL:</h3>
+            <p>Coba buka di <strong>Incognito/Private Mode</strong> untuk bypass cache.</p>
+        </div>
+        
+        <div style="text-align: center; margin: 30px 0;">
+            <a href="http://localhost:5000" class="button" target="_blank">
+                🌐 BUKA DASHBOARD & CEK CONSOLE
+            </a>
+        </div>
+        
+        <div class="success">
+            <h3>✅ YANG HARUS MUNCUL:</h3>
+            <p>Jika berhasil, dashboard akan menampilkan:</p>
+            <ul>
+                <li>Total Tugas: <strong>3</strong></li>
+                <li>Tugas Selesai: <strong>1</strong></li>
+                <li>Sekolah Binaan: <strong>3</strong></li>
+                <li>Supervisi Bulan Ini: <strong>3</strong></li>
+            </ul>
+        </div>
+        
+        <div class="step">
+            <h3>📝 CATATAN TEKNIS:</h3>
+            <p>Dashboard sekarang menggunakan data hardcoded langsung tanpa useQuery.</p>
+            <p>Data sudah pasti ada di memori saat component render.</p>
+            <p>Jika masih 0, kemungkinan ada masalah dengan React rendering atau cache browser.</p>
+        </div>
+    </div>
+
+    <script>
+        console.log('🔍 Debug Dashboard Console page loaded');
+        console.log('📋 Instruksi:');
+        console.log('1. Buka http://localhost:5000');
+        console.log('2. Tekan F12 → Console');
+        console.log('3. Klik Dashboard di sidebar');
+        console.log('4. Lihat log debug yang muncul');
+        
+        // Auto open after 2 seconds
+        setTimeout(() => {
+            if (confirm('Buka dashboard sekarang untuk debug?')) {
+                window.open('http://localhost:5000', '_blank');
+            }
+        }, 2000);
+    </script>
+</body>
+</html>
