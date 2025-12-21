@@ -21,16 +21,6 @@ try {
   });
   console.log('✅ Client build completed!\n');
 
-  // Build server with esbuild
-  console.log('📦 Building server with esbuild...');
-  
-  // Use esbuild directly
-  execSync('esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist', {
-    stdio: 'inherit',
-    cwd: __dirname
-  });
-  console.log('✅ Server build completed!\n');
-
   console.log('🎉 Build process completed successfully!');
   process.exit(0);
 } catch (error) {

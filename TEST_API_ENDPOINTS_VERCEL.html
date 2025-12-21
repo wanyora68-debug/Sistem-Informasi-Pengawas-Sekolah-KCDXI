@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔍 Test API Endpoints - Vercel</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            color: #2d3748;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+        .api-logo {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%);
+            border-radius: 12px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            margin-bottom: 20px;
+            color: white;
+        }
+        .endpoint-test {
+            background: #f7fafc;
+            border-left: 4px solid #4299e1;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .endpoint-test h3 {
+            color: #2d3748;
+            margin-top: 0;
+        }
+        .btn {
+            background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            margin: 5px;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        .btn-success {
+            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+        }
+        .btn-warning {
+            background: linear-gradient(135deg, #ed8936 0%, #dd6b20 100%);
+        }
+        .btn-danger {
+            background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
+        }
+        .url-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 16px;
+            margin: 10px 0;
+        }
+        .result {
+            background: #e6fffa;
+            border: 2px solid #38b2ac;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 10px 0;
+            color: #234e52;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .result.error {
+            background: #fed7d7;
+            border-color: #f56565;
+            color: #742a2a;
+        }
+        .result.warning {
+            background: #fffaf0;
+            border-color: #ed8936;
+            color: #744210;
+        }
+        .result.success {
+            background: #f0fff4;
+            border-color: #48bb78;
+            color: #22543d;
+        }
+        .endpoint-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .endpoint-card {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 20px;
+        }
+        .endpoint-card.success {
+            border-color: #48bb78;
+            background: #f0fff4;
+        }
+        .endpoint-card.error {
+            border-color: #f56565;
+            background: #fffafa;
+        }
+        .endpoint-card.warning {
+            border-color: #ed8936;
+            background: #fffaf0;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        .status-success {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+        .status-error {
+            background: #fed7d7;
+            color: #742a2a;
+        }
+        .status-warning {
+            background: #feebc8;
+            color: #744210;
+        }
+        .json-viewer {
+            background: #1a202c;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            overflow-x: auto;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="api-logo">🔍</div>
+            <h1>Test API Endpoints</h1>
+            <p>Comprehensive API testing untuk Vercel deployment</p>
+        </div>
+
+        <div class="endpoint-test">
+            <h3>🌐 Base URL Configuration</h3>
+            <input type="text" id="base-url" class="url-input" 
+                   placeholder="https://your-app.vercel.app" 
+                   value="https://sistem-informasi-pengawas-sekolah-kcdy.vercel.app">
+            <button class="btn" onclick="setBaseUrl()">🔗 Set Base URL</button>
+            <button class="btn btn-success" onclick="testAllEndpoints()">🚀 Test All Endpoints</button>
+        </div>
+
+        <div class="endpoint-test">
+            <h3>🔐 Authentication Test</h3>
+            <p>Test login endpoint dan dapatkan token:</p>
+            <button class="btn" onclick="testLogin()">🔐 Test Login</button>
+            <button class="btn btn-warning" onclick="testLoginWithWrongCredentials()">❌ Test Wrong Credentials</button>
+            <div id="auth-result"></div>
+        </div>
+
+        <div class="endpoint-grid" id="endpoint-results">
+            <!-- Results akan muncul di sini -->
+        </div>
+
+        <div class="endpoint-test">
+            <h3>📊 Detailed API Tests</h3>
+            <div class="endpoint-grid">
+                <div class="endpoint-card">
+                    <h4>GET /api/auth/me</h4>
+                    <button class="btn" onclick="testEndpoint('/api/auth/me', 'GET', true)">Test</button>
+                    <div id="result-auth-me"></div>
+                </div>
+                
+                <div class="endpoint-card">
+                    <h4>GET /api/users</h4>
+                    <button class="btn" onclick="testEndpoint('/api/users', 'GET', true)">Test</button>
+                    <div id="result-users"></div>
+                </div>
+                
+                <div class="endpoint-card">
+                    <h4>GET /api/schools</h4>
+                    <button class="btn" onclick="testEndpoint('/api/schools', 'GET', true)">Test</button>
+                    <div id="result-schools"></div>
+                </div>
+                
+                <div class="endpoint-card">
+                    <h4>GET /api/tasks</h4>
+                    <button class="btn" onclick="testEndpoint('/api/tasks', 'GET', true)">Test</button>
+                    <div id="result-tasks"></div>
+                </div>
+                
+                <div class="endpoint-card">
+                    <h4>GET /api/supervisions</h4>
+                    <button class="btn" onclick="testEndpoint('/api/supervisions', 'GET', true)">Test</button>
+                    <div id="result-supervisions"></div>
+                </div>
+                
+                <div class="endpoint-card">
+                    <h4>POST /api/auth/login</h4>
+                    <button class="btn" onclick="testEndpoint('/api/auth/login', 'POST', false, {username: 'admin', password: 'admin123'})">Test</button>
+                    <div id="result-login"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="endpoint-test">
+            <h3>🔧 Debug Information</h3>
+            <button class="btn btn-warning" onclick="showDebugInfo()">🔍 Show Debug Info</button>
+            <div id="debug-info"></div>
+        </div>
+
+        <div id="summary-results"></div>
+    </div>
+
+    <script>
+        let baseUrl = 'https://sistem-informasi-pengawas-sekolah-kcdy.vercel.app';
+        let authToken = null;
+        let testResults = {};
+
+        function setBaseUrl() {
+            const urlInput = document.getElementById('base-url');
+            baseUrl = urlInput.value.trim();
+            
+            if (!baseUrl.startsWith('http')) {
+                baseUrl = 'https://' + baseUrl;
+            }
+            
+            showResult('auth-result', `Base URL set to: ${baseUrl}`, 'success');
+        }
+
+        async function testLogin() {
+            showResult('auth-result', 'Testing login...', 'info');
+            
+            try {
+                const response = await fetch(`${baseUrl}/api/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        username: 'admin',
+                        password: 'admin123'
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    authToken = data.token || data.accessToken || 'mock-token';
+                    showResult('auth-result', 
+                        `✅ Login successful!\nStatus: ${response.status}\nToken: ${authToken ? 'Received' : 'Not received'}\nResponse: ${JSON.stringify(data, null, 2)}`, 
+                        'success');
+                    testResults.login = true;
+                } else {
+                    showResult('auth-result', 
+                        `❌ Login failed!\nStatus: ${response.status}\nResponse: ${JSON.stringify(data, null, 2)}`, 
+                        'error');
+                    testResults.login = false;
+                }
+            } catch (error) {
+                showResult('auth-result', 
+                    `❌ Login error: ${error.message}`, 
+                    'error');
+                testResults.login = false;
+            }
+        }
+
+        async function testLoginWithWrongCredentials() {
+            showResult('auth-result', 'Testing login with wrong credentials...', 'info');
+            
+            try {
+                const response = await fetch(`${baseUrl}/api/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        username: 'wrong',
+                        password: 'wrong'
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.status === 401 || response.status === 403) {
+                    showResult('auth-result', 
+                        `✅ Security working! Wrong credentials rejected.\nStatus: ${response.status}\nResponse: ${JSON.stringify(data, null, 2)}`, 
+                        'success');
+                } else {
+                    showResult('auth-result', 
+                        `⚠️ Security issue: Wrong credentials not properly rejected.\nStatus: ${response.status}\nResponse: ${JSON.stringify(data, null, 2)}`, 
+                        'warning');
+                }
+            } catch (error) {
+                showResult('auth-result', 
+                    `❌ Test error: ${error.message}`, 
+                    'error');
+            }
+        }
+
+        async function testEndpoint(endpoint, method = 'GET', requiresAuth = false, body = null) {
+            const resultId = `result-${endpoint.replace(/[^a-zA-Z0-9]/g, '-')}`;
+            const resultElement = document.getElementById(resultId);
+            
+            if (resultElement) {
+                resultElement.innerHTML = '<div class="result">Testing...</div>';
+            }
+            
+            try {
+                const headers = {
+                    'Content-Type': 'application/json'
+                };
+                
+                if (requiresAuth && authToken) {
+                    headers['Authorization'] = `Bearer ${authToken}`;
+                }
+                
+                const options = {
+                    method,
+                    headers
+                };
+                
+                if (body && method !== 'GET') {
+                    options.body = JSON.stringify(body);
+                }
+                
+                const response = await fetch(`${baseUrl}${endpoint}`, options);
+                let data;
+                
+                try {
+                    data = await response.json();
+                } catch (e) {
+                    data = await response.text();
+                }
+                
+                const statusClass = response.ok ? 'success' : 
+                                  (response.status === 401 && requiresAuth) ? 'warning' : 'error';
+                
+                const resultText = `
+                    Status: ${response.status} ${response.statusText}
+                    ${response.ok ? '✅' : response.status === 401 ? '🔐' : '❌'}
+                    
+                    Response:
+                    ${typeof data === 'object' ? JSON.stringify(data, null, 2) : data}
+                `;
+                
+                if (resultElement) {
+                    showResult(resultId, resultText, statusClass);
+                }
+                
+                testResults[endpoint] = {
+                    status: response.status,
+                    ok: response.ok,
+                    requiresAuth,
+                    data
+                };
+                
+                return { response, data };
+                
+            } catch (error) {
+                const errorText = `❌ Error: ${error.message}`;
+                
+                if (resultElement) {
+                    showResult(resultId, errorText, 'error');
+                }
+                
+                testResults[endpoint] = {
+                    error: error.message,
+                    ok: false
+                };
+                
+                return { error };
+            }
+        }
+
+        async function testAllEndpoints() {
+            showResult('auth-result', '🚀 Starting comprehensive API test...', 'info');
+            
+            // First, try to login
+            await testLogin();
+            
+            // Wait a bit for login to complete
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            
+            // Test all endpoints
+            const endpoints = [
+                { path: '/api/auth/me', method: 'GET', requiresAuth: true },
+                { path: '/api/users', method: 'GET', requiresAuth: true },
+                { path: '/api/schools', method: 'GET', requiresAuth: true },
+                { path: '/api/tasks', method: 'GET', requiresAuth: true },
+                { path: '/api/supervisions', method: 'GET', requiresAuth: true }
+            ];
+            
+            for (const endpoint of endpoints) {
+                await testEndpoint(endpoint.path, endpoint.method, endpoint.requiresAuth);
+                // Small delay between requests
+                await new Promise(resolve => setTimeout(resolve, 500));
+            }
+            
+            // Show summary
+            setTimeout(showSummary, 2000);
+        }
+
+        function showResult(elementId, message, type = 'info') {
+            const element = document.getElementById(elementId);
+            if (!element) return;
+            
+            const resultClass = type === 'success' ? 'result success' : 
+                              type === 'error' ? 'result error' : 
+                              type === 'warning' ? 'result warning' : 'result';
+            
+            element.innerHTML = `<div class="${resultClass}">${message}</div>`;
+        }
+
+        function showDebugInfo() {
+            const debugInfo = {
+                baseUrl,
+                authToken: authToken ? 'Present' : 'Not set',
+                userAgent: navigator.userAgent,
+                timestamp: new Date().toISOString(),
+                testResults: Object.keys(testResults).length
+            };
+            
+            showResult('debug-info', 
+                `Debug Information:\n${JSON.stringify(debugInfo, null, 2)}`, 
+                'info');
+        }
+
+        function showSummary() {
+            const summaryElement = document.getElementById('summary-results');
+            const totalTests = Object.keys(testResults).length;
+            const passedTests = Object.values(testResults).filter(result => 
+                result.ok || (result.status === 401 && result.requiresAuth)
+            ).length;
+            
+            const successRate = totalTests > 0 ? ((passedTests / totalTests) * 100).toFixed(1) : 0;
+            
+            let summaryClass = 'success';
+            let summaryMessage = '🎉 All API tests passed!';
+            
+            if (successRate < 100) {
+                summaryClass = successRate > 50 ? 'warning' : 'error';
+                summaryMessage = `⚠️ ${passedTests}/${totalTests} tests passed (${successRate}%)`;
+            }
+            
+            const summaryHtml = `
+                <div class="endpoint-test">
+                    <h3>📊 Test Summary</h3>
+                    <div class="result ${summaryClass}">
+                        <strong>${summaryMessage}</strong>
+                        
+                        <h4>Detailed Results:</h4>
+                        ${Object.entries(testResults).map(([endpoint, result]) => {
+                            const status = result.ok ? '✅' : 
+                                         (result.status === 401) ? '🔐' : '❌';
+                            return `${status} ${endpoint}: ${result.status || 'Error'}`;
+                        }).join('\n')}
+                        
+                        <h4>Recommendations:</h4>
+                        ${successRate === 100 ? 
+                            '✅ All endpoints working correctly!' : 
+                            `🔧 ${totalTests - passedTests} endpoints need attention. Check Vercel logs and environment variables.`
+                        }
+                    </div>
+                </div>
+            `;
+            
+            summaryElement.innerHTML = summaryHtml;
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            showResult('auth-result', '🔍 API Endpoint Tester ready. Click "Test All Endpoints" to start comprehensive testing.', 'info');
+        });
+    </script>
+</body>
+</html>

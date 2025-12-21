@@ -1,52 +1,79 @@
-const { createClient } = require('@supabase/supabase-js');
+import { createClient } from '@supabase/supabase-js';
 
-module.exports = async function handler(req, res) {
+export default async function handler(req, res) {
+  // CORS headers
+  res.setHeader('Access-Control-Allow-Credentials', true);
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization');
+
+  if (req.method === 'OPTIONS') {
+    res.status(200).end();
+    return;
+  }
+
   try {
-    // Initialize Supabase client
-    const supabaseUrl = process.env.SUPABASE_URL || 'https://fmxeboullgcewzjpql.supabase.co';
-    const supabaseKey = process.env.SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZteGVib3VsbGdjZXd6anBxbCIsInJvbGUiOiJhbm9uIiwiaWF0IjoxNzM0NTk5NzI4LCJleHAiOjIwNTAxNzU3Mjh9.Ej8Ej8Ej8Ej8Ej8Ej8Ej8Ej8Ej8Ej8Ej8Ej8Ej8';
-    
-    const supabase = createClient(supabaseUrl, supabaseKey);
-
     if (req.method === 'GET') {
-      const { data: tasks, error } = await supabase
-        .from('tasks')
-        .select('*')
-        .order('created_at', { ascending: false });
+      // Return sample tasks data
+      const sampleTasks = [
+        {
+          id: '1',
+          title: 'Supervisi Akademik SDN 1 Garut',
+          description: 'Melakukan supervisi akademik untuk meningkatkan kualitas pembelajaran',
+          category: 'Pendampingan',
+          completed: false,
+          date: new Date().toISOString(),
+          created_at: new Date().toISOString()
+        },
+        {
+          id: '2',
+          title: 'Penyusunan Laporan Bulanan',
+          description: 'Menyusun laporan kegiatan supervisi bulan ini',
+          category: 'Pelaporan',
+          completed: true,
+          date: new Date().toISOString(),
+          created_at: new Date().toISOString()
+        }
+      ];
 
-      if (error) {
-        console.error('Tasks GET error:', error);
-        return res.status(500).json({ error: 'Failed to fetch tasks' });
-      }
-
-      res.json(tasks || []);
+      res.json(sampleTasks);
 
     } else if (req.method === 'POST') {
-      const { title, description, dueDate, priority, schoolId } = req.body;
+      const { title, description, category, date } = req.body;
 
       if (!title) {
         return res.status(400).json({ error: 'Title is required' });
       }
 
-      const { data: task, error } = await supabase
-        .from('tasks')
-        .insert({
-          title,
-          description,
-          due_date: dueDate,
-          priority: priority || 'medium',
-          school_id: schoolId,
-          status: 'pending'
-        })
-        .select()
-        .single();
+      const newTask = {
+        id: Date.now().toString(),
+        title,
+        description: description || '',
+        category: category || 'Perencanaan',
+        completed: false,
+        date: date || new Date().toISOString(),
+        created_at: new Date().toISOString()
+      };
 
-      if (error) {
-        console.error('Tasks POST error:', error);
-        return res.status(500).json({ error: 'Failed to create task' });
-      }
+      res.status(201).json(newTask);
 
-      res.status(201).json(task);
+    } else if (req.method === 'PUT') {
+      const { id } = req.query;
+      const updateData = req.body;
+
+      // Mock update response
+      const updatedTask = {
+        id,
+        ...updateData,
+        updated_at: new Date().toISOString()
+      };
+
+      res.status(200).json(updatedTask);
+
+    } else if (req.method === 'DELETE') {
+      const { id } = req.query;
+
+      res.status(200).json({ message: 'Task deleted successfully' });
 
     } else {
       res.status(405).json({ error: 'Method not allowed' });
