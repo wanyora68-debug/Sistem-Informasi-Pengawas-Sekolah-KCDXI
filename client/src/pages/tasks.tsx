@@ -12,6 +12,9 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Plus, Pencil, Trash2, Printer, Image as ImageIcon, X } from "lucide-react";
 import { tasksApi } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
+import { queryClient } from "@/lib/queryClient";
+import { queryClient } from "@/lib/queryClient";
+import { id } from "date-fns/locale";
 
 type Task = {
   id: string;
@@ -106,28 +109,17 @@ export default function TasksPage() {
   // Toggle complete mutation
   const toggleCompleteMutation = useMutation({
     mutationFn: async ({ id, completed }: { id: string; completed: boolean }) => {
-      // Try API first, fallback to localStorage
-      try {
-        const token = localStorage.getItem('auth_token');
-        const response = await fetch(`/api/tasks/${id}`, {
-          method: 'PATCH',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
-          },
-          body: JSON.stringify({ completed }),
-          credentials: 'include',
-        });
-        if (response.ok) {
-          return response.json();
-        }
-      } catch (error) {
-        console.log('Toggle API failed, using localStorage fallback');
-      }
-      
-      // Fallback to localStorage
+      // For now, use localStorage fallback since we don't have update API yet
       const tasksData = localStorage.getItem('tasks_data');
       const currentTasks = tasksData ? JSON.parse(tasksData) : [];
+      
+      const updatedTasks = currentTasks.map((task: any) => 
+        task.id === id ? { ...task, completed } : task
+      );
+      
+      localStorage.setItem('tasks_data', JSON.stringify(updatedTasks));
+      return { id, completed };
+    },
       
       const updatedTasks = currentTasks.map((task: any) => 
         task.id === id ? { ...task, completed } : task
@@ -249,25 +241,7 @@ export default function TasksPage() {
   // Update task mutation
   const updateTaskMutation = useMutation({
     mutationFn: async ({ id, formData }: { id: string; formData: FormData }) => {
-      // Try API first, fallback to localStorage
-      try {
-        const token = localStorage.getItem('auth_token');
-        const response = await fetch(`/api/tasks/${id}`, {
-          method: 'PUT',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-          },
-          body: formData,
-          credentials: 'include',
-        });
-        if (response.ok) {
-          return response.json();
-        }
-      } catch (error) {
-        console.log('Update API failed, using localStorage fallback');
-      }
-      
-      // Fallback to localStorage
+      // For now, use localStorage fallback since we don't have update API yet
       const tasksData = localStorage.getItem('tasks_data');
       const currentTasks = tasksData ? JSON.parse(tasksData) : [];
       

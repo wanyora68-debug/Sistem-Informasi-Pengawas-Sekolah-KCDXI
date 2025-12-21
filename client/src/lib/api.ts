@@ -1,94 +1,69 @@
-// API client for backend communication
+// Direct Supabase API client - No backend needed!
 import { supabase } from './supabase';
 
-const API_BASE = '/api';
-
-// Helper function to get auth headers
-function getAuthHeaders(): HeadersInit {
-  const token = localStorage.getItem('auth_token');
-  return token ? { 'Authorization': `Bearer ${token}` } : {};
-}
-
-// Helper function to handle API responses
-async function handleResponse(response: Response) {
-  if (!response.ok) {
-    if (response.status === 401) {
-      // Clear token and redirect to login if unauthorized
-      localStorage.removeItem('auth_token');
-      window.location.href = '/login';
-      throw new Error('Silakan login terlebih dahulu');
-    }
-    const error = await response.json().catch(() => ({ error: 'An error occurred' }));
-    throw new Error(error.error || 'An error occurred');
-  }
-  return response.json();
-}
-
-// Schools API - Using Supabase
-export const schoolsApi = {
-  getAll: async () => {
+// Auth API - Direct Supabase Auth
+export const authApi = {
+  login: async (username: string, password: string) => {
     try {
-      const { data, error } = await supabase
-        .from('schools')
+      // First, get user from database to verify credentials
+      const { data: users, error: userError } = await supabase
+        .from('users')
         .select('*')
-        .order('created_at', { ascending: false });
-      
-      if (error) throw error;
-      return data || [];
-    } catch (error) {
-      console.log('Supabase failed, using sample data');
-      return [
-        {
-          id: '1',
-          name: 'SDN 1 Garut',
-          address: 'Jl. Raya Garut No. 1',
-          principal: 'Drs. Ahmad Suryadi',
-          phone: '0262-123456',
-          email: 'sdn1garut@gmail.com'
-        },
-        {
-          id: '2', 
-          name: 'SMPN 2 Garut',
-          address: 'Jl. Pendidikan No. 15',
-          principal: 'Dra. Siti Nurhasanah',
-          phone: '0262-234567',
-          email: 'smpn2garut@gmail.com'
-        }
-      ];
+        .eq('username', username)
+        .single();
+
+      if (userError || !users) {
+        throw new Error('Username tidak ditemukan');
+      }
+
+      // For simplicity, we'll check if password is 'admin123' for all users
+      // In production, you'd use proper password hashing
+      if (password !== 'admin123') {
+        throw new Error('Password salah');
+      }
+
+      // Store user data in localStorage (simple session management)
+      const userData = {
+        id: users.id,
+        username: users.username,
+        full_name: users.full_name,
+        role: users.role,
+        nip: users.nip,
+        rank: users.rank,
+        photo_url: users.photo_url
+      };
+
+      localStorage.setItem('auth_user', JSON.stringify(userData));
+      localStorage.setItem('auth_token', 'simple-token-' + Date.now());
+
+      return {
+        user: userData,
+        token: 'simple-token-' + Date.now()
+      };
+    } catch (error: any) {
+      throw new Error(error.message || 'Login gagal');
     }
   },
-  
-  create: async (schoolData: any) => {
-    try {
-      const { data, error } = await supabase
-        .from('schools')
-        .insert([schoolData])
-        .select()
-        .single();
-      
-      if (error) throw error;
-      return data;
-    } catch (error) {
-      console.log('Supabase failed, using localStorage fallback');
-      // Fallback to localStorage
-      const schoolsData = localStorage.getItem('schools_data');
-      const currentSchools = schoolsData ? JSON.parse(schoolsData) : [];
-      
-      const newSchool = {
-        id: Date.now().toString(),
-        ...schoolData,
-        created_at: new Date().toISOString()
-      };
-      
-      const updatedSchools = [...currentSchools, newSchool];
-      localStorage.setItem('schools_data', JSON.stringify(updatedSchools));
-      
-      return newSchool;
+
+  logout: async () => {
+    localStorage.removeItem('auth_user');
+    localStorage.removeItem('auth_token');
+    return { success: true };
+  },
+
+  getCurrentUser: async () => {
+    const userData = localStorage.getItem('auth_user');
+    const token = localStorage.getItem('auth_token');
+    
+    if (!userData || !token) {
+      throw new Error('Tidak ada session aktif');
     }
+
+    return JSON.parse(userData);
   }
 };
 
-// Users API - Using Supabase
+// Users API - Direct Supabase
 export const usersApi = {
   getAll: async () => {
     try {
@@ -98,284 +73,352 @@ export const usersApi = {
         .order('created_at', { ascending: false });
       
       if (error) throw error;
+      
+      console.log('✅ Data users dari Supabase:', data?.length || 0, 'records');
       return data || [];
-    } catch (error) {
-      console.log('Supabase failed, using sample data');
-      return [
-        {
-          id: '1',
-          username: 'admin',
-          name: 'Administrator',
-          role: 'admin',
-          nip: '196501011990031001',
-          position: 'Pengawas Sekolah'
-        },
-        {
-          id: '2',
-          username: 'wawan',
-          name: 'Wawan Yogaswara',
-          role: 'user',
-          nip: '197505152008011002',
-          position: 'Pengawas Sekolah'
-        }
-      ];
+    } catch (error: any) {
+      console.error('Error fetching users:', error);
+      
+      // Fallback to localStorage
+      const localData = localStorage.getItem('users_data');
+      if (localData) {
+        const users = JSON.parse(localData);
+        console.log('📦 Fallback ke localStorage users:', users.length, 'records');
+        return users;
+      }
+      
+      return [];
     }
   },
-  
+
   create: async (userData: any) => {
     try {
       const { data, error } = await supabase
         .from('users')
-        .insert([userData])
+        .insert([{
+          username: userData.username,
+          password: '$2b$10$K7L1OJ45/4Y2nIvL0DXbu.b7Q5Qr4WzO.BhHb9gYRt5h8K9L0DXbu', // admin123
+          full_name: userData.full_name,
+          role: userData.role,
+          nip: userData.nip || '',
+          rank: userData.rank || '',
+          photo_url: userData.photo_url || ''
+        }])
         .select()
         .single();
       
       if (error) throw error;
       return data;
-    } catch (error) {
-      console.log('Supabase failed, using localStorage fallback');
-      // Fallback to localStorage
-      const usersData = localStorage.getItem('users_data');
-      const currentUsers = usersData ? JSON.parse(usersData) : [];
-      
-      const newUser = {
-        id: Date.now().toString(),
-        ...userData,
-        created_at: new Date().toISOString()
-      };
-      
-      const updatedUsers = [...currentUsers, newUser];
-      localStorage.setItem('users_data', JSON.stringify(updatedUsers));
-      
-      return newUser;
+    } catch (error: any) {
+      console.error('Error creating user:', error);
+      throw new Error('Gagal membuat user');
     }
   }
 };
 
-// Tasks API
+// Schools API - Direct Supabase
+export const schoolsApi = {
+  getAll: async () => {
+    try {
+      const { data, error } = await supabase
+        .from('schools')
+        .select(`
+          *,
+          users!schools_user_id_fkey (
+            username,
+            full_name
+          )
+        `)
+        .order('created_at', { ascending: false });
+      
+      if (error) throw error;
+      
+      console.log('✅ Data schools dari Supabase:', data?.length || 0, 'records');
+      return data || [];
+    } catch (error: any) {
+      console.error('Error fetching schools:', error);
+      
+      // Fallback to localStorage
+      const localData = localStorage.getItem('schools_data');
+      if (localData) {
+        const schools = JSON.parse(localData);
+        console.log('📦 Fallback ke localStorage schools:', schools.length, 'records');
+        return schools;
+      }
+      
+      return [];
+    }
+  },
+
+  create: async (schoolData: any) => {
+    try {
+      // Get current user to set user_id
+      const currentUser = await authApi.getCurrentUser();
+      
+      const { data, error } = await supabase
+        .from('schools')
+        .insert([{
+          user_id: currentUser.id,
+          name: schoolData.name,
+          address: schoolData.address,
+          contact: schoolData.contact || '',
+          principal_name: schoolData.principal_name || ''
+        }])
+        .select()
+        .single();
+      
+      if (error) throw error;
+      return data;
+    } catch (error: any) {
+      console.error('Error creating school:', error);
+      throw new Error('Gagal membuat sekolah');
+    }
+  }
+};
+
+// Additional Tasks API - Direct Supabase
+export const additionalTasksApi = {
+  getAll: async () => {
+    try {
+      const { data, error } = await supabase
+        .from('additional_tasks')
+        .select(`
+          *,
+          users!additional_tasks_user_id_fkey (
+            username,
+            full_name
+          )
+        `)
+        .order('date', { ascending: false });
+      
+      if (error) throw error;
+      
+      console.log('✅ Data additional tasks dari Supabase:', data?.length || 0, 'records');
+      return data || [];
+    } catch (error: any) {
+      console.error('Error fetching additional tasks:', error);
+      
+      // Fallback to localStorage
+      const localData = localStorage.getItem('additional_tasks_data');
+      if (localData) {
+        const tasks = JSON.parse(localData);
+        console.log('📦 Fallback ke localStorage additional tasks:', tasks.length, 'records');
+        return tasks;
+      }
+      
+      return [];
+    }
+  },
+
+  create: async (taskData: any) => {
+    try {
+      // Get current user to set user_id
+      const currentUser = await authApi.getCurrentUser();
+      
+      const { data, error } = await supabase
+        .from('additional_tasks')
+        .insert([{
+          user_id: currentUser.id,
+          name: taskData.name,
+          date: taskData.date,
+          location: taskData.location,
+          organizer: taskData.organizer || '',
+          description: taskData.description || '',
+          photo1: taskData.photo1 || ''
+        }])
+        .select()
+        .single();
+      
+      if (error) throw error;
+      return data;
+    } catch (error: any) {
+      console.error('Error creating additional task:', error);
+      throw new Error('Gagal membuat tugas tambahan');
+    }
+  },
+
+  delete: async (id: string) => {
+    try {
+      const { error } = await supabase
+        .from('additional_tasks')
+        .delete()
+        .eq('id', id);
+      
+      if (error) throw error;
+      return { success: true };
+    } catch (error: any) {
+      console.error('Error deleting additional task:', error);
+      throw new Error('Gagal menghapus tugas tambahan');
+    }
+  }
+};
+
+// Tasks API - Direct Supabase
 export const tasksApi = {
   getAll: async () => {
     try {
-      const response = await fetch(`${API_BASE}/tasks`, {
-        headers: getAuthHeaders(),
-        credentials: 'include',
-      });
-      if (response.ok) {
-        return handleResponse(response);
+      const { data, error } = await supabase
+        .from('tasks')
+        .select(`
+          *,
+          users!tasks_user_id_fkey (
+            username,
+            full_name
+          )
+        `)
+        .order('date', { ascending: false });
+      
+      if (error) throw error;
+      
+      console.log('✅ Data tasks dari Supabase:', data?.length || 0, 'records');
+      return data || [];
+    } catch (error: any) {
+      console.error('Error fetching tasks:', error);
+      
+      // Fallback to localStorage
+      const localData = localStorage.getItem('tasks_data');
+      if (localData) {
+        const tasks = JSON.parse(localData);
+        console.log('📦 Fallback ke localStorage tasks:', tasks.length, 'records');
+        return tasks;
       }
-    } catch (error) {
-      console.log('Tasks API failed, using localStorage fallback');
+      
+      return [];
     }
-    
-    // Fallback to localStorage
-    const tasksData = localStorage.getItem('tasks_data');
-    return tasksData ? JSON.parse(tasksData) : [];
   },
-  
-  create: async (formData: FormData) => {
+
+  create: async (taskData: any) => {
     try {
-      const response = await fetch(`${API_BASE}/tasks`, {
-        method: 'POST',
-        headers: getAuthHeaders(),
-        body: formData,
-        credentials: 'include',
-      });
-      if (response.ok) {
-        return handleResponse(response);
-      }
-    } catch (error) {
-      console.log('Tasks API failed, using localStorage fallback');
+      // Get current user to set user_id
+      const currentUser = await authApi.getCurrentUser();
+      
+      const { data, error } = await supabase
+        .from('tasks')
+        .insert([{
+          user_id: currentUser.id,
+          title: taskData.title,
+          category: taskData.category || 'Umum',
+          description: taskData.description || '',
+          completed: taskData.completed || false,
+          date: taskData.date,
+          photo1: taskData.photo1 || ''
+        }])
+        .select()
+        .single();
+      
+      if (error) throw error;
+      return data;
+    } catch (error: any) {
+      console.error('Error creating task:', error);
+      throw new Error('Gagal membuat tugas');
     }
-    
-    // Fallback to localStorage
-    const tasksData = localStorage.getItem('tasks_data');
-    const currentTasks = tasksData ? JSON.parse(tasksData) : [];
-    
-    // Convert FormData to object with proper async file handling
-    const taskData: any = {};
-    const filePromises: Promise<void>[] = [];
-    
-    formData.forEach((value, key) => {
-      if (key.startsWith('photo') && value instanceof File) {
-        // Convert file to base64 for localStorage
-        const promise = new Promise<void>((resolve) => {
-          const reader = new FileReader();
-          reader.onload = () => {
-            taskData[key] = reader.result;
-            resolve();
-          };
-          reader.readAsDataURL(value);
-        });
-        filePromises.push(promise);
-      } else {
-        taskData[key] = value;
-      }
-    });
-    
-    // Wait for all file conversions to complete
-    await Promise.all(filePromises);
-    
-    const newTask = {
-      id: Date.now().toString(),
-      ...taskData,
-      date: taskData.date || new Date().toISOString().split('T')[0],
-      completed: taskData.completed === 'true',
-      createdAt: new Date().toISOString()
-    };
-    
-    const updatedTasks = [...currentTasks, newTask];
-    localStorage.setItem('tasks_data', JSON.stringify(updatedTasks));
-    
-    return newTask;
-  },
-  
-  delete: async (id: string) => {
-    try {
-      const response = await fetch(`${API_BASE}/tasks/${id}`, {
-        method: 'DELETE',
-        headers: getAuthHeaders(),
-        credentials: 'include',
-      });
-      if (response.ok) {
-        return handleResponse(response);
-      }
-    } catch (error) {
-      console.log('Tasks API failed, using localStorage fallback');
-    }
-    
-    // Fallback to localStorage
-    const tasksData = localStorage.getItem('tasks_data');
-    const currentTasks = tasksData ? JSON.parse(tasksData) : [];
-    
-    const updatedTasks = currentTasks.filter((task: any) => task.id !== id);
-    localStorage.setItem('tasks_data', JSON.stringify(updatedTasks));
-    
-    return { success: true };
-  },
+  }
 };
 
-// Supervisions API - DISABLED: Using localStorage only to prevent 405 errors
+// Supervisions API - Direct Supabase
 export const supervisionsApi = {
   getAll: async () => {
-    // Direct localStorage only - no API calls
-    const supervisionsData = localStorage.getItem('supervisions_data');
-    return supervisionsData ? JSON.parse(supervisionsData) : [];
-  },
-  
-  create: async (formData: FormData) => {
-    // Direct localStorage only - no API calls
-    const supervisionsData = localStorage.getItem('supervisions_data');
-    const currentSupervisions = supervisionsData ? JSON.parse(supervisionsData) : [];
-    
-    // Convert FormData to object with proper async file handling
-    const supervisionData: any = {};
-    const filePromises: Promise<void>[] = [];
-    
-    formData.forEach((value, key) => {
-      if (key.startsWith('photo') && value instanceof File) {
-        // Convert file to base64 for localStorage
-        const promise = new Promise<void>((resolve) => {
-          const reader = new FileReader();
-          reader.onload = () => {
-            supervisionData[key] = reader.result;
-            resolve();
-          };
-          reader.readAsDataURL(value);
-        });
-        filePromises.push(promise);
-      } else {
-        supervisionData[key] = value;
+    try {
+      const { data, error } = await supabase
+        .from('supervisions')
+        .select(`
+          *,
+          users!supervisions_user_id_fkey (
+            username,
+            full_name
+          ),
+          schools!supervisions_school_id_fkey (
+            name,
+            principal_name
+          )
+        `)
+        .order('date', { ascending: false });
+      
+      if (error) throw error;
+      
+      console.log('✅ Data supervisions dari Supabase:', data?.length || 0, 'records');
+      return data || [];
+    } catch (error: any) {
+      console.error('Error fetching supervisions:', error);
+      
+      // Fallback to localStorage
+      const localData = localStorage.getItem('supervisions_data');
+      if (localData) {
+        const supervisions = JSON.parse(localData);
+        console.log('📦 Fallback ke localStorage supervisions:', supervisions.length, 'records');
+        return supervisions;
       }
-    });
-    
-    // Wait for all file conversions to complete
-    await Promise.all(filePromises);
-    
-    const newSupervision = {
-      id: Date.now().toString(),
-      ...supervisionData,
-      createdAt: new Date().toISOString()
-    };
-    
-    const updatedSupervisions = [...currentSupervisions, newSupervision];
-    localStorage.setItem('supervisions_data', JSON.stringify(updatedSupervisions));
-    localStorage.setItem('supervisions_data_backup', JSON.stringify(updatedSupervisions));
-    
-    return newSupervision;
+      
+      return [];
+    }
   },
-  
-  delete: async (id: string) => {
-    // Direct localStorage only - no API calls
-    const supervisionsData = localStorage.getItem('supervisions_data');
-    const currentSupervisions = supervisionsData ? JSON.parse(supervisionsData) : [];
-    
-    const updatedSupervisions = currentSupervisions.filter((supervision: any) => supervision.id !== id);
-    localStorage.setItem('supervisions_data', JSON.stringify(updatedSupervisions));
-    localStorage.setItem('supervisions_data_backup', JSON.stringify(updatedSupervisions));
-    
-    return { success: true };
-  },
+
+  create: async (supervisionData: any) => {
+    try {
+      // Get current user to set user_id
+      const currentUser = await authApi.getCurrentUser();
+      
+      const { data, error } = await supabase
+        .from('supervisions')
+        .insert([{
+          user_id: currentUser.id,
+          school_id: supervisionData.school_id,
+          type: supervisionData.type || 'Akademik',
+          date: supervisionData.date,
+          findings: supervisionData.findings || '',
+          recommendations: supervisionData.recommendations || '',
+          photo1: supervisionData.photo1 || ''
+        }])
+        .select()
+        .single();
+      
+      if (error) throw error;
+      return data;
+    } catch (error: any) {
+      console.error('Error creating supervision:', error);
+      throw new Error('Gagal membuat supervisi');
+    }
+  }
 };
 
-// Additional Tasks API - DISABLED: Using localStorage only to prevent 405 errors
-export const additionalTasksApi = {
-  getAll: async () => {
-    // Direct localStorage only - no API calls
-    const additionalTasksData = localStorage.getItem('additional_tasks_data');
-    return additionalTasksData ? JSON.parse(additionalTasksData) : [];
-  },
-  
-  create: async (formData: FormData) => {
-    // Direct localStorage only - no API calls
-    const additionalTasksData = localStorage.getItem('additional_tasks_data');
-    const currentAdditionalTasks = additionalTasksData ? JSON.parse(additionalTasksData) : [];
-    
-    // Convert FormData to object with proper async file handling
-    const taskData: any = {};
-    const filePromises: Promise<void>[] = [];
-    
-    formData.forEach((value, key) => {
-      if (key.startsWith('photo') && value instanceof File) {
-        // Convert file to base64 for localStorage
-        const promise = new Promise<void>((resolve) => {
-          const reader = new FileReader();
-          reader.onload = () => {
-            taskData[key] = reader.result;
-            resolve();
-          };
-          reader.readAsDataURL(value);
-        });
-        filePromises.push(promise);
-      } else {
-        taskData[key] = value;
-      }
-    });
-    
-    // Wait for all file conversions to complete
-    await Promise.all(filePromises);
-    
-    const newAdditionalTask = {
-      id: Date.now().toString(),
-      ...taskData,
-      createdAt: new Date().toISOString()
-    };
-    
-    const updatedAdditionalTasks = [...currentAdditionalTasks, newAdditionalTask];
-    localStorage.setItem('additional_tasks_data', JSON.stringify(updatedAdditionalTasks));
-    localStorage.setItem('additional_tasks_data_backup', JSON.stringify(updatedAdditionalTasks));
-    
-    return newAdditionalTask;
-  },
-  
-  delete: async (id: string) => {
-    // Direct localStorage only - no API calls
-    const additionalTasksData = localStorage.getItem('additional_tasks_data');
-    const currentAdditionalTasks = additionalTasksData ? JSON.parse(additionalTasksData) : [];
-    
-    const updatedAdditionalTasks = currentAdditionalTasks.filter((task: any) => task.id !== id);
-    localStorage.setItem('additional_tasks_data', JSON.stringify(updatedAdditionalTasks));
-    localStorage.setItem('additional_tasks_data_backup', JSON.stringify(updatedAdditionalTasks));
-    
-    return { success: true };
-  },
+// Dashboard API - Aggregate data from Supabase
+export const dashboardApi = {
+  getStats: async () => {
+    try {
+      const [usersData, schoolsData, tasksData, additionalTasksData] = await Promise.all([
+        usersApi.getAll(),
+        schoolsApi.getAll(),
+        tasksApi.getAll(),
+        additionalTasksApi.getAll()
+      ]);
+
+      return {
+        totalUsers: usersData.length,
+        totalSchools: schoolsData.length,
+        totalTasks: tasksData.length,
+        totalAdditionalTasks: additionalTasksData.length,
+        completedTasks: tasksData.filter((task: any) => task.completed).length
+      };
+    } catch (error: any) {
+      console.error('Error fetching dashboard stats:', error);
+      return {
+        totalUsers: 0,
+        totalSchools: 0,
+        totalTasks: 0,
+        totalAdditionalTasks: 0,
+        completedTasks: 0
+      };
+    }
+  }
+};
+
+// Export all APIs
+export {
+  authApi,
+  usersApi,
+  schoolsApi,
+  additionalTasksApi,
+  tasksApi,
+  supervisionsApi,
+  dashboardApi
 };

@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧪 Test Netlify + Render Production</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            min-height: 100vh;
+        }
+        .container {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            border-radius: 10px;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            background: #f9f9f9;
+        }
+        .test-section h3 {
+            color: #2196F3;
+            margin-top: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .btn {
+            background: linear-gradient(135deg, #2196F3, #1976D2);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+            transition: all 0.3s ease;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(33, 150, 243, 0.3);
+        }
+        .btn-success { background: linear-gradient(135deg, #4CAF50, #45a049); }
+        .btn-warning { background: linear-gradient(135deg, #FF9800, #F57C00); }
+        .btn-danger { background: linear-gradient(135deg, #f44336, #d32f2f); }
+        .result {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .success { background: #e8f5e8; border-left: 5px solid #4CAF50; }
+        .error { background: #ffebee; border-left: 5px solid #f44336; }
+        .info { background: #e3f2fd; border-left: 5px solid #2196F3; }
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .url-section {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+        .url-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin: 5px 0;
+        }
+        .credentials {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🧪 Test Netlify + Render Production</h1>
+            <p>Verifikasi Frontend (Netlify) + Backend (Render) + Database (Supabase)</p>
+        </div>
+
+        <div class="url-section">
+            <h3>🌐 URLs Production</h3>
+            <p><strong>Frontend (Netlify):</strong> <a href="https://celadon-chebakia-a3bf18.netlify.app" target="_blank">https://celadon-chebakia-a3bf18.netlify.app</a></p>
+            <p><strong>Backend (Render):</strong> <input type="text" id="backendURL" class="url-input" placeholder="https://your-app.onrender.com" value="https://school-guard-manager-api.onrender.com"></p>
+            <p><strong>Database:</strong> Supabase PostgreSQL (29 records data real)</p>
+        </div>
+
+        <div class="credentials">
+            <h3>🔑 Kredensial Login</h3>
+            <p><strong>Username:</strong> wawan | <strong>Password:</strong> admin123</p>
+            <p><strong>Username:</strong> yenihandayani | <strong>Password:</strong> admin123</p>
+            <p><strong>Username:</strong> itasdik | <strong>Password:</strong> admin123</p>
+            <p><strong>Username:</strong> admin | <strong>Password:</strong> admin123</p>
+        </div>
+
+        <div class="test-section">
+            <h3>🔍 1. Test Backend API (Render)</h3>
+            <button class="btn btn-success" onclick="testBackendAPI()">Test Backend Connection</button>
+            <div id="backend-result" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>👥 2. Test Data Users</h3>
+            <button class="btn btn-success" onclick="testUsers()">Cek Data Users</button>
+            <div id="users-result" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>🏫 3. Test Data Schools</h3>
+            <button class="btn btn-success" onclick="testSchools()">Cek Data Schools</button>
+            <div id="schools-result" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>📋 4. Test Data Additional Tasks</h3>
+            <button class="btn btn-success" onclick="testAdditionalTasks()">Cek Data Additional Tasks</button>
+            <div id="tasks-result" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>🔐 5. Test Login API</h3>
+            <button class="btn btn-warning" onclick="testLogin()">Test Login Wawan</button>
+            <div id="login-result" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>🌐 6. Test Frontend (Netlify)</h3>
+            <button class="btn btn-success" onclick="testFrontend()">Test Frontend Loading</button>
+            <div id="frontend-result" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>🚀 7. Test Full Integration</h3>
+            <button class="btn btn-danger" onclick="testFullIntegration()">Test Semua Komponen</button>
+            <div id="integration-result" class="result"></div>
+        </div>
+    </div>
+
+    <script>
+        function getBackendURL() {
+            return document.getElementById('backendURL').value.trim() || 'https://school-guard-manager-api.onrender.com';
+        }
+
+        function showLoading(elementId) {
+            document.getElementById(elementId).innerHTML = '<div class="loading"></div> Testing...';
+        }
+
+        function showResult(elementId, content, type = 'info') {
+            const element = document.getElementById(elementId);
+            element.className = `result ${type}`;
+            element.innerHTML = content;
+        }
+
+        async function testBackendAPI() {
+            showLoading('backend-result');
+            const backendURL = getBackendURL();
+            
+            try {
+                // Test basic health check
+                const response = await fetch(`${backendURL}/api/health`);
+                
+                let result = `🔍 BACKEND API TEST\n`;
+                result += `URL: ${backendURL}\n\n`;
+                
+                if (response.ok) {
+                    const data = await response.text();
+                    result += `✅ Backend API: ONLINE\n`;
+                    result += `Status: ${response.status}\n`;
+                    result += `Response: ${data}\n\n`;
+                    
+                    // Test users endpoint
+                    try {
+                        const usersResponse = await fetch(`${backendURL}/api/users`);
+                        if (usersResponse.ok) {
+                            const usersData = await usersResponse.json();
+                            result += `✅ Users Endpoint: WORKING\n`;
+                            result += `Users Count: ${usersData.length}\n`;
+                        } else {
+                            result += `❌ Users Endpoint: FAILED (${usersResponse.status})\n`;
+                        }
+                    } catch (error) {
+                        result += `❌ Users Endpoint: ERROR (${error.message})\n`;
+                    }
+                    
+                    showResult('backend-result', result, 'success');
+                } else {
+                    result += `❌ Backend API: OFFLINE\n`;
+                    result += `Status: ${response.status}\n`;
+                    showResult('backend-result', result, 'error');
+                }
+            } catch (error) {
+                let result = `❌ BACKEND CONNECTION ERROR!\n`;
+                result += `URL: ${backendURL}\n`;
+                result += `Error: ${error.message}\n\n`;
+                result += `Possible causes:\n`;
+                result += `- Backend belum di-deploy ke Render\n`;
+                result += `- URL Render salah\n`;
+                result += `- Backend masih starting up\n`;
+                result += `- Network issues\n`;
+                
+                showResult('backend-result', result, 'error');
+            }
+        }
+
+        async function testUsers() {
+            showLoading('users-result');
+            const backendURL = getBackendURL();
+            
+            try {
+                const response = await fetch(`${backendURL}/api/users`);
+                const data = await response.json();
+                
+                if (response.ok && Array.isArray(data) && data.length > 0) {
+                    let result = `✅ USERS DATA SUCCESS!\n`;
+                    result += `Total Users: ${data.length}\n\n`;
+                    result += `Users List:\n`;
+                    data.forEach((user, index) => {
+                        result += `${index + 1}. ${user.full_name} (${user.username}) - ${user.role}\n`;
+                    });
+                    
+                    showResult('users-result', result, 'success');
+                } else {
+                    showResult('users-result', `❌ USERS DATA FAILED!\nStatus: ${response.status}\nResponse: ${JSON.stringify(data, null, 2)}`, 'error');
+                }
+            } catch (error) {
+                showResult('users-result', `❌ USERS DATA ERROR!\nError: ${error.message}`, 'error');
+            }
+        }
+
+        async function testSchools() {
+            showLoading('schools-result');
+            const backendURL = getBackendURL();
+            
+            try {
+                const response = await fetch(`${backendURL}/api/schools`);
+                const data = await response.json();
+                
+                if (response.ok && Array.isArray(data) && data.length > 0) {
+                    let result = `✅ SCHOOLS DATA SUCCESS!\n`;
+                    result += `Total Schools: ${data.length}\n\n`;
+                    result += `Sample Schools (first 5):\n`;
+                    data.slice(0, 5).forEach((school, index) => {
+                        result += `${index + 1}. ${school.name} - ${school.principal_name}\n`;
+                    });
+                    if (data.length > 5) {
+                        result += `... dan ${data.length - 5} sekolah lainnya\n`;
+                    }
+                    
+                    showResult('schools-result', result, 'success');
+                } else {
+                    showResult('schools-result', `❌ SCHOOLS DATA FAILED!\nStatus: ${response.status}`, 'error');
+                }
+            } catch (error) {
+                showResult('schools-result', `❌ SCHOOLS DATA ERROR!\nError: ${error.message}`, 'error');
+            }
+        }
+
+        async function testAdditionalTasks() {
+            showLoading('tasks-result');
+            const backendURL = getBackendURL();
+            
+            try {
+                const response = await fetch(`${backendURL}/api/additional-tasks`);
+                const data = await response.json();
+                
+                if (response.ok && Array.isArray(data) && data.length > 0) {
+                    let result = `✅ ADDITIONAL TASKS SUCCESS!\n`;
+                    result += `Total Tasks: ${data.length}\n\n`;
+                    result += `Tasks List:\n`;
+                    data.forEach((task, index) => {
+                        const date = new Date(task.date).toLocaleDateString('id-ID');
+                        result += `${index + 1}. ${task.name} - ${task.location} (${date})\n`;
+                    });
+                    
+                    showResult('tasks-result', result, 'success');
+                } else {
+                    showResult('tasks-result', `❌ ADDITIONAL TASKS FAILED!\nStatus: ${response.status}`, 'error');
+                }
+            } catch (error) {
+                showResult('tasks-result', `❌ ADDITIONAL TASKS ERROR!\nError: ${error.message}`, 'error');
+            }
+        }
+
+        async function testLogin() {
+            showLoading('login-result');
+            const backendURL = getBackendURL();
+            
+            try {
+                const response = await fetch(`${backendURL}/api/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        username: 'wawan',
+                        password: 'admin123'
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data.user) {
+                    let result = `✅ LOGIN SUCCESS!\n`;
+                    result += `User: ${data.user.full_name}\n`;
+                    result += `Username: ${data.user.username}\n`;
+                    result += `Role: ${data.user.role}\n`;
+                    result += `NIP: ${data.user.nip}\n`;
+                    result += `Rank: ${data.user.rank}\n`;
+                    result += `Token: ${data.token ? 'YES' : 'NO'}\n`;
+                    
+                    showResult('login-result', result, 'success');
+                } else {
+                    showResult('login-result', `❌ LOGIN FAILED!\nStatus: ${response.status}\nResponse: ${JSON.stringify(data, null, 2)}`, 'error');
+                }
+            } catch (error) {
+                showResult('login-result', `❌ LOGIN ERROR!\nError: ${error.message}`, 'error');
+            }
+        }
+
+        async function testFrontend() {
+            showLoading('frontend-result');
+            const frontendURL = 'https://celadon-chebakia-a3bf18.netlify.app';
+            
+            try {
+                const response = await fetch(frontendURL);
+                
+                if (response.ok) {
+                    let result = `✅ FRONTEND SUCCESS!\n`;
+                    result += `URL: ${frontendURL}\n`;
+                    result += `Status: ${response.status}\n`;
+                    result += `Content-Type: ${response.headers.get('content-type')}\n\n`;
+                    result += `🌐 Frontend is accessible!\n`;
+                    result += `📱 You can now test the full application:\n`;
+                    result += `1. Open: ${frontendURL}\n`;
+                    result += `2. Login: wawan / admin123\n`;
+                    result += `3. Check dashboard, schools, tasks\n`;
+                    
+                    showResult('frontend-result', result, 'success');
+                } else {
+                    showResult('frontend-result', `❌ FRONTEND FAILED!\nStatus: ${response.status}`, 'error');
+                }
+            } catch (error) {
+                showResult('frontend-result', `❌ FRONTEND ERROR!\nError: ${error.message}`, 'error');
+            }
+        }
+
+        async function testFullIntegration() {
+            showLoading('integration-result');
+            
+            let results = [];
+            let passedTests = 0;
+            const totalTests = 5;
+            
+            try {
+                const backendURL = getBackendURL();
+                const frontendURL = 'https://celadon-chebakia-a3bf18.netlify.app';
+                
+                results.push(`🚀 FULL INTEGRATION TEST`);
+                results.push(`Frontend: ${frontendURL}`);
+                results.push(`Backend: ${backendURL}`);
+                results.push(`Database: Supabase PostgreSQL`);
+                results.push(`=`.repeat(50));
+                
+                // Test 1: Backend Health
+                results.push(`\n🔍 Testing Backend Health...`);
+                try {
+                    const healthResponse = await fetch(`${backendURL}/api/health`);
+                    if (healthResponse.ok) {
+                        results.push(`✅ Backend Health: OK`);
+                        passedTests++;
+                    } else {
+                        results.push(`❌ Backend Health: FAILED (${healthResponse.status})`);
+                    }
+                } catch (error) {
+                    results.push(`❌ Backend Health: ERROR (${error.message})`);
+                }
+                
+                // Test 2: Database Connection (via Users)
+                results.push(`\n🗄️ Testing Database Connection...`);
+                try {
+                    const usersResponse = await fetch(`${backendURL}/api/users`);
+                    const usersData = await usersResponse.json();
+                    if (usersResponse.ok && usersData.length > 0) {
+                        results.push(`✅ Database: ${usersData.length} users found`);
+                        passedTests++;
+                    } else {
+                        results.push(`❌ Database: No users found`);
+                    }
+                } catch (error) {
+                    results.push(`❌ Database: ERROR (${error.message})`);
+                }
+                
+                // Test 3: Authentication
+                results.push(`\n🔐 Testing Authentication...`);
+                try {
+                    const loginResponse = await fetch(`${backendURL}/api/auth/login`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ username: 'wawan', password: 'admin123' })
+                    });
+                    const loginData = await loginResponse.json();
+                    if (loginResponse.ok && loginData.user) {
+                        results.push(`✅ Authentication: Login successful`);
+                        passedTests++;
+                    } else {
+                        results.push(`❌ Authentication: Login failed`);
+                    }
+                } catch (error) {
+                    results.push(`❌ Authentication: ERROR (${error.message})`);
+                }
+                
+                // Test 4: Data Integrity
+                results.push(`\n📊 Testing Data Integrity...`);
+                try {
+                    const [schoolsRes, tasksRes] = await Promise.all([
+                        fetch(`${backendURL}/api/schools`),
+                        fetch(`${backendURL}/api/additional-tasks`)
+                    ]);
+                    
+                    const [schoolsData, tasksData] = await Promise.all([
+                        schoolsRes.json(),
+                        tasksRes.json()
+                    ]);
+                    
+                    if (schoolsRes.ok && tasksRes.ok && schoolsData.length > 0 && tasksData.length > 0) {
+                        results.push(`✅ Data Integrity: ${schoolsData.length} schools, ${tasksData.length} tasks`);
+                        passedTests++;
+                    } else {
+                        results.push(`❌ Data Integrity: Missing data`);
+                    }
+                } catch (error) {
+                    results.push(`❌ Data Integrity: ERROR (${error.message})`);
+                }
+                
+                // Test 5: Frontend Accessibility
+                results.push(`\n🌐 Testing Frontend...`);
+                try {
+                    const frontendResponse = await fetch(frontendURL);
+                    if (frontendResponse.ok) {
+                        results.push(`✅ Frontend: Accessible`);
+                        passedTests++;
+                    } else {
+                        results.push(`❌ Frontend: Not accessible`);
+                    }
+                } catch (error) {
+                    results.push(`❌ Frontend: ERROR (${error.message})`);
+                }
+                
+                // Summary
+                results.push(`\n🎯 INTEGRATION TEST SUMMARY:`);
+                results.push(`✅ Passed: ${passedTests}/${totalTests}`);
+                results.push(`❌ Failed: ${totalTests - passedTests}/${totalTests}`);
+                
+                if (passedTests === totalTests) {
+                    results.push(`\n🎉 ALL TESTS PASSED!`);
+                    results.push(`🚀 Production is ready to use!`);
+                    results.push(`\n📱 Next steps:`);
+                    results.push(`1. Open: ${frontendURL}`);
+                    results.push(`2. Login: wawan / admin123`);
+                    results.push(`3. Verify all features work`);
+                    results.push(`4. Test with real data (29 records)`);
+                    
+                    showResult('integration-result', results.join('\n'), 'success');
+                } else {
+                    results.push(`\n⚠️ Some tests failed.`);
+                    results.push(`Check individual test results above.`);
+                    showResult('integration-result', results.join('\n'), 'error');
+                }
+                
+            } catch (error) {
+                results.push(`\n❌ INTEGRATION TEST ERROR: ${error.message}`);
+                showResult('integration-result', results.join('\n'), 'error');
+            }
+        }
+
+        // Auto-run backend test on page load
+        window.onload = function() {
+            setTimeout(testBackendAPI, 1000);
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Migrasi LocalStorage - Localhost ke Production</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .alert {
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+            border-left: 4px solid;
+        }
+        .alert-success {
+            background: #d4edda;
+            border-color: #28a745;
+            color: #155724;
+        }
+        .alert-info {
+            background: #d1ecf1;
+            border-color: #17a2b8;
+            color: #0c5460;
+        }
+        .alert-warning {
+            background: #fff3cd;
+            border-color: #ffc107;
+            color: #856404;
+        }
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+            transition: all 0.3s;
+        }
+        .btn-primary {
+            background: #007bff;
+            color: white;
+        }
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+        .btn-warning {
+            background: #ffc107;
+            color: #212529;
+        }
+        .btn:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+        .step {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background: #fafafa;
+        }
+        .step h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        .code-block {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            overflow-x: auto;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        #log {
+            background: #000;
+            color: #0f0;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: monospace;
+            height: 200px;
+            overflow-y: auto;
+            margin: 20px 0;
+        }
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 20px;
+        }
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border: none;
+            background: #f8f9fa;
+            border-bottom: 2px solid transparent;
+        }
+        .tab.active {
+            background: white;
+            border-bottom-color: #007bff;
+            color: #007bff;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .data-preview {
+            background: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 10px 0;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔄 Migrasi LocalStorage - Localhost ke Production</h1>
+        
+        <div class="alert alert-success">
+            <strong>💡 Solusi Terbaik:</strong><br>
+            Migrasi data langsung dari localStorage localhost:5000 ke production. Data lebih kecil, proses lebih cepat, tidak ada masalah "canceled"!
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('extract')">1. Ekstrak Data</button>
+            <button class="tab" onclick="showTab('migrate')">2. Migrasi Data</button>
+            <button class="tab" onclick="showTab('verify')">3. Verifikasi</button>
+        </div>
+
+        <div id="extract" class="tab-content active">
+            <div class="step">
+                <h3>📤 Langkah 1: Ekstrak Data dari Localhost:5000</h3>
+                <p><strong>Instruksi:</strong></p>
+                <ol>
+                    <li>Buka aplikasi di <code>localhost:5000</code></li>
+                    <li>Buka Developer Console (F12)</li>
+                    <li>Copy-paste script di bawah ini</li>
+                    <li>Copy hasil output untuk digunakan di production</li>
+                </ol>
+                
+                <button class="btn btn-primary" onclick="copyToClipboard('extractScript')">📋 Copy Script Ekstrak</button>
+                <div class="code-block" id="extractScript">
+// Script untuk ekstrak data dari localStorage localhost:5000
+console.log('🚀 Memulai ekstraksi data dari localhost...');
+
+// Fungsi untuk membersihkan data foto base64 yang terlalu besar
+function cleanPhotoData(data) {
+    if (Array.isArray(data)) {
+        return data.map(item => {
+            if (item.photo && item.photo.startsWith('data:image')) {
+                // Ganti foto base64 dengan path sederhana
+                const extension = item.photo.includes('jpeg') ? 'jpg' : 'png';
+                return {
+                    ...item,
+                    photo: `/uploads/${item.username || item.id || 'user'}.${extension}`
+                };
+            }
+            return item;
+        });
+    }
+    return data;
+}
+
+// Ekstrak semua data dari localStorage
+const extractedData = {
+    users: cleanPhotoData(JSON.parse(localStorage.getItem('users_data') || '[]')),
+    schools: JSON.parse(localStorage.getItem('schools_data') || '[]'),
+    tasks: cleanPhotoData(JSON.parse(localStorage.getItem('tasks_data') || '[]')),
+    supervisions: cleanPhotoData(JSON.parse(localStorage.getItem('supervisions_data') || '[]')),
+    additionalTasks: cleanPhotoData(JSON.parse(localStorage.getItem('additional_tasks_data') || '[]'))
+};
+
+console.log('📊 Data berhasil diekstrak:');
+console.log('- Users:', extractedData.users.length);
+console.log('- Schools:', extractedData.schools.length);
+console.log('- Tasks:', extractedData.tasks.length);
+console.log('- Supervisions:', extractedData.supervisions.length);
+console.log('- Additional Tasks:', extractedData.additionalTasks.length);
+
+// Generate script untuk production
+const migrationScript = `
+// Script Migrasi Data - Generated from localhost:5000
+console.log('🚀 Memulai migrasi data ke production...');
+
+// Data Users (${extractedData.users.length} records)
+const users = ${JSON.stringify(extractedData.users, null, 2)};
+localStorage.setItem('users_data', JSON.stringify(users));
+console.log('✅ Users migrated:', users.length, 'records');
+
+// Data Schools (${extractedData.schools.length} records)  
+const schools = ${JSON.stringify(extractedData.schools, null, 2)};
+localStorage.setItem('schools_data', JSON.stringify(schools));
+console.log('✅ Schools migrated:', schools.length, 'records');
+
+// Data Tasks (${extractedData.tasks.length} records)
+const tasks = ${JSON.stringify(extractedData.tasks, null, 2)};
+localStorage.setItem('tasks_data', JSON.stringify(tasks));
+console.log('✅ Tasks migrated:', tasks.length, 'records');
+
+// Data Supervisions (${extractedData.supervisions.length} records)
+const supervisions = ${JSON.stringify(extractedData.supervisions, null, 2)};
+localStorage.setItem('supervisions_data', JSON.stringify(supervisions));
+console.log('✅ Supervisions migrated:', supervisions.length, 'records');
+
+// Data Additional Tasks (${extractedData.additionalTasks.length} records)
+const additionalTasks = ${JSON.stringify(extractedData.additionalTasks, null, 2)};
+localStorage.setItem('additional_tasks_data', JSON.stringify(additionalTasks));
+console.log('✅ Additional Tasks migrated:', additionalTasks.length, 'records');
+
+console.log('');
+console.log('🎉 MIGRASI SELESAI!');
+console.log('📊 Total data yang dipindahkan:');
+console.log('   - Users:', users.length);
+console.log('   - Schools:', schools.length);
+console.log('   - Tasks:', tasks.length);
+console.log('   - Supervisions:', supervisions.length);
+console.log('   - Additional Tasks:', additionalTasks.length);
+
+// Verifikasi data tersimpan
+console.log('');
+console.log('📋 Verifikasi data di localStorage:');
+console.log('- users_data:', localStorage.getItem('users_data') ? 'OK ✅' : 'GAGAL ❌');
+console.log('- schools_data:', localStorage.getItem('schools_data') ? 'OK ✅' : 'GAGAL ❌');
+console.log('- tasks_data:', localStorage.getItem('tasks_data') ? 'OK ✅' : 'GAGAL ❌');
+console.log('- supervisions_data:', localStorage.getItem('supervisions_data') ? 'OK ✅' : 'GAGAL ❌');
+console.log('- additional_tasks_data:', localStorage.getItem('additional_tasks_data') ? 'OK ✅' : 'GAGAL ❌');
+
+console.log('');
+console.log('🔄 Refresh halaman untuk melihat data real!');
+setTimeout(() => {
+    window.location.reload();
+}, 2000);
+`;
+
+console.log('');
+console.log('📋 COPY SCRIPT BERIKUT UNTUK PRODUCTION:');
+console.log('=====================================');
+console.log(migrationScript);
+console.log('=====================================');
+console.log('');
+console.log('💡 Cara menggunakan:');
+console.log('1. Copy script di atas');
+console.log('2. Buka aplikasi production di browser');
+console.log('3. Buka Developer Console (F12)');
+console.log('4. Paste script dan tekan Enter');
+console.log('5. Tunggu hingga selesai dan halaman refresh otomatis');
+                </div>
+            </div>
+        </div>
+
+        <div id="migrate" class="tab-content">
+            <div class="step">
+                <h3>🚀 Langkah 2: Migrasi ke Production</h3>
+                <p><strong>Instruksi:</strong></p>
+                <ol>
+                    <li>Setelah menjalankan script ekstrak di localhost:5000</li>
+                    <li>Copy script yang dihasilkan dari console</li>
+                    <li>Buka aplikasi production di browser</li>
+                    <li>Buka Developer Console (F12)</li>
+                    <li>Paste script migrasi dan tekan Enter</li>
+                </ol>
+
+                <div class="alert alert-info">
+                    <strong>📝 Catatan:</strong><br>
+                    Script migrasi akan otomatis dihasilkan setelah Anda menjalankan script ekstrak di localhost:5000. 
+                    Script tersebut sudah dioptimasi untuk menghindari masalah "canceled".
+                </div>
+
+                <button class="btn btn-success" onclick="copyToClipboard('quickMigrate')">📋 Copy Script Migrasi Cepat</button>
+                <div class="code-block" id="quickMigrate">
+// Script Migrasi Cepat (jika tidak ada data di localhost)
+console.log('🚀 Migrasi data cepat...');
+
+// Data minimal untuk testing
+const users = [
+  {"id":"1762696424712","username":"admin","name":"Administrator","role":"admin","nip":"","position":"Pengawas Sekolah","photo":"/uploads/admin.jpg","created_at":"2025-11-09T13:53:44.712Z"},
+  {"id":"1762696525337","username":"wawan","name":"H. Wawan Yogaswara, S.Pd, M.Pd","role":"user","nip":"196805301994121001","position":"Pembina Utama Muda, IV/c","photo":"/uploads/wawan.jpg","created_at":"2025-11-09T13:55:25.337Z"}
+];
+
+const schools = [
+  {"id":"1762699563468","name":"SDN 1 Garut","address":"Jl. Raya Garut No. 1","principal":"Drs. Ahmad Suryadi","phone":"0262-123456","email":"sdn1garut@gmail.com","created_at":"2024-11-09T14:39:23.468Z"},
+  {"id":"1762699623789","name":"SMPN 2 Garut","address":"Jl. Pendidikan No. 15","principal":"Dra. Siti Nurhasanah","phone":"0262-234567","email":"smpn2garut@gmail.com","created_at":"2024-11-09T14:40:23.789Z"}
+];
+
+// Simpan ke localStorage
+localStorage.setItem('users_data', JSON.stringify(users));
+localStorage.setItem('schools_data', JSON.stringify(schools));
+localStorage.setItem('tasks_data', JSON.stringify([]));
+localStorage.setItem('supervisions_data', JSON.stringify([]));
+localStorage.setItem('additional_tasks_data', JSON.stringify([]));
+
+console.log('✅ Data berhasil dimigrasikan!');
+console.log('🔄 Refresh halaman...');
+setTimeout(() => window.location.reload(), 1000);
+                </div>
+            </div>
+        </div>
+
+        <div id="verify" class="tab-content">
+            <div class="step">
+                <h3>✅ Langkah 3: Verifikasi Data</h3>
+                <p>Setelah migrasi selesai, verifikasi bahwa data sudah tersimpan dengan benar:</p>
+                
+                <button class="btn btn-warning" onclick="copyToClipboard('verifyScript')">📋 Copy Script Verifikasi</button>
+                <div class="code-block" id="verifyScript">
+// Script Verifikasi Data di Production
+console.log('🔍 Memverifikasi data di production...');
+
+// Cek semua data di localStorage
+const verification = {
+    users: JSON.parse(localStorage.getItem('users_data') || '[]'),
+    schools: JSON.parse(localStorage.getItem('schools_data') || '[]'),
+    tasks: JSON.parse(localStorage.getItem('tasks_data') || '[]'),
+    supervisions: JSON.parse(localStorage.getItem('supervisions_data') || '[]'),
+    additionalTasks: JSON.parse(localStorage.getItem('additional_tasks_data') || '[]')
+};
+
+console.log('📊 Status Data di Production:');
+console.log('================================');
+console.log('✅ Users:', verification.users.length, 'records');
+console.log('✅ Schools:', verification.schools.length, 'records');
+console.log('✅ Tasks:', verification.tasks.length, 'records');
+console.log('✅ Supervisions:', verification.supervisions.length, 'records');
+console.log('✅ Additional Tasks:', verification.additionalTasks.length, 'records');
+
+// Tampilkan sample data
+if (verification.users.length > 0) {
+    console.log('');
+    console.log('👤 Sample User Data:');
+    console.log(verification.users[0]);
+}
+
+if (verification.schools.length > 0) {
+    console.log('');
+    console.log('🏫 Sample School Data:');
+    console.log(verification.schools[0]);
+}
+
+// Cek apakah data sudah benar
+const totalRecords = verification.users.length + verification.schools.length + 
+                    verification.tasks.length + verification.supervisions.length + 
+                    verification.additionalTasks.length;
+
+console.log('');
+console.log('📈 Total Records:', totalRecords);
+
+if (totalRecords > 0) {
+    console.log('🎉 MIGRASI BERHASIL!');
+    console.log('✅ Data sudah tersedia di production');
+    console.log('🔄 Refresh halaman untuk melihat perubahan');
+} else {
+    console.log('❌ MIGRASI GAGAL!');
+    console.log('⚠️ Tidak ada data yang tersimpan');
+    console.log('🔧 Ulangi proses migrasi');
+}
+                </div>
+
+                <div class="alert alert-success">
+                    <strong>🎯 Hasil yang Diharapkan:</strong><br>
+                    - Data users, schools, dan lainnya muncul di console<br>
+                    - Total records > 0<br>
+                    - Dashboard menampilkan data real (bukan data sampel)<br>
+                    - Semua fitur berfungsi dengan data asli
+                </div>
+            </div>
+        </div>
+
+        <div class="alert alert-warning">
+            <strong>💡 Tips Sukses:</strong><br>
+            • Pastikan localhost:5000 sudah memiliki data real<br>
+            • Jalankan script ekstrak di localhost terlebih dahulu<br>
+            • Copy script migrasi yang dihasilkan ke production<br>
+            • Tunggu hingga proses selesai sebelum refresh<br>
+            • Jika gagal, ulangi dari langkah 1
+        </div>
+
+        <div id="log"></div>
+    </div>
+
+    <script>
+        function showTab(tabName) {
+            // Hide all tab contents
+            const contents = document.querySelectorAll('.tab-content');
+            contents.forEach(content => content.classList.remove('active'));
+            
+            // Remove active class from all tabs
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(tab => tab.classList.remove('active'));
+            
+            // Show selected tab content
+            document.getElementById(tabName).classList.add('active');
+            
+            // Add active class to clicked tab
+            event.target.classList.add('active');
+            
+            addLog(`📂 Switched to tab: ${tabName}`);
+        }
+
+        function copyToClipboard(elementId) {
+            const element = document.getElementById(elementId);
+            const text = element.textContent;
+            
+            navigator.clipboard.writeText(text).then(() => {
+                // Visual feedback
+                const btn = event.target;
+                const originalText = btn.textContent;
+                btn.textContent = '✅ Copied!';
+                btn.style.background = '#28a745';
+                
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.style.background = '';
+                }, 2000);
+                
+                // Log
+                addLog(`📋 Script ${elementId} berhasil di-copy ke clipboard`);
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+                addLog(`❌ Gagal copy script ${elementId}`);
+            });
+        }
+        
+        function addLog(message) {
+            const log = document.getElementById('log');
+            const timestamp = new Date().toLocaleTimeString();
+            log.innerHTML += `[${timestamp}] ${message}\n`;
+            log.scrollTop = log.scrollHeight;
+        }
+        
+        // Initialize
+        addLog('🚀 Halaman migrasi localStorage siap digunakan');
+        addLog('📋 Ikuti langkah-langkah secara berurutan');
+        addLog('💡 Mulai dari tab "1. Ekstrak Data"');
+    </script>
+</body>
+</html>

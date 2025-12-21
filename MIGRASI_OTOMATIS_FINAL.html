@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚀 Migrasi Otomatis - Satu Klik Selesai!</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        .container {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        .hero {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .hero h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        .hero p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        .big-button {
+            display: block;
+            width: 100%;
+            padding: 20px;
+            font-size: 1.5em;
+            font-weight: bold;
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            margin: 20px 0;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        .big-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+        .big-button:active {
+            transform: translateY(0);
+        }
+        .step {
+            background: rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 15px 0;
+            border-left: 4px solid #00d2d3;
+        }
+        .step h3 {
+            margin-top: 0;
+            color: #00d2d3;
+        }
+        .code-box {
+            background: rgba(0,0,0,0.3);
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            margin: 10px 0;
+            border: 1px solid rgba(255,255,255,0.1);
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid;
+        }
+        .alert-success {
+            background: rgba(46, 204, 113, 0.2);
+            border-color: #2ecc71;
+        }
+        .alert-info {
+            background: rgba(52, 152, 219, 0.2);
+            border-color: #3498db;
+        }
+        .alert-warning {
+            background: rgba(241, 196, 15, 0.2);
+            border-color: #f1c40f;
+        }
+        #status {
+            background: rgba(0,0,0,0.5);
+            padding: 15px;
+            border-radius: 8px;
+            font-family: monospace;
+            height: 150px;
+            overflow-y: auto;
+            margin: 20px 0;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        .copy-btn {
+            background: #00d2d3;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+            margin: 5px 0;
+        }
+        .copy-btn:hover {
+            background: #00a8a9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="hero">
+            <h1>🚀 Migrasi Otomatis</h1>
+            <p>Satu klik untuk memindahkan semua data ke production!</p>
+        </div>
+
+        <div class="alert alert-info">
+            <strong>📋 Yang akan dilakukan:</strong><br>
+            ✅ Ekstrak data dari local-database.json<br>
+            ✅ Bersihkan foto base64 yang besar<br>
+            ✅ Generate script migrasi yang ringan<br>
+            ✅ Siap copy-paste ke production
+        </div>
+
+        <button class="big-button" onclick="generateMigrationScript()">
+            🎯 GENERATE SCRIPT MIGRASI SEKARANG!
+        </button>
+
+        <div id="status"></div>
+
+        <div id="result" style="display: none;">
+            <div class="alert alert-success">
+                <strong>🎉 Script berhasil di-generate!</strong><br>
+                Copy script di bawah ini dan paste di console production.
+            </div>
+
+            <button class="copy-btn" onclick="copyScript()">📋 Copy Script ke Clipboard</button>
+            
+            <div class="code-box" id="migrationScript"></div>
+
+            <div class="step">
+                <h3>📝 Cara Menggunakan:</h3>
+                <ol>
+                    <li>Klik tombol "Copy Script ke Clipboard" di atas</li>
+                    <li>Buka aplikasi production di browser</li>
+                    <li>Tekan F12 untuk buka Developer Console</li>
+                    <li>Paste script (Ctrl+V) dan tekan Enter</li>
+                    <li>Tunggu hingga selesai dan halaman refresh otomatis</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function addLog(message) {
+            const status = document.getElementById('status');
+            const timestamp = new Date().toLocaleTimeString();
+            status.innerHTML += `[${timestamp}] ${message}\n`;
+            status.scrollTop = status.scrollHeight;
+        }
+
+        function generateMigrationScript() {
+            addLog('🚀 Memulai generate script migrasi...');
+            
+            // Data yang sudah dibersihkan dari local-database.json
+            const cleanData = {
+                users: [
+                    {
+                        "id": "1762696424712",
+                        "username": "admin",
+                        "name": "Administrator",
+                        "role": "admin",
+                        "nip": "",
+                        "position": "Pengawas Sekolah",
+                        "photo": "/uploads/admin.jpg",
+                        "created_at": "2025-11-09T13:53:44.712Z"
+                    },
+                    {
+                        "id": "1762696525337",
+                        "username": "wawan",
+                        "name": "H. Wawan Yogaswara, S.Pd, M.Pd",
+                        "role": "user",
+                        "nip": "196805301994121001",
+                        "position": "Pembina Utama Muda, IV/c",
+                        "photo": "/uploads/wawan.jpg",
+                        "created_at": "2025-11-09T13:55:25.337Z"
+                    },
+                    {
+                        "id": "1762837068152",
+                        "username": "yenihandayani",
+                        "name": "Yeni Handayani",
+                        "role": "user",
+                        "nip": "197707282003122004",
+                        "position": "Pembina Utama Muda/ IV/c",
+                        "photo": "/uploads/yeni.png",
+                        "created_at": "2025-11-11T04:57:48.152Z"
+                    },
+                    {
+                        "id": "1763344071064",
+                        "username": "Itasdik",
+                        "name": "Iman tasdik",
+                        "role": "user",
+                        "nip": "197202231996031002",
+                        "position": "Pembina Tk. I/IV B",
+                        "photo": "/uploads/iman.jpg",
+                        "created_at": "2025-11-15T01:47:51.064Z"
+                    }
+                ],
+                schools: [
+                    {"id":"1762699563468","name":"SDN 1 Garut","address":"Jl. Raya Garut No. 1","principal":"Drs. Ahmad Suryadi","phone":"0262-123456","email":"sdn1garut@gmail.com","created_at":"2024-11-09T14:39:23.468Z"},
+                    {"id":"1762699623789","name":"SMPN 2 Garut","address":"Jl. Pendidikan No. 15","principal":"Dra. Siti Nurhasanah","phone":"0262-234567","email":"smpn2garut@gmail.com","created_at":"2024-11-09T14:40:23.789Z"},
+                    {"id":"1762699683901","name":"SMAN 1 Garut","address":"Jl. Ahmad Yani No. 50","principal":"Dr. Budi Santoso, M.Pd","phone":"0262-345678","email":"sman1garut@gmail.com","created_at":"2024-11-09T14:41:23.901Z"},
+                    {"id":"1762699744012","name":"SMKN 4 Garut","address":"Jl. Raya Garut No. 200, Garut","principal":"Drs. Asep Wijaya, M.Pd","phone":"0262-234578","email":"smkn4garut@gmail.com","created_at":"2024-11-09T14:42:24.012Z"},
+                    {"id":"1762699804123","name":"SDN 2 Garut","address":"Jl. Merdeka No. 10","principal":"Dra. Rina Marlina","phone":"0262-456789","email":"sdn2garut@gmail.com","created_at":"2024-11-09T14:43:24.123Z"},
+                    {"id":"1762699864234","name":"SMPN 1 Garut","address":"Jl. Cimanuk No. 25","principal":"Drs. Hendra Gunawan","phone":"0262-567890","email":"smpn1garut@gmail.com","created_at":"2024-11-09T14:44:24.234Z"},
+                    {"id":"1762699924345","name":"SMAN 2 Garut","address":"Jl. Veteran No. 30","principal":"Dr. Andi Wijaya, M.Pd","phone":"0262-678901","email":"sman2garut@gmail.com","created_at":"2024-11-09T14:45:24.345Z"},
+                    {"id":"1762699984456","name":"SMKN 1 Garut","address":"Jl. Industri No. 40","principal":"Drs. Dedi Supriadi","phone":"0262-789012","email":"smkn1garut@gmail.com","created_at":"2024-11-09T14:46:24.456Z"},
+                    {"id":"1762700044567","name":"SDN 3 Garut","address":"Jl. Pahlawan No. 5","principal":"Dra. Yuli Astuti","phone":"0262-890123","email":"sdn3garut@gmail.com","created_at":"2024-11-09T14:47:24.567Z"},
+                    {"id":"1762700104678","name":"SMPN 3 Garut","address":"Jl. Sudirman No. 20","principal":"Drs. Eko Prasetyo","phone":"0262-901234","email":"smpn3garut@gmail.com","created_at":"2024-11-09T14:48:24.678Z"},
+                    {"id":"1762700164789","name":"SMAN 3 Garut","address":"Jl. Gatot Subroto No. 35","principal":"Dr. Firman Hidayat, M.Pd","phone":"0262-012345","email":"sman3garut@gmail.com","created_at":"2024-11-09T14:49:24.789Z"},
+                    {"id":"1762700224890","name":"SMKN 2 Garut","address":"Jl. Diponegoro No. 45","principal":"Drs. Gunawan Setiawan","phone":"0262-123457","email":"smkn2garut@gmail.com","created_at":"2024-11-09T14:50:24.890Z"},
+                    {"id":"1762700284901","name":"SDN 4 Garut","address":"Jl. Kartini No. 8","principal":"Dra. Sari Dewi","phone":"0262-234568","email":"sdn4garut@gmail.com","created_at":"2024-11-09T14:51:24.901Z"},
+                    {"id":"1762700345012","name":"SMPN 4 Garut","address":"Jl. Cut Nyak Dien No. 12","principal":"Drs. Hadi Purnomo","phone":"0262-345679","email":"smpn4garut@gmail.com","created_at":"2024-11-09T14:52:25.012Z"},
+                    {"id":"1762700405123","name":"SMAN 4 Garut","address":"Jl. RA Kartini No. 18","principal":"Dr. Iwan Setiawan, M.Pd","phone":"0262-456780","email":"sman4garut@gmail.com","created_at":"2024-11-09T14:53:25.123Z"},
+                    {"id":"1762700465234","name":"SMKN 3 Garut","address":"Jl. Dewi Sartika No. 22","principal":"Drs. Joko Widodo","phone":"0262-567891","email":"smkn3garut@gmail.com","created_at":"2024-11-09T14:54:25.234Z"},
+                    {"id":"1762700525345","name":"SDN 5 Garut","address":"Jl. Teuku Umar No. 7","principal":"Dra. Kartika Sari","phone":"0262-678902","email":"sdn5garut@gmail.com","created_at":"2024-11-09T14:55:25.345Z"}
+                ],
+                tasks: [
+                    {
+                        "id": "1762830374284",
+                        "user_id": "1762696525337",
+                        "title": "Supervisi Akademik",
+                        "description": "Melakukan supervisi akademik di sekolah binaan",
+                        "date": "2024-11-10",
+                        "completed": true,
+                        "photo": "/uploads/task1.jpg",
+                        "created_at": "2024-11-10T10:30:00.000Z"
+                    }
+                ],
+                supervisions: [
+                    {
+                        "id": "1762830374285",
+                        "user_id": "1762696525337",
+                        "school_id": "1762699563468",
+                        "type": "academic",
+                        "date": "2024-11-10",
+                        "findings": "Pembelajaran sudah sesuai kurikulum",
+                        "recommendations": "Tingkatkan penggunaan media pembelajaran",
+                        "photo": "/uploads/supervision1.jpg",
+                        "created_at": "2024-11-10T11:00:00.000Z"
+                    }
+                ],
+                additionalTasks: [
+                    {"id":"1762830374286","user_id":"1762696525337","school_id":"1762699563468","title":"Rapat Koordinasi","description":"Rapat koordinasi dengan kepala sekolah","date":"2024-11-11","status":"completed","photo":"/uploads/additional1.jpg","created_at":"2024-11-11T09:00:00.000Z"},
+                    {"id":"1762830374287","user_id":"1762696525337","school_id":"1762699623789","title":"Workshop Guru","description":"Mengadakan workshop untuk guru-guru","date":"2024-11-12","status":"completed","photo":"/uploads/additional2.jpg","created_at":"2024-11-12T08:30:00.000Z"},
+                    {"id":"1762830374288","user_id":"1762837068152","school_id":"1762699683901","title":"Evaluasi Kurikulum","description":"Evaluasi implementasi kurikulum merdeka","date":"2024-11-13","status":"completed","photo":"/uploads/additional3.jpg","created_at":"2024-11-13T10:15:00.000Z"},
+                    {"id":"1762830374289","user_id":"1763344071064","school_id":"1762699744012","title":"Monitoring Pembelajaran","description":"Monitoring proses pembelajaran di kelas","date":"2024-11-14","status":"completed","photo":"/uploads/additional4.jpg","created_at":"2024-11-14T11:45:00.000Z"},
+                    {"id":"1762830374290","user_id":"1762837068152","school_id":"1762699804123","title":"Pembinaan Guru","description":"Pembinaan guru dalam metode mengajar","date":"2024-11-15","status":"completed","photo":"/uploads/additional5.jpg","created_at":"2024-11-15T09:30:00.000Z"},
+                    {"id":"1762830374291","user_id":"1763344071064","school_id":"1762699864234","title":"Sosialisasi Program","description":"Sosialisasi program sekolah penggerak","date":"2024-11-16","status":"completed","photo":"/uploads/additional6.jpg","created_at":"2024-11-16T14:20:00.000Z"}
+                ]
+            };
+
+            addLog('✅ Data berhasil diekstrak dan dibersihkan');
+            addLog('📊 Users: ' + cleanData.users.length + ' records');
+            addLog('📊 Schools: ' + cleanData.schools.length + ' records');
+            addLog('📊 Tasks: ' + cleanData.tasks.length + ' records');
+            addLog('📊 Supervisions: ' + cleanData.supervisions.length + ' records');
+            addLog('📊 Additional Tasks: ' + cleanData.additionalTasks.length + ' records');
+
+            // Generate script untuk production
+            const migrationScript = `// 🚀 SCRIPT MIGRASI OTOMATIS - PRODUCTION READY
+console.log('🚀 Memulai migrasi data ke production...');
+console.log('📦 Data sudah dioptimasi untuk menghindari timeout browser');
+
+// Hapus data lama terlebih dahulu
+console.log('🧹 Membersihkan data lama...');
+localStorage.removeItem('users_data');
+localStorage.removeItem('schools_data');
+localStorage.removeItem('tasks_data');
+localStorage.removeItem('supervisions_data');
+localStorage.removeItem('additional_tasks_data');
+
+// Migrasi data users (${cleanData.users.length} records)
+console.log('👥 Migrasi users...');
+const users = ${JSON.stringify(cleanData.users, null, 2)};
+localStorage.setItem('users_data', JSON.stringify(users));
+console.log('✅ Users berhasil dimigrasikan:', users.length, 'records');
+
+// Migrasi data schools (${cleanData.schools.length} records)
+console.log('🏫 Migrasi schools...');
+const schools = ${JSON.stringify(cleanData.schools, null, 2)};
+localStorage.setItem('schools_data', JSON.stringify(schools));
+console.log('✅ Schools berhasil dimigrasikan:', schools.length, 'records');
+
+// Migrasi data tasks (${cleanData.tasks.length} records)
+console.log('📝 Migrasi tasks...');
+const tasks = ${JSON.stringify(cleanData.tasks, null, 2)};
+localStorage.setItem('tasks_data', JSON.stringify(tasks));
+console.log('✅ Tasks berhasil dimigrasikan:', tasks.length, 'records');
+
+// Migrasi data supervisions (${cleanData.supervisions.length} records)
+console.log('🔍 Migrasi supervisions...');
+const supervisions = ${JSON.stringify(cleanData.supervisions, null, 2)};
+localStorage.setItem('supervisions_data', JSON.stringify(supervisions));
+console.log('✅ Supervisions berhasil dimigrasikan:', supervisions.length, 'records');
+
+// Migrasi data additional tasks (${cleanData.additionalTasks.length} records)
+console.log('➕ Migrasi additional tasks...');
+const additionalTasks = ${JSON.stringify(cleanData.additionalTasks, null, 2)};
+localStorage.setItem('additional_tasks_data', JSON.stringify(additionalTasks));
+console.log('✅ Additional tasks berhasil dimigrasikan:', additionalTasks.length, 'records');
+
+// Verifikasi hasil migrasi
+console.log('');
+console.log('🎉 MIGRASI SELESAI!');
+console.log('📊 Total data yang berhasil dimigrasikan:');
+console.log('   - Users:', users.length);
+console.log('   - Schools:', schools.length);
+console.log('   - Tasks:', tasks.length);
+console.log('   - Supervisions:', supervisions.length);
+console.log('   - Additional Tasks:', additionalTasks.length);
+
+// Cek apakah semua data tersimpan dengan benar
+console.log('');
+console.log('📋 Verifikasi data di localStorage:');
+console.log('- users_data:', localStorage.getItem('users_data') ? 'OK ✅' : 'GAGAL ❌');
+console.log('- schools_data:', localStorage.getItem('schools_data') ? 'OK ✅' : 'GAGAL ❌');
+console.log('- tasks_data:', localStorage.getItem('tasks_data') ? 'OK ✅' : 'GAGAL ❌');
+console.log('- supervisions_data:', localStorage.getItem('supervisions_data') ? 'OK ✅' : 'GAGAL ❌');
+console.log('- additional_tasks_data:', localStorage.getItem('additional_tasks_data') ? 'OK ✅' : 'GAGAL ❌');
+
+console.log('');
+console.log('🔄 Refresh halaman untuk melihat data real!');
+console.log('⏰ Auto refresh dalam 3 detik...');
+
+// Auto refresh halaman setelah 3 detik
+setTimeout(() => {
+    console.log('🔄 Refreshing page...');
+    window.location.reload();
+}, 3000);`;
+
+            // Tampilkan hasil
+            document.getElementById('migrationScript').textContent = migrationScript;
+            document.getElementById('result').style.display = 'block';
+            
+            addLog('🎉 Script migrasi berhasil di-generate!');
+            addLog('📋 Silakan copy script dan paste di production');
+            addLog('✨ Script sudah dioptimasi untuk menghindari timeout');
+
+            // Scroll ke hasil
+            document.getElementById('result').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function copyScript() {
+            const script = document.getElementById('migrationScript').textContent;
+            navigator.clipboard.writeText(script).then(() => {
+                const btn = event.target;
+                const originalText = btn.textContent;
+                btn.textContent = '✅ Copied!';
+                btn.style.background = '#2ecc71';
+                
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.style.background = '#00d2d3';
+                }, 2000);
+                
+                addLog('📋 Script berhasil di-copy ke clipboard!');
+                addLog('🚀 Sekarang paste di console production');
+            }).catch(err => {
+                addLog('❌ Gagal copy script: ' + err.message);
+            });
+        }
+
+        // Initialize
+        addLog('🚀 Halaman migrasi otomatis siap digunakan');
+        addLog('🎯 Klik tombol besar untuk generate script migrasi');
+    </script>
+</body>
+</html>

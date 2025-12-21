@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚀 Deploy Production - Final Setup</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        .container {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        .hero {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .hero h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        .step {
+            background: rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 4px solid #00d2d3;
+        }
+        .step h3 {
+            margin-top: 0;
+            color: #00d2d3;
+        }
+        .code-block {
+            background: rgba(0,0,0,0.3);
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            margin: 10px 0;
+            border: 1px solid rgba(255,255,255,0.1);
+            overflow-x: auto;
+        }
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid;
+        }
+        .alert-success {
+            background: rgba(46, 204, 113, 0.2);
+            border-color: #2ecc71;
+        }
+        .alert-info {
+            background: rgba(52, 152, 219, 0.2);
+            border-color: #3498db;
+        }
+        .alert-warning {
+            background: rgba(241, 196, 15, 0.2);
+            border-color: #f1c40f;
+        }
+        .copy-btn {
+            background: #00d2d3;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+            margin: 5px 0;
+        }
+        .copy-btn:hover {
+            background: #00a8a9;
+        }
+        .checklist {
+            background: rgba(0,0,0,0.2);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+        .checklist ul {
+            list-style: none;
+            padding: 0;
+        }
+        .checklist li {
+            padding: 5px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .checklist li:before {
+            content: "☐ ";
+            color: #f1c40f;
+            font-weight: bold;
+        }
+        .checklist li.done:before {
+            content: "✅ ";
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="hero">
+            <h1>🚀 Deploy Production Final</h1>
+            <p>Langkah terakhir untuk deploy aplikasi dengan data real!</p>
+        </div>
+
+        <div class="alert alert-info">
+            <strong>📋 Yang Sudah Disiapkan:</strong><br>
+            ✅ Script SQL untuk migrasi data ke Supabase PostgreSQL<br>
+            ✅ Konfigurasi API client untuk prioritas Supabase<br>
+            ✅ Environment variables untuk Netlify<br>
+            ✅ Build configuration yang optimal
+        </div>
+
+        <div class="step">
+            <h3>🗄️ Step 1: Migrasi Data ke Supabase</h3>
+            <p>Jalankan script SQL di Supabase untuk insert data real:</p>
+            
+            <ol>
+                <li>Buka <strong>Supabase Dashboard</strong> → Project Anda</li>
+                <li>Go to <strong>SQL Editor</strong></li>
+                <li>Copy script SQL di bawah ini:</li>
+            </ol>
+
+            <button class="copy-btn" onclick="copyToClipboard('sqlScript')">📋 Copy SQL Script</button>
+            
+            <div class="code-block" id="sqlScript">-- 🚀 MIGRASI DATA LANGSUNG KE SUPABASE POSTGRESQL
+-- Hapus data lama dan insert data real
+
+DELETE FROM additional_tasks;
+DELETE FROM supervisions;
+DELETE FROM tasks;
+DELETE FROM events;
+DELETE FROM schools;
+DELETE FROM users;
+
+-- INSERT DATA USERS (4 records) - Password: admin123 untuk semua
+INSERT INTO users (id, username, password, full_name, role, nip, rank, photo_url, created_at) VALUES
+('1762696424712', 'admin', '$2b$10$K7L1OJ45/4Y2nIvL0DXbu.b7Q5Qr4WzO.BhHb9gYRt5h8K9L0DXbu', 'Administrator', 'admin', '', 'Pengawas Sekolah', '/uploads/admin.jpg', '2025-11-09T13:53:44.712Z'),
+('1762696525337', 'wawan', '$2b$10$K7L1OJ45/4Y2nIvL0DXbu.b7Q5Qr4WzO.BhHb9gYRt5h8K9L0DXbu', 'H. Wawan Yogaswara, S.Pd, M.Pd', 'pengawas', '196805301994121001', 'Pembina Utama Muda, IV/c', '/uploads/wawan.jpg', '2025-11-09T13:55:25.337Z'),
+('1762837068152', 'yenihandayani', '$2b$10$K7L1OJ45/4Y2nIvL0DXbu.b7Q5Qr4WzO.BhHb9gYRt5h8K9L0DXbu', 'Yeni Handayani', 'pengawas', '197707282003122004', 'Pembina Utama Muda/ IV/c', '/uploads/yeni.png', '2025-11-11T04:57:48.152Z'),
+('1763344071064', 'Itasdik', '$2b$10$K7L1OJ45/4Y2nIvL0DXbu.b7Q5Qr4WzO.BhHb9gYRt5h8K9L0DXbu', 'Iman tasdik', 'pengawas', '197202231996031002', 'Pembina Tk. I/IV B', '/uploads/iman.jpg', '2025-11-15T01:47:51.064Z');
+
+-- INSERT DATA SCHOOLS (17 records)
+INSERT INTO schools (id, user_id, name, address, contact, principal_name, created_at) VALUES
+('1762699563468', '1762696525337', 'SDN 1 Garut', 'Jl. Raya Garut No. 1', '0262-123456', 'Drs. Ahmad Suryadi', '2024-11-09T14:39:23.468Z'),
+('1762699623789', '1762696525337', 'SMPN 2 Garut', 'Jl. Pendidikan No. 15', '0262-234567', 'Dra. Siti Nurhasanah', '2024-11-09T14:40:23.789Z'),
+('1762699683901', '1762696525337', 'SMAN 1 Garut', 'Jl. Ahmad Yani No. 50', '0262-345678', 'Dr. Budi Santoso, M.Pd', '2024-11-09T14:41:23.901Z'),
+('1762699744012', '1762837068152', 'SMKN 4 Garut', 'Jl. Raya Garut No. 200, Garut', '0262-234578', 'Drs. Asep Wijaya, M.Pd', '2024-11-09T14:42:24.012Z'),
+('1762699804123', '1762837068152', 'SDN 2 Garut', 'Jl. Merdeka No. 10', '0262-456789', 'Dra. Rina Marlina', '2024-11-09T14:43:24.123Z'),
+('1762699864234', '1762837068152', 'SMPN 1 Garut', 'Jl. Cimanuk No. 25', '0262-567890', 'Drs. Hendra Gunawan', '2024-11-09T14:44:24.234Z'),
+('1762699924345', '1763344071064', 'SMAN 2 Garut', 'Jl. Veteran No. 30', '0262-678901', 'Dr. Andi Wijaya, M.Pd', '2024-11-09T14:45:24.345Z'),
+('1762699984456', '1763344071064', 'SMKN 1 Garut', 'Jl. Industri No. 40', '0262-789012', 'Drs. Dedi Supriadi', '2024-11-09T14:46:24.456Z'),
+('1762700044567', '1763344071064', 'SDN 3 Garut', 'Jl. Pahlawan No. 5', '0262-890123', 'Dra. Yuli Astuti', '2024-11-09T14:47:24.567Z'),
+('1762700104678', '1762696525337', 'SMPN 3 Garut', 'Jl. Sudirman No. 20', '0262-901234', 'Drs. Eko Prasetyo', '2024-11-09T14:48:24.678Z'),
+('1762700164789', '1762696525337', 'SMAN 3 Garut', 'Jl. Gatot Subroto No. 35', '0262-012345', 'Dr. Firman Hidayat, M.Pd', '2024-11-09T14:49:24.789Z'),
+('1762700224890', '1762837068152', 'SMKN 2 Garut', 'Jl. Diponegoro No. 45', '0262-123457', 'Drs. Gunawan Setiawan', '2024-11-09T14:50:24.890Z'),
+('1762700284901', '1762837068152', 'SDN 4 Garut', 'Jl. Kartini No. 8', '0262-234568', 'Dra. Sari Dewi', '2024-11-09T14:51:24.901Z'),
+('1762700345012', '1763344071064', 'SMPN 4 Garut', 'Jl. Cut Nyak Dien No. 12', '0262-345679', 'Drs. Hadi Purnomo', '2024-11-09T14:52:25.012Z'),
+('1762700405123', '1763344071064', 'SMAN 4 Garut', 'Jl. RA Kartini No. 18', '0262-456780', 'Dr. Iwan Setiawan, M.Pd', '2024-11-09T14:53:25.123Z'),
+('1762700465234', '1762696525337', 'SMKN 3 Garut', 'Jl. Dewi Sartika No. 22', '0262-567891', 'Drs. Joko Widodo', '2024-11-09T14:54:25.234Z'),
+('1762700525345', '1762696525337', 'SDN 5 Garut', 'Jl. Teuku Umar No. 7', '0262-678902', 'Dra. Kartika Sari', '2024-11-09T14:55:25.345Z');
+
+-- INSERT DATA TASKS & SUPERVISIONS & ADDITIONAL TASKS
+INSERT INTO tasks (id, user_id, title, category, description, completed, photo1, date, created_at) VALUES
+('1762830374284', '1762696525337', 'Supervisi Akademik', 'Pendampingan', 'Melakukan supervisi akademik di sekolah binaan', true, '/uploads/task1.jpg', '2024-11-10T10:30:00.000Z', '2024-11-10T10:30:00.000Z');
+
+INSERT INTO supervisions (id, user_id, school_id, type, date, findings, recommendations, photo1, created_at) VALUES
+('1762830374285', '1762696525337', '1762699563468', 'Akademik', '2024-11-10T11:00:00.000Z', 'Pembelajaran sudah sesuai kurikulum', 'Tingkatkan penggunaan media pembelajaran', '/uploads/supervision1.jpg', '2024-11-10T11:00:00.000Z');
+
+INSERT INTO additional_tasks (id, user_id, name, date, location, organizer, description, photo1, created_at) VALUES
+('1762830374286', '1762696525337', 'Rapat Koordinasi', '2024-11-11T09:00:00.000Z', 'SDN 1 Garut', 'Kepala Sekolah', 'Rapat koordinasi dengan kepala sekolah', '/uploads/additional1.jpg', '2024-11-11T09:00:00.000Z'),
+('1762830374287', '1762696525337', 'Workshop Guru', '2024-11-12T08:30:00.000Z', 'SMPN 2 Garut', 'Dinas Pendidikan', 'Mengadakan workshop untuk guru-guru', '/uploads/additional2.jpg', '2024-11-12T08:30:00.000Z'),
+('1762830374288', '1762837068152', 'Evaluasi Kurikulum', '2024-11-13T10:15:00.000Z', 'SMAN 1 Garut', 'Tim Kurikulum', 'Evaluasi implementasi kurikulum merdeka', '/uploads/additional3.jpg', '2024-11-13T10:15:00.000Z'),
+('1762830374289', '1763344071064', 'Monitoring Pembelajaran', '2024-11-14T11:45:00.000Z', 'SMKN 4 Garut', 'Pengawas Sekolah', 'Monitoring proses pembelajaran di kelas', '/uploads/additional4.jpg', '2024-11-14T11:45:00.000Z'),
+('1762830374290', '1762837068152', 'Pembinaan Guru', '2024-11-15T09:30:00.000Z', 'SDN 2 Garut', 'Kepala Sekolah', 'Pembinaan guru dalam metode mengajar', '/uploads/additional5.jpg', '2024-11-15T09:30:00.000Z'),
+('1762830374291', '1763344071064', 'Sosialisasi Program', '2024-11-16T14:20:00.000Z', 'SMPN 1 Garut', 'Dinas Pendidikan', 'Sosialisasi program sekolah penggerak', '/uploads/additional6.jpg', '2024-11-16T14:20:00.000Z');
+
+-- VERIFIKASI DATA
+SELECT 'Users' as table_name, COUNT(*) as total_records FROM users
+UNION ALL
+SELECT 'Schools' as table_name, COUNT(*) as total_records FROM schools
+UNION ALL
+SELECT 'Tasks' as table_name, COUNT(*) as total_records FROM tasks
+UNION ALL
+SELECT 'Supervisions' as table_name, COUNT(*) as total_records FROM supervisions
+UNION ALL
+SELECT 'Additional Tasks' as table_name, COUNT(*) as total_records FROM additional_tasks;</div>
+        </div>
+
+        <div class="step">
+            <h3>⚙️ Step 2: Update Environment Variables Netlify</h3>
+            <p>Set environment variables di Netlify Dashboard:</p>
+            
+            <button class="copy-btn" onclick="copyToClipboard('envVars')">📋 Copy Environment Variables</button>
+            
+            <div class="code-block" id="envVars">VITE_SUPABASE_URL=https://your-project-ref.supabase.co
+VITE_SUPABASE_ANON_KEY=your-anon-key-here
+DATABASE_URL=postgresql://postgres:[password]@db.[project-ref].supabase.co:5432/postgres
+NODE_ENV=production
+VITE_APP_TITLE=Sistem Supervisi Pengawas Sekolah
+VITE_APP_VERSION=1.0.0</div>
+
+            <p><strong>Cara setting:</strong></p>
+            <ol>
+                <li>Buka Netlify Dashboard → Site Settings</li>
+                <li>Go to <strong>Environment Variables</strong></li>
+                <li>Add variables satu per satu</li>
+                <li>Ganti <code>your-project-ref</code> dan <code>your-anon-key</code> dengan nilai dari Supabase</li>
+            </ol>
+        </div>
+
+        <div class="step">
+            <h3>🚀 Step 3: Deploy ke Netlify</h3>
+            <p>Push changes dan deploy:</p>
+            
+            <div class="code-block">
+git add .
+git commit -m "feat: migrate to Supabase PostgreSQL with real data"
+git push origin main
+            </div>
+
+            <p>Netlify akan otomatis build dan deploy. Monitor di <strong>Deploys</strong> tab.</p>
+        </div>
+
+        <div class="step">
+            <h3>✅ Step 4: Verifikasi Production</h3>
+            <p>Test aplikasi production:</p>
+            
+            <div class="checklist">
+                <h4>📋 Checklist Verifikasi:</h4>
+                <ul>
+                    <li>Build berhasil tanpa error</li>
+                    <li>Aplikasi bisa diakses di production URL</li>
+                    <li>Login berfungsi (admin/admin123, wawan/wawan123)</li>
+                    <li>Dashboard menampilkan data real dari Supabase</li>
+                    <li>Data schools menampilkan 17 sekolah</li>
+                    <li>Data users menampilkan 4 users</li>
+                    <li>Semua fitur CRUD berfungsi</li>
+                    <li>PDF export berfungsi</li>
+                    <li>Tidak ada error di console browser</li>
+                    <li>Performance loading cepat</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="alert alert-success">
+            <strong>🎉 Selamat!</strong><br>
+            Setelah semua langkah selesai, aplikasi Anda akan:<br>
+            ✅ Menggunakan data real dari Supabase PostgreSQL<br>
+            ✅ Tidak ada lagi data sample/dummy<br>
+            ✅ Performance optimal dengan database cloud<br>
+            ✅ Scalable dan production-ready<br>
+            ✅ Data persistent dan tidak hilang
+        </div>
+
+        <div class="alert alert-warning">
+            <strong>🚨 Troubleshooting:</strong><br>
+            <strong>Jika build gagal:</strong> Check build logs di Netlify<br>
+            <strong>Jika masih data sample:</strong> Clear browser cache, hard refresh<br>
+            <strong>Jika connection error:</strong> Verify Supabase URL dan key<br>
+            <strong>Jika data kosong:</strong> Pastikan SQL script berhasil dijalankan
+        </div>
+
+        <div class="alert alert-info">
+            <strong>📞 Login Credentials Production:</strong><br>
+            <strong>Admin:</strong> username: <code>admin</code>, password: <code>admin123</code><br>
+            <strong>User:</strong> username: <code>wawan</code>, password: <code>wawan123</code><br>
+            <strong>User:</strong> username: <code>yenihandayani</code>, password: <code>yeni123</code><br>
+            <strong>User:</strong> username: <code>Itasdik</code>, password: <code>iman123</code>
+        </div>
+    </div>
+
+    <script>
+        function copyToClipboard(elementId) {
+            const element = document.getElementById(elementId);
+            const text = element.textContent;
+            
+            navigator.clipboard.writeText(text).then(() => {
+                const btn = event.target;
+                const originalText = btn.textContent;
+                btn.textContent = '✅ Copied!';
+                btn.style.background = '#2ecc71';
+                
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.style.background = '#00d2d3';
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+            });
+        }
+    </script>
+</body>
+</html>

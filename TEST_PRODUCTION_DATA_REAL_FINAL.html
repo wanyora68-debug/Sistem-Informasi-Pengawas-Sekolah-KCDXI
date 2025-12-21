@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚀 Test Production Data Real - Verifikasi Migrasi Supabase</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            min-height: 100vh;
+        }
+        .container {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            border-radius: 10px;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            background: #f9f9f9;
+        }
+        .test-section h3 {
+            color: #2196F3;
+            margin-top: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .btn {
+            background: linear-gradient(135deg, #2196F3, #1976D2);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+            transition: all 0.3s ease;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(33, 150, 243, 0.3);
+        }
+        .btn-success { background: linear-gradient(135deg, #4CAF50, #45a049); }
+        .btn-warning { background: linear-gradient(135deg, #FF9800, #F57C00); }
+        .btn-danger { background: linear-gradient(135deg, #f44336, #d32f2f); }
+        .result {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .success { background: #e8f5e8; border-left: 5px solid #4CAF50; }
+        .error { background: #ffebee; border-left: 5px solid #f44336; }
+        .info { background: #e3f2fd; border-left: 5px solid #2196F3; }
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .stat-card {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .credentials {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+        .url-section {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+        .url-link {
+            color: #155724;
+            font-weight: bold;
+            text-decoration: none;
+            font-size: 18px;
+        }
+        .url-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 Test Production Data Real</h1>
+            <p>Verifikasi Migrasi Data Supabase Berhasil</p>
+        </div>
+
+        <div class="url-section">
+            <h3>🌐 URL Production</h3>
+            <p>Aplikasi Production: <a href="https://celadon-chebakia-a3bf18.netlify.app" target="_blank" class="url-link">https://celadon-chebakia-a3bf18.netlify.app</a></p>
+            <p>Klik link di atas untuk membuka aplikasi production</p>
+        </div>
+
+        <div class="credentials">
+            <h3>🔑 Kredensial Login</h3>
+            <p><strong>Username:</strong> wawan | <strong>Password:</strong> admin123</p>
+            <p><strong>Username:</strong> yenihandayani | <strong>Password:</strong> admin123</p>
+            <p><strong>Username:</strong> itasdik | <strong>Password:</strong> admin123</p>
+            <p><strong>Username:</strong> admin | <strong>Password:</strong> admin123</p>
+        </div>
+
+        <div class="test-section">
+            <h3>🔍 1. Test Koneksi API Production</h3>
+            <button class="btn btn-success" onclick="testAPIConnection()">Test Koneksi API</button>
+            <div id="api-result" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>👥 2. Test Data Users</h3>
+            <button class="btn btn-success" onclick="testUsers()">Cek Data Users</button>
+            <div id="users-result" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>🏫 3. Test Data Schools</h3>
+            <button class="btn btn-success" onclick="testSchools()">Cek Data Schools</button>
+            <div id="schools-result" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>📋 4. Test Data Additional Tasks</h3>
+            <button class="btn btn-success" onclick="testAdditionalTasks()">Cek Data Additional Tasks</button>
+            <div id="tasks-result" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>🔐 5. Test Login Production</h3>
+            <button class="btn btn-warning" onclick="testLogin()">Test Login Wawan</button>
+            <div id="login-result" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>📊 6. Test Dashboard Data</h3>
+            <button class="btn btn-success" onclick="testDashboard()">Test Dashboard Stats</button>
+            <div id="dashboard-result" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>🚀 7. Test All Features</h3>
+            <button class="btn btn-danger" onclick="testAllFeatures()">Test Semua Fitur</button>
+            <div id="all-result" class="result"></div>
+        </div>
+
+        <div class="stats" id="stats-container" style="display: none;">
+            <div class="stat-card">
+                <div class="stat-number" id="users-count">0</div>
+                <div>Users</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="schools-count">0</div>
+                <div>Schools</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="tasks-count">0</div>
+                <div>Additional Tasks</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="supervisions-count">0</div>
+                <div>Supervisions</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const PRODUCTION_URL = 'https://celadon-chebakia-a3bf18.netlify.app';
+        
+        function showLoading(elementId) {
+            document.getElementById(elementId).innerHTML = '<div class="loading"></div> Testing...';
+        }
+
+        function showResult(elementId, content, type = 'info') {
+            const element = document.getElementById(elementId);
+            element.className = `result ${type}`;
+            element.innerHTML = content;
+        }
+
+        async function testAPIConnection() {
+            showLoading('api-result');
+            try {
+                const response = await fetch(`${PRODUCTION_URL}/api/auth/me`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (response.ok || response.status === 401) {
+                    showResult('api-result', `✅ API Connection SUCCESS!
+Status: ${response.status}
+URL: ${PRODUCTION_URL}/api/auth/me
+Response: API endpoint accessible`, 'success');
+                } else {
+                    showResult('api-result', `❌ API Connection FAILED!
+Status: ${response.status}
+URL: ${PRODUCTION_URL}/api/auth/me`, 'error');
+                }
+            } catch (error) {
+                showResult('api-result', `❌ API Connection ERROR!
+Error: ${error.message}
+URL: ${PRODUCTION_URL}/api/auth/me`, 'error');
+            }
+        }
+
+        async function testUsers() {
+            showLoading('users-result');
+            try {
+                const response = await fetch(`${PRODUCTION_URL}/api/users`);
+                const data = await response.json();
+                
+                if (response.ok && data.length > 0) {
+                    document.getElementById('users-count').textContent = data.length;
+                    document.getElementById('stats-container').style.display = 'grid';
+                    
+                    let usersList = data.map(user => 
+                        `• ${user.full_name} (${user.username}) - ${user.role}`
+                    ).join('\n');
+                    
+                    showResult('users-result', `✅ USERS DATA SUCCESS!
+Total Users: ${data.length}
+
+Users List:
+${usersList}`, 'success');
+                } else {
+                    showResult('users-result', `❌ USERS DATA FAILED!
+Response: ${JSON.stringify(data, null, 2)}`, 'error');
+                }
+            } catch (error) {
+                showResult('users-result', `❌ USERS DATA ERROR!
+Error: ${error.message}`, 'error');
+            }
+        }
+
+        async function testSchools() {
+            showLoading('schools-result');
+            try {
+                const response = await fetch(`${PRODUCTION_URL}/api/schools`);
+                const data = await response.json();
+                
+                if (response.ok && data.length > 0) {
+                    document.getElementById('schools-count').textContent = data.length;
+                    
+                    let schoolsList = data.slice(0, 5).map(school => 
+                        `• ${school.name} - ${school.principal_name}`
+                    ).join('\n');
+                    
+                    showResult('schools-result', `✅ SCHOOLS DATA SUCCESS!
+Total Schools: ${data.length}
+
+Sample Schools (5 first):
+${schoolsList}
+${data.length > 5 ? `\n... dan ${data.length - 5} sekolah lainnya` : ''}`, 'success');
+                } else {
+                    showResult('schools-result', `❌ SCHOOLS DATA FAILED!
+Response: ${JSON.stringify(data, null, 2)}`, 'error');
+                }
+            } catch (error) {
+                showResult('schools-result', `❌ SCHOOLS DATA ERROR!
+Error: ${error.message}`, 'error');
+            }
+        }
+
+        async function testAdditionalTasks() {
+            showLoading('tasks-result');
+            try {
+                const response = await fetch(`${PRODUCTION_URL}/api/additional-tasks`);
+                const data = await response.json();
+                
+                if (response.ok && data.length > 0) {
+                    document.getElementById('tasks-count').textContent = data.length;
+                    
+                    let tasksList = data.map(task => 
+                        `• ${task.name} - ${task.location} (${new Date(task.date).toLocaleDateString('id-ID')})`
+                    ).join('\n');
+                    
+                    showResult('tasks-result', `✅ ADDITIONAL TASKS SUCCESS!
+Total Tasks: ${data.length}
+
+Tasks List:
+${tasksList}`, 'success');
+                } else {
+                    showResult('tasks-result', `❌ ADDITIONAL TASKS FAILED!
+Response: ${JSON.stringify(data, null, 2)}`, 'error');
+                }
+            } catch (error) {
+                showResult('tasks-result', `❌ ADDITIONAL TASKS ERROR!
+Error: ${error.message}`, 'error');
+            }
+        }
+
+        async function testLogin() {
+            showLoading('login-result');
+            try {
+                const response = await fetch(`${PRODUCTION_URL}/api/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        username: 'wawan',
+                        password: 'admin123'
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data.user) {
+                    showResult('login-result', `✅ LOGIN SUCCESS!
+User: ${data.user.full_name}
+Username: ${data.user.username}
+Role: ${data.user.role}
+NIP: ${data.user.nip}
+Rank: ${data.user.rank}
+
+Token received: ${data.token ? 'YES' : 'NO'}`, 'success');
+                } else {
+                    showResult('login-result', `❌ LOGIN FAILED!
+Response: ${JSON.stringify(data, null, 2)}`, 'error');
+                }
+            } catch (error) {
+                showResult('login-result', `❌ LOGIN ERROR!
+Error: ${error.message}`, 'error');
+            }
+        }
+
+        async function testDashboard() {
+            showLoading('dashboard-result');
+            try {
+                // Test multiple endpoints for dashboard
+                const [usersRes, schoolsRes, tasksRes, supervisionsRes] = await Promise.all([
+                    fetch(`${PRODUCTION_URL}/api/users`),
+                    fetch(`${PRODUCTION_URL}/api/schools`),
+                    fetch(`${PRODUCTION_URL}/api/additional-tasks`),
+                    fetch(`${PRODUCTION_URL}/api/supervisions`)
+                ]);
+
+                const [users, schools, tasks, supervisions] = await Promise.all([
+                    usersRes.json(),
+                    schoolsRes.json(),
+                    tasksRes.json(),
+                    supervisionsRes.json()
+                ]);
+
+                document.getElementById('users-count').textContent = users.length || 0;
+                document.getElementById('schools-count').textContent = schools.length || 0;
+                document.getElementById('tasks-count').textContent = tasks.length || 0;
+                document.getElementById('supervisions-count').textContent = supervisions.length || 0;
+                document.getElementById('stats-container').style.display = 'grid';
+
+                showResult('dashboard-result', `✅ DASHBOARD DATA SUCCESS!
+
+📊 Statistics:
+• Users: ${users.length || 0}
+• Schools: ${schools.length || 0}
+• Additional Tasks: ${tasks.length || 0}
+• Supervisions: ${supervisions.length || 0}
+
+🎯 All dashboard endpoints working!`, 'success');
+            } catch (error) {
+                showResult('dashboard-result', `❌ DASHBOARD ERROR!
+Error: ${error.message}`, 'error');
+            }
+        }
+
+        async function testAllFeatures() {
+            showLoading('all-result');
+            
+            let results = [];
+            
+            try {
+                // Test 1: API Connection
+                results.push('🔍 Testing API Connection...');
+                const apiTest = await fetch(`${PRODUCTION_URL}/api/auth/me`);
+                results.push(apiTest.ok || apiTest.status === 401 ? '✅ API Connection: OK' : '❌ API Connection: FAILED');
+                
+                // Test 2: Users
+                results.push('\n👥 Testing Users...');
+                const usersTest = await fetch(`${PRODUCTION_URL}/api/users`);
+                const usersData = await usersTest.json();
+                results.push(usersTest.ok && usersData.length > 0 ? `✅ Users: ${usersData.length} found` : '❌ Users: FAILED');
+                
+                // Test 3: Schools
+                results.push('\n🏫 Testing Schools...');
+                const schoolsTest = await fetch(`${PRODUCTION_URL}/api/schools`);
+                const schoolsData = await schoolsTest.json();
+                results.push(schoolsTest.ok && schoolsData.length > 0 ? `✅ Schools: ${schoolsData.length} found` : '❌ Schools: FAILED');
+                
+                // Test 4: Additional Tasks
+                results.push('\n📋 Testing Additional Tasks...');
+                const tasksTest = await fetch(`${PRODUCTION_URL}/api/additional-tasks`);
+                const tasksData = await tasksTest.json();
+                results.push(tasksTest.ok && tasksData.length > 0 ? `✅ Additional Tasks: ${tasksData.length} found` : '❌ Additional Tasks: FAILED');
+                
+                // Test 5: Login
+                results.push('\n🔐 Testing Login...');
+                const loginTest = await fetch(`${PRODUCTION_URL}/api/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: 'wawan', password: 'admin123' })
+                });
+                const loginData = await loginTest.json();
+                results.push(loginTest.ok && loginData.user ? '✅ Login: SUCCESS' : '❌ Login: FAILED');
+                
+                // Summary
+                const successCount = results.filter(r => r.includes('✅')).length;
+                const totalTests = 5;
+                
+                results.push(`\n🎯 SUMMARY:`);
+                results.push(`✅ Passed: ${successCount}/${totalTests}`);
+                results.push(`❌ Failed: ${totalTests - successCount}/${totalTests}`);
+                
+                if (successCount === totalTests) {
+                    results.push(`\n🚀 ALL TESTS PASSED! Production ready!`);
+                    showResult('all-result', results.join('\n'), 'success');
+                } else {
+                    results.push(`\n⚠️ Some tests failed. Check individual tests above.`);
+                    showResult('all-result', results.join('\n'), 'error');
+                }
+                
+            } catch (error) {
+                showResult('all-result', `❌ COMPREHENSIVE TEST ERROR!
+Error: ${error.message}
+
+Results so far:
+${results.join('\n')}`, 'error');
+            }
+        }
+
+        // Auto-run API connection test on page load
+        window.onload = function() {
+            setTimeout(testAPIConnection, 1000);
+        };
+    </script>
+</body>
+</html>

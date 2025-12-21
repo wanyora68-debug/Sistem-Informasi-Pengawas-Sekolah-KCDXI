@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Eye, EyeOff } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { authApi } from "@/lib/api";
 
 export default function LoginPage() {
   const [, setLocation] = useLocation();
@@ -31,49 +32,25 @@ export default function LoginPage() {
     setIsLoading(true);
     
     try {
-      console.log('Attempting client-side login...');
+      console.log('Attempting Supabase login...');
       
-      // Client-side authentication - bypass API completely
-      const validUsers: Record<string, { password: string; role: string; fullName: string }> = {
-        admin: { password: 'admin123', role: 'admin', fullName: 'Administrator' },
-        wawan: { password: 'wawan123', role: 'pengawas', fullName: 'H. Wawan Yogaswara, S.Pd, M.Pd' }
-      };
+      // Use new Supabase direct API
+      const result = await authApi.login(loginUsername, loginPassword);
       
-      const user = validUsers[loginUsername.toLowerCase()];
-      
-      if (!user || user.password !== loginPassword) {
-        toast({
-          title: "Gagal",
-          description: "Username atau password salah",
-          variant: "destructive",
-        });
-        return;
-      }
-
-      // Generate token and store user data
-      const token = `${loginUsername}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-      
-      localStorage.setItem('auth_token', token);
-      localStorage.setItem('user_data', JSON.stringify({
-        username: loginUsername,
-        role: user.role,
-        fullName: user.fullName
-      }));
-      
-      console.log('Client-side login successful');
+      console.log('Supabase login successful:', result.user);
       
       toast({
         title: "Berhasil",
-        description: "Login berhasil! (Client-side)",
+        description: `Selamat datang, ${result.user.full_name}!`,
       });
       
       setLocation('/');
       
-    } catch (error) {
+    } catch (error: any) {
       console.error('Login error:', error);
       toast({
-        title: "Error",
-        description: "Terjadi kesalahan saat login",
+        title: "Gagal",
+        description: error.message || "Username atau password salah",
         variant: "destructive",
       });
     } finally {
